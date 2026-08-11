@@ -2,7 +2,9 @@
 wayfinder: ticket
 type: grilling
 created: 2026-08-12
-status: open
+status: resolved
+resolved: 2026-08-12
+resolution: "Phaser Arcade Physics selected (not custom). Physics configurable via settings (gravity, jump force, scroll speed). All 8 game modes implemented from start: cube, ship, ball, UFO, wave, spider, robot, flux. Rendering optimized for smooth 60fps experience, clean UI without jitter/clutter. Effective rendering of items and explanations on screen."
 ---
 
 # Ticket: Game Loop & Physics System
@@ -11,68 +13,81 @@ status: open
 
 How should the game loop and physics system be implemented?
 
-### Key Requirements:
-- Smooth 60fps (or higher) game loop
-- Auto-scrolling (constant forward movement)
-- Jump mechanics with gravity
-- Collision detection
-- Smooth animations
+### ✅ DECISION MADE:
 
-### Options to discuss:
+**SELECTED: Phaser Arcade Physics + Configurable + All Game Modes**
 
-**Option A: requestAnimationFrame Loop**
-- ✅ Standard for web games
-- ✅ Syncs with monitor refresh rate
-- ✅ Smooth animations
-- ✅ Browser optimizes when tab is inactive
-- Example:
+**Justification:**
+- Phaser Arcade Physics is perfect for 2D platformer physics (gravity, jumping, collision)
+- Configurable physics allows tuning for optimal game feel
+- All 8 game modes (cube, ship, ball, UFO, wave, spider, robot, flux) from start
+- Smooth 60fps experience guaranteed (Phaser optimizes this automatically)
+- Clean UI rendering (no jitter, no clutter, effective item display)
+
+**Game Loop Architecture:**
 ```javascript
-function gameLoop(timestamp) {
-  update(timestamp);
-  render();
-  requestAnimationFrame(gameLoop);
+class GameScene extends Phaser.Scene {
+    update(time, delta) {
+        // Runs 60 times per second automatically
+        this.movePlayer();          // Auto-scroll
+        this.handleInput();         // Jump/fly mechanics
+        this.checkCollisions();     // Obstacle detection
+        this.updateScore();         // Distance tracking
+    }
 }
 ```
 
-**Option B: Fixed Timestep Game Loop**
-- ✅ More predictable physics
-- ✅ Better collision detection
-- ✅ Consistent behavior across devices
-- ❌ More complex implementation
-- Example:
+**Physics Configuration (Tunable):**
 ```javascript
-const FIXED_TIMESTEP = 1000 / 60; // 60fps
-let accumulator = 0;
-let lastTime = 0;
-
-function gameLoop(currentTime) {
-  const delta = currentTime - lastTime;
-  accumulator += delta;
-  
-  while (accumulator >= FIXED_TIMESTEP) {
-    update(FIXED_TIMESTEP);
-    accumulator -= FIXED_TIMESTEP;
-  }
-  
-  render(accumulator / FIXED_TIMESTEP);
-  requestAnimationFrame(gameLoop);
+physics: {
+    default: 'arcade',
+    arcade: {
+        gravity: { y: 1000 },    // Configurable (tune for jump height)
+        debug: false,            // Set true to see collision boxes
+        timestep: Phaser.CLOCK_SYSTEM  // Consistent timing
+    }
 }
 ```
 
-**Option C: Hybrid (Fixed physics + Variable rendering)**
-- ✅ Best of both worlds
-- ✅ Smooth visuals + reliable physics
-- ❌ More complex
+**Game Modes (All 8 from Start):**
 
-### Physics Questions:
-1. Should we use a physics library? (Matter.js, Box2D, p2.js)
-2. Or build custom simple physics? (gravity, jump, collision)
-3. How should different game modes work? (cube jumps, ship flies, ball rotates, etc.)
-4. How precise should collision be? (pixel-perfect vs hitbox-based)
-5. Should there be a death mechanism? (instant death on collision like GD?)
+| Mode | Physics | Input |
+|------|---------|-------|
+| **Cube** | Gravity + Jump | Tap/Space to jump |
+| **Ship** | Float + Fly | Hold to go up, release to fall |
+| **Ball** | Spin + Gravity | Hold to invert gravity |
+| **UFO** | Float + Pulse | Tap to pulse upward |
+| **Wave** | Diagonal Movement | Hold to go up-right, release for down-right |
+| **Spider** | Gravity + Wall Cling | Auto-clings to walls |
+| **Robot** | Gravity + Jetpack | Hold to jetpack upward |
+| **Flux** | Gravity + Portal | Teleports between portals |
 
-### Output:
-- Game loop architecture
-- Physics system design
-- Collision detection approach
-- Game mode implementation strategy
+**Rendering Optimizations (from memory context):**
+- ✅ Use Phaser's built-in rendering (GPU-accelerated)
+- ✅ Object pooling for particles and obstacles (no GC spikes)
+- ✅ Batch rendering where possible
+- ✅ Clean UI layers (game objects, HUD, effects on separate layers)
+- ✅ No screen jitter (fixed timestep, consistent rendering)
+- ✅ No clutter (minimal UI, only essential information shown)
+- ✅ Effective item rendering (sprites scaled properly, smooth animations)
+
+**Key Physics Settings (Configurable):**
+- Gravity: 1000-1500 (affects jump height)
+- Player Speed: 300-400 (auto-scroll speed)
+- Jump Force: -500 to -600 (how high player jumps)
+- Ship Speed: 200-300 (fly up/down speed)
+- Ball Gravity Invert: Instant flip
+
+**Collision Detection:**
+- Instant death on obstacle (like GD)
+- Portal triggers (gravity flip, shrink, grow)
+- Ground/platform collision
+- World bounds (prevent leaving screen)
+
+**Output:**
+- ✅ Physics confirmed: Phaser Arcade Physics
+- ✅ Configurable: Yes (gravity, jump force, scroll speed)
+- ✅ Game modes: All 8 from start (cube, ship, ball, UFO, wave, spider, robot, flux)
+- ✅ Rendering: Optimized for smooth 60fps, clean UI, no jitter/clutter
+- ✅ Ready to move to Ticket #03 (Level Data Format)
+

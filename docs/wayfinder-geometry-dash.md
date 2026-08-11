@@ -22,7 +22,8 @@ A feature-rich, web-based 2D Geometry Dash clone running locally in the browser 
 
 - [Ticket #01: Choose Game Engine/Framework](tickets/01-tech-stack.md) — **Phaser.js v3 selected** (built-in physics, audio, sprites, particles, input handling) ✨
 - [Ticket #02: Game Architecture Pattern](tickets/02-game-architecture.md) — **Organized Structure B selected** (scenes/entities/systems separation, hybrid pattern) ♪
-- [Scope confirmed] — Auto-scrolling character, jump mechanics, obstacles, collision detection, score tracking (◕‿◕)
+- [Ticket #06: Game Loop & Physics](tickets/06-game-loop-physics.md) — **Phaser Arcade Physics selected** (configurable, all 8 game modes, smooth 60fps rendering) (◕‿◕)
+- [Scope confirmed] — Auto-scrolling character, jump mechanics, obstacles, collision detection, score tracking
 
 ## Not yet specified
 
