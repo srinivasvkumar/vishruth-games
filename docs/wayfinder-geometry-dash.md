@@ -20,7 +20,7 @@ A feature-rich, web-based 2D Geometry Dash clone running locally in the browser 
 
 ## Decisions so far
 
-- [Technology confirmed] — 2D web-based game, feature-rich scope ✨
+- [Ticket #01: Choose Game Engine/Framework](tickets/01-tech-stack.md) — **Phaser.js v3 selected** (built-in physics, audio, sprites, particles, input handling) ✨
 - [Scope confirmed] — Auto-scrolling character, jump mechanics, obstacles, collision detection, score tracking (◕‿◕)
 
 ## Not yet specified
