@@ -27,32 +27,24 @@ A feature-rich, web-based 2D Geometry Dash clone running locally in the browser 
 - [Ticket #04: Audio System Design](tickets/04-audio-system-design.md) — **Hybrid BPM + Mix Music + Volume Controls + Persist Settings + Simple Editor** 🎵
 - [Ticket #05: Visual Design & Assets](tickets/05-visual-design-assets.md) — **Geometric/Polygon style + Canvas drawing + Particles + Gradient background + In-menu settings** 🎨
 - [Ticket #07: Controls & Input Handling](tickets/07-controls-input.md) — **Tap to jump + Keyboard/Mouse/Touch + Scroll prevention + Focus handling** ⌨️
+- [Ticket #08: Score & Progression](tickets/08-score-progression.md) — **Score = Distance % (0-100%) + Attempt tracking + Simple UI + localStorage** 🏆
 - [Scope confirmed] — Auto-scrolling character, jump mechanics, obstacles, collision detection, score tracking
 
 ## Not yet specified
 
-The fog gathers around implementation details. Each decision ticket below chips away at the uncertainty~! ♪
+All active decision tickets have been resolved! The map is complete and ready for implementation. Any new features or decisions that arise during development can be added as new tickets.
 
-### Active Decision Tickets
+**Completed tickets (8 total):**
+- ✅ Technology Stack (Phaser.js v3)
+- ✅ Game Architecture (Organized Structure B)
+- ✅ Game Loop & Physics (Arcade Physics, all 8 game modes)
+- ✅ Level Data Format (JSON, 5 levels, level editor, custom music)
+- ✅ Audio System Design (Hybrid BPM, mix music, volume controls)
+- ✅ Visual Design & Assets (Geometric/Polygon, Canvas drawing)
+- ✅ Controls & Input Handling (Tap to jump, all input methods)
+- ✅ Score & Progression (Distance %, attempt tracking)
 
-#### Technology & Architecture
-1. **[Choose Game Engine/Framework](tickets/01-tech-stack.md)** — Phaser.js vs Vanilla Canvas vs Pixi.js
-2. **[Game Architecture Pattern](tickets/02-game-architecture.md)** — ECS vs OOP vs Functional
-3. **[Controls & Input Handling](tickets/07-controls-input.md)** — Keyboard, Mouse, Touch input design
-
-#### Core Gameplay
-4. **[Game Loop & Physics System](tickets/06-game-loop-physics.md)** — requestAnimationFrame vs Fixed Timestep
-5. **[Level Data Format](tickets/03-level-data-format.md)** — JSON files vs Level Editor vs Binary
-
-#### Features & Polish
-6. **[Audio/Music System Design](tickets/04-audio-system-design.md)** — Web Audio API vs HTML5 Audio vs Hybrid
-7. **[Visual Design & Assets](tickets/05-visual-design-assets.md)** — Canvas Drawing vs CSS/SVG vs External Sprites
-8. **[Score & Progression](tickets/08-score-progression.md)** — Scoring, persistence, localStorage vs IndexedDB
-
-### Suggested Order
-- **Start with** #01 (Tech Stack) — it influences everything else
-- **Then** #02 (Architecture) and #06 (Game Loop/Physics)
-- **Parallel work** possible on #03, #04, #05, #07, #08
+**Ready for implementation!** 🚀
 
 ## Out of scope
 

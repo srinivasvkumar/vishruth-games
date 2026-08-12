@@ -2,7 +2,9 @@
 wayfinder: ticket
 type: grilling
 created: 2026-08-12
-status: open
+status: resolved
+resolved: 2026-08-12
+resolution: "Score system: Score = Distance % (0-100% per level). Attempt tracking per level. Progression based on completion status. Simple clean UI with minimal settings. Persistence in localStorage. Reset option in settings."
 ---
 
 # Ticket: Score, Progression & Persistence
@@ -11,60 +13,80 @@ status: open
 
 How should scoring, progress tracking, and data persistence work?
 
-### Features to Design:
+### ✅ DECISION MADE:
+
+**SELECTED: Score = Distance % (0-100%)**
+
+**Justification:**
+- Distance-based scoring is standard for GD
+- Simple, intuitive progress tracking
+- Easy to implement and understand
+- Clean, minimal UI
 
 **Score System:**
-- Score based on distance traveled?
-- Score based on percentage of level completed?
-- Best score per level?
-- Attempts counter?
+- ✅ **Score = Distance %** (0-100% per level)
+- ✅ 0% = Start of level
+- ✅ 100% = Level complete
+- ✅ Track best score per level
 
-**Progression:**
-- Should levels unlock progressively?
-- Or can players try any level anytime?
-- Should there be achievements?
+**Progression System:**
 
-**Persistence:**
-- Store best scores locally?
-- How many levels to track?
-- Settings persistence (volume, controls)?
+**Per Level:**
+- ✅ Best score (distance %)
+- ✅ Attempts count
+- ✅ Completion status
 
-### Storage Options:
+**Global:**
+- ✅ Total attempts
+- ✅ Total levels completed
 
-**Option A: localStorage**
-- ✅ Built into browsers
-- ✅ Simple API
-- ✅ No server needed (we're running locally)
-- ❌ Limited storage (~5-10MB)
-- ❌ Per-browser, not synced
-- Example:
-```javascript
-// Save
-localStorage.setItem('gd-best-scores', JSON.stringify(scores));
-// Load
-const scores = JSON.parse(localStorage.getItem('gd-best-scores')) || {};
+**Storage: localStorage**
+```json
+{
+    "levels": {
+        "level-1": {
+            "bestScore": 100,
+            "attempts": 5,
+            "completed": true
+        },
+        "level-2": {
+            "bestScore": 85,
+            "attempts": 12,
+            "completed": false
+        }
+    },
+    "totalAttempts": 17,
+    "totalLevelsCompleted": 1
+}
 ```
 
-**Option B: IndexedDB**
-- ✅ More storage space
-- ✅ Better for larger datasets
-- ❌ More complex API
-- ❌ Overkill for our needs?
+**HUD (Top-left corner):**
+```
+┌─────────────────────────────┐
+│  Level: 1                   │
+│  Score: 85%                 │
+│  Attempts: 3                │
+└─────────────────────────────┘
+```
 
-**Option C: Both**
-- ✅ localStorage for settings
-- ✅ IndexedDB for level data
-- ❌ More code
+**UI Elements:**
+- ✅ Level select screen with progress
+- ✅ Level complete screen with stats
+- ✅ Death screen with retry button
+- ✅ Settings screen with reset option
 
-### Key Questions:
-1. What exactly constitutes "score"? (distance, completion %, attempts)
-2. Should there be a "best of" system? (e.g., best time, best attempt)
-3. How should level progression work? (all available vs locked)
-4. Should we show statistics? (completion %, best scores)
-5. Should settings persist? (volume, control scheme, fullscreen)
+**Clean & Simple:**
+- ✅ Minimal UI (only essential information)
+- ✅ No clutter
+- ✅ Clear, readable text
+- ✅ Consistent styling
 
-### Output:
-- Score calculation design
-- Data model for persistence
-- Storage strategy
-- UI for displaying scores/stats
+**Output:**
+- ✅ Score: Distance % (0-100%)
+- ✅ Attempt tracking: Per level
+- ✅ Progression: Completion status
+- ✅ Simple UI: Clean, minimal
+- ✅ Persistence: localStorage
+- ✅ Reset option: In settings
+- ✅ **Wayfinder complete! Ready for implementation!**
+
