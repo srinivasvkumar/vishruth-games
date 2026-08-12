@@ -26,6 +26,7 @@ A feature-rich, web-based 2D Geometry Dash clone running locally in the browser 
 - [Ticket #03: Level Data Format](tickets/03-level-data-format.md) — **JSON format + 5 built-in levels + Level Editor + Custom Music + Attempt Tracking** 📊
 - [Ticket #04: Audio System Design](tickets/04-audio-system-design.md) — **Hybrid BPM + Mix Music + Volume Controls + Persist Settings + Simple Editor** 🎵
 - [Ticket #05: Visual Design & Assets](tickets/05-visual-design-assets.md) — **Geometric/Polygon style + Canvas drawing + Particles + Gradient background + In-menu settings** 🎨
+- [Ticket #07: Controls & Input Handling](tickets/07-controls-input.md) — **Tap to jump + Keyboard/Mouse/Touch + Scroll prevention + Focus handling** ⌨️
 - [Scope confirmed] — Auto-scrolling character, jump mechanics, obstacles, collision detection, score tracking
 
 ## Not yet specified
