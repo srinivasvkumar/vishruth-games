@@ -1,0 +1,39 @@
+{
+  "id": "level-4",
+  "name": "Orbital Overdrive",
+  "difficulty": "Hard",
+  "bpm": 150,
+  "speed": 380,
+  "startX": 100,
+  "groundY": 600,
+  "totalDistance": 6000,
+  "music": null,
+  "blocks": [
+    {"x": 400, "y": 400, "width": 80, "height": 20},
+    {"x": 800, "y": 350, "width": 80, "height": 20},
+    {"x": 1200, "y": 500, "width": 80, "height": 20},
+    {"x": 1600, "y": 300, "width": 80, "height": 20},
+    {"x": 2000, "y": 450, "width": 80, "height": 20},
+    {"x": 2400, "y": 350, "width": 80, "height": 20},
+    {"x": 3000, "y": 550, "width": 150, "height": 50},
+    {"x": 3800, "y": 400, "width": 80, "height": 20},
+    {"x": 4500, "y": 300, "width": 80, "height": 20},
+    {"x": 5200, "y": 450, "width": 80, "height": 20}
+  ],
+  "obstacles": [
+    {"x": 1000, "y": 560, "type": "spike"},
+    {"x": 1400, "y": 560, "type": "spike"},
+    {"x": 1440, "y": 560, "type": "spike"},
+    {"x": 2200, "y": 560, "type": "saw"},
+    {"x": 2600, "y": 560, "type": "saw"},
+    {"x": 3400, "y": 560, "type": "saw"},
+    {"x": 4000, "y": 560, "type": "saw"},
+    {"x": 5000, "y": 560, "type": "saw"},
+    {"x": 5600, "y": 560, "type": "saw"}
+  ],
+  "portals": [
+    {"x": 2800, "y": 300, "type": "gravity"},
+    {"x": 4800, "y": 250, "type": "gravity"}
+  ],
+  "groundColor": "#aa00ff"
+}

@@ -1,0 +1,52 @@
+{
+  "id": "level-5",
+  "name": "Final Frontier",
+  "difficulty": "Expert",
+  "bpm": 160,
+  "speed": 400,
+  "startX": 100,
+  "groundY": 600,
+  "totalDistance": 8000,
+  "music": null,
+  "blocks": [
+    {"x": 300, "y": 400, "width": 80, "height": 20},
+    {"x": 700, "y": 350, "width": 80, "height": 20},
+    {"x": 1100, "y": 500, "width": 80, "height": 20},
+    {"x": 1500, "y": 300, "width": 80, "height": 20},
+    {"x": 1900, "y": 450, "width": 80, "height": 20},
+    {"x": 2300, "y": 350, "width": 80, "height": 20},
+    {"x": 2700, "y": 500, "width": 80, "height": 20},
+    {"x": 3100, "y": 400, "width": 80, "height": 20},
+    {"x": 3500, "y": 300, "width": 80, "height": 20},
+    {"x": 4000, "y": 550, "width": 200, "height": 50},
+    {"x": 4500, "y": 450, "width": 80, "height": 20},
+    {"x": 4900, "y": 350, "width": 80, "height": 20},
+    {"x": 5300, "y": 500, "width": 80, "height": 20},
+    {"x": 5700, "y": 400, "width": 80, "height": 20},
+    {"x": 6100, "y": 300, "width": 80, "height": 20},
+    {"x": 6500, "y": 550, "width": 150, "height": 50},
+    {"x": 7000, "y": 400, "width": 80, "height": 20}
+  ],
+  "obstacles": [
+    {"x": 900, "y": 560, "type": "spike"},
+    {"x": 1300, "y": 560, "type": "spike"},
+    {"x": 1340, "y": 560, "type": "spike"},
+    {"x": 1380, "y": 560, "type": "spike"},
+    {"x": 2100, "y": 560, "type": "saw"},
+    {"x": 2500, "y": 560, "type": "saw"},
+    {"x": 2900, "y": 560, "type": "saw"},
+    {"x": 3700, "y": 560, "type": "saw"},
+    {"x": 4200, "y": 560, "type": "saw"},
+    {"x": 5000, "y": 560, "type": "saw"},
+    {"x": 5800, "y": 560, "type": "saw"},
+    {"x": 6300, "y": 560, "type": "saw"},
+    {"x": 6900, "y": 560, "type": "saw"},
+    {"x": 7500, "y": 560, "type": "saw"}
+  ],
+  "portals": [
+    {"x": 3200, "y": 300, "type": "gravity"},
+    {"x": 5600, "y": 250, "type": "gravity"},
+    {"x": 7200, "y": 200, "type": "gravity"}
+  ],
+  "groundColor": "#ffffff"
+}
