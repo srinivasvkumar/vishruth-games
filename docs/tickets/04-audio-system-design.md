@@ -2,7 +2,9 @@
 wayfinder: ticket
 type: grilling
 created: 2026-08-12
-status: open
+status: resolved
+resolved: 2026-08-12
+resolution: "Hybrid BPM detection (manual + auto-detect). Mix of built-in (5 tracks, 1 per level) and user-uploaded music. Full volume controls (Master, Music, SFX + mute). Settings persist in localStorage. Keep editor simple - no beat visualizations. Audio system uses Phaser's built-in Web Audio API integration."
 ---
 
 # Ticket: Audio/Music System Design
@@ -11,40 +13,82 @@ status: open
 
 How should the game handle audio, especially music sync which is CORE to Geometry Dash?
 
-### Key Requirements:
-- Music sync (objects spawn on beat)
-- Sound effects (jump, death, portal, etc.)
-- Volume control
-- Mute option
+### ✅ DECISION MADE:
 
-### Options to discuss:
+**SELECTED: Hybrid BPM + Mix Music + Volume Controls + Persist Settings + Simple Editor**
 
-**Option A: Web Audio API**
-- ✅ Precise timing (critical for beat sync)
-- ✅ Frequency analysis possible
-- ✅ Can modify audio in real-time
-- ❌ More complex API
-- ❌ Browser compatibility quirks
+**Justification:**
+- Hybrid BPM ensures accurate beat detection with fallback
+- Mix of built-in and user music provides flexibility
+- Volume controls give players control
+- Persisted settings improve user experience
+- Keep editor simple avoids clutter
 
-**Option B: HTML5 Audio Element**
-- ✅ Simple to use
-- ✅ Good for basic playback
-- ❌ Less precise timing
-- ❌ Harder to sync with game objects
+**Hybrid BPM Detection:**
+```javascript
+// Priority order:
+// 1. Use manual BPM from level JSON if available
+// 2. Auto-detect BPM from audio file if no manual value
 
-**Option C: Web Audio + HTML5 Audio Hybrid**
-- ✅ Best of both worlds
-- ✅ More complex architecture
-- ✅ Precise sync + simple fallback
+const bpm = level.bpm || await detectBPM(audioFile);
+const beatInterval = 60000 / bpm;  // milliseconds per beat
+```
 
-### Key Design Questions:
-1. How should beat detection work? (manual BPM marking vs automatic)
-2. Should music be pre-analyzed for beat positions?
-3. How should audio states work? (menu, playing, dead, paused)
-4. What about sound effects vs background music?
-5. Should players be able to use their own music for levels?
+**Music Sources:**
+- **Built-in (5 tracks)** - 1 per level, curated quality
+- **User-uploaded** - MP3, WAV, OGG files from local directory
+- **Level editor** - Select from built-in or upload new
 
-### Output:
-- Audio system architecture
-- Music sync implementation approach
-- Audio file format recommendations
+**Audio System Architecture:**
+```javascript
+class AudioManager {
+    constructor(scene) {
+        this.scene = scene;
+        this.music = null;
+        this.sfx = {};
+        this.bpm = 0;
+        this.volume = { master: 1, music: 1, sfx: 1 };
+    }
+    
+    // Load music (built-in or user)
+    loadMusic(file, type = 'built-in') { /* load audio */ }
+    
+    // Play with beat sync
+    playWithSync() { /* start music, spawn beats */ }
+    
+    // Volume controls
+    setVolume(type, value) { /* update volume */ }
+    mute() { /* mute all */ }
+    
+    // Beat detection
+    getCurrentBeat() { /* return beat # */ }
+}
+```
+
+**Volume Settings (Persisted in localStorage):**
+```json
+{
+    "audio": {
+        "master": 1.0,
+        "music": 0.8,
+        "sfx": 1.0,
+        "muted": false
+    }
+}
+```
+
+**Sound Effects:**
+- Jump (jump sound)
+- Death/explosion (death effect)
+- Portal activation (portal sound)
+- Level complete (success sound)
+- Button click (menu interactions)
+
+**Output:**
+- ✅ BPM: Hybrid (manual + auto-detect)
+- ✅ Music: Mix (built-in + user-uploaded)
+- ✅ Volume: Master, Music, SFX + mute
+- ✅ Persistence: localStorage
+- ✅ Editor: Simple (no beat visualizations)
+- ✅ Ready to move to Ticket #05 (Visual Design & Assets)
+
