@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type to Jump - Stereo Madness Copy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            text-align: center;
+        }
+        
+        #gameCanvas {
+            border: 3px solid #00d4ff;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+        
+        #ui {
+            margin-top: 15px;
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        #instructions {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: #fff;
+            text-shadow: 0 0 10px #00d4ff;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="1200" height="500"></canvas>
+        <div id="message"></div>
+        <div id="ui">
+            <div id="score">Score: 0</div>
+            <div id="instructions">
+                Press SPACE or 'J' to JUMP | Hold SPACE to CLIMB | Press 'S' for SPACESHIP MODE
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const messageElement = document.getElementById('message');
+        
+        // Game state
+        let gameRunning = true;
+        let score = 0;
+        let frameCount = 0;
+        
+        // Player
+        const player = {
+            x: 100,
+            y: 400,
+            width: 30,
+            height: 30,
+            color: '#00ff88',
+            velocityY: 0,
+            gravity: 0.3,        // Much weaker gravity - floaty jumps
+            jumpForce: -10,      // Higher jump for more air time
+            isJumping: false,
+            isHoldingJump: false,
+            mode: 'normal', // normal or spaceship
+            angle: 0
+        };
+        
+        // Ground
+        const ground = {
+            y: 450,
+            height: 50,
+            color: '#16213e'
+        };
+        
+        // Obstacles and platforms
+        let obstacles = [];
+        let platforms = [];
+        let letters = [];
+        
+        // Stereo Madness inspired level design
+        function createStereoMadnessLevel() {
+            obstacles = [];
+            platforms = [];
+            letters = [];
+            
+            // Initial tower climb (like Stereo Madness) - increased spacing for easier climbing
+            // Letter blocks that require hold-jump to climb
+            for (let i = 0; i < 5; i++) {
+                platforms.push({
+                    x: 300 + i * 100,  // Increased from 80 to 100 for more space
+                    y: ground.y - 40 - i * 70,  // Increased vertical spacing from 60 to 70
+                    width: 60,
+                    height: 20,
+                    color: '#ff6b6b',
+                    type: 'tower'
+                });
+                letters.push({
+                    x: 315 + i * 100,
+                    y: ground.y - 80 - i * 70,
+                    char: String.fromCharCode(65 + i), // A, B, C, D, E
+                    width: 30,
+                    height: 40,
+                    color: '#ffd93d'
+                });
+            }
+            
+            // Regular obstacles - increased spacing for slower speed
+            const obstaclePositions = [
+                {x: 500, type: 'spike', height: 40},
+                {x: 750, type: 'block', height: 30},
+                {x: 1000, type: 'spike', height: 40},
+                {x: 1300, type: 'block', height: 50},
+                {x: 1600, type: 'spike', height: 40},
+                {x: 1900, type: 'block', height: 30},
+                {x: 2200, type: 'spike', height: 40},
+                {x: 2500, type: 'block', height: 40},
+            ];
+            
+            obstaclePositions.forEach(pos => {
+                obstacles.push({
+                    x: pos.x,
+                    y: ground.y - pos.height,
+                    width: pos.type === 'spike' ? 30 : 40,
+                    height: pos.height,
+                    type: pos.type,
+                    color: pos.type === 'spike' ? '#ff4757' : '#5352ed'
+                });
+            });
+            
+            // More letter platforms for spaceship section - increased spacing
+            for (let i = 0; i < 6; i++) {
+                platforms.push({
+                    x: 2400 + i * 120,  // Increased from 2200/100 to 2400/120 for more space
+                    y: ground.y - 100 - Math.sin(i) * 50,
+                    width: 80,
+                    height: 20,
+                    color: '#3742fa',
+                    type: 'floating'
+                });
+                letters.push({
+                    x: 2430 + i * 120,
+                    y: ground.y - 150 - Math.sin(i) * 50,
+                    char: String.fromCharCode(65 + i),
+                    width: 30,
+                    height: 40,
+                    color: '#2ed573'
+                });
+            }
+        }
+        
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.key === 'j' || e.key === 'J') {
+                if (!player.isJumping && !player.isHoldingJump) {
+                    player.velocityY = player.jumpForce;
+                    player.isJumping = true;
+                    player.isHoldingJump = true;
+                }
+            }
+            
+            if (e.key === 's' || e.key === 'S') {
+                player.mode = player.mode === 'normal' ? 'spaceship' : 'normal';
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space' || e.key === 'j' || e.key === 'J') {
+                player.isHoldingJump = false;
+            }
+        });
+        
+        // Game update
+        function update() {
+            if (!gameRunning) return;
+            
+            // Apply gravity
+            player.velocityY += player.gravity;
+            player.y += player.velocityY;
+            
+            // Hold jump to climb (extended jump when holding - reduces gravity effect)
+            if (player.isHoldingJump && player.isJumping && player.velocityY < 0) {
+                player.velocityY -= 0.5; // Reduce upward velocity slower, stay in air longer
+            }
+            
+            // Ground collision
+            if (player.y + player.height >= ground.y) {
+                player.y = ground.y - player.height;
+                player.velocityY = 0;
+                player.isJumping = false;
+                player.angle = 0;
+            }
+            
+            // Platform collision
+            platforms.forEach(platform => {
+                if (player.x + player.width > platform.x && 
+                    player.x < platform.x + platform.width &&
+                    player.y + player.height >= platform.y &&
+                    player.y + player.height <= platform.y + 20) {
+                    player.y = platform.y - player.height;
+                    player.velocityY = 0;
+                    player.isJumping = false;
+                }
+            });
+            
+            // Obstacle collision
+            obstacles.forEach(obstacle => {
+                if (player.x + player.width > obstacle.x && 
+                    player.x < obstacle.x + obstacle.width &&
+                    player.y + player.height > obstacle.y &&
+                    player.y < obstacle.y + obstacle.height) {
+                    gameOver();
+                }
+            });
+            
+            // Letter collection
+            letters.forEach((letter, index) => {
+                if (player.x + player.width > letter.x && 
+                    player.x < letter.x + letter.width &&
+                    player.y + player.height > letter.y &&
+                    player.y < letter.y + letter.height) {
+                    score += 100;
+                    letters.splice(index, 1);
+                    scoreElement.textContent = `Score: ${score}`;
+                }
+            });
+            
+            // Auto-scroll (very slow for maximum playability)
+            player.x += 1.0;
+            
+            // Camera follow
+            if (player.x > canvas.width * 0.3) {
+                const offset = player.x - canvas.width * 0.3;
+                player.x = canvas.width * 0.3;
+                obstacles.forEach(o => o.x -= offset);
+                platforms.forEach(p => p.x -= offset);
+                letters.forEach(l => l.x -= offset);
+            }
+            
+            // Rotate player in spaceship mode
+            if (player.mode === 'spaceship') {
+                player.angle += 0.1;
+                player.velocityY += 0.2; // More gravity in spaceship
+            }
+            
+            frameCount++;
+        }
+        
+        // Draw everything
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0f0c29');
+            gradient.addColorStop(0.5, '#302b63');
+            gradient.addColorStop(1, '#24243e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw ground
+            ctx.fillStyle = ground.color;
+            ctx.fillRect(0, ground.y, canvas.width, ground.height);
+            
+            // Draw ground line
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, ground.y);
+            ctx.lineTo(canvas.width, ground.y);
+            ctx.stroke();
+            
+            // Draw platforms
+            platforms.forEach(platform => {
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                
+                // Platform border
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+            });
+            
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                if (obstacle.type === 'spike') {
+                    // Draw spike triangle
+                    ctx.fillStyle = obstacle.color;
+                    ctx.beginPath();
+                    ctx.moveTo(obstacle.x, obstacle.y + obstacle.height);
+                    ctx.lineTo(obstacle.x + obstacle.width / 2, obstacle.y);
+                    ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height);
+                    ctx.closePath();
+                    ctx.fill();
+                } else {
+                    // Draw block
+                    ctx.fillStyle = obstacle.color;
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                }
+            });
+            
+            // Draw letters
+            letters.forEach(letter => {
+                ctx.fillStyle = letter.color;
+                ctx.fillRect(letter.x, letter.y, letter.width, letter.height);
+                
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(letter.char, letter.x + letter.width / 2, letter.y + 28);
+            });
+            
+            // Draw player
+            ctx.save();
+            ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+            
+            if (player.mode === 'spaceship') {
+                // Rotate for spaceship mode
+                ctx.rotate(player.angle);
+                ctx.fillStyle = '#00d4ff';
+                ctx.beginPath();
+                ctx.moveTo(15, 0);
+                ctx.lineTo(-10, 10);
+                ctx.lineTo(-10, -10);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Engine trail
+                ctx.fillStyle = '#ff6b6b';
+                ctx.beginPath();
+                ctx.moveTo(-12, 0);
+                ctx.lineTo(-25, 5);
+                ctx.lineTo(-25, -5);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Normal mode - square
+                ctx.fillStyle = player.color;
+                ctx.fillRect(-player.width / 2, -player.height / 2, player.width, player.height);
+                
+                // Eyes
+                ctx.fillStyle = '#000';
+                ctx.fillRect(-8, -5, 6, 6);
+                ctx.fillRect(4, -5, 6, 6);
+            }
+            
+            ctx.restore();
+            
+            // Draw jump indicator
+            if (player.isHoldingJump && player.isJumping) {
+                ctx.fillStyle = 'rgba(0, 255, 136, 0.3)';
+                ctx.beginPath();
+                ctx.arc(player.x + player.width / 2, player.y + player.height, 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function gameOver() {
+            gameRunning = false;
+            messageElement.textContent = `Game Over! Score: ${score}`;
+            messageElement.style.display = 'block';
+            
+            setTimeout(() => {
+                resetGame();
+            }, 2000);
+        }
+        
+        function resetGame() {
+            player.y = 400;
+            player.velocityY = 0;
+            player.isJumping = false;
+            player.isHoldingJump = false;
+            player.mode = 'normal';
+            player.x = 100;
+            player.angle = 0;
+            score = 0;
+            frameCount = 0;
+            scoreElement.textContent = 'Score: 0';
+            messageElement.style.display = 'none';
+            gameRunning = true;
+            createStereoMadnessLevel();
+        }
+        
+        // Game loop
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Initialize
+        createStereoMadnessLevel();
+        gameLoop();
+    </script>
+</body>
+</html>
