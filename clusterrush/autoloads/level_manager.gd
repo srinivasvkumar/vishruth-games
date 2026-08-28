@@ -1,0 +1,452 @@
+extends Node
+# LevelManager - Level loading and management
+# Manages the 35 levels with 5 difficulty tiers
+# Loads level scenes and handles level transitions
+
+signal level_loaded
+signal level_starting
+signal level_finished
+
+const MAX_LEVELS := 35
+
+# Collision layer / mask constants
+const LAYER_GROUND	 := 1		# Static terrain / ground
+const LAYER_TRUCK	 := 2		# Moving trucks
+const LAYER_HAZARD	 := 4		# Hazards (saws, hammers, etc.)
+const LAYER_PLAYER	 := 8		# Player character
+
+# Ground mask: player (8) detects ground (1) and trucks (2)
+const MASK_PLAYER	 := LAYER_GROUND | LAYER_TRUCK
+
+# Hazard mask: hazards (4) detect player (8)
+const MASK_HAZARD	 := LAYER_PLAYER
+
+# Truck mask: trucks (2) detect ground (1) and player (8)
+const MASK_TRUCK	 := LAYER_GROUND | LAYER_PLAYER
+
+# Level templates for 5 difficulty tiers
+var level_templates := {
+	"tutorial": {
+		"levels": [1, 2, 3, 4, 5],
+		"truck_count": [1, 2],
+		"speed": [10.0, 12.0],
+		"gap_size": [3.0, 4.0],
+		"hazard_count": [0, 1]
+	},
+	"easy": {
+		"levels": [6, 7, 8, 9, 10],
+		"truck_count": [2, 3],
+		"speed": [12.0, 15.0],
+		"gap_size": [2.5, 3.5],
+		"hazard_count": [1, 2]
+	},
+	"medium": {
+		"levels": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+		"truck_count": [4, 6],
+		"speed": [15.0, 18.0],
+		"gap_size": [2.0, 3.0],
+		"hazard_count": [2, 3]
+	},
+	"hard": {
+		"levels": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+		"truck_count": [6, 8],
+		"speed": [18.0, 22.0],
+		"gap_size": [1.5, 2.5],
+		"hazard_count": [3, 4]
+	},
+	"expert": {
+		"levels": [31, 32, 33, 34, 35],
+		"truck_count": [8, 10],
+		"speed": [22.0, 25.0],
+		"gap_size": [1.0, 2.0],
+		"hazard_count": [4, 5]
+	}
+}
+
+var current_level: int = 1
+var _scene_root: Node3D = null
+# Collected references for easy lookup
+var _trucks: Array[CharacterBody3D] = []
+var _hazards: Array[Area3D] = []
+var _player: CharacterBody3D = null
+var _ground: StaticBody3D = null
+
+func _ready():
+	# Use call_deferred to add after tree setup completes
+	call_deferred("_create_scene_root")
+
+func _create_scene_root():
+	if _scene_root == null:
+		_scene_root = Node3D.new()
+		_scene_root.name = "World"
+		get_tree().root.add_child(_scene_root)
+
+func get_template_for_level(level: int) -> Dictionary:
+	for tier_name in level_templates:
+		var tier = level_templates[tier_name]
+		if level in tier["levels"]:
+			return tier
+	return level_templates["tutorial"]
+
+func get_level_parameters(level: int) -> Dictionary:
+	var template = get_template_for_level(level)
+	var difficulty: float = float(level - 1) / 7.0  # 0-4 for 35 levels
+	var speed_mult: float = 1.0 + (level * 0.03)
+	var gap_mult: float = 1.0 - (difficulty * 0.1)
+	
+	return {
+		"truck_count": randi() % (template["truck_count"][1] - template["truck_count"][0] + 1) + template["truck_count"][0],
+		"speed": template["speed"][0] * speed_mult,
+		"max_speed": template["speed"][1] * speed_mult,
+		"gap_size": template["gap_size"][0] * gap_mult,
+		"max_gap": template["gap_size"][1] * gap_mult,
+		"hazard_count": randi() % (template["hazard_count"][1] - template["hazard_count"][0] + 1) + template["hazard_count"][0]
+	}
+
+func load_level(level: int) -> void:
+	current_level = level
+	level_starting.emit()
+	
+	print("[LevelManager] Loading level ", level)
+	# In a full implementation, this would load the actual scene
+	# For now, create a procedural level
+	_generate_level(level)
+	
+	level_loaded.emit()
+
+func _generate_level(level: int) -> void:
+	var params = get_level_parameters(level)
+	
+	# Clear existing level if any
+	if _scene_root:
+		for child in _scene_root.get_children():
+			_scene_root.remove_child(child)
+			child.queue_free()
+		_trucks.clear()
+		_hazards.clear()
+		_player = null
+		_ground = null
+	
+	# Generate ground platform
+	_ground = _create_ground()
+	
+	# Generate truck convoy
+	_trucks = _create_truck_convoy(params["truck_count"], params["speed"], params["max_speed"])
+	
+	# Generate hazards (placed on trucks)
+	_hazards = _create_hazards(params["hazard_count"])
+	
+	# Place player on the first truck or ground
+	_player = _place_player()
+	
+	# Ensure camera controller exists
+	_ensure_camera_controller()
+
+# =============================================================================
+# Ground
+# =============================================================================
+func _create_ground() -> StaticBody3D:
+	var ground = StaticBody3D.new()
+	ground.name = "Ground"
+	ground.collision_layer = LAYER_GROUND
+	ground.collision_mask = 0  # Ground doesn't need to detect anything
+	
+	# Collision shape — extends along X (direction of travel) and Z (width)
+	var shape = CollisionShape3D.new()
+	var shape_data = BoxShape3D.new()
+	shape_data.size = Vector3(300, 0.5, 20)   # 300 units long (was 200)
+	shape.shape = shape_data
+	
+	# Visual mesh
+	var visual = MeshInstance3D.new()
+	var mesh = BoxMesh.new()
+	mesh.size = Vector3(300, 0.5, 20)         # match collision
+	visual.mesh = mesh
+	visual.position = Vector3(0, -0.25, 0)    # half-height down so top is at y=0
+	
+	ground.add_child(shape)
+	ground.add_child(visual)
+	_scene_root.add_child(ground)
+	
+	print("[LevelManager] Ground created: 300 x 0.5 x 20 at y=0")
+	return ground
+
+# =============================================================================
+# Trucks
+# =============================================================================
+const TRUCK_WIDTH := 6.0      # x extent of each truck
+const TRUCK_GAP   := 10.0     # gap between trucks (task requirement)
+const TRUCK_SPACING := TRUCK_WIDTH + TRUCK_GAP   # 16 units center-to-center
+
+func _create_truck_convoy(count: int, min_speed: float, max_speed: float) -> Array[CharacterBody3D]:
+	var trucks: Array[CharacterBody3D] = []
+	
+	# Start offset: place the first truck so its center is a bit ahead of origin
+	# Ground spans [-150, +150] in X; player starts near 0
+	var start_x := 4.0  # slightly ahead of spawn
+	
+	for i in range(count):
+		var truck = _create_truck(min_speed, max_speed)
+		# Position: x = start + i * spacing, z = 0
+		truck.position = Vector3(start_x + i * TRUCK_SPACING, 0, 0)
+		truck.name = "Truck_%d" % i
+		_scene_root.add_child(truck)
+		trucks.append(truck)
+	
+	print("[LevelManager] Truck convoy: %d trucks, spacing=%.1f units" % [count, TRUCK_SPACING])
+	return trucks
+
+func _create_truck(min_speed: float, max_speed: float) -> CharacterBody3D:
+	var truck = CharacterBody3D.new()
+	truck.name = "Truck"
+	truck.is_on_ground = true
+	
+	# --- Collision shape ---
+	var collision = CollisionShape3D.new()
+	var shape = BoxShape3D.new()
+	shape.size = Vector3(TRUCK_WIDTH / 2, 1.5, 1.5)   # half-extents
+	collision.shape = shape
+	# Position collision at truck center height
+	collision.position = Vector3(0, 1.5, 0)
+	truck.add_child(collision)
+	
+	# --- Visual body ---
+	var body = MeshInstance3D.new()
+	body.name = "Body"
+	var mesh = BoxMesh.new()
+	mesh.size = Vector3(TRUCK_WIDTH, 3, 3)
+	body.mesh = mesh
+	body.position = Vector3(0, 1.5, 0)
+	truck.add_child(body)
+	
+	# --- Collision layer / mask ---
+	truck.collision_layer   = LAYER_TRUCK
+	truck.collision_mask    = MASK_TRUCK
+	
+	# --- Script ---
+	var truck_script = preload("res://scripts/truck/truck_controller.gd")
+	truck.set_script(truck_script)
+	truck.set_min_speed(min_speed)
+	truck.set_max_speed(max_speed)
+	
+	return truck
+
+# =============================================================================
+# Hazards — placed ON the trucks (not clipping through)
+# =============================================================================
+func _create_hazards(count: int) -> Array[Area3D]:
+	var hazards: Array[Area3D] = []
+	
+	# Safety: if no trucks, we can't place hazards
+	if _trucks.is_empty():
+		print("[LevelManager] Warning: no trucks to place hazards on")
+		return hazards
+	
+	for i in range(count):
+		var hazard = _create_hazard(i % 4)
+		
+		# Pick a truck to mount the hazard on
+		var truck_idx = i % _trucks.size()
+		var truck = _trucks[truck_idx]
+		
+		# Place hazard on top of truck (truck top surface is at y = 1.5 + 1.5 = 3.0)
+		# We position hazard at y = 3.0 + small_offset so it sits ON the truck
+		var offset_y := 4.0        # just above truck top
+		var offset_x := randf_range(-1.5, 1.5)   # slight random offset on truck
+		var offset_z := randf_range(-0.8, 0.8)
+		
+		hazard.position = truck.global_position + Vector3(offset_x, offset_y, offset_z)
+		hazard.name = "Hazard_%d" % i
+		
+		_scene_root.add_child(hazard)
+		hazards.append(hazard)
+	
+	print("[LevelManager] Placed %d hazards on trucks" % count)
+	return hazards
+
+func _create_hazard(type: int) -> Area3D:
+	var hazard = Area3D.new()
+	hazard.name = "Hazard_%d" % type
+	hazard.collision_layer   = LAYER_HAZARD
+	hazard.collision_mask    = MASK_HAZARD  # detect player only
+	
+	match type:
+		0:  # Saw blade
+			var visual = MeshInstance3D.new()
+			var mesh = CylinderMesh.new()
+			mesh.radius = 0.8
+			mesh.height = 0.1
+			visual.mesh = mesh
+			visual.rotation.x = PI / 2
+			hazard.add_child(visual)
+			var collision = CollisionShape3D.new()
+			var shape = SphereShape3D.new()
+			shape.radius = 0.8
+			collision.shape = shape
+			hazard.add_child(collision)
+		1:  # Ramp / cone
+			var visual = MeshInstance3D.new()
+			var mesh = CylinderMesh.new()
+			mesh.radius = 1.0
+			mesh.height = 2.0
+			visual.mesh = mesh
+			hazard.add_child(visual)
+			var collision = CollisionShape3D.new()
+			var shape = CylinderShape3D.new()
+			shape.radius = 1.0
+			shape.height = 2.0
+			collision.shape = shape
+			hazard.add_child(collision)
+		2:  # Debris
+			var visual = MeshInstance3D.new()
+			var mesh = SphereMesh.new()
+			mesh.radius = 0.5
+			visual.mesh = mesh
+			hazard.add_child(visual)
+			var collision = CollisionShape3D.new()
+			var shape = SphereShape3D.new()
+			shape.radius = 0.5
+			collision.shape = shape
+			hazard.add_child(collision)
+		3:  # Hammer
+			var visual = MeshInstance3D.new()
+			var mesh = BoxMesh.new()
+			mesh.size = Vector3(0.3, 0.3, 2)
+			visual.mesh = mesh
+			hazard.add_child(visual)
+			var collision = CollisionShape3D.new()
+			var shape = BoxShape3D.new()
+			shape.size = Vector3(0.3, 0.3, 2)
+			collision.shape = shape
+			hazard.add_child(collision)
+	
+	return hazard
+
+# =============================================================================
+# Player — spawned on the ground, not floating
+# =============================================================================
+func _place_player() -> CharacterBody3D:
+	var player = _create_player()
+	# Spawn on the ground surface (y=0), feet at y=0 means center ≈ 0.3
+	# (CapsuleShape3D height=1, radius=0.3 → bottom edge is at center-0.3)
+	player.position = Vector3(0, 0.3, 0)
+	player.velocity = Vector3.ZERO
+	_scene_root.add_child(player)
+	
+	print("[LevelManager] Player spawned at y=%.1f (on ground)" % player.position.y)
+	return player
+
+func _create_player() -> CharacterBody3D:
+	var player = CharacterBody3D.new()
+	player.name = "Player"
+	
+	# --- Visual capsule body ---
+	var body = MeshInstance3D.new()
+	body.name = "Body"
+	var mesh = CapsuleMesh.new()
+	mesh.radius = 0.3
+	mesh.height = 1.0
+	body.mesh = mesh
+	# Position the mesh so its bottom sits at y=0 when player center is y=0.3
+	body.position = Vector3(0, 0.8, 0)
+	player.add_child(body)
+	
+	# --- Collision shape ---
+	var collision = CollisionShape3D.new()
+	collision.name = "CollisionShape"
+	var shape = CapsuleShape3D.new()
+	shape.radius = 0.3
+	shape.height = 1.0
+	collision.shape = shape
+	# Center of collision at player position (y=0)
+	player.add_child(collision)
+	
+	# --- Ray casts for player logic ---
+	var ray_left = RayCast3D.new()
+	ray_left.name = "RayCastLeft"
+	ray_left.target_position = Vector3(0, -0.5, 0.5)
+	ray_left.enabled = true
+	ray_left.collide_with_bodies = true
+	ray_left.collide_with_areas = false
+	player.add_child(ray_left)
+	
+	var ray_right = RayCast3D.new()
+	ray_right.name = "RayCastRight"
+	ray_right.target_position = Vector3(0, -0.5, -0.5)
+	ray_right.enabled = true
+	ray_right.collide_with_bodies = true
+	ray_right.collide_with_areas = false
+	player.add_child(ray_right)
+	
+	var ground_check = RayCast3D.new()
+	ground_check.name = "GroundCheck"
+	ground_check.target_position = Vector3(0, -0.5, 0)
+	ground_check.enabled = true
+	ground_check.collide_with_bodies = true
+	ground_check.collide_with_areas = false
+	player.add_child(ground_check)
+	
+	# --- Script ---
+	var player_script = preload("res://scripts/player/player_movement.gd")
+	player.set_script(player_script)
+	
+	# --- Collision layer/mask ---
+	player.collision_layer   = LAYER_PLAYER
+	player.collision_mask    = MASK_PLAYER
+	
+	return player
+
+# =============================================================================
+# Respawn
+# =============================================================================
+func respawn_player() -> void:
+	# Find player and reset position
+	if _player:
+		_player.position = Vector3(0, 0.3, 0)
+		_player.velocity = Vector3.ZERO
+	elif _scene_root:
+		var player = _scene_root.get_node_or_null("Player")
+		if player:
+			player.position = Vector3(0, 0.3, 0)
+			player.velocity = Vector3.ZERO
+
+# =============================================================================
+# Camera controller — ensures a FollowCamera is present on the root
+# =============================================================================
+func _ensure_camera_controller() -> Node3D:
+	# Check if a camera with FollowCamera script already exists under _scene_root
+	var existing = _scene_root.get_node_or_null("Camera3D")
+	if existing and existing.has_script():
+		return existing
+	
+	# Create one
+	var camera = Camera3D.new()
+	camera.name = "Camera3D"
+	
+	var cam_script = preload("res://scripts/camera/camera_controller.gd")
+	camera.set_script(cam_script)
+	
+	# Exported defaults matching game.tscn
+	camera.follow_distance = 8.0
+	camera.height_offset = 4.0
+	camera.smoothness = 0.12
+	
+	_scene_root.add_child(camera)
+	return camera
+
+# =============================================================================
+# Progress
+# =============================================================================
+func get_unlocked_levels() -> int:
+	var config: ConfigFile = ConfigFile.new()
+	var err: int = config.load("user://cluster_rush_save.dat")
+	if err == OK:
+		return config.get_value("progress", "highest_level", 1)
+	return 1
+
+func save_progress(level: int) -> void:
+	var config: ConfigFile = ConfigFile.new()
+	config.set_value("progress", "highest_level", level)
+	var err: int = config.save("user://cluster_rush_save.dat")
+	if err != OK:
+		printerr("[LevelManager] Failed to save progress: ", err)
