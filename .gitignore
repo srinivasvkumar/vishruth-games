@@ -1,5 +1,76 @@
-node_modules/
-*.pyc
-__pycache__/
-.env
+# Godot engine and project files
+Godot_v*.zip
+Godot_v*.exe
+Godot*Editor*
+godot*
+.editorconfig
+.editordata
+
+# Godot generated files
+project.godot
+godot.x11.*
+godot.editor.*
+export_presets.cfg
+export_templates/
+.godot/
+
+# Godot export output
+Builds/
+builds/
+build/
+temp/
+
+# Godot library and cache
+Library/
+Temp/
+obj/
 *.log
+
+# Godot scene and script files (keep .tscn/.gd but ignore generated)
+*.tscn.import
+*.tres.import
+*.import/
+*.uid
+
+# Generated C# files (if using Godot#)
+bin/
+*.csproj
+*.sln
+*.suo
+
+# Godot export templates (large, regenerated)
+export_templates.tpz
+
+# Crash reports
+*.crash
+*.crash.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.vs/
+.idea/
+
+# Node test dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.nyc_output/
+
+# Test results
+coverage/
+*.lcov
+reports/
+*.html
+*.json
+
+# Local Godot user data
+user://
+
+# PCK files
+*.pck
