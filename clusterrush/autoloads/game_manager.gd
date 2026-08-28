@@ -37,9 +37,7 @@ func start_level(level_num: int):
 	current_level = level_num
 	lives = 3 if level_num <= 5 else 2
 	score = 0
-	set_state("playing")
 	level_started.emit(level_num)
-	LevelManager.load_level(level_num)
 
 func player_died():
 	lives -= 1

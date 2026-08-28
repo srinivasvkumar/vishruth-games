@@ -38,7 +38,7 @@ func _on_start_game():
 	var highest_level := LevelManager.get_unlocked_levels()
 	if highest_level <= 1:
 		highest_level = 1
-	GameManager.start_level(highest_level)
+	# Change scene first, then let game.tscn generate the level
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 func _on_level_select():

@@ -1,50 +1,136 @@
-[gd_scene load_steps=4 format=3 uid="uid://cltrsh_gme"]
+[gd_scene load_steps=6 format=3 uid="uid://cxn4h2m1k9r5y"]
 
-[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
-[ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="2_mvm"]
-[ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="3_cam"]
+[ext_resource type="Script" path="res://scripts/game_scene.gd" id="1_game"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="2hud"]
+[ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="3mvm"]
+[ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="4cam"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="5menu"]
 
-[node name="Game" type="Control"]
-anchors_and_margins_preset = 15
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Root" type="Node"]
+script = ExtResource("1_game")
 
-[node name="HUD" type="Control" parent="Game"]
+[node name="World" type="Node3D" parent="."]
+position = Vector3(0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="World"]
+rotation_degrees = Vector3(45, 30, 0)
+shadow_enabled = true
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="World"]
+rotation_degrees = Vector3(-30, -20, 0)
+
+[node name="Player" type="CharacterBody3D" parent="World"]
+position = Vector3(0, 1, 0)
+script = ExtResource("3mvm")
+
+[node name="RayCastLeft" type="RayCast3D" parent="World/Player"]
+target_position = Vector3(-1, 0, 0)
+
+[node name="RayCastRight" type="RayCast3D" parent="World/Player"]
+target_position = Vector3(1, 0, 0)
+
+[node name="GroundCheck" type="RayCast3D" parent="World/Player"]
+target_position = Vector3(0, -1, 0)
+
+[node name="Camera3D" type="Camera3D" parent="World" instance=ExtResource("4cam")]
+
+[node name="GameUI" type="Control" parent="Root"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_hud")
+layer = 1
 
-[node name="LevelLabel" type="Label" parent="HUD"]
+[node name="HUD" type="Control" parent="GameUI" instance=ExtResource("2hud")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LevelLabel" type="Label" parent="GameUI/HUD"]
 layout_mode = 2
+anchor_left = 0.5
+anchor_top = 0.0
+anchor_right = 0.5
+anchor_bottom = 0.0
+offset_left = -50.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 40.0
 text = "Level: 1 / 35"
+horizontal_alignment = 1
 
-[node name="LivesLabel" type="Label" parent="HUD"]
+[node name="LivesLabel" type="Label" parent="GameUI/HUD"]
 layout_mode = 2
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 80.0
+offset_bottom = 40.0
 text = "Lives: 3"
 
-[node name="TimeLabel" type="Label" parent="HUD"]
+[node name="TimeLabel" type="Label" parent="GameUI/HUD"]
 layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 0.0
+anchor_left = 1.0
+anchor_top = 0.0
+offset_left = -80.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 40.0
 text = "Time: 00:00.00"
+horizontal_alignment = 2
 
-[node name="ScoreLabel" type="Label" parent="HUD"]
+[node name="ScoreLabel" type="Label" parent="GameUI/HUD"]
 layout_mode = 2
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -100.0
+offset_top = 45.0
+offset_right = -10.0
+offset_bottom = 75.0
 text = "Score: 0"
+horizontal_alignment = 2
 
-[node name="LevelComplete" type="Control" parent="Game"]
-visible = false
+[node name="ProgressBar" type="ProgressBar" parent="GameUI/HUD"]
+layout_mode = 2
+anchor_left = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_top = 70.0
+offset_right = 1.0
+offset_bottom = 90.0
+value = 0.0
+show_percentage = true
+
+[node name="LevelComplete" type="Control" parent="GameUI"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+visible = false
 
-[node name="LCPanel" type="Panel" parent="LevelComplete"]
-layout_mode = 2
+[node name="Panel" type="Panel" parent="GameUI/LevelComplete"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -80.0
+offset_right = 120.0
+offset_bottom = 80.0
 
-[node name="LCVBox" type="VBoxContainer" parent="LevelComplete/LCPanel"]
+[node name="VBox" type="VBoxContainer" parent="GameUI/LevelComplete/Panel"]
 layout_mode = 2
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,33 +141,40 @@ offset_left = -100.0
 offset_top = -75.0
 offset_right = 100.0
 offset_bottom = 75.0
-fill_rect = true
 
-[node name="LCLabel" type="Label" parent="LevelComplete/LCPanel/LCVBox"]
+[node name="Title" type="Label" parent="GameUI/LevelComplete/Panel/VBox"]
 layout_mode = 2
 text = "Level Complete!"
 horizontal_alignment = 1
 
-[node name="BonusLabel" type="Label" parent="LevelComplete/LCPanel/LCVBox"]
+[node name="Bonus" type="Label" parent="GameUI/LevelComplete/Panel/VBox"]
 layout_mode = 2
 text = "Time Bonus: 0 pts"
 
-[node name="NextButton" type="Button" parent="LevelComplete/LCPanel/LCVBox"]
+[node name="NextBtn" type="Button" parent="GameUI/LevelComplete/Panel/VBox"]
 layout_mode = 2
 text = "Next Level"
 
-[node name="GameOver" type="Control" parent="Game"]
-visible = false
+[node name="GameOver" type="Control" parent="GameUI"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+visible = false
 
-[node name="GOPanel" type="Panel" parent="GameOver"]
-layout_mode = 2
+[node name="Panel2" type="Panel" parent="GameUI/GameOver"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -80.0
+offset_right = 120.0
+offset_bottom = 80.0
 
-[node name="GOVBox" type="VBoxContainer" parent="GameOver/GOPanel"]
+[node name="VBox2" type="VBoxContainer" parent="GameUI/GameOver/Panel2"]
 layout_mode = 2
 anchors_preset = 8
 anchor_left = 0.5
@@ -92,40 +185,113 @@ offset_left = -100.0
 offset_top = -75.0
 offset_right = 100.0
 offset_bottom = 75.0
-fill_rect = true
 
-[node name="GOLabel" type="Label" parent="GameOver/GOPanel/GOVBox"]
+[node name="Title2" type="Label" parent="GameUI/GameOver/Panel2/VBox2"]
 layout_mode = 2
 text = "Game Over"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
+[node name="FinalScore" type="Label" parent="GameUI/GameOver/Panel2/VBox2"]
+layout_mode = 2
+text = "Final Score: 0"
+
+[node name="RetryBtn" type="Button" parent="GameUI/GameOver/Panel2/VBox2"]
 layout_mode = 2
 text = "Retry"
 
-[node name="LSButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
+[node name="LevelSelectBtn" type="Button" parent="GameUI/GameOver/Panel2/VBox2"]
 layout_mode = 2
 text = "Level Select"
 
-[node name="MMButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
+[node name="MainMenuBtn" type="Button" parent="GameUI/GameOver/Panel2/VBox2"]
 layout_mode = 2
 text = "Main Menu"
 
-[node name="World" type="Node3D" parent="."]
+[node name="PauseMenu" type="Control" parent="GameUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
 
-[node name="Player" type="CharacterBody3D" parent="World" instance=ExtResource("2_mvm")]
-position = Vector3(0, 5, 0)
+[node name="Panel3" type="Panel" parent="GameUI/PauseMenu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -80.0
+offset_right = 100.0
+offset_bottom = 80.0
 
-[node name="RayCastLeft" type="RayCast3D" parent="Player"]
-target_position = Vector3(-1, 0, 0)
+[node name="VBox3" type="VBoxContainer" parent="GameUI/PauseMenu/Panel3"]
+layout_mode = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -80.0
+offset_right = 80.0
+offset_bottom = 80.0
+fill_rect = true
 
-[node name="RayCastRight" type="RayCast3D" parent="Player"]
-target_position = Vector3(1, 0, 0)
+[node name="Title3" type="Label" parent="GameUI/PauseMenu/Panel3/VBox3"]
+layout_mode = 2
+text = "Paused"
+horizontal_alignment = 1
 
-[node name="GroundCheck" type="RayCast3D" parent="Player"]
-target_position = Vector3(0, -0.5, 0)
+[node name="ResumeBtn" type="Button" parent="GameUI/PauseMenu/Panel3/VBox3"]
+layout_mode = 2
+text = "Resume"
 
-[node name="Camera3D" type="Camera3D" parent="World" instance=ExtResource("3_cam")]
-follow_distance = 8.0
-height_offset = 4.0
-smoothness = 0.12
+[node name="PauseLevelSelectBtn" type="Button" parent="GameUI/PauseMenu/Panel3/VBox3"]
+layout_mode = 2
+text = "Level Select"
+
+[node name="PauseMainMenuBtn" type="Button" parent="GameUI/PauseMenu/Panel3/VBox3"]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="LoadingScreen" type="Control" parent="GameUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LoadingPanel" type="Panel" parent="GameUI/LoadingScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LoadingVBox" type="VBoxContainer" parent="GameUI/LoadingScreen/LoadingPanel"]
+layout_mode = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -25.0
+offset_right = 80.0
+offset_bottom = 25.0
+
+[node name="LoadingLabel" type="Label" parent="GameUI/LoadingScreen/LoadingPanel/LoadingVBox"]
+layout_mode = 2
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="LoadingBar" type="ProgressBar" parent="GameUI/LoadingScreen/LoadingPanel/LoadingVBox"]
+layout_mode = 2
+anchor_left = 0.3
+anchor_right = 0.7
+offset_top = 30.0
+offset_right = 0.7
+offset_bottom = 50.0
+show_percentage = false

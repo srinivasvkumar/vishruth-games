@@ -73,13 +73,26 @@ var _ground: StaticBody3D = null
 
 func _ready():
 	# Use call_deferred to add after tree setup completes
-	call_deferred("_create_scene_root")
+	call_deferred("_find_or_create_scene_root")
 
-func _create_scene_root():
-	if _scene_root == null:
+func _find_or_create_scene_root():
+	# Try to find the World node from the current game scene
+	var scene_root = get_tree().get_current_scene()
+	if scene_root:
+		var world_node = scene_root.get_node_or_null("World")
+		if world_node:
+			_scene_root = world_node
+			print("[LevelManager] Using existing World node from scene")
+			return
+	# Fallback: create a new World node
+	if not _scene_root:
 		_scene_root = Node3D.new()
 		_scene_root.name = "World"
-		get_tree().root.add_child(_scene_root)
+		if scene_root:
+			scene_root.add_child(_scene_root)
+		else:
+			get_tree().root.add_child(_scene_root)
+		print("[LevelManager] Created new World node")
 
 func get_template_for_level(level: int) -> Dictionary:
 	for tier_name in level_templates:
@@ -117,9 +130,18 @@ func load_level(level: int) -> void:
 func _generate_level(level: int) -> void:
 	var params = get_level_parameters(level)
 	
-	# Clear existing level if any
+	# Ensure we have a scene root to work with
+	_find_or_create_scene_root()
+	
+	# Clear existing dynamic level content ONLY (not scene-prefab nodes)
 	if _scene_root:
-		for child in _scene_root.get_children():
+		# Remove dynamically created nodes, preserve scene nodes
+		var children = _scene_root.get_children()
+		for child in children:
+			var name = child.name
+			# Skip scene-prefab nodes that should be preserved
+			if name in ["Player", "Camera3D", "DirectionalLight3D", "DirectionalLight3D2"]:
+				continue
 			_scene_root.remove_child(child)
 			child.queue_free()
 		_trucks.clear()
@@ -136,7 +158,7 @@ func _generate_level(level: int) -> void:
 	# Generate hazards (placed on trucks)
 	_hazards = _create_hazards(params["hazard_count"])
 	
-	# Place player on the first truck or ground
+	# Find or create player
 	_player = _place_player()
 	
 	# Ensure camera controller exists
@@ -262,13 +284,18 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		hazards.append(hazard)
 	
 	print("[LevelManager] Placed %d hazards on trucks" % count)
+	
+	# Connect hazard area_entered signals to trigger player death
+	_connect_hazard_signals()
+	
 	return hazards
 
 func _create_hazard(type: int) -> Area3D:
 	var hazard = Area3D.new()
 	hazard.name = "Hazard_%d" % type
 	hazard.collision_layer   = LAYER_HAZARD
-	hazard.collision_mask    = MASK_HAZARD  # detect player only
+	hazard.collision_mask    = MASK_HAZARD  # detect player (layer 8)
+	hazard.set_deferred("monitoring", true)
 	
 	match type:
 		0:  # Saw blade
@@ -323,18 +350,21 @@ func _create_hazard(type: int) -> Area3D:
 	return hazard
 
 # =============================================================================
-# Player — spawned on the ground, not floating
+# Player — use scene's existing player, or create if missing
 # =============================================================================
 func _place_player() -> CharacterBody3D:
-	var player = _create_player()
-	# Spawn on the ground surface (y=0), feet at y=0 means center ≈ 0.3
-	# (CapsuleShape3D height=1, radius=0.3 → bottom edge is at center-0.3)
-	player.position = Vector3(0, 0.3, 0)
-	player.velocity = Vector3.ZERO
-	_scene_root.add_child(player)
-	
-	print("[LevelManager] Player spawned at y=%.1f (on ground)" % player.position.y)
-	return player
+	# Try to find existing player in scene
+	_player = _scene_root.get_node_or_null("Player")
+	if _player:
+		_player.position = Vector3(0, 0.3, 0)
+		_player.velocity = Vector3.ZERO
+		print("[LevelManager] Using existing Player from scene")
+	else:
+		# Fallback: create one
+		_player = _create_player()
+		_scene_root.add_child(_player)
+		print("[LevelManager] Created new Player")
+	return _player as CharacterBody3D
 
 func _create_player() -> CharacterBody3D:
 	var player = CharacterBody3D.new()
@@ -433,6 +463,24 @@ func _ensure_camera_controller() -> Node3D:
 	
 	_scene_root.add_child(camera)
 	return camera
+
+# =============================================================================
+# Hazard signal connection
+# =============================================================================
+func _connect_hazard_signals() -> void:
+	# Connect each hazard's area_entered signal to trigger player death
+	for hazard in _hazards:
+		hazard.area_entered.connect(_on_hazard_collided.bind(hazard))
+
+func _on_hazard_collided(other: Node, hazard: Area3D) -> void:
+	# Check if the other node is the player or an ancestor of the player
+	var node = other
+	while node:
+		if node == _player:
+			print("[LevelManager] Hazard collision! Player hit by ", hazard.name)
+			GameManager.player_died()
+			break
+		node = node.get_parent()
 
 # =============================================================================
 # Progress
