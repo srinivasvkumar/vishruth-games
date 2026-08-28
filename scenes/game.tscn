@@ -23,9 +23,6 @@ rotation_degrees = Vector3(-30, -20, 0)
 position = Vector3(0, 1, 0)
 script = ExtResource("3mvm")
 
-[node name="PlayerBody" type="MeshInstance3D" parent="World/Player"]
-mesh = CapsuleMesh.new()
-
 [node name="RayCastLeft" type="RayCast3D" parent="World/Player"]
 target_position = Vector3(-1, 0, 0)
 
