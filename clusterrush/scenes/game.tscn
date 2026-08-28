@@ -44,7 +44,7 @@ grow_vertical = 2
 [node name="LCPanel" type="Panel" parent="LevelComplete"]
 layout_mode = 2
 
-[node name="LCVBox" type="VBoxContainer" parent="LevelComplete/Panel"]
+[node name="LCVBox" type="VBoxContainer" parent="LevelComplete/LCPanel"]
 layout_mode = 2
 anchors_preset = 8
 anchor_left = 0.5
@@ -57,16 +57,16 @@ offset_right = 100.0
 offset_bottom = 75.0
 fill_rect = true
 
-[node name="LCLabel" type="Label" parent="LevelComplete/Panel/LCVBox"]
+[node name="LCLabel" type="Label" parent="LevelComplete/LCPanel/LCVBox"]
 layout_mode = 2
 text = "Level Complete!"
 horizontal_alignment = 1
 
-[node name="BonusLabel" type="Label" parent="LevelComplete/Panel/LCVBox"]
+[node name="BonusLabel" type="Label" parent="LevelComplete/LCPanel/LCVBox"]
 layout_mode = 2
 text = "Time Bonus: 0 pts"
 
-[node name="NextButton" type="Button" parent="LevelComplete/Panel/LCVBox"]
+[node name="NextButton" type="Button" parent="LevelComplete/LCPanel/LCVBox"]
 layout_mode = 2
 text = "Next Level"
 
@@ -81,7 +81,7 @@ grow_vertical = 2
 [node name="GOPanel" type="Panel" parent="GameOver"]
 layout_mode = 2
 
-[node name="GOVBox" type="VBoxContainer" parent="GameOver/Panel"]
+[node name="GOVBox" type="VBoxContainer" parent="GameOver/GOPanel"]
 layout_mode = 2
 anchors_preset = 8
 anchor_left = 0.5
@@ -94,20 +94,20 @@ offset_right = 100.0
 offset_bottom = 75.0
 fill_rect = true
 
-[node name="GOLabel" type="Label" parent="GameOver/Panel/GOVBox"]
+[node name="GOLabel" type="Label" parent="GameOver/GOPanel/GOVBox"]
 layout_mode = 2
 text = "Game Over"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="GameOver/Panel/GOVBox"]
+[node name="RetryButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
 layout_mode = 2
 text = "Retry"
 
-[node name="LSButton" type="Button" parent="GameOver/Panel/GOVBox"]
+[node name="LSButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
 layout_mode = 2
 text = "Level Select"
 
-[node name="MMButton" type="Button" parent="GameOver/Panel/GOVBox"]
+[node name="MMButton" type="Button" parent="GameOver/GOPanel/GOVBox"]
 layout_mode = 2
 text = "Main Menu"
 
