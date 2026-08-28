@@ -1,0 +1,11 @@
+# Binary/build artifacts
+godot-editor-4.2.1/
+bin/
+Builds/
+.godot/
+export_templates/
+tests/
+
+# Game node_modules
+geometry-dash/node_modules/
+2048/

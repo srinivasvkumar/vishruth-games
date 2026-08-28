@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Type Dash — type to jump</title>
+<style>
+  html,body{margin:0;height:100%;background:#0e0e18;overflow:hidden;font-family:monospace;}
+  #wrap{position:fixed;inset:0;}
+  canvas{display:block;width:100%;height:100%;background:#0e0e18;}
+  #hud{position:fixed;left:16px;bottom:16px;color:#8f9bff;font-size:13px;line-height:1.5;z-index:5;pointer-events:none;text-shadow:0 1px 3px #000;}
+  #hud b{color:#c7d2ff;}
+  #title{position:fixed;top:16px;left:16px;color:#3f4a7a;font-size:13px;z-index:5;pointer-events:none;}
+  .key{display:inline-block;background:#20233a;border:1px solid #3a4070;border-radius:3px;padding:0 6px;margin:0 2px;color:#aab3ff;}
+  @media (max-width:600px){#hud{font-size:11px}}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="title">TYPE DASH · type to jump</div>
+<div id="hud">
+  <div><b>MODE:</b> <span id="mode">cube</span></div>
+  <div><b>WORD:</b> <span id="word">—</span> <span id="progress"></span></div>
+  <div><b>DIST:</b> <span id="dist">0</span>m</div>
+  <div><b>BEST:</b> <span id="best">0</span>m</div>
+  <div style="margin-top:6px;color:#6b7399">
+    <span class="key">A–Z / Space</span> jump · <span class="key">Space</span> rapid = wave
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+const cv=document.getElementById('c');
+const ctx=cv.getContext('2d');
+let W=innerWidth,H=innerHeight;
+function resize(){W=innerWidth;H=innerHeight;cv.width=W;cv.height=H;}
+addEventListener('resize',resize);resize();
+
+const DPR=Math.min(devicePixelRatio||1,2);
+// use CSS-scaled logical canvas; drawing in logical px
+// (cv.width already set to W). Keep 1:1 for crispness on 2x later.
+cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+
+// ---------- constants ----------
+const GRAV=0.62;
+const JUMPV=12.6;
+const MOVE=4.4;                 // world scroll speed
+const GROUNDY=H*0.72;
+const PX=Math.min(W*0.16,190);  // player screen x
+const SPIKE_H=34;
+
+// ---------- level / segments ----------
+// Each segment: {mode, len, spikes:[...], blocks:[...], word:null|string}
+const MODES=['cube','ship','ball','wave'];
+// Words used for the "type a word" sections
+const WORDS=['jump','wave','dash','type','fast','go','leap','fly','boost','race'];
+
+let segs=[];
+let segIndex=0;      // current segment
+let segStart=0;      // world x where current segment starts
+let worldX=0;        // total scrolled distance
+
+function makeLevel(){
+  segs=[];
+  const r=(a,b)=>a+Math.random()*(b-a);
+  for(let i=0;i<26;i++){
+    const mode=MODES[i%MODES.length];
+    const len=Math.round(r(700,1200));
+    const s={mode:mode,len:len,spikes:[],blocks:[],word:null};
+    const useWord=(mode==='cube')&&(Math.random()<0.5)&&(i%2===0);
+    if(useWord){
+      s.word=WORDS[Math.floor(r(0,WORDS.length))];
+      // place one spike per letter of the word
+      const n=s.word.length;
+      for(let k=0;k<n;k++){
+        s.spikes.push(Math.round(r(120,180))); // gaps between spike centers
+        if(k>0) s.spikes[k]+=s.spikes[k-1];
+      }
+      s.len=Math.round(s.spikes[s.spikes.length-1]+400);
+    } else {
+      const count=Math.round(r(2,5));
+      let acc=200;
+      for(let k=0;k<count;k++){
+        acc+=r(150,260);
+        s.spikes.push(acc);
+      }
+      s.len=Math.round(s.spikes[s.spikes.length-1]+420);
+    }
+    segs.push(s);
+  }
+}
+
+// ---------- player ----------
+let px=0;          // world x of player (used for collision)
+let py=GROUNDY;    // y (feet/top depending mode)
+let vy=0;
+let mode='cube';
+let rot=0;         // rotation for cube/ball
+let alive=true;
+let deadT=0;
+
+// typing state for word sections
+let word=null;     // current word
+let wordIdx=0;     // next letter to type
+let lastKey='';
+
+// ---------- helpers ----------
+const isGround=(mode)=>mode==='cube'||mode==='ball';
+const isShip=(mode)=>mode==='ship';
+
+function respawn(){
+  makeLevel();
+  segIndex=0; segStart=0; worldX=0;
+  px=0; py=GROUNDY; vy=0;
+  mode='cube'; rot=0;
+  word=null; wordIdx=0;
+  alive=true; deadT=0;
+  setMode('cube');
+  updateHud();
+}
+
+function setMode(m){
+  mode=m;
+  const el=document.getElementById('mode');
+  el.textContent=m;
+  el.style.color=m==='wave'?'#ff6ac2':(m==='ship'?'#5ad1ff':'#c7d2ff');
+}
+
+function currentSeg(){
+  return segs[segIndex];
+}
+
+// advance worldX; handle segment transitions
+function stepWorld(){
+  worldX+=MOVE;
+  // check if player entered next segment
+  const seg=currentSeg();
+  if(worldX - segStart >= seg.len){
+    segStart+=seg.len;
+    segIndex++;
+    if(segIndex>=segs.length){ segIndex=0; segStart=0; segs=[]; makeLevel(); segStart=-worldX; }
+    const ns=currentSeg();
+    setMode(ns.mode);
+    word=ns.word||null; wordIdx=0;
+  }
+}
+
+// ---------- input ----------
+const keyHeld={};
+function onKey(e){
+  const k=e.key.toLowerCase();
+  if(e.type==='keydown'){
+    keyHeld[k]=true;
+    // space counts as jump in cube/ball/wave
+    const jumpKey=(k===' ')?' ':k;
+    if(alive){
+      handleTypedKey(jumpKey);
+    }
+  } else {
+    keyHeld[k]=false;
+  }
+}
+addEventListener('keydown',e=>{
+  if(e.key===' '||e.key.length===1){ e.preventDefault(); }
+  onKey(e);
+});
+addEventListener('keyup',e=>{ keyHeld[e.key.toLowerCase()]=false; });
+
+// typed-word mechanic: jump requires pressing the correct next letter
+function handleTypedKey(k){
+  if(mode==='wave'){
+    // rapid space = boost up
+    if(k===' '){ vy=-Math.min(vy<0?vy+2:2, JUMPV*0.9); }
+    return;
+  }
+  if(isGround(mode)||isShip(mode)){
+    if(k===' ') { jump(); return; }
+    if(k.length!==1) return;
+    if(word){
+      // must type the word's next letter to jump
+      const need=word[wordIdx];
+      if(k===need){
+        jump();
+        wordIdx++;
+        if(wordIdx>=word.length){ word=null; wordIdx=0; }
+        updateWord();
+      }
+    } else {
+      // free typing: any letter jumps
+      jump();
+    }
+  }
+}
+
+function jump(){
+  if(isGround(mode)){
+    py-=1; vy=-JUMPV; rot=0;
+    if(mode==='ball'){ rot=Math.PI/2; }
+  } else if(isShip(mode)){
+    vy=-JUMPV*0.6; // ship tap = pulse
+  }
+  if(word && wordIdx>0 && wordIdx<word.length){
+    // small combo effect handled in draw
+  }
+}
+
+// ---------- physics ----------
+function physics(){
+  if(!alive) return;
+  // ship: hold space to fly
+  if(isShip(mode)){
+    const hold = keyHeld[' ']||keyHeld['shift'];
+    if(hold){ vy-=0.35; } else { vy+=0.3; }
+    vy=Math.max(vy,-4.2); vy=Math.min(vy,4.2);
+  }
+  // wave: gravity, but space presses boosted in handler; natural fall
+  if(mode==='wave'){
+    vy+=GRAV*0.85;
+    vy=Math.min(vy,5.5);
+  }
+  if(isGround(mode)){
+    vy+=GRAV;
+    py+=vy;
+    if(py>=GROUNDY){ py=GROUNDY; vy=0; }
+    if(vy<0 && mode==='cube') rot-=0.25;
+    if(mode==='ball') rot+=0.18;
+  } else if(isShip(mode)){
+    py+=vy;
+    py=Math.max(py,GROUNDY-260);
+    py=Math.min(py,GROUNDY);
+  } else if(mode==='wave'){
+    py+=vy;
+    if(py>GROUNDY){ py=GROUNDY; vy=0; }
+    if(py<GROUNDY-340){ py=GROUNDY-340; vy=0; }
+  }
+  rot+=0.05;
+  if(mode==='cube'&&py>=GROUNDY) rot=Math.round(rot/Math.PI)*Math.PI;
+}
+
+// ---------- collision ----------
+function collide(){
+  if(!alive) return;
+  const seg=currentSeg();
+  // world coords of spikes
+  const local=worldX - segStart;
+  const pyTop = py; // player vertical position (feet ~ GROUNDY when grounded)
+  // player hitbox: center near GROUNDY, half-height
+  const ph = isGround(mode)? 22 : 16;
+  const pcy = py - ph*0.5;
+  const pLeft = worldX - 12, pRight = worldX + 12;
+  // spikes
+  for(const sx of seg.spikes){
+    const sxWorld = segStart + sx;
+    if(pRight>=sxWorld-8 && pLeft<=sxWorld+8){
+      const spikeTop = GROUNDY - SPIKE_H;
+      // player must be above spike tip
+      if(py > spikeTop + 4){ die(); return; }
+    }
+  }
+  // blocks (square walls on ground)
+  for(const b of seg.blocks){
+    const bWorld = segStart + b.x;
+    if(pRight>=bWorld && pLeft<=bWorld+b.w){
+      if(py > GROUNDY - b.h + 2){ die(); return; }
+    }
+  }
+}
+
+function die(){
+  alive=false; deadT=0;
+  updateHud();
+}
+
+// ---------- hud ----------
+function updateWord(){
+  const wEl=document.getElementById('word');
+  const pEl=document.getElementById('progress');
+  if(word){
+    let shown='';
+    for(let i=0;i<word.length;i++){
+      shown+= (i===wordIdx)? '<span style="color:#ffd27a">'+word[i]+'</span>'
+            : (i<wordIdx)? '<span style="color:#7aff8f">'+word[i]+'</span>'
+            : word[i];
+    }
+    wEl.innerHTML=shown;
+    pEl.textContent='('+wordIdx+'/'+word.length+')';
+  } else {
+    wEl.textContent='—';
+    pEl.textContent='';
+  }
+}
+function updateHud(){
+  const d=Math.floor(worldX/60);
+  document.getElementById('dist').textContent=d;
+  const b=Math.max(d,parseInt(document.getElementById('best').textContent)||0);
+  document.getElementById('best').textContent=b;
+}
+
+// ---------- draw ----------
+function drawBack(){
+  // parallax sky + pillars
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#131a30');g.addColorStop(1,'#0b0b16');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  // stars
+  for(let i=0;i<60;i++){
+    const x=(i*97)%W, y=(i*53)%(GROUNDY*0.6);
+    ctx.fillStyle='rgba(180,200,255,'+(0.3+(0.5*Math.sin(i+worldX/40)))+')';
+    ctx.fillRect(x,y,2,2);
+  }
+  // pillars
+  ctx.fillStyle='#1a2140';
+  for(let i=0;i<14;i++){
+    const x=((i*260 - worldX*0.35)%(W+300))-150;
+    if(x>-200&&x<W+200){
+      const ph=120+((i*47)%90);
+      ctx.fillRect(x,GROUNDY-ph,70,ph);
+      ctx.fillStyle='#222a52';ctx.fillRect(x+70,GROUNDY-ph,6,ph);ctx.fillStyle='#1a2140';
+    }
+  }
+  // ground
+  ctx.fillStyle='#20233a';
+  ctx.fillRect(0,GROUNDY,W,H-GROUNDY);
+  ctx.fillStyle='#2b3050';
+  ctx.fillRect(0,GROUNDY,W,3);
+  // moving chevron lines on ground
+  ctx.strokeStyle='#3a4070';
+  for(let i=0;i<20;i++){
+    const x=(i*120 - worldX)% (W+200);
+    ctx.beginPath();
+    ctx.moveTo(x,GROUNDY+34);ctx.lineTo(x-16,GROUNDY+46);
+    ctx.stroke();
+  }
+}
+
+function drawPlayer(){
+  const cy=py;
+  if(!alive){
+    ctx.globalAlpha=0.4;
+  }
+  ctx.save();
+  ctx.translate(PX,cy);
+  ctx.rotate(rot*0.35);
+  if(mode==='wave'){
+    // arrow/wave wedge
+    ctx.fillStyle='#ff6ac2';
+    ctx.beginPath();
+    ctx.moveTo(0,-14);ctx.lineTo(14,0);ctx.lineTo(0,14);ctx.lineTo(-14,0);
+    ctx.closePath();ctx.fill();
+  } else if(mode==='ship'){
+    ctx.fillStyle='#5ad1ff';
+    ctx.beginPath();
+    ctx.moveTo(0,-16);ctx.quadraticCurveTo(10,0,0,16);ctx.quadraticCurveTo(-10,0,0,-16);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.arc(-4,0,3,0,7);ctx.fill();
+  } else {
+    ctx.fillStyle= mode==='ball'?'#7aff8f':'#ffd27a';
+    if(mode==='ball'){
+      ctx.beginPath();ctx.arc(0,0,15,0,7);ctx.fill();
+    } else {
+      ctx.fillRect(-13,-16,26,32);
+      ctx.fillStyle='#fff';
+      ctx.fillRect(-2,-16,6,4);
+      ctx.fillStyle='#ffd27a';
+    }
+  }
+  ctx.restore();
+  ctx.globalAlpha=1;
+}
+
+function drawSegments(){
+  const seg=currentSeg();
+  const local=worldX - segStart;
+  // spikes
+  ctx.fillStyle='#ff5c5c';
+  for(const sx of seg.spikes){
+    const x=segStart+sx - worldX + PX;
+    if(x<-40||x>W+40) continue;
+    ctx.beginPath();
+    ctx.moveTo(x,GROUNDY);
+    ctx.lineTo(x-SPIKE_H/2,GROUNDY);
+    ctx.lineTo(x,GROUNDY-SPIKE_H);
+    ctx.lineTo(x+SPIKE_H/2,GROUNDY);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle='#ff8f8f';
+    ctx.beginPath();ctx.moveTo(x,GROUNDY-SPIKE_H+4);ctx.lineTo(x-5,GROUNDY-SPIKE_H+10);ctx.lineTo(x+5,GROUNDY-SPIKE_H+10);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#ff5c5c';
+  }
+  // blocks
+  ctx.fillStyle='#6b7aff';
+  for(const b of seg.blocks){
+    const x=segStart+b.x - worldX + PX;
+    if(x<-80||x>W+80) continue;
+    ctx.fillRect(x,GROUNDY-b.h,b.w,b.h);
+  }
+  // mode banner
+  if(mode==='wave'){
+    ctx.fillStyle='rgba(255,106,194,0.15)';
+    ctx.fillRect(0,GROUNDY-340,W,340);
+    ctx.fillStyle='#ff6ac2';
+    ctx.font='bold 22px monospace';
+    ctx.fillText('RAPID SPACE = WAVE',W-280,GROUNDY-320);
+  }
+}
+
+// word letter markers floating above spikes
+function drawWordMarks(){
+  if(!word) return;
+  const seg=currentSeg();
+  ctx.font='bold 20px monospace';
+  ctx.textAlign='center';
+  for(let i=0;i<word.length;i++){
+    const sx=seg.spikes[i];
+    const x=segStart+sx - worldX + PX;
+    if(x<-60||x>W+60) continue;
+    const done=i<wordIdx;
+    ctx.fillStyle=done?'#7aff8f':(i===wordIdx?'#ffd27a':'#8f9bff');
+    ctx.globalAlpha=0.85;
+    ctx.fillText(word[i],x,GROUNDY-SPIKE_H-26);
+    ctx.globalAlpha=1;
+  }
+  ctx.textAlign='start';
+}
+
+// ---------- main loop ----------
+let lastT=0;
+function frame(t){
+  const dt=Math.min(t-lastT,40)/16.67; lastT=t;
+  if(alive){
+    stepWorld();
+    physics();
+    collide();
+  } else {
+    deadT+=dt;
+    if(deadT>30){ respawn(); }
+  }
+  updateHud();
+  drawBack();
+  drawSegments();
+  drawWordMarks();
+  drawPlayer();
+  // death flash
+  if(!alive){
+    ctx.fillStyle='rgba(255,80,80,'+(Math.sin(deadT)*0.15+0.15)+')';
+    ctx.fillRect(0,0,W,H);
+  }
+  requestAnimationFrame(frame);
+}
+
+respawn();
+updateWord();
+requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
