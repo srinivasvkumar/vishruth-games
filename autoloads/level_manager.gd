@@ -2,6 +2,7 @@ extends Node
 # LevelManager - Level loading and management
 # Manages the 35 levels with 5 difficulty tiers
 # Loads level scenes and handles level transitions
+# Phase 5: Truck system + hazard generation
 
 signal level_loaded
 signal level_starting
@@ -79,9 +80,22 @@ var _hazards: Array[Area3D] = []
 var _player: CharacterBody3D = null
 var _ground: StaticBody3D = null
 
+# Phase 5: Debris falling state
+var _debris_spawn_timer: float = 0.0
+var _debris_spawn_interval: float = 4.0
+var _debris_target_speed: float = 10.0
+
 func _ready():
 	# Use call_deferred to add after tree setup completes
 	call_deferred("_find_or_create_scene_root")
+
+func _process(delta: float) -> void:
+	# Phase 5: Periodic debris falling spawns from trucks
+	if _debris_target_speed > 0:
+		_debris_spawn_timer -= delta
+		if _debris_spawn_timer <= 0:
+			_spawn_falling_debris()
+			_debris_spawn_timer = _debris_spawn_interval
 
 func _find_or_create_scene_root():
 	# Try to find the World node from the current game scene
@@ -268,7 +282,6 @@ func _create_truck_convoy(count: int, min_speed: float, max_speed: float) -> Arr
 func _create_truck(min_speed: float, max_speed: float) -> CharacterBody3D:
 	var truck = CharacterBody3D.new()
 	truck.name = "Truck"
-	truck.is_on_ground = true
 	
 	# --- Collision shape ---
 	var collision = CollisionShape3D.new()
@@ -326,7 +339,9 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		var truck_idx = i % _trucks.size()
 		var truck = _trucks[truck_idx]
 		
-		var hazard = _create_hazard(i % 4, truck_idx)
+		# Determine hazard type: 0=saw, 1=ramp, 2=hammer, 3=debris
+		var hazard_type = i % 4
+		var hazard = _create_hazard(hazard_type, truck_idx)
 		
 		# Parent the hazard to the truck so it moves with the truck
 		truck.add_child(hazard)
@@ -336,14 +351,94 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		var offset_z := randf_range(-0.8, 0.8)
 		hazard.position = Vector3(offset_x, offset_y, offset_z)
 		
+		# Configure type-specific behavior (assign script, set parameters)
+		_configure_hazard(hazard, hazard_type)
+		
 		hazards.append(hazard)
 	
 	print("[LevelManager] Placed %d hazards on trucks" % count)
 	
-	# Connect hazard area_entered signals to trigger player death
+	# Connect hazard body_entered signals to trigger player death
 	_connect_hazard_signals()
 	
+	# Start periodic debris falling spawns
+	_debris_spawn_timer = 2.0
+	_debris_spawn_interval = randf_range(3.0, 5.0)
+	
 	return hazards
+
+func _configure_hazard(hazard: Area3D, hazard_type: int) -> void:
+	"""Assign the appropriate script and configure type-specific behavior."""
+	match hazard_type:
+		0:  # Saw blade
+			var saw_script = preload("res://scripts/hazards/saw_blade.gd")
+			hazard.set_script(saw_script)
+		
+		1:  # Ramp (launch pad)
+			var ramp_script = preload("res://scripts/hazards/ramp.gd")
+			hazard.set_script(ramp_script)
+			hazard.launch_force = 18.0
+		
+		2:  # Static debris marker (also used to trigger falling debris spawns)
+			# No special script needed; level_manager handles falling debris
+			pass
+		
+		3:  # Hammer
+			var hammer_script = preload("res://scripts/hazards/swinging_hammer.gd")
+			hazard.set_script(hammer_script)
+			hazard.swing_period = randf_range(1.5, 3.0)
+			hazard.swing_amplitude = randf_range(PI / 6, PI / 3)
+
+func _spawn_falling_debris():
+	"""Spawn a falling debris object from above a random truck."""
+	if _trucks.is_empty():
+		return
+	
+	# Pick a random truck
+	var truck = _trucks[randi() % _trucks.size()]
+	if not truck.is_inside_tree():
+		return
+	
+	# Spawn debris above the truck
+	var debris_visual = MeshInstance3D.new()
+	debris_visual.name = "DebrisVisual"
+	var mesh = SphereMesh.new()
+	mesh.radius = 0.5
+	debris_visual.mesh = mesh
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = COLOR_HAZARD_DEBRIS
+	mat.roughness = 0.95
+	mat.metallic = 0.0
+	debris_visual.set_material(mat)
+	
+	var debris_area = Area3D.new()
+	debris_area.name = "FallingDebris"
+	debris_area.collision_layer = LAYER_HAZARD
+	debris_area.collision_mask = MASK_HAZARD
+	debris_area.set_deferred("monitoring", true)
+	debris_area.add_child(debris_visual)
+	
+	# Collision shape
+	var collision = CollisionShape3D.new()
+	var shape = SphereShape3D.new()
+	shape.radius = 0.5
+	collision.shape = shape
+	debris_area.add_child(collision)
+	
+	# Script for falling behavior
+	var debris_script = preload("res://scripts/hazards/falling_debris.gd")
+	debris_area.set_script(debris_script)
+	
+	# Position above truck
+	var spawn_x = truck.position.x + randf_range(-3.0, 3.0)
+	var spawn_z = truck.position.z + randf_range(-2.0, 2.0)
+	debris_area.activate(spawn_x, spawn_z, 25.0)
+	
+	# Add to scene root (not parented to truck so it falls independently)
+	if _scene_root:
+		_scene_root.add_child(debris_area)
+		_hazards.append(debris_area)
+		print("[LevelManager] Spawned falling debris at x=%.1f z=%.1f" % [spawn_x, spawn_z])
 
 func _create_hazard(type: int, truck_idx: int) -> Area3D:
 	var hazard = Area3D.new()
@@ -355,6 +450,7 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 	match type:
 		0:  # Saw blade — sharp metal with emissive edge
 			var visual = MeshInstance3D.new()
+			visual.name = "Visual"
 			var mesh = CylinderMesh.new()
 			mesh.radius = 0.8
 			mesh.height = 0.1
@@ -374,8 +470,10 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 			shape.radius = 0.8
 			collision.shape = shape
 			hazard.add_child(collision)
+		
 		1:  # Ramp / cone — bright warning color
 			var visual = MeshInstance3D.new()
+			visual.name = "Visual"
 			var mesh = CylinderMesh.new()
 			mesh.radius = 1.0
 			mesh.height = 2.0
@@ -395,8 +493,10 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 			shape.height = 2.0
 			collision.shape = shape
 			hazard.add_child(collision)
-		2:  # Debris — rough organic material
+		
+		2:  # Debris marker — rough organic material (static visual on truck)
 			var visual = MeshInstance3D.new()
+			visual.name = "Visual"
 			var mesh = SphereMesh.new()
 			mesh.radius = 0.5
 			visual.mesh = mesh
@@ -411,8 +511,10 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 			shape.radius = 0.5
 			collision.shape = shape
 			hazard.add_child(collision)
+		
 		3:  # Hammer — metallic tool with warning glow
 			var visual = MeshInstance3D.new()
+			visual.name = "Visual"
 			var mesh = BoxMesh.new()
 			mesh.size = Vector3(0.3, 0.3, 2)
 			visual.mesh = mesh
@@ -498,25 +600,22 @@ func _create_player() -> CharacterBody3D:
 	ray_left.name = "RayCastLeft"
 	ray_left.target_position = Vector3(0, -0.5, 0.5)
 	ray_left.enabled = true
-	ray_left.collide_with_bodies = true
-	ray_left.collide_with_areas = false
-	player.add_child(ray_left)
 	
 	var ray_right = RayCast3D.new()
 	ray_right.name = "RayCastRight"
 	ray_right.target_position = Vector3(0, -0.5, -0.5)
 	ray_right.enabled = true
-	ray_right.collide_with_bodies = true
-	ray_right.collide_with_areas = false
-	player.add_child(ray_right)
 	
 	var ground_check = RayCast3D.new()
 	ground_check.name = "GroundCheck"
 	ground_check.target_position = Vector3(0, -0.5, 0)
 	ground_check.enabled = true
-	ground_check.collide_with_bodies = true
-	ground_check.collide_with_areas = false
-	player.add_child(ground_check)
+	
+	# Common ray settings
+	for ray in [ray_left, ray_right, ground_check]:
+		ray.collide_with_bodies = true
+		ray.collide_with_areas = false
+		player.add_child(ray)
 	
 	# Add audio player for SFX
 	var sfx_player = AudioStreamPlayer.new()
@@ -579,6 +678,9 @@ func _connect_hazard_signals() -> void:
 	# Connect each hazard's body_entered signal to trigger player death
 	# (player is a CharacterBody3D, so body_entered fires)
 	for hazard in _hazards:
+		# Avoid duplicate connections
+		if hazard.body_entered.is_connected(_on_hazard_collided):
+			continue
 		hazard.body_entered.connect(_on_hazard_collided)
 
 func _on_hazard_collided(body: Node) -> void:

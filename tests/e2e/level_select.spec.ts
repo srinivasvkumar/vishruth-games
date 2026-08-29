@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Level Select Screen', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to level select via main menu
-    await page.goto('/');
+    await page.goto('http://localhost:8765/');
     // Wait for main menu to load
     await page.waitForSelector('canvas', { state: 'visible', timeout: 30000 });
     await page.waitForTimeout(1500);
