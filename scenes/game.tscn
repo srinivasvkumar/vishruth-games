@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/game_scene.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="2hud"]
 [ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="3mvm"]
-[ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="4cam"]
+[ext_resource type="Script" path="res://scripts/camera/first_person_camera.gd" id="4cam"]
 [ext_resource type="Script" path="res://scripts/utilities/particle_effects.gd" id="5particle"]
 [ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="6menu"]
 
@@ -39,6 +39,7 @@ target_position = Vector3(0, -1, 0)
 [node name="SFX" type="AudioStreamPlayer3D" parent="World/Player"]
 
 [node name="Camera3D" type="Camera3D" parent="World"]
+current = true
 script = ExtResource("4cam")
 
 [node name="GameUI" type="Control" parent="Root"]
