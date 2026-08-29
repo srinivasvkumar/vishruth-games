@@ -24,6 +24,14 @@ const MASK_HAZARD	 := LAYER_PLAYER
 # Truck mask: trucks (2) detect ground (1) and player (8)
 const MASK_TRUCK	 := LAYER_GROUND | LAYER_PLAYER
 
+# Visual colors for different objects
+const COLOR_GROUND	 := Color(0.3, 0.3, 0.3)
+const COLOR_TRUCK	 := Color(0.2, 0.6, 0.9)
+const COLOR_HAZARD_SAW := Color(0.9, 0.2, 0.2)
+const COLOR_HAZARD_RAMP := Color(0.9, 0.7, 0.2)
+const COLOR_HAZARD_DEBRIS := Color(0.5, 0.3, 0.1)
+const COLOR_HAZARD_HAMMER := Color(0.4, 0.4, 0.4)
+
 # Level templates for 5 difficulty tiers
 var level_templates := {
 	"tutorial": {
@@ -186,6 +194,11 @@ func _create_ground() -> StaticBody3D:
 	visual.mesh = mesh
 	visual.position = Vector3(0, -0.25, 0)    # half-height down so top is at y=0
 	
+	# Add visual material
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = COLOR_GROUND
+	visual.set_material(mat)
+	
 	ground.add_child(shape)
 	ground.add_child(visual)
 	_scene_root.add_child(ground)
@@ -239,6 +252,11 @@ func _create_truck(min_speed: float, max_speed: float) -> CharacterBody3D:
 	mesh.size = Vector3(TRUCK_WIDTH, 3, 3)
 	body.mesh = mesh
 	body.position = Vector3(0, 1.5, 0)
+	
+	# Add visual material
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = COLOR_TRUCK
+	body.set_material(mat)
 	truck.add_child(body)
 	
 	# --- Collision layer / mask ---
@@ -305,6 +323,9 @@ func _create_hazard(type: int) -> Area3D:
 			mesh.height = 0.1
 			visual.mesh = mesh
 			visual.rotation.x = PI / 2
+			var mat = StandardMaterial3D.new()
+			mat.albedo_color = COLOR_HAZARD_SAW
+			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
 			var shape = SphereShape3D.new()
@@ -317,6 +338,9 @@ func _create_hazard(type: int) -> Area3D:
 			mesh.radius = 1.0
 			mesh.height = 2.0
 			visual.mesh = mesh
+			var mat = StandardMaterial3D.new()
+			mat.albedo_color = COLOR_HAZARD_RAMP
+			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
 			var shape = CylinderShape3D.new()
@@ -329,6 +353,9 @@ func _create_hazard(type: int) -> Area3D:
 			var mesh = SphereMesh.new()
 			mesh.radius = 0.5
 			visual.mesh = mesh
+			var mat = StandardMaterial3D.new()
+			mat.albedo_color = COLOR_HAZARD_DEBRIS
+			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
 			var shape = SphereShape3D.new()
@@ -340,6 +367,9 @@ func _create_hazard(type: int) -> Area3D:
 			var mesh = BoxMesh.new()
 			mesh.size = Vector3(0.3, 0.3, 2)
 			visual.mesh = mesh
+			var mat = StandardMaterial3D.new()
+			mat.albedo_color = COLOR_HAZARD_HAMMER
+			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
 			var shape = BoxShape3D.new()
@@ -379,6 +409,12 @@ func _create_player() -> CharacterBody3D:
 	body.mesh = mesh
 	# Position the mesh so its bottom sits at y=0 when player center is y=0.3
 	body.position = Vector3(0, 0.8, 0)
+	
+	# Add visual material (bright green player)
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = Color(0.2, 0.8, 0.2)
+	body.set_material(mat)
+	
 	player.add_child(body)
 	
 	# --- Collision shape ---
@@ -415,6 +451,12 @@ func _create_player() -> CharacterBody3D:
 	ground_check.collide_with_bodies = true
 	ground_check.collide_with_areas = false
 	player.add_child(ground_check)
+	
+	# Add audio player for SFX
+	var sfx_player = AudioStreamPlayer.new()
+	sfx_player.name = "SFX"
+	player.add_child(sfx_player)
+	player._sfx_player = sfx_player
 	
 	# --- Script ---
 	var player_script = preload("res://scripts/player/player_movement.gd")
