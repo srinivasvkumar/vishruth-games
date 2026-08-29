@@ -1,4 +1,4 @@
-## WebGLBridge - C# to JavaScript bridge for Playwright E2E testing
+## WebGLBridge - GDScript to JavaScript bridge for Playwright E2E testing
 ## Exposes game state and debugging info to the browser's JavaScript environment
 ## This is the key bridge that reviewer issue #3 identified as missing
 
@@ -143,17 +143,3 @@ func _bridge_trigger_ramp_launch() -> void:
 func _bridge_complete_current_level() -> void:
 	if GameManager:
 		GameManager.on_level_complete()
-
-## Checks if a level is complete
-func _bridge_is_level_complete(level_number: int) -> bool:
-	if GameManager:
-		return GameManager.current_level == level_number
-	return false
-
-## Returns if the game is active
-func _bridge_is_game_active() -> bool:
-	return GameManager and GameManager.is_playing()
-
-## Returns if the game is paused
-func _bridge_is_paused() -> bool:
-	return GameManager and GameManager.is_paused()
