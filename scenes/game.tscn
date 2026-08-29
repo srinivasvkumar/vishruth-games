@@ -32,7 +32,8 @@ target_position = Vector3(1, 0, 0)
 [node name="GroundCheck" type="RayCast3D" parent="World/Player"]
 target_position = Vector3(0, -1, 0)
 
-[node name="Camera3D" type="Camera3D" parent="World" instance=ExtResource("4cam")]
+[node name="Camera3D" type="Camera3D" parent="World"]
+script = ExtResource("4cam")
 
 [node name="GameUI" type="Control" parent="Root"]
 anchors_preset = 15
@@ -42,7 +43,8 @@ grow_horizontal = 2
 grow_vertical = 2
 layer = 1
 
-[node name="HUD" type="Control" parent="GameUI" instance=ExtResource("2hud")]
+[node name="HUD" type="Control" parent="GameUI"]
+script = ExtResource("2hud")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
