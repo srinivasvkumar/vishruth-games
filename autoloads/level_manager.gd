@@ -111,17 +111,40 @@ func get_template_for_level(level: int) -> Dictionary:
 
 func get_level_parameters(level: int) -> Dictionary:
 	var template = get_template_for_level(level)
-	var difficulty: float = float(level - 1) / 7.0  # 0-4 for 35 levels
-	var speed_mult: float = 1.0 + (level * 0.03)
-	var gap_mult: float = 1.0 - (difficulty * 0.1)
+	var tier_levels = template["levels"]
+	
+	# Determine position within tier (0.0 to 1.0)
+	var tier_range = tier_levels.size() - 1
+	var tier_progress: float
+	if tier_range > 0:
+		tier_progress = float(level - tier_levels[0]) / float(tier_range)
+	else:
+		tier_progress = 0.0
+	
+	# Clamp progress to [0, 1]
+	tier_progress = clampf(tier_progress, 0.0, 1.0)
+	
+	# Deterministic truck count: scale within tier range
+	var truck_range = template["truck_count"][1] - template["truck_count"][0]
+	var truck_count: int = template["truck_count"][0] + int(tier_progress * float(truck_range))
+	
+	# Deterministic hazard count: scale within tier range
+	var hazard_range = template["hazard_count"][1] - template["hazard_count"][0]
+	var hazard_count: int = template["hazard_count"][0] + int(tier_progress * float(hazard_range))
+	
+	# Speed: interpolate between tier min and max based on tier progress
+	var speed = lerp(template["speed"][0], template["speed"][1], tier_progress)
+	
+	# Gap: decrease with tier progress (harder = tighter gaps)
+	var gap = lerp(template["gap_size"][1], template["gap_size"][0], tier_progress)
 	
 	return {
-		"truck_count": randi() % (template["truck_count"][1] - template["truck_count"][0] + 1) + template["truck_count"][0],
-		"speed": template["speed"][0] * speed_mult,
-		"max_speed": template["speed"][1] * speed_mult,
-		"gap_size": template["gap_size"][0] * gap_mult,
-		"max_gap": template["gap_size"][1] * gap_mult,
-		"hazard_count": randi() % (template["hazard_count"][1] - template["hazard_count"][0] + 1) + template["hazard_count"][0]
+		"truck_count": truck_count,
+		"speed": speed,
+		"max_speed": speed * 1.2,
+		"gap_size": gap,
+		"max_gap": gap * 1.3,
+		"hazard_count": hazard_count
 	}
 
 func load_level(level: int) -> void:
@@ -129,8 +152,6 @@ func load_level(level: int) -> void:
 	level_starting.emit()
 	
 	print("[LevelManager] Loading level ", level)
-	# In a full implementation, this would load the actual scene
-	# For now, create a procedural level
 	_generate_level(level)
 	
 	level_loaded.emit()
@@ -388,6 +409,13 @@ func _place_player() -> CharacterBody3D:
 	if _player:
 		_player.position = Vector3(0, 0.3, 0)
 		_player.velocity = Vector3.ZERO
+		# Ensure player has the movement script and correct collision layers
+		if not _player.has_script():
+			var player_script = preload("res://scripts/player/player_movement.gd")
+			_player.set_script(player_script)
+		_player.collision_layer = LAYER_PLAYER
+		_player.collision_mask = MASK_PLAYER
+		_player.set_meta("_level_manager_controlled", true)
 		print("[LevelManager] Using existing Player from scene")
 	else:
 		# Fallback: create one

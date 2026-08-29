@@ -61,7 +61,7 @@ func complete_level():
 	if current_level >= 35:
 		set_state("completed")
 	else:
-		LevelManager.save_progress(current_level + 1)
+		save_progress(current_level + 1)
 
 func fail_level():
 	level_failed.emit()
