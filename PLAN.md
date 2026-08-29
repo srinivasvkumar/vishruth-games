@@ -510,29 +510,26 @@ Code Change
 | `getLivesRemaining()` | `int` | Player lives left | ✅ Yes |
 
 **Implementation pattern:**
-```csharp
-// WebGLBridge.cs
-public class WebGLBridge : MonoBehaviour
-{
-    [AOT.MonoPInvokeCallback(typeof(Action<float>))]
-    public static void OnPlayerPosition(float x, float y)
-    {
-        // Called from C# → triggers JS callback
+```gdscript
+# WebGLBridge.gd — GDScript for Godot 4
+@tool
+extends Node
+
+# Called from Godot → triggers JS callback via JavaScript.evaluate()
+static func _on_player_position(x: float, y: float) -> void:
+    JavaScript.call("onPlayerPosition", x, y)
+
+# Exposed to JS via JavaScriptBridge (Godot 4)
+func get_player_state_json() -> String:
+    var state := {
+        "y": $Player.position.y,
+        "grounded": is_grounding,
+        "climbing": is_climbing,
+        "dead": is_dead,
+        "level": GameManager.current_level,
+        "lives": GameManager.lives
     }
-    
-    // Exposed to JS via JavaScriptBridge (Godot 4)
-    public string GetPlayerStateJSON()
-    {
-        return JsonUtility.ToJson(new {
-            y = player.transform.position.y,
-            grounded = isGrounded,
-            climbing = isClimbing,
-            dead = isDead,
-            level = GameManager.CurrentLevel,
-            lives = GameManager.Lives
-        });
-    }
-}
+    return JSON.stringify(state)
 ```
 
 **Playwright usage:**
