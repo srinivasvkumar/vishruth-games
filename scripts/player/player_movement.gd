@@ -70,6 +70,10 @@ func _ready():
 	
 	# Wire up SFX audio player reference
 	_sfx_player = get_node_or_null("SFX")
+	
+	# Load audio files for jump and death SFX
+	_jump_sound = load("res://audio/sfx/jump.wav")
+	_death_sound = load("res://audio/sfx/death.wav")
 
 func _configure_raycast(ray: RayCast3D, direction: Vector3, length: float) -> void:
 	ray.enabled = true
