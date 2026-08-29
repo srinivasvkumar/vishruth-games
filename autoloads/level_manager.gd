@@ -617,8 +617,8 @@ func _load_level_data() -> Dictionary:
 	var err := config.load("user://cluster_rush_save.dat")
 	if err != OK:
 		return {}
-	var json_str := config.get_value("progress", "level_data", "{}")
-	var data := JSON.parse_string(json_str)
+	var json_str: String = config.get_value("progress", "level_data", "{}")
+	var data = JSON.parse_string(json_str)
 	if data is Dictionary:
 		return data
 	return {}
@@ -629,7 +629,7 @@ func has_completed_level(level: int) -> bool:
 
 func get_level_stars(level: int) -> int:
 	var data := _load_level_data()
-	var info := data.get(str(level), {})
+	var info = data.get(str(level), {})
 	return info.get("stars", 0)
 
 func save_level_completion(level: int, stars: int) -> void:

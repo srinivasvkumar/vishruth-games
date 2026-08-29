@@ -26,8 +26,8 @@ func _setup_visuals() -> void:
 	_hud_style.border_color = Color(0.3, 0.6, 1.0, 0.5)
 	add_theme_stylebox_override("panel", _hud_style)
 	
-	# Common font settings (24px)
-	_font = ThemeDB.get_default_font()
+	# Common font settings (24px) — use default theme font
+	_font = null
 
 func _process(delta: float) -> void:
 	_update_timer += delta

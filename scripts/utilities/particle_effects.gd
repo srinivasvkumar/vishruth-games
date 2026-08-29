@@ -4,18 +4,12 @@ extends Node3D
 ## and environmental effects (trucks, saw blades, ramps, debris)
 ##
 ## Implementation: Uses GPUParticles3D nodes for GPU-accelerated particles.
-## Particles are created, positioned, and emitted dynamically.
 
-# Preload particle material for reuse
 var _particle_material: StandardMaterial3D
 
 func _ready():
 	_particle_material = StandardMaterial3D.new()
 	_particle_material.render_priority = 1
-
-# ============================================================================
-# Public API — particle spawn functions
-# ============================================================================
 
 ## Spawn particles on a jump
 func spawn_jump_particles(position: Vector3) -> GPUParticles3D:
@@ -41,10 +35,6 @@ func spawn_dust_particles(position: Vector3) -> GPUParticles3D:
 func spawn_spark_particles(position: Vector3) -> GPUParticles3D:
 	return _create_burst_particles(position, Color(1.0, 0.9, 0.5, 0.9), 15, 3.0, 0.5)
 
-# ============================================================================
-# Internal — particle creation
-# ============================================================================
-
 ## Create a burst of GPUParticles3D at the given position
 func _create_burst_particles(
 	position: Vector3,
@@ -58,52 +48,36 @@ func _create_burst_particles(
 	particles.name = "ParticleBurst_" + str(position.x) + "_" + str(position.y)
 	particles.position = position
 	
-	# Set particle emission
 	particles.amount = count
 	particles.lifetime = lifetime
 	particles.one_shot = true
 	particles.process_material = _create_particle_material(color, spread)
-	
-	# Emission shape — spherical burst from a point
-	var emit_shape = SphereShape3D.new()
-	emit_shape.radius = 0.1
-	particles.emitting = false  # Start stopped, emit once on ready
-	
-	# Visual appearance
 	particles.draw_pass_1 = _create_particle_mesh()
 	
-	# Add to scene
+	particles.emitting = false
 	add_child(particles)
-	
-	# Emit immediately
 	particles.emitting = true
-	
-	# Auto-free after particles finish
-	await particles.finished
-	if is_inside_tree():
-		particles.queue_free()
+	particles.autofree = true
 	
 	return particles
 
 ## Create the particle process material with custom behavior
-func _create_particle_material(color: Color, spread: float) -> ParticlesMaterial:
-	var material = ParticlesMaterial.new()
-	material.life_mode = ParticlesMaterial.LifeMode.ONE_SHOT
+func _create_particle_material(color: Color, spread: float) -> ParticleProcessMaterial:
+	var material = ParticleProcessMaterial.new()
+	material.life_mode = 1
 	material.initial_velocity_min = spread * 50.0
 	material.initial_velocity_max = spread * 150.0
-	material.acceleration = Vector3(0, -100.0, 0)  # Gravity
+	material.acceleration = Vector3(0, -100.0, 0)
 	material.randomness = 0.8
 	material.texture_scale_min = 0.1
 	material.texture_scale_max = 1.0
 	
-	# Color ramp — fade out over lifetime
 	var color_ramp = Gradient.new()
 	color_ramp.set_point(0, color)
 	color_ramp.set_point(0.7, color)
 	color_ramp.set_point(1.0, Color(1.0, 1.0, 1.0, 0.0))
 	material.color_ramp = color_ramp
 	
-	# Scale ramp — shrink over time
 	var scale_ramp = Curve2D.new()
 	scale_ramp.add_point(Vector2(0, 1.0))
 	scale_ramp.add_point(Vector2(0.5, 0.6))
@@ -113,11 +87,10 @@ func _create_particle_material(color: Color, spread: float) -> ParticlesMaterial
 	return material
 
 ## Create a simple quad mesh for particles
-func _create_particle_mesh() -> SurfaceTool:
+func _create_particle_mesh() -> Mesh:
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
-	# Quad vertices (2 triangles)
 	var verts = [
 		Vector3(-0.5, -0.5, 0),
 		Vector3(0.5, -0.5, 0),
@@ -132,9 +105,9 @@ func _create_particle_mesh() -> SurfaceTool:
 		st.add_uv(Vector2(0, 0))
 	
 	for idx in indices:
-		st.index(idx)
+		st.add_index(idx)
 	
 	st.generate_normals()
 	st.commit()
 	
-	return st as Mesh
+	return st
