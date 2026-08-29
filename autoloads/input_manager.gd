@@ -36,7 +36,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	# Track grounded state for coyote time
-	var player_node: = get_node_or_null("/root/World/Player")
+	var player_node = get_node_or_null("/root/World/Player")
 	if player_node:
 		if player_node.is_on_floor():
 			_last_ground_contact = Time.get_ticks_msec() / 1000.0
@@ -86,7 +86,7 @@ func clear_buffer():
 
 func _init_input_actions():
 	# Register input actions if they don't exist
-	var existing_actions: = InputMap.get_actions()
+	var existing_actions = InputMap.get_actions()
 	if not "jump" in existing_actions:
 		InputMap.add_action("jump")
 	if not "strafe_left" in existing_actions:

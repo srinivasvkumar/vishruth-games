@@ -33,7 +33,7 @@ const COLOR_HAZARD_DEBRIS := Color(0.5, 0.3, 0.1)
 const COLOR_HAZARD_HAMMER := Color(0.4, 0.4, 0.4)
 
 # Level templates for 5 difficulty tiers
-var level_templates: = {
+var level_templates = {
 	"tutorial": {
 		"levels": [1, 2, 3, 4, 5],
 		"truck_count": [1, 2],
@@ -252,7 +252,7 @@ func _create_truck_convoy(count: int, min_speed: float, max_speed: float) -> Arr
 	
 	# Start offset: place the first truck so its center is a bit ahead of origin
 	# Ground spans [-150, +150] in X; player starts near 0
-	var start_x: = 4.0  # slightly ahead of spawn
+	var start_x = 4.0  # slightly ahead of spawn
 	
 	for i in range(count):
 		var truck = _create_truck(min_speed, max_speed)
@@ -331,9 +331,9 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		# Parent the hazard to the truck so it moves with the truck
 		truck.add_child(hazard)
 		# Position hazard relative to truck local space
-		var offset_y: = 4.0        # just above truck top
-		var offset_x: = randf_range(-1.5, 1.5)   # slight random offset on truck
-		var offset_z: = randf_range(-0.8, 0.8)
+		var offset_y = 4.0        # just above truck top
+		var offset_x = randf_range(-1.5, 1.5)   # slight random offset on truck
+		var offset_z = randf_range(-0.8, 0.8)
 		hazard.position = Vector3(offset_x, offset_y, offset_z)
 		
 		hazards.append(hazard)
@@ -613,41 +613,41 @@ func save_progress(level: int) -> void:
 # =============================================================================
 
 func _load_level_data() -> Dictionary:
-	var config: = ConfigFile.new()
-	var err: = config.load("user://cluster_rush_save.dat")
+	var config = ConfigFile.new()
+	var err = config.load("user://cluster_rush_save.dat")
 	if err != OK:
 		return {}
-	var json_str: = config.get_value("progress", "level_data", "{}")
-	var data: = JSON.parse_string(json_str)
+	var json_str = config.get_value("progress", "level_data", "{}")
+	var data = JSON.parse_string(json_str)
 	if data is Dictionary:
 		return data
 	return {}
 
 func has_completed_level(level: int) -> bool:
-	var data: = _load_level_data()
+	var data = _load_level_data()
 	return data.has(str(level)) and data[str(level)].get("completed", false)
 
 func get_level_stars(level: int) -> int:
-	var data: = _load_level_data()
-	var info: = data.get(str(level), {})
+	var data = _load_level_data()
+	var info = data.get(str(level), {})
 	return info.get("stars", 0)
 
 func save_level_completion(level: int, stars: int) -> void:
-	var config: = ConfigFile.new()
-	var err: = config.load("user://cluster_rush_save.dat")
+	var config = ConfigFile.new()
+	var err = config.load("user://cluster_rush_save.dat")
 	
-	var json_str: = "{}"
+	var json_str = "{}"
 	if err == OK:
 		json_str = config.get_value("progress", "level_data", "{}")
 	
-	var data: = JSON.parse_string(json_str) as Dictionary
+	var data = JSON.parse_string(json_str) as Dictionary
 	if data == null:
 		data = {}
 	
-	var level_info: = {"stars": stars, "completed": true}
+	var level_info = {"stars": stars, "completed": true}
 	data[str(level)] = level_info
 	
-	var json: = JSON.new()
+	var json = JSON.new()
 	config.set_value("progress", "level_data", json.stringify(data))
 	config.save("user://cluster_rush_save.dat")
 
