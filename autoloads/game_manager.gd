@@ -61,7 +61,7 @@ func complete_level():
 	score += 100 + time_bonus
 	
 	# Calculate star rating based on performance
-	var stars: int = 1
+	var stars := 1
 	if lives >= 2:
 		stars = 2
 	if lives >= 3 and time_bonus >= 50:
