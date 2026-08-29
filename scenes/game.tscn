@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/camera/first_person_camera.gd" id="4cam"]
 [ext_resource type="Script" path="res://scripts/utilities/particle_effects.gd" id="5particle"]
 [ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="6menu"]
+[ext_resource type="Script" path="res://scripts/ui/end_screen_ui.gd" id="7end"]
 
 [node name="Root" type="Node"]
 script = ExtResource("1_game")
