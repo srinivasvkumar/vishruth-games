@@ -1,5 +1,5 @@
 extends Node3D
-# FallingDebris.cs - Falling debris hazard
+# FallingDebris - Falling debris hazard
 # Drops from above with gravity, causes death on contact
 
 var fall_speed: float = -15.0
@@ -8,23 +8,29 @@ var spawn_width: float = 10.0
 var gravity: float = 9.81
 
 var velocity_y: float = 0.0
+var _active: bool = false
 
 func _ready():
-	# Start above the scene
-	position.y = spawn_height
-	velocity_y = 0
+	# Start inactive; activated by LevelManager when spawning
+	_active = false
+
+func activate(initial_y: float, initial_x: float, initial_z: float):
+	position = Vector3(initial_x, initial_y, initial_z)
+	velocity_y = 0.0
+	_active = true
 
 func _physics_process(delta: float) -> void:
+	if not _active:
+		return
+	
 	# Apply gravity
 	velocity_y += gravity * delta
 	position.y += velocity_y * delta
 	
-	# Kill player if below ground
-	if position.y < -5:
+	# Remove if below ground
+	if position.y < -15.0:
+		_active = false
 		queue_free()
 
-func set_fall_speed(speed: float) -> void:
-	fall_speed = speed
-
-func get_fall_speed() -> float:
-	return fall_speed
+func deactivate():
+	_active = false

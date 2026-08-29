@@ -1,26 +1,28 @@
 extends Node3D
-# SawBlade.cs - Rotating saw blade hazard
+# SawBlade - Rotating saw blade hazard
 # Spinning obstacle that causes instant death on contact
 
 var rotation_speed: float = 10.0
 var collision_radius: float = 0.8
-var _sound_player: AudioStreamPlayer
+var _visual: MeshInstance3D = null
 
 func _ready():
-	# Set up rotation
-	if has_node("Visual"):
-		$Visual.rotate_z(rotation_speed)
+	# Find the visual mesh child (created by LevelManager)
+	_visual = get_node_or_null("Visual")
 	
-	# Create audio player for hazard SFX (stubbed — add audio files later)
-	_sound_player = AudioStreamPlayer.new()
-	_sound_player.name = "HazardSound"
-	add_child(_sound_player)
-	# TODO: Add actual hazard sound files to audio/sfx/ directory
+	# Set up collision shape if not present
+	if not has_node("CollisionShape3D"):
+		var collision = CollisionShape3D.new()
+		collision.name = "CollisionShape3D"
+		var shape = SphereShape3D.new()
+		shape.radius = collision_radius
+		collision.shape = shape
+		add_child(collision)
 
 func _process(delta: float) -> void:
-	# Rotate the blade
-	if has_node("Visual"):
-		$Visual.rotate_z(rotation_speed * delta)
+	# Rotate the blade around its own axis
+	if _visual:
+		_visual.rotation.z += rotation_speed * delta
 
 func get_collision_radius() -> float:
 	return collision_radius

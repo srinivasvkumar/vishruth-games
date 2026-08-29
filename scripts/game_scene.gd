@@ -17,6 +17,11 @@ extends Node
 @onready var pause_ls_btn: Button = $GameUI/PauseMenu/Panel3/VBox3/PauseLevelSelectBtn
 @onready var pause_mm_btn: Button = $GameUI/PauseMenu/Panel3/VBox3/PauseMainMenuBtn
 
+@onready var final_score_label: Label = $GameUI/GameOver/Panel2/VBox2/FinalScore
+@onready var time_bonus_label: Label = $GameUI/LevelComplete/Panel/VBox/Bonus
+
+var _is_transitioning: bool = false
+
 func _ready():
 	# Hide all overlays initially
 	level_complete.visible = false
@@ -25,17 +30,25 @@ func _ready():
 	loading_screen.visible = false
 	
 	# Connect button signals
-	next_btn.pressed.connect(_on_next_level)
-	retry_btn.pressed.connect(_on_retry)
-	ls_btn.pressed.connect(_on_level_select)
-	mm_btn.pressed.connect(_on_main_menu)
-	resume_btn.pressed.connect(_on_resume)
-	pause_ls_btn.pressed.connect(_on_level_select)
-	pause_mm_btn.pressed.connect(_on_main_menu)
+	if next_btn:
+		next_btn.pressed.connect(_on_next_level)
+	if retry_btn:
+		retry_btn.pressed.connect(_on_retry)
+	if ls_btn:
+		ls_btn.pressed.connect(_on_level_select)
+	if mm_btn:
+		mm_btn.pressed.connect(_on_main_menu)
+	if resume_btn:
+		resume_btn.pressed.connect(_on_resume)
+	if pause_ls_btn:
+		pause_ls_btn.pressed.connect(_on_level_select)
+	if pause_mm_btn:
+		pause_mm_btn.pressed.connect(_on_main_menu)
 	
 	# Connect GameManager signals
 	GameManager.level_completed.connect(_on_level_completed)
 	GameManager.game_over.connect(_on_game_over)
+	GameManager.game_completed.connect(_on_game_completed)
 	
 	# Wait for autoloads to be ready, then load the level
 	await get_tree().process_frame
@@ -47,13 +60,13 @@ func _process(delta):
 		_toggle_pause()
 	
 	# Check level completion — player must reach the end of the ground
-	if GameManager.get_state() == "playing" and world:
+	if GameManager.get_state() == "playing" and world and not _is_transitioning:
 		var player_node = world.get_node_or_null("Player")
 		if player_node:
 			# Ground extends to +150 in X; consider level complete at +140
 			if player_node.global_position.x >= 140.0:
+				_is_transitioning = true
 				GameManager.complete_level()
-				level_complete.visible = true
 
 func _load_level():
 	# Show loading screen
@@ -82,24 +95,53 @@ func _wire_player_death():
 		printerr("[GameScene] Player not found or has no player_died signal")
 
 func _on_player_died():
-	GameManager.player_died()
+	if GameManager.is_player_alive():
+		GameManager.player_died()
+	else:
+		# Already game over from player_died()
+		pass
 
 func _on_level_completed():
-	level_complete.visible = true
+	_is_transitioning = false
+	# Calculate time bonus for display
+	var elapsed: float = GameManager.get_current_time()
+	var time_bonus: float = minf(elapsed * 10.0, 100.0)
+	
+	# Show the level complete screen with time bonus
+	if level_complete.visible:
+		pass  # Already shown by _process check
+	else:
+		level_complete.visible = true
+	
+	# Update time bonus label if we have a reference
+	if time_bonus_label:
+		time_bonus_label.text = "Time Bonus: " + str(int(time_bonus)) + " pts"
 
 func _on_game_over():
+	# Show game over screen with final score
 	game_over.visible = true
+	if final_score_label:
+		final_score_label.text = "Final Score: " + str(GameManager.score)
+
+func _on_game_completed():
+	# All 35 levels complete! Go to end screen
+	_is_transitioning = false
+	get_tree().change_scene_to_file("res://scenes/end_screen.tscn")
 
 func _on_next_level():
+	if _is_transitioning:
+		return
+	_is_transitioning = true
 	level_complete.visible = false
+	
 	var next_level = GameManager.current_level + 1
 	if next_level <= 35:
 		GameManager.current_level = next_level
 		# Reload scene with new level
 		get_tree().reload_current_scene()
 	else:
-		# Game complete - change to end screen
-		get_tree().change_scene_to_file("res://scenes/end_screen.tscn")
+		# Game complete - handled by game_completed signal
+		pass
 
 func _on_retry():
 	game_over.visible = false
@@ -125,10 +167,3 @@ func _toggle_pause():
 	if GameManager.get_state() == "playing":
 		get_tree().paused = not get_tree().paused
 		pause_menu.visible = get_tree().paused
-
-func _level_complete():
-	# Calculate time bonus
-	var elapsed = GameManager.get_current_time()
-	var bonus = minf(elapsed * 10.0, 100.0)
-	var final_score = 100 + bonus
-	GameManager.score += final_score

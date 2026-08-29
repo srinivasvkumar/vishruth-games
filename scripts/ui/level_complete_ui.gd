@@ -6,7 +6,7 @@ extends Control
 var _time_bonus_label: Label
 
 func _ready():
-	_time_bonus_label = $Panel/VBox/TimeBonusLabel
+	_time_bonus_label = $Panel/VBox/Bonus
 
 func show(time_bonus: float):
 	_time_bonus_label.text = "Time Bonus: " + str(int(time_bonus)) + " pts"

@@ -541,9 +541,10 @@ func _ensure_camera_controller() -> Node3D:
 # Hazard signal connection
 # =============================================================================
 func _connect_hazard_signals() -> void:
-	# Connect each hazard's area_entered signal to trigger player death
+	# Connect each hazard's body_entered signal to trigger player death
+	# (player is a CharacterBody3D, so body_entered fires)
 	for hazard in _hazards:
-		hazard.area_entered.connect(_on_hazard_collided.bind(hazard))
+		hazard.connect("body_entered", _on_hazard_collided)
 
 func _on_hazard_collided(other: Node, hazard: Area3D) -> void:
 	# Check if the other node is the player or an ancestor of the player
