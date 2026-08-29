@@ -39,6 +39,10 @@ var jump_cancelled: bool = false
 var _sfx_player: AudioStreamPlayer
 var _jump_sound: AudioStream
 var _death_sound: AudioStream
+var _land_sound: AudioStream
+var _hazard_sound: AudioStream
+var _complete_sound: AudioStream
+var _click_sound: AudioStream
 
 @onready var raycast_left: RayCast3D = $RayCastLeft
 @onready var raycast_right: RayCast3D = $RayCastRight

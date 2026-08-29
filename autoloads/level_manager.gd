@@ -404,7 +404,6 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 			mat.albedo_color = COLOR_HAZARD_DEBRIS
 			mat.roughness = 0.95
 			mat.metallic = 0.0
-			mat.finish = StandardMaterial3D.FINISH_MOSS
 			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
@@ -421,7 +420,6 @@ func _create_hazard(type: int, truck_idx: int) -> Area3D:
 			mat.albedo_color = COLOR_HAZARD_HAMMER
 			mat.roughness = 0.4
 			mat.metallic = 0.8
-			mat.finish = StandardMaterial3D.FINISH_METAL
 			mat.emission_enabled = true
 			mat.emission = Color(0.3, 0.3, 0.3)
 			mat.emission_energy_multiplier = 0.8
@@ -478,7 +476,6 @@ func _create_player() -> CharacterBody3D:
 	mat.albedo_color = Color(0.2, 0.8, 0.2)
 	mat.roughness = 0.5
 	mat.metallic = 0.2
-	mat.finish = StandardMaterial3D.FINISH_PLASTIC
 	mat.emission_enabled = true
 	mat.emission = Color(0.1, 0.5, 0.1)
 	mat.emission_energy_multiplier = 1.0

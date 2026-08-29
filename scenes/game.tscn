@@ -1,10 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cxn4h2m1k9r5y"]
+[gd_scene load_steps=6 format=3 uid="uid://cxn4h2m1k9r5y"]
 
 [ext_resource type="Script" path="res://scripts/game_scene.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="2hud"]
 [ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="3mvm"]
 [ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="4cam"]
-[ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="5menu"]
+[ext_resource type="Script" path="res://scripts/utilities/particle_effects.gd" id="5particle"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="6menu"]
 
 [node name="Root" type="Node"]
 script = ExtResource("1_game")
@@ -18,6 +19,9 @@ shadow_enabled = true
 
 [node name="DirectionalLight3D2" type="DirectionalLight3D" parent="World"]
 rotation_degrees = Vector3(-30, -20, 0)
+
+[node name="ParticleEffects" type="Node3D" parent="World"]
+script = ExtResource("5particle")
 
 [node name="Player" type="CharacterBody3D" parent="World"]
 position = Vector3(0, 1, 0)
