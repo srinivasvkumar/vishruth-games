@@ -35,6 +35,11 @@ var jump_buffer_timer: float = 0.0
 var jump_held_time: float = 0.0
 var jump_cancelled: bool = false
 
+# Audio references
+var _sfx_player: AudioStreamPlayer
+var _jump_sound: AudioStream
+var _death_sound: AudioStream
+
 @onready var raycast_left: RayCast3D = $RayCastLeft
 @onready var raycast_right: RayCast3D = $RayCastRight
 @onready var ground_check: RayCast3D = $GroundCheck
@@ -62,6 +67,9 @@ func _ready():
 	#   LAYER_PLAYER=8  LAYER_GROUND=1  LAYER_HAZARD=4  LAYER_TRUCK=2
 	collision_layer = 8
 	collision_mask = 7  # Ground(1) | Hazard(4) | Truck(2)
+	
+	# Wire up SFX audio player reference
+	_sfx_player = get_node_or_null("SFX")
 
 func _configure_raycast(ray: RayCast3D, direction: Vector3, length: float) -> void:
 	ray.enabled = true
@@ -124,6 +132,10 @@ func perform_jump() -> void:
 	jump_count += 1
 	jump_buffer_timer = 0.0
 	
+	# Play jump SFX
+	if _sfx_player and AudioManager:
+		AudioManager.play_sfx(_jump_sound)
+	
 	if jump_count == 1:
 		jump_performed.emit()
 	elif jump_count == 2:
@@ -181,4 +193,7 @@ func reset():
 
 func die():
 	if _on_hazard:
+		# Play death SFX
+		if _sfx_player and AudioManager:
+			AudioManager.play_sfx(_death_sound)
 		player_died.emit()
