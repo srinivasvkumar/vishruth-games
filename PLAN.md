@@ -867,7 +867,8 @@ func _enter_tree():
 - [x] Asset sourcing plan finalized (free)
 - [x] Section ordering verified
 - [x] FPS thresholds standardized
-- [ ] Phase 1 execution started
+- [x] Phase 1 execution started
+- [x] Phase 2 execution started
 
 ---
 
