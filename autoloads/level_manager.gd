@@ -113,26 +113,34 @@ func get_level_parameters(level: int) -> Dictionary:
 	var template = get_template_for_level(level)
 	var tier_levels = template["levels"]
 	
-	# Determine position within tier (0.0 to 1.0)
-	var tier_range = tier_levels.size() - 1
-	var tier_progress: float
-	if tier_range > 0:
-		tier_progress = float(level - tier_levels[0]) / float(tier_range)
+	# Determine position within tier (0-indexed)
+	var tier_index = level - tier_levels[0]
+	var num_levels = tier_levels.size()
+	
+	# Deterministic truck count: distribute evenly across tier
+	# e.g. medium tier (10 levels, range 4-6): [4,4,5,5,5,5,6,6,6,6]
+	var truck_count: int
+	if num_levels > 1:
+		var step: float = float(template["truck_count"][1] - template["truck_count"][0]) / float(num_levels - 1)
+		truck_count = template["truck_count"][0] + round(tier_index * step)
 	else:
-		tier_progress = 0.0
+		truck_count = template["truck_count"][0]
 	
-	# Clamp progress to [0, 1]
-	tier_progress = clampf(tier_progress, 0.0, 1.0)
-	
-	# Deterministic truck count: scale within tier range
-	var truck_range = template["truck_count"][1] - template["truck_count"][0]
-	var truck_count: int = template["truck_count"][0] + int(tier_progress * float(truck_range))
-	
-	# Deterministic hazard count: scale within tier range
-	var hazard_range = template["hazard_count"][1] - template["hazard_count"][0]
-	var hazard_count: int = template["hazard_count"][0] + int(tier_progress * float(hazard_range))
+	# Deterministic hazard count: distribute evenly across tier
+	var hazard_count: int
+	if num_levels > 1:
+		var step: float = float(template["hazard_count"][1] - template["hazard_count"][0]) / float(num_levels - 1)
+		hazard_count = template["hazard_count"][0] + round(tier_index * step)
+	else:
+		hazard_count = template["hazard_count"][0]
 	
 	# Speed: interpolate between tier min and max based on tier progress
+	var tier_range = num_levels - 1
+	var tier_progress: float
+	if tier_range > 0:
+		tier_progress = float(tier_index) / float(tier_range)
+	else:
+		tier_progress = 0.0
 	var speed = lerp(template["speed"][0], template["speed"][1], tier_progress)
 	
 	# Gap: decrease with tier progress (harder = tighter gaps)
@@ -218,9 +226,11 @@ func _create_ground() -> StaticBody3D:
 	visual.mesh = mesh
 	visual.position = Vector3(0, 0, 0)         # centered on collision shape
 	
-	# Add visual material
+	# Add visual material with roughness/metallic for better visuals
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = COLOR_GROUND
+	mat.roughness = 0.9
+	mat.metallic = 0.0
 	visual.set_material(mat)
 	
 	ground.add_child(shape)
@@ -263,7 +273,7 @@ func _create_truck(min_speed: float, max_speed: float) -> CharacterBody3D:
 	# --- Collision shape ---
 	var collision = CollisionShape3D.new()
 	var shape = BoxShape3D.new()
-	shape.size = Vector3(TRUCK_WIDTH / 2, 1.5, 1.5)   # half-extents
+	shape.size = Vector3(TRUCK_WIDTH, 3, 3)   # full extents, matches visual mesh
 	collision.shape = shape
 	# Position collision at truck center height
 	collision.position = Vector3(0, 1.5, 0)
@@ -277,9 +287,14 @@ func _create_truck(min_speed: float, max_speed: float) -> CharacterBody3D:
 	body.mesh = mesh
 	body.position = Vector3(0, 1.5, 0)
 	
-	# Add visual material
+	# Add visual material with metallic/roughness for shiny truck bodies
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = COLOR_TRUCK
+	mat.roughness = 0.3
+	mat.metallic = 0.7
+	# Add emissive glow for visibility
+	mat.emission_enabled = true
+	mat.emission = Color(0.1, 0.3, 0.5)
 	body.set_material(mat)
 	truck.add_child(body)
 	
@@ -307,22 +322,20 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		return hazards
 	
 	for i in range(count):
-		var hazard = _create_hazard(i % 4)
-		
 		# Pick a truck to mount the hazard on
 		var truck_idx = i % _trucks.size()
 		var truck = _trucks[truck_idx]
 		
-		# Place hazard on top of truck (truck top surface is at y = 1.5 + 1.5 = 3.0)
-		# We position hazard at y = 3.0 + small_offset so it sits ON the truck
+		var hazard = _create_hazard(i % 4, truck_idx)
+		
+		# Parent the hazard to the truck so it moves with the truck
+		truck.add_child(hazard)
+		# Position hazard relative to truck local space
 		var offset_y := 4.0        # just above truck top
 		var offset_x := randf_range(-1.5, 1.5)   # slight random offset on truck
 		var offset_z := randf_range(-0.8, 0.8)
+		hazard.position = Vector3(offset_x, offset_y, offset_z)
 		
-		hazard.position = truck.global_position + Vector3(offset_x, offset_y, offset_z)
-		hazard.name = "Hazard_%d" % i
-		
-		_scene_root.add_child(hazard)
 		hazards.append(hazard)
 	
 	print("[LevelManager] Placed %d hazards on trucks" % count)
@@ -332,15 +345,15 @@ func _create_hazards(count: int) -> Array[Area3D]:
 	
 	return hazards
 
-func _create_hazard(type: int) -> Area3D:
+func _create_hazard(type: int, truck_idx: int) -> Area3D:
 	var hazard = Area3D.new()
-	hazard.name = "Hazard_%d" % type
+	hazard.name = "Hazard_%d_t%d" % [type, truck_idx]
 	hazard.collision_layer   = LAYER_HAZARD
 	hazard.collision_mask    = MASK_HAZARD  # detect player (layer 8)
 	hazard.set_deferred("monitoring", true)
 	
 	match type:
-		0:  # Saw blade
+		0:  # Saw blade — sharp metal with emissive edge
 			var visual = MeshInstance3D.new()
 			var mesh = CylinderMesh.new()
 			mesh.radius = 0.8
@@ -349,6 +362,11 @@ func _create_hazard(type: int) -> Area3D:
 			visual.rotation.x = PI / 2
 			var mat = StandardMaterial3D.new()
 			mat.albedo_color = COLOR_HAZARD_SAW
+			mat.roughness = 0.2
+			mat.metallic = 0.9
+			mat.emission_enabled = true
+			mat.emission = Color(1.0, 0.1, 0.1)
+			mat.emission_energy_multiplier = 1.5
 			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
@@ -356,7 +374,7 @@ func _create_hazard(type: int) -> Area3D:
 			shape.radius = 0.8
 			collision.shape = shape
 			hazard.add_child(collision)
-		1:  # Ramp / cone
+		1:  # Ramp / cone — bright warning color
 			var visual = MeshInstance3D.new()
 			var mesh = CylinderMesh.new()
 			mesh.radius = 1.0
@@ -364,6 +382,11 @@ func _create_hazard(type: int) -> Area3D:
 			visual.mesh = mesh
 			var mat = StandardMaterial3D.new()
 			mat.albedo_color = COLOR_HAZARD_RAMP
+			mat.roughness = 0.5
+			mat.metallic = 0.3
+			mat.emission_enabled = true
+			mat.emission = Color(1.0, 0.8, 0.0)
+			mat.emission_energy_multiplier = 1.2
 			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
@@ -372,13 +395,16 @@ func _create_hazard(type: int) -> Area3D:
 			shape.height = 2.0
 			collision.shape = shape
 			hazard.add_child(collision)
-		2:  # Debris
+		2:  # Debris — rough organic material
 			var visual = MeshInstance3D.new()
 			var mesh = SphereMesh.new()
 			mesh.radius = 0.5
 			visual.mesh = mesh
 			var mat = StandardMaterial3D.new()
 			mat.albedo_color = COLOR_HAZARD_DEBRIS
+			mat.roughness = 0.95
+			mat.metallic = 0.0
+			mat.finish = StandardMaterial3D.FINISH_MOSS
 			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
@@ -386,13 +412,19 @@ func _create_hazard(type: int) -> Area3D:
 			shape.radius = 0.5
 			collision.shape = shape
 			hazard.add_child(collision)
-		3:  # Hammer
+		3:  # Hammer — metallic tool with warning glow
 			var visual = MeshInstance3D.new()
 			var mesh = BoxMesh.new()
 			mesh.size = Vector3(0.3, 0.3, 2)
 			visual.mesh = mesh
 			var mat = StandardMaterial3D.new()
 			mat.albedo_color = COLOR_HAZARD_HAMMER
+			mat.roughness = 0.4
+			mat.metallic = 0.8
+			mat.finish = StandardMaterial3D.FINISH_METAL
+			mat.emission_enabled = true
+			mat.emission = Color(0.3, 0.3, 0.3)
+			mat.emission_energy_multiplier = 0.8
 			visual.set_material(mat)
 			hazard.add_child(visual)
 			var collision = CollisionShape3D.new()
@@ -441,9 +473,15 @@ func _create_player() -> CharacterBody3D:
 	# Position the mesh so its bottom sits at y=0 when player center is y=0.3
 	body.position = Vector3(0, 0.8, 0)
 	
-	# Add visual material (bright green player)
+	# Add visual material — bright green player with subtle glow
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = Color(0.2, 0.8, 0.2)
+	mat.roughness = 0.5
+	mat.metallic = 0.2
+	mat.finish = StandardMaterial3D.FINISH_PLASTIC
+	mat.emission_enabled = true
+	mat.emission = Color(0.1, 0.5, 0.1)
+	mat.emission_energy_multiplier = 1.0
 	body.set_material(mat)
 	
 	player.add_child(body)
@@ -544,14 +582,14 @@ func _connect_hazard_signals() -> void:
 	# Connect each hazard's body_entered signal to trigger player death
 	# (player is a CharacterBody3D, so body_entered fires)
 	for hazard in _hazards:
-		hazard.connect("body_entered", _on_hazard_collided)
+		hazard.body_entered.connect(_on_hazard_collided)
 
-func _on_hazard_collided(other: Node, hazard: Area3D) -> void:
+func _on_hazard_collided(body: Node) -> void:
 	# Check if the other node is the player or an ancestor of the player
-	var node = other
+	var node = body
 	while node:
 		if node == _player:
-			print("[LevelManager] Hazard collision! Player hit by ", hazard.name)
+			print("[LevelManager] Hazard collision! Player hit hazard")
 			GameManager.player_died()
 			break
 		node = node.get_parent()
