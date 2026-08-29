@@ -11,7 +11,7 @@ extends Control
 
 var _update_timer: float = 0.0
 var _hud_style: StyleBoxFlat
-var _font: Font
+var _bar_style: StyleBoxFlat
 
 func _ready() -> void:
 	_setup_visuals()
@@ -25,41 +25,39 @@ func _setup_visuals() -> void:
 	_hud_style.set_border_width_left(2)
 	_hud_style.border_color = Color(0.3, 0.6, 1.0, 0.5)
 	add_theme_stylebox_override("panel", _hud_style)
-	
-	# Common font settings (24px)
-	_font = ThemeDB.get_default_font()
 
 func _process(delta: float) -> void:
 	_update_timer += delta
-	if _update_timer > 0.1:  # Update every 100ms for smooth timer
+	if _update_timer > 0.1:
 		_update_timer = 0.0
 		updateHUD()
 
 func updateHUD() -> void:
 	if not GameManager:
 		return
-	
-	# Level — "Level: 5"
+
+	# Level
 	level_label.text = "Level: " + str(GameManager.current_level)
 	_setup_label_font(level_label)
-	
-	# Lives — "Lives: [hearts]"
+
+	# Lives
 	var hearts: String = ""
+	var i: int = 0
 	for i in range(GameManager.lives):
-		hearts += "\u2764\uFE0F"  # Red heart emoji
+		hearts += "\u2764\uFE0F"
 	lives_label.text = "Lives: " + hearts
 	_setup_label_font(lives_label)
-	
-	# Score — "Score: 150"
+
+	# Score
 	score_label.text = "Score: " + str(GameManager.score)
 	_setup_label_font(score_label)
-	
-	# Timer — "Time: 45s"
+
+	# Timer
 	var elapsed: float = GameManager.get_current_time()
 	timer_label.text = "Time: " + str(int(elapsed)) + "s"
 	_setup_label_font(timer_label)
-	
-	# Progress bar — based on player position
+
+	# Progress bar
 	_update_progress_bar()
 
 func _update_progress_bar() -> void:
@@ -69,19 +67,18 @@ func _update_progress_bar() -> void:
 	if player_node:
 		var progress: float = clampf(player_node.global_position.x / 140.0, 0.0, 1.0)
 		progress_bar.value = progress
-		# Apply style
-		var pb_style: StyleBoxFlat = StyleBoxFlat.new()
-		pb_style.bg_color = Color(0.2, 0.5, 0.9, 0.3)
-		pb_style.set_corner_radius_all(4)
-		progress_bar.add_theme_stylebox_override("finished", _bar_style())
-		progress_bar.add_theme_stylebox_override("fill", _bar_style())
-		progress_bar.add_theme_stylebox_override("bar", _bar_style())
+		# Apply cached bar style
+		var bar_style: StyleBoxFlat = _get_bar_style()
+		progress_bar.add_theme_stylebox_override("finished", bar_style)
+		progress_bar.add_theme_stylebox_override("fill", bar_style)
+		progress_bar.add_theme_stylebox_override("bar", bar_style)
 
-func _bar_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.7, 1.0)
-	style.set_corner_radius_all(2)
-	return style
+func _get_bar_style() -> StyleBoxFlat:
+	if _bar_style == null:
+		_bar_style = StyleBoxFlat.new()
+		_bar_style.bg_color = Color(0.2, 0.7, 1.0)
+		_bar_style.set_corner_radius_all(2)
+	return _bar_style
 
 func _setup_label_font(label: Label) -> void:
 	# White text, centered alignment
