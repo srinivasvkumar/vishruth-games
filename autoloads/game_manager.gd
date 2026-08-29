@@ -83,6 +83,15 @@ func get_state() -> String:
 func is_player_alive() -> bool:
 	return game_state == "playing" and lives > 0
 
+func is_playing() -> bool:
+	return game_state == "playing"
+
+func is_paused() -> bool:
+	return game_state == "paused"
+
+func on_level_complete() -> void:
+	complete_level()
+
 func get_level_time_bonus() -> float:
 	return level_time_bonus
 

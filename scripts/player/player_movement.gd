@@ -200,8 +200,24 @@ func reset():
 	last_ground_contact = -999.0
 
 func die():
-	if _on_hazard:
-		# Play death SFX
-		if _sfx_player and AudioManager:
-			AudioManager.play_sfx(_death_sound)
-		player_died.emit()
+	# Stop all movement
+	velocity = Vector3.ZERO
+	_on_hazard = false
+	jump_count = max_jumps  # Prevent any more jumps
+	
+	# Play death SFX — direct playback since AudioManager is a stub
+	_death_sound = load("res://audio/sfx/death.wav") if FileAccess.file_exists("res://audio/sfx/death.wav") else null
+	if _death_sound:
+		# Direct audio playback
+		if _sfx_player:
+			_sfx_player.stream = _death_sound
+			_sfx_player.play()
+		else:
+			# WebGL fallback: audio may not play without user interaction
+			print("[Player] Death SFX queued (no SFX player node)")
+	
+	# Emit death signal
+	player_died.emit()
+	
+	# Stop physics processing — player is dead
+	set_physics_process(false)
