@@ -60,10 +60,20 @@ func complete_level():
 	level_time_bonus = time_bonus
 	score += 100 + time_bonus
 	
+	# Calculate star rating based on performance
+	var stars := 1
+	if lives >= 2:
+		stars = 2
+	if lives >= 3 and time_bonus >= 50:
+		stars = 3
+	
 	level_completed.emit()
 	
 	# Save progress immediately
 	save_progress(current_level + 1)
+	
+	# Save completion with stars
+	LevelManager.save_level_completion(current_level, stars)
 	
 	if current_level >= 35:
 		set_state("completed")

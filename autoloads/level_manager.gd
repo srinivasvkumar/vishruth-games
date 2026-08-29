@@ -607,3 +607,58 @@ func save_progress(level: int) -> void:
 	var err: int = config.save("user://cluster_rush_save.dat")
 	if err != OK:
 		printerr("[LevelManager] Failed to save progress: ", err)
+
+# =============================================================================
+# Level completion tracking (P1 Visual Polish)
+# =============================================================================
+
+func _load_level_data() -> Dictionary:
+	var config := ConfigFile.new()
+	var err := config.load("user://cluster_rush_save.dat")
+	if err != OK:
+		return {}
+	var json_str := config.get_value("progress", "level_data", "{}")
+	var data := JSON.parse_string(json_str)
+	if data is Dictionary:
+		return data
+	return {}
+
+func has_completed_level(level: int) -> bool:
+	var data := _load_level_data()
+	return data.has(str(level)) and data[str(level)].get("completed", false)
+
+func get_level_stars(level: int) -> int:
+	var data := _load_level_data()
+	var info := data.get(str(level), {})
+	return info.get("stars", 0)
+
+func save_level_completion(level: int, stars: int) -> void:
+	var config := ConfigFile.new()
+	var err := config.load("user://cluster_rush_save.dat")
+	
+	var json_str := "{}"
+	if err == OK:
+		json_str = config.get_value("progress", "level_data", "{}")
+	
+	var data := JSON.parse_string(json_str) as Dictionary
+	if data == null:
+		data = {}
+	
+	var level_info := {"stars": stars, "completed": true}
+	data[str(level)] = level_info
+	
+	var json := JSON.new()
+	config.set_value("progress", "level_data", json.stringify(data))
+	config.save("user://cluster_rush_save.dat")
+
+func get_tier_color(level: int) -> Color:
+	if level <= 5:
+		return Color(0.2, 0.85, 0.2)    # Green - Tutorial
+	elif level <= 10:
+		return Color(0.2, 0.5, 0.95)    # Blue - Easy
+	elif level <= 20:
+		return Color(0.95, 0.85, 0.15)  # Yellow - Medium
+	elif level <= 30:
+		return Color(0.95, 0.55, 0.1)   # Orange - Hard
+	else:
+		return Color(0.95, 0.15, 0.15)  # Red - Expert
