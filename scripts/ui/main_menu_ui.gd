@@ -29,16 +29,23 @@ func _setup_visuals():
 	menu_style.corner_radius_bottom_left = 8
 	add_theme_stylebox_override("bg", menu_style)
 
-	# Style all buttons in the VBoxContainer
-	var vb := $VBoxContainer as VBoxContainer
-	for child in vb.get_children():
-		if child is Button:
-			_style_button(child)
+	# Get the VBoxContainer - it might be inside CenterContainer now
+	var vb: VBoxContainer = null
+	if has_node("CenterContainer/VBoxContainer"):
+		vb = get_node("CenterContainer/VBoxContainer")
+	elif has_node("VBoxContainer"):
+		vb = get_node("VBoxContainer")
+	
+	if vb:
+		# Style all buttons in the VBoxContainer
+		for child in vb.get_children():
+			if child is Button:
+				_style_button(child)
 
-	# Style the title label
-	var title_label := vb.get_child(0) as Label
-	if title_label:
-		_style_title(title_label)
+		# Style the title label
+		var title_label := vb.get_child(0) as Label
+		if title_label:
+			_style_title(title_label)
 
 	# Style settings panel
 	if has_node("SettingsPanel"):
@@ -164,24 +171,34 @@ func _style_pause_menu():
 							child.add_theme_font_override("font", _main_font)
 
 func _setup_ui():
-	# Get UI elements
-	var start_button: Button = $VBoxContainer/StartButton as Button
-	var level_select_button: Button = $VBoxContainer/LevelSelectButton as Button
-	var settings_button: Button = $VBoxContainer/SettingsButton as Button
-	var credits_button: Button = $VBoxContainer/CreditsButton as Button
+	# Get UI elements - buttons are now inside CenterContainer/VBoxContainer
+	var vb_container = null
 	
-	# Connect signals
-	if start_button:
-		start_button.pressed.connect(_on_start_game)
+	# Try the new structure first (with CenterContainer)
+	if has_node("CenterContainer/VBoxContainer"):
+		vb_container = get_node("CenterContainer/VBoxContainer")
+	# Fall back to old structure (without CenterContainer)
+	elif has_node("VBoxContainer"):
+		vb_container = get_node("VBoxContainer")
 	
-	if level_select_button:
-		level_select_button.pressed.connect(_on_level_select)
-	
-	if settings_button:
-		settings_button.pressed.connect(_on_settings)
-	
-	if credits_button:
-		credits_button.pressed.connect(_on_credits)
+	if vb_container:
+		var start_button: Button = vb_container.get_node_or_null("StartButton") as Button
+		var level_select_button: Button = vb_container.get_node_or_null("LevelSelectButton") as Button
+		var settings_button: Button = vb_container.get_node_or_null("SettingsButton") as Button
+		var credits_button: Button = vb_container.get_node_or_null("CreditsButton") as Button
+		
+		# Connect signals
+		if start_button:
+			start_button.pressed.connect(_on_start_game)
+		
+		if level_select_button:
+			level_select_button.pressed.connect(_on_level_select)
+		
+		if settings_button:
+			settings_button.pressed.connect(_on_settings)
+		
+		if credits_button:
+			credits_button.pressed.connect(_on_credits)
 
 func _process(delta: float) -> void:
 	# Handle pause toggle
