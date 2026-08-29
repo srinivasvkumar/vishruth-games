@@ -47,7 +47,7 @@
 Build a locally-runnable Cluster Rush clone in Godot 4 with proper UI/UX, physics-driven truck movement, and 35 levels of escalating difficulty.
 
 ### Why Godot 4
-- Original Cluster Rush was built in Unity (proven path), but we are implementing in Godot 4
+- Original Cluster Rush was inspired by a proven game concept, now built in Godot 4
 - Godot 4.7.2 provides native ARM64 Linux support (no x86_64 constraint)
 - Built-in physics with Area3D/CharacterBody3D for smooth gameplay
 - WebGL export via `--export-release "Web"` for local browser running
@@ -489,8 +489,7 @@ Code Change
 
 **Design Rules:**
 - All bridge methods must be AOT-compatible (no virtual method overrides exposed)
-- No `GameObject.SendMessage` to C# (breaks in AOT)
-- Use `[MonoPInvokeCallback]` or `[DllExport]` for cross-platform compatibility
+- Use `JavaScript.call()` for cross-platform compatibility from GDScript
 - Wrap all GDScript calls in try/catch with safe defaults
 
 **Bridge API Surface (11 functions):**
@@ -553,20 +552,32 @@ player_state = page.evaluate("window.gameBridge.getState()")
 | `clusterRush_settings` | JSON of preferences | `{"volume":0.7,"controls":"default"}` |
 
 **Usage:**
-```csharp
-// SaveSystem.cs
-public static class SaveSystem
-{
-    public static void SaveLevelUnlock(int level) {
-        var unlocked = PlayerPrefs.GetInt("unlocked", 0);
-        if (level > unlocked) PlayerPrefs.SetInt("unlocked", level);
-        PlayerPrefs.Save(); // localStorage in WebGL
-    }
-    
-    public static int GetUnlockedLevel() {
-        return PlayerPrefs.GetInt("unlocked", 1);
-    }
-}
+```gdscript
+# SaveSystem.gd — GDScript save system for Godot 4
+# Uses OS.get_environment() or File for persistence
+
+static func save_level_unlock(level: int) -> void:
+    var unlocked := _get_unlocked()
+    if level > unlocked:
+        _set_unlocked(level)
+
+static func get_unlocked_level() -> int:
+    return _get_unlocked()
+
+static func _get_unlocked() -> int:
+    var file := File.new()
+    if file.open("user://cluster_rush_save.dat", File.READ) == OK:
+        var data := JSON.parse_string(file.get_as_text())
+        if data and data.has("unlocked"):
+            return data["unlocked"] as int
+    return 1
+
+static func _set_unlocked(level: int) -> void:
+    var file := File.new()
+    var data := {"unlocked": level, "high_scores": {}}
+    file.open("user://cluster_rush_save.dat", File.WRITE)
+    file.store_string(JSON.stringify(data))
+    file.close()
 ```
 
 ### WebGL Constraints (Critical — Read Before Coding)
@@ -774,8 +785,8 @@ func _enter_tree():
 
 | Resource | Specification |
 |----------|---------------|
-| **Unity Version** | 2022.3 LTS (LTS for stability) |
-| **Input System** | com.unity.inputsystem@1.7.0+ |
+| **Godot Version** | 4.7.2 stable (LTS for stability) |
+| **Input Map** | Custom input actions with buffering + coyote time |
 | **Target FPS** | 60 (pass threshold ≥55) |
 | **Memory Budget** | 256MB (WebGL default) |
 | **Build Size** | <50 MB |
@@ -787,25 +798,25 @@ func _enter_tree():
 ## 12. Commands, Code Style, and Boundaries
 
 ### Code Style
-- C# conventions: PascalCase for public members, camelCase for private
+- GDScript conventions: PascalCase for class names, camelCase for variables, snake_case for functions
 - No magic numbers — use named constants
 - Each script: <200 lines, single responsibility
-- No `GameObject.Find()` — use references, events, or Singleton pattern
+- Use signals and node references — no node path string lookups
 
-### Unity-Specific "Never Do"
-- ❌ No `Thread.Sleep()`, `async/await` without `Yield`
-- ❌ No `SendMessage()` (AOT unsafe)
-- ❌ No `new` in `Update()` or `FixedUpdate()`
-- ❌ No physics in `Update()` — use `FixedUpdate()`
-- ❌ No `GameObject.Find()` per frame
-- ❌ No virtual method overrides in WebGL bridge
+### Godot-Specific "Never Do"
+- ❌ No `time.sleep()` — use `await` or `await get_tree().create_timer()`
+- ❌ No blocking I/O in `_process()` or `_physics_process()`
+- ❌ No `new()` in `_process()` or `_physics_process()` — use object pooling
+- ❌ No physics in `_process()` — use `_physics_process()`
+- ❌ No `get_node("Path/To/Node")` per frame with string paths — use `@onready` references
+- ❌ No virtual method overrides in JavaScript bridge functions
 
 ### Required Patterns
-- ✅ Physics in `FixedUpdate()`
-- ✅ Object pooling for frequently spawned objects
-- ✅ `Singleton<T>` pattern for managers
-- ✅ ScriptableObjects for level data/hazard configs
-- ✅ `Coroutine` for non-physics timing
+- ✅ Physics in `_physics_process()`
+- ✅ Object pooling for frequently spawned objects (trucks, hazards)
+- ✅ Node reference pattern with `@onready` for manager nodes
+- ✅ Resource files (preload) for level data/hazard configs
+- ✅ `await get_tree().create_timer()` for non-physics timing
 
 ---
 
@@ -837,7 +848,7 @@ func _enter_tree():
 
 ## 15. Commands / Style / Boundaries
 
-- `@game-dev` owns all Unity C# scripting and project setup
+- `@game-dev` owns all GDScript coding and project setup
 - `@implementer` assists with file creation and configuration
 - `@reviewer` reviews all code before commit
 - `@researcher` provides WebGL optimization guidance
@@ -863,7 +874,7 @@ func _enter_tree():
 ## 17. Next Steps
 
 1. **Phase 1 Kickoff**: @game-dev starts project scaffold
-2. **Unity Install**: @game-dev installs Unity Hub + 2022.3 LTS
+2. **Godot Install**: @game-dev verifies Godot 4.7.2 is installed and working
 3. **Research Parallel**: @researcher continues WebGL optimization findings
 4. **Testing Prep**: @reviewer prepares test fixtures
 
