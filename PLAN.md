@@ -1,12 +1,31 @@
 # Cluster Rush - Unity Development Plan
 
-**Status:** Approved — Phase 1 Complete ✅
+**Status:** Phase 1 ~80% — Code complete, build exported, critical bugs fixed
 **Created:** 2026-08-26
-**Last Updated:** 2026-08-28
+**Last Updated:** 2026-08-29
 **Target Platform:** WebGL (Local Browser)
 **Engine:** Godot 4.7.2 (native ARM64 Linux)
 
-Phase 1 Deliverables Complete:
+## Recent Critical Fixes (2026-08-29)
+- **BUG 1:** Non-deterministic level parameters (`randi()` → tier interpolation) — level difficulty now reproducible
+- **BUG 2:** Broken speed/gap formulas (negative gaps, broken multipliers) — now using proper `lerp()` interpolation
+- **BUG 3:** `complete_level()` didn't save progress — now calls `save_progress()` directly
+- **BUG 4:** Player missing script/physics layers in some code paths — added safety checks in LevelManager
+- **BUG 5:** World node lookup failure — fixed `_find_or_create_scene_root()` to use `get_current_scene()`
+- **BUG 6:** Premature `LevelManager.load_level()` call — moved to game scene lifecycle
+- **BUG 7:** Player invisible (no mesh) — added CapsuleMesh body
+- **BUG 8:** No level completion check — added x=140 threshold (ground is 300 units long)
+
+## Level Parameter Audit (matches PLAN.md T1-T5 spec)
+| Tier | Levels | Trucks | Speed (m/s) | Gap (m) | Hazards |
+|------|--------|--------|-------------|---------|---------|
+| T1 Tutorial | 1-5 | 1-2 | 10-12 | 3.0-4.0 | 0-1 |
+| T2 Easy | 6-10 | 2-3 | 12-15 | 2.5-3.5 | 1-2 |
+| T3 Medium | 11-20 | 4-6 | 15-18 | 2.0-3.0 | 2-3 |
+| T4 Hard | 21-30 | 6-8 | 18-22 | 1.5-2.5 | 3-4 |
+| T5 Expert | 31-35 | 8-10 | 22-25 | 1.0-2.0 | 4-5 |
+
+## Phase 1 Deliverables Complete:
 - ✅ Godot 4.7.2 installed (ARM64 native build)
 - ✅ `project.godot` — Project configuration with autoloads, input bindings, rendering settings
 - ✅ `autoloads/game_manager.gd` — Game state (lives, score, level progression, save/load)
