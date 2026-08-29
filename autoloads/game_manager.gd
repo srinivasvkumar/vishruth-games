@@ -9,6 +9,7 @@ signal level_failed
 signal game_paused
 signal game_resumed
 signal game_over
+signal game_completed
 signal level_started
 
 var current_level: int = 1
@@ -30,8 +31,10 @@ func set_state(new_state: String):
 		level_start_time = Time.get_ticks_msec() / 1000.0
 	elif new_state == "paused":
 		game_paused.emit()
-	elif new_state == "gameover" or new_state == "completed":
+	elif new_state == "gameover":
 		game_over.emit()
+	elif new_state == "completed":
+		game_completed.emit()
 
 func start_level(level_num: int):
 	current_level = level_num
@@ -54,14 +57,16 @@ func complete_level():
 	
 	var elapsed: float = Time.get_ticks_msec() / 1000.0 - level_start_time
 	var time_bonus: float = minf(elapsed * 10.0, 100.0)
+	level_time_bonus = time_bonus
 	score += 100 + time_bonus
 	
 	level_completed.emit()
 	
+	# Save progress immediately
+	save_progress(current_level + 1)
+	
 	if current_level >= 35:
 		set_state("completed")
-	else:
-		save_progress(current_level + 1)
 
 func fail_level():
 	level_failed.emit()
