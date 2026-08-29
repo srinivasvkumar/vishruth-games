@@ -180,6 +180,9 @@ func _generate_level(level: int) -> void:
 	
 	# Generate ground platform
 	_ground = _create_ground()
+	# Align player to ground surface
+	if _player:
+		_player.position.y = 0.75  # bottom of capsule at y=0.25 (ground top)
 	
 	# Generate truck convoy
 	_trucks = _create_truck_convoy(params["truck_count"], params["speed"], params["max_speed"])
@@ -213,7 +216,7 @@ func _create_ground() -> StaticBody3D:
 	var mesh = BoxMesh.new()
 	mesh.size = Vector3(300, 0.5, 20)         # match collision
 	visual.mesh = mesh
-	visual.position = Vector3(0, -0.25, 0)    # half-height down so top is at y=0
+	visual.position = Vector3(0, 0, 0)         # centered on collision shape
 	
 	# Add visual material
 	var mat = StandardMaterial3D.new()
@@ -407,7 +410,7 @@ func _place_player() -> CharacterBody3D:
 	# Try to find existing player in scene
 	_player = _scene_root.get_node_or_null("Player")
 	if _player:
-		_player.position = Vector3(0, 0.3, 0)
+		_player.position = Vector3(0, 0.75, 0)
 		_player.velocity = Vector3.ZERO
 		# Ensure player has the movement script and correct collision layers
 		if not _player.has_script():
@@ -502,12 +505,12 @@ func _create_player() -> CharacterBody3D:
 func respawn_player() -> void:
 	# Find player and reset position
 	if _player:
-		_player.position = Vector3(0, 0.3, 0)
+		_player.position = Vector3(0, 0.75, 0)
 		_player.velocity = Vector3.ZERO
 	elif _scene_root:
 		var player = _scene_root.get_node_or_null("Player")
 		if player:
-			player.position = Vector3(0, 0.3, 0)
+			player.position = Vector3(0, 0.75, 0)
 			player.velocity = Vector3.ZERO
 
 # =============================================================================
