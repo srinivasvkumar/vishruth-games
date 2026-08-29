@@ -10,11 +10,28 @@ export default defineConfig({
     baseURL: 'http://localhost:8765',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
+    viewport: { width: 1280, height: 720 },
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Headless WebGL support
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--disable-gpu-compositing',
+            '--use-gl=egl',
+            '--use-angle=egl',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding',
+          ]
+        }
+      },
     },
   ],
   retries: 1,
