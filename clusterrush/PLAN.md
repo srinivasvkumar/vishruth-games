@@ -1,12 +1,31 @@
-# Cluster Rush - Unity Development Plan
+# Cluster Rush - Godot 4 Development Plan
 
-**Status:** Approved — Phase 1 Complete ✅
+**Status:** Phase 1 ~80% — Code complete, build exported, critical bugs fixed
 **Created:** 2026-08-26
-**Last Updated:** 2026-08-28
+**Last Updated:** 2026-08-29
 **Target Platform:** WebGL (Local Browser)
 **Engine:** Godot 4.7.2 (native ARM64 Linux)
 
-Phase 1 Deliverables Complete:
+## Recent Critical Fixes (2026-08-29)
+- **BUG 1:** Non-deterministic level parameters (`randi()` → tier interpolation) — level difficulty now reproducible
+- **BUG 2:** Broken speed/gap formulas (negative gaps, broken multipliers) — now using proper `lerp()` interpolation
+- **BUG 3:** `complete_level()` didn't save progress — now calls `save_progress()` directly
+- **BUG 4:** Player missing script/physics layers in some code paths — added safety checks in LevelManager
+- **BUG 5:** World node lookup failure — fixed `_find_or_create_scene_root()` to use `get_current_scene()`
+- **BUG 6:** Premature `LevelManager.load_level()` call — moved to game scene lifecycle
+- **BUG 7:** Player invisible (no mesh) — added CapsuleMesh body
+- **BUG 8:** No level completion check — added x=140 threshold (ground is 300 units long)
+
+## Level Parameter Audit (matches PLAN.md T1-T5 spec)
+| Tier | Levels | Trucks | Speed (m/s) | Gap (m) | Hazards |
+|------|--------|--------|-------------|---------|---------|
+| T1 Tutorial | 1-5 | 1-2 | 10-12 | 3.0-4.0 | 0-1 |
+| T2 Easy | 6-10 | 2-3 | 12-15 | 2.5-3.5 | 1-2 |
+| T3 Medium | 11-20 | 4-6 | 15-18 | 2.0-3.0 | 2-3 |
+| T4 Hard | 21-30 | 6-8 | 18-22 | 1.5-2.5 | 3-4 |
+| T5 Expert | 31-35 | 8-10 | 22-25 | 1.0-2.0 | 4-5 |
+
+## Phase 1 Deliverables Complete:
 - ✅ Godot 4.7.2 installed (ARM64 native build)
 - ✅ `project.godot` — Project configuration with autoloads, input bindings, rendering settings
 - ✅ `autoloads/game_manager.gd` — Game state (lives, score, level progression, save/load)
@@ -25,14 +44,14 @@ Phase 1 Deliverables Complete:
 ## 1. Executive Summary
 
 ### Goal
-Build a locally-runnable Cluster Rush clone in Unity with proper UI/UX, physics-driven truck movement, and 35 levels of escalating difficulty.
+Build a locally-runnable Cluster Rush clone in Godot 4 with proper UI/UX, physics-driven truck movement, and 35 levels of escalating difficulty.
 
-### Why Unity
-- Original Cluster Rush was built in Unity (proven path)
-- First-person camera + physics is Unity's sweet spot
-- Visual editor accelerates level design (35 levels)
-- WebGL export for local browser running
-- Built-in PhysX physics engine
+### Why Godot 4
+- Original Cluster Rush was built in Unity (proven path), but we are implementing in Godot 4
+- Godot 4.7.2 provides native ARM64 Linux support (no x86_64 constraint)
+- Built-in physics with Area3D/CharacterBody3D for smooth gameplay
+- WebGL export via `--export-release "Web"` for local browser running
+- Free and open-source engine
 
 ### Success Criteria
 - ✅ Player can jump, double-jump, wall-climb between moving trucks
@@ -66,18 +85,18 @@ Build a locally-runnable Cluster Rush clone in Unity with proper UI/UX, physics-
 ### Test Plan Strategy (4-Layer Approach)
 **Objective:** Ensure robust, efficient testing by running checks in the correct order to catch issues early and avoid wasting time on slow WebGL builds.
 
-#### Layer 1: Unit Tests (EditMode)
-- **Tool:** Unity Test Framework (EditMode)
-- **Purpose:** Test logic in isolation (no Unity engine required). Fast execution (<1s).
-- **Scope:** 
+#### Layer 1: Unit Tests
+- **Tool:** GDScript unit tests with `godot --headless --test`
+- **Purpose:** Test logic in isolation (no engine required). Fast execution (<1s).
+- **Scope:**
   - Player mechanics (jump force, double-jump state machine)
   - Truck physics calculations (velocity, collision detection logic)
   - Level template parameter validation
 - **Execution:** Run automatically on every code commit.
 
 #### Layer 2: Integration Tests (PlayMode)
-- **Tool:** Unity Test Framework (PlayMode)
-- **Purpose:** Test interactions between components inside the Unity Editor.
+- **Tool:** Godot 4 runnable scene tests
+- **Purpose:** Test interactions between components inside the Godot engine.
 - **Scope:**
   - Player + Truck collision resolution
   - Hazard triggering and death logic
@@ -122,8 +141,8 @@ Build a locally-runnable Cluster Rush clone in Unity with proper UI/UX, physics-
 
 | Layer | Tool | Scope | When Run | Gate |
 |-------|------|-------|----------|------|
-| **L1: Unit (EditMode)** | Unity Test Framework (EditMode, no engine) | Pure logic: jump math, state transitions, parameter validation, level template generation | On every code commit | Blocks commit |
-| **L2: Integration (PlayMode)** | Unity Test Framework (PlayMode, in-editor) | Component interactions: player-truck collision, hazard triggers, UI state machines | Before every WebGL build | Blocks build |
+| **L1: Unit (EditMode)** | GDScript unit tests (headless) | Pure logic: jump math, state transitions, parameter validation, level template generation | On every code commit | Blocks commit |
+| **L2: Integration (PlayMode)** | Godot 4 runnable scene tests | Component interactions: player-truck collision, hazard triggers, UI state machines | Before every WebGL build | Blocks build |
 | **L3: E2E Automation** | Playwright + computer_use | Complete user journeys in browser: full level playthroughs, input responsiveness | Nightly + milestone completion | Blocks approval |
 | **L4: Performance** | Chrome DevTools (Performance + Memory panels) | FPS (≥60 sustained), frame timing (≤16.6ms), JS heap growth, draw calls | Phase 3+, Phase 6, Phase 7, Phase 8 | Blocks sign-off |
 
@@ -141,19 +160,18 @@ Build a locally-runnable Cluster Rush clone in Unity with proper UI/UX, physics-
 
 | # | Task | Test ID | Layer | Test Case | Pass Criteria | Verification Method |
 |---|------|---------|-------|-----------|---------------|---------------------|
-| 1.1 | Install Unity Hub + 2022.3 LTS | P1-T01 | L1 | `unity --version` returns 2022.3.x | Exact version string matches | Terminal: `unity-editor --version` |
-| 1.2 | Create 3D Unity project at `~/vishruth/games/clusterrush` | P1-T02 | L1 | Project directory exists with `Assets/`, `ProjectSettings/`, `Packages/` | All required dirs present | Filesystem scan |
+| 1.1 | Install Godot 4.7.2 (ARM64 Linux) | P1-T01 | L1 | `godot --version` returns 4.7.2.stable | Exact version string matches | Terminal: `godot --version` |
+| 1.2 | Create Godot project at `~/vishruth/games/clusterrush` | P1-T02 | L1 | Project directory exists with `autoloads/`, `scripts/`, `scenes/` | All required dirs present | Filesystem scan |
 | 1.3 | Set up folder structure (Scripts/, Prefabs/, Materials/, Scenes/, Audio/, etc.) | P1-T03 | L1 | All directories from architecture spec exist | 15+ directories match PLAN.md tree | Automated directory comparison |
-| 1.4 | Configure physics materials (bounciness=0, friction=0.5 for trucks) | P1-T04 | L1 + L2 | PhysicsMaterial asset exists with correct values | `physicsMaterial.bounciness == 0f && friction == 0.5f` | Unity API test: load asset, check serialized fields |
-| 1.5 | Set up WebGL build target | P1-T05 | L2 | Build player succeeds for WebGL with zero errors | `BuildPipeline.BuildPlayer()` completes, output directory exists | PlayMode test |
-| 1.6 | Empty scene runs in browser | P1-T06 | L3 | Open `Builds/WebGL/index.html` → browser renders empty scene | No console errors, canvas visible, no freeze | Playwright: assert canvas element exists, no errors in 10s |
-| 1.7 | Configure Input System (com.unity.inputsystem@1.7.0+) | P1-T07 | L1 | Package installed in `Packages/manifest.json` | Package string present in manifest | File parse + version check |
+| 1.4 | Set up collision layers (Ground=1, Truck=2, Hazard=4, Player=8) | P1-T04 | L1 + L2 | Collision constants defined in LevelManager.gd | `LAYER_GROUND==1 && LAYER_TRUCK==2 && LAYER_HAZARD==4 && LAYER_PLAYER==8` | GDScript unit test: load autoload, check constants |
+| 1.5 | Configure Input Map (strafe_left/right, jump, climb) | P1-T05 | L1 | Input actions defined in project.godot | `InputMap.get_actions()` returns expected actions | GDScript unit test: check input map entries |
+| 1.6 | Export WebGL build (`--export-release "Web"`) | P1-T06 | L2 | Builds/WebGL/index.html exists and loads | index.html, index.wasm, index.pck present | Playwright: assert page loads, no console errors |
 | 1.8 | Create Input Actions Asset with Player + UI action maps | P1-T08 | L1 + L2 | `InputActions.inputactions` file exists with correct action maps | All 4 actions defined: Jump, StrafeLeft, StrafeRight, Climb | L1: Parse JSON structure. L2: Bind action to player prefab |
-| 1.9 | Configure scene build order (MainMenu → Level_01...35 → EndScreen) | P1-T09 | L2 | `PlayerSettings.SetApplicationBuildScenario` lists all scenes | Scene count = 37 (1 menu + 35 levels + 1 end) | Unity API: check `EditorBuildSettings.scenes` |
-| 1.10 | Set WebGL build settings (Brotli compression, 60 FPS target, 256MB limit) | P1-T10 | L2 | Build settings match spec | `WebGLBuilderSettings.compressionEncoding == Brotli`, `targetFrameRate == 60` | Unity API read-back |
-| 1.11 | Design WebGL-JS Bridge specification (C#→JS interop layer) | P1-T11 | L1 | Bridge spec document defines 11+ functions for Playwright testing | Bridge API covers playerY, isGrounded, isClimbing, getTruckPositions, getFPS, getHeapSize, isDead, etc. | Review: AOT-safe, no virtual method issues |
-| 1.12 | Create BuildProcessor.cs with WebGL auto-configuration | P1-T12 | L1 | Build script configures all WebGL settings | Runs without errors, applies Brotli compression, 60 FPS, 256MB cap | Terminal: run script, verify settings applied |
-| 1.13 | Update .gitignore (complete Unity set) | P1-T13 | L1 | .gitignore includes all Unity-specific patterns | Includes *.csproj, *.sln, *.userprefs, Library/, Temp/, obj/, etc. | grep check against Unity .gitignore template |
+| 1.9 | Configure scene tree (MainMenu → Game → Level Select → Credits → EndScreen) | P1-T09 | L2 | Scene files define proper navigation flow | Scene count = 37 (1 menu + 35 levels + end + level select) | Godot scene tree test |
+| 1.10 | Configure export preset with WebGL optimization settings | P1-T10 | L2 | export_presets.cfg has correct WebGL settings | compression=brotli, target FPS=60, canvas settings configured | Godot export preset test |
+| 1.11 | Design browser bridge specification (GDScript→JavaScript interop) | P1-T11 | L1 | Bridge spec document defines 11+ functions for testing | Bridge API covers playerY, isGrounded, isClimbing, getTruckPositions, getFPS, getHeapSize, isDead, etc. | Review: AOT-safe, no virtual method issues |
+| 1.12 | Create export hook for WebGL auto-configuration | P1-T12 | L1 | Build script configures all WebGL settings | Runs without errors, applies Brotli compression, 60 FPS, 256MB cap | Terminal: run script, verify settings applied |
+| 1.13 | Update .gitignore (complete Godot set) | P1-T13 | L1 | .gitignore includes all Godot-specific patterns | Includes .godot/, *.godot, *.pck, Builds/, etc. | grep check against Godot .gitignore template |
 
 **Phase 1 Test Deliverables:**
 - `tests/editmode/results/P1-project-setup.json` — Unit test results
@@ -339,7 +357,7 @@ Build a locally-runnable Cluster Rush clone in Unity with proper UI/UX, physics-
 | Physics Values | Standardized gravity, mass, force values | `tests/fixtures/physics_constants.json` |
 | Input Mocks | Simulated keyboard/mouse event sequences | `tests/fixtures/input_patterns.json` |
 | Asset Placeholders | Low-poly models for testing | `Assets/Prefabs/Placeholders/` |
-| Test Levels | 5 minimal test scenes (one per phase) | `Assets/Scenes/Test_*.unity` |
+| Test Levels | 5 minimal test scenes (one per phase) | `scenes/test_*.tscn` |
 
 ---
 
@@ -447,7 +465,7 @@ Code Change
 ## 8. Technical Architecture
 
 ### Input System Configuration (Complete Specification)
-**Unity New Input System Package Required**: `com.unity.inputsystem@1.7.0+`
+**Godot 4 InputMap Configuration Required**: Set up in `project.godot` `[input]` section
 
 **Input Actions Asset**: `Assets/Input/InputActions.inputactions`
 
@@ -473,7 +491,7 @@ Code Change
 - All bridge methods must be AOT-compatible (no virtual method overrides exposed)
 - No `GameObject.SendMessage` to C# (breaks in AOT)
 - Use `[MonoPInvokeCallback]` or `[DllExport]` for cross-platform compatibility
-- Wrap all Unity API calls in try/catch with safe defaults
+- Wrap all GDScript calls in try/catch with safe defaults
 
 **Bridge API Surface (11 functions):**
 
@@ -502,7 +520,7 @@ public class WebGLBridge : MonoBehaviour
         // Called from C# → triggers JS callback
     }
     
-    // Exposed to JS via Application.ExternalCall (Unity 2022 LTS)
+    // Exposed to JS via JavaScriptBridge (Godot 4)
     public string GetPlayerStateJSON()
     {
         return JsonUtility.ToJson(new {
@@ -556,21 +574,21 @@ public static class SaveSystem
 
 ### WebGL Constraints (Critical — Read Before Coding)
 
-**Single-Threaded Warning:** Unity WebGL runs on a single JavaScript thread. ALL Unity API calls, physics, rendering, and game logic share one thread.
+**Single-Threaded Warning:** Godot WebGL runs on a single JavaScript thread. ALL GDScript, physics, rendering, and game logic share one thread.
 
 **Required Patterns:**
-- Physics MUST run in `FixedUpdate()`, never `Update()`
-- No `new` allocations in `Update()` — use object pooling
-- No blocking calls: `Thread.Sleep()`, `async/await` without `Yield`, `WWW`
+- Physics MUST run in `_physics_process()`, never `_process()`
+- No `new` allocations in `_process()` — use object pooling
+- No blocking calls: `await`, infinite loops, `OS.delay_msec()` in per-frame methods
 - Heavy computation should be split across multiple frames
-- Use `Coroutine` instead of `Thread` for background work
+- Use `call_deferred()` instead of threads for background work
 
 **Never Do:**
 - ❌ Never use `Thread` class (not supported in WebGL)
-- ❌ Never use `async/await` without `Yield` for Unity API calls
-- ❌ Never allocate memory in per-frame methods
-- ❌ Never call `GameObject.Find()` every frame (cache references)
-- ❌ Never use `SendMessage()` (not AOT-safe)
+- ❌ Never use infinite loops in `_process()` or `_physics_process()`
+- ❌ Never allocate memory in per-frame methods (use object pooling)
+- ❌ Never call `get_node()` repeatedly (cache with `@onready`)
+- ❌ Never use `yield` without proper await handling
 - ❌ Never call virtual methods from bridge code (AOT breakage)
 
 ### Texture Compression by Browser
@@ -597,9 +615,12 @@ public static class SaveSystem
 ClusterRush/
 ├── Assets/
 │   ├── Scenes/
-│   │   ├── MainMenu.unity
-│   │   ├── Level_01.unity through Level_35.unity
-│   │   └── EndScreen.unity
+│   │   ├── main_menu.tscn
+│   │   ├── game.tscn
+│   │   ├── level_01.tscn through level_35.tscn
+│   │   ├── level_select.tscn
+│   │   ├── credits.tscn
+│   │   └── end_screen.tscn
 │   ├── Scripts/
 │   │   ├── Player/
 │   │   │   ├── PlayerMovement.cs
@@ -666,17 +687,17 @@ ClusterRush/
 | Asset Type | Source | Specific Assets | Cost | Notes |
 |------------|--------|-----------------|------|-------|
 | **3D Truck Models** | Polyfork / Kenney | Low poly truck variants | Free | MIT license, consistent scale |
-| **3D Hazard Models** | Unity Asset Store (free) | Low poly props | Free | Saw blades, ramps, debris, hammers |
+| **3D Hazard Models** | Kenney.nl (free) | Low poly props | Free | Saw blades, ramps, debris, hammers |
 | **Environment Textures** | Poly Haven | Ground textures, skybox | Free | 2K textures, PBR materials |
 | **UI Graphics** | Kenney Assets | UI icons, buttons, fonts | Free | Consistent low-poly aesthetic |
-| **Audio SFX** | Freesound.org (CC0) | Jump, death, hazard sounds | Free | Use FreesoundHub Unity tool |
+| **Audio SFX** | Freesound.org (CC0) | Jump, death, hazard sounds | Free | Use `AudioStreamPlayer3D` for SFX |
 | **Audio Music** | OpenGameArt | 2-3 background tracks | Free | Upbeat, non-distracting |
 
 **Recommended Free Asset Packages:**
 1. **Low Poly Vehicles Pack** (Kenney) - Free
 2. **Low Poly Nature/Environment** (Kenney) - Free
 3. **FreesoundHub** (Asset Store) - Free, in-editor sound search
-4. **Polyfork Unity Plugin** - Free 335 low-poly models, MIT license
+4. **Polyfork** - Free 335 low-poly models, MIT license
 
 **Asset Pipeline Workflow:**
 1. Week 1: Source placeholder assets (free for prototyping)
@@ -688,7 +709,7 @@ ClusterRush/
 - All models under 500 triangles (WebGL performance)
 - Textures compressed (DXT/ASTC for WebGL)
 - Audio files in OGG format
-- Consistent scale (1 Unity unit = 1 meter)
+- Consistent scale (1 Godot unit = 1 meter)
 
 ---
 
@@ -696,32 +717,20 @@ ClusterRush/
 
 ### BuildProcessor.cs — Custom WebGL Build Script
 
-```csharp
-// Editor/BuildProcessor.cs
-using UnityEngine;
-using UnityEditor;
-using UnityEditor.Build.Reporting;
+```gdscript
+# Editor/BuildProcessor.gd
+extends EditorPlugin
+# WebGL export hook for production build configuration
+# Configures Brotli compression, memory limits, and optimization settings
 
-public static class BuildProcessor
-{
-    [MenuItem("Build/WebGL Production")]
-    public static void BuildWebGL()
-    {
-        var targetPath = "Builds/WebGL";
-        
-        // Ensure output directory exists
-        System.IO.Directory.CreateDirectory(targetPath);
-        
-        // Configure WebGL build settings
-        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
-        PlayerSettings.WebGL.dataCaching = true;
-        PlayerSettings.WebGL.emscriptenArgs = "-s ALLOW_MEMORY_GROWTH=1";
-        PlayerSettings.targetTexture = null;
-        PlayerSettings.SetApplicationBuildScenario(BuildTargetGroup.WebGL, 0);
-        
-        // Set build parameters
-        PlayerSettings.webGLMemorySize = 256;
-        PlayerSettings.webGLDataCaching = true;
+func _enter_tree():
+	add_custom_type("WebGLBuildHook", "EditorScript", preload("res://scripts/utilities/build_processor.gd"), null)
+```
+
+```gdscript
+# scripts/utilities/build_processor.gd
+# WebGL Build Configuration for Godot 4
+# Configures export preset settings for production builds
         
         // Build
         var report = BuildPipeline.BuildPlayer(
