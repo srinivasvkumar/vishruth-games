@@ -390,9 +390,108 @@ LevelSelect (Control)
 
 ---
 
+## Transitions & Animations
+
+| Transition | Behavior |
+|------------|----------|
+| Level Select → Game | Instant `change_scene_to_file("res://scenes/game.tscn")` — no fade |
+| Game → Level Select (pause) | Instant `change_scene_to_file("res://scenes/level_select.tscn")` — no fade |
+| Game → Main Menu (pause) | Instant `change_scene_to_file("res://scenes/main_menu.tscn")` — no fade |
+| Level Select → Main Menu (back) | Instant `change_scene_to_file("res://scenes/main_menu.tscn")` — no fade |
+| Level Complete → Next Level | `reload_current_scene()` — instant |
+| Level Complete → End Screen | `change_scene_to_file("res://scenes/end_screen.tscn")` — instant |
+| Level Over → Game Over | Overlay `visible = true` — no animation |
+
+**Note:** No tween animations for MVP. Simple visibility toggles and instant scene changes are sufficient.
+
+---
+
+## Difficulty Stars — Implementation Spec
+
+### Star Display
+- Below the level number text, in a **separate Label node**
+- Format: ⭐ repeated N times (e.g. "⭐" for tier 1, "⭐⭐⭐" for tier 3)
+- Star color: `Color(1.0, 0.843, 0.0)` (gold #FFD700)
+- Star font size: 14px (smaller than button text)
+- Star alignment: Centered below level number
+
+### Star-to-Tier Mapping
+| Levels | Tier | Stars | Button Color (Optional) |
+|--------|------|-------|------------------------|
+| 1-5 | Tutorial | ⭐ | Green (#33cc33) |
+| 6-10 | Easy | ⭐⭐ | Blue (#3399cc) |
+| 11-20 | Medium | ⭐⭐⭐ | Yellow (#cccc33) |
+| 21-30 | Hard | ⭐⭐⭐⭐ | Orange (#cc6633) |
+| 31-35 | Expert | ⭐⭐⭐⭐⭐ | Red (#cc3333) |
+
+### GDScript Implementation (add to `level_select_ui.gd`)
+```gdscript
+func _get_star_count(level: int) -> String:
+    if level <= 5: return "⭐"
+    if level <= 10: return "⭐⭐"
+    if level <= 20: return "⭐⭐⭐"
+    if level <= 30: return "⭐⭐⭐⭐"
+    return "⭐⭐⭐⭐⭐"
+
+func _get_tier_color(level: int) -> Color:
+    if level <= 5: return Color(0.2, 0.8, 0.2)
+    if level <= 10: return Color(0.2, 0.2, 0.8)
+    if level <= 20: return Color(0.8, 0.8, 0.2)
+    if level <= 30: return Color(0.8, 0.4, 0.2)
+    return Color(0.8, 0.2, 0.2)
+```
+
+### Visual Layout (button with star)
+```
+┌──────────┐
+│  Level 5 │  ← Button text
+│   ⭐      │  ← Star label (below number)
+└──────────┘
+```
+
+---
+
+## Responsive Grid — Scroll Strategy
+
+### Strategy: ScrollContainer (NOT wrapping)
+- Wrap `LevelButtonsContainer` (GridContainer) inside a **ScrollContainer**
+- GridContainer keeps fixed **7 columns**
+- When viewport height < ~640px, **vertical scrollbar** appears
+- Horizontal scrolling NOT needed (7 columns fit most screens)
+
+### Minimum Viewport: 360×480 (phone portrait)
+- At 360×480: Grid shows ~4 rows, rest scrolls
+- At 480×640+: Grid shows all 5 rows, no scroll needed
+- At 800×600+: Full grid visible
+
+### Scene Tree Change
+```
+LevelSelect (Control)
+└── VBoxContainer
+    ├── TitleLabel
+    ├── ScrollContainer              ← NEW: wraps the grid
+    │   └── LevelButtonsContainer (GridContainer, 7 cols)
+    ├── RestartButton
+    └── BackButton
+```
+
+---
+
+## Error Handling — Explicit Spec
+
+| Error | Handling |
+|-------|----------|
+| `GameManager.unlocked_level` missing/corrupted | `LevelManager.get_unlocked_levels()` returns `1` as safe fallback. Level 1 always playable. |
+| Level number > 35 | `_on_level_selected()` validates: `if level > 35: printerr(...); return` |
+| Level number < 1 | `_on_level_selected()` validates: `if level < 1: printerr(...); return` |
+| `game.tscn` fails to load | Godot prints error to console. No crash. Graceful fallback. |
+| Scene load during transition | `_is_transitioning` guard in game_scene.gd prevents double-load. |
+
+---
+
 ## Priority
 
 - **P0**: Core functionality (click → load level, back → menu) — already working
-- **P1**: Visual polish (difficulty colors, completion indicators, scroll container)
+- **P1**: Visual polish (difficulty colors, scroll container, completion indicators)
 - **P2**: Star ratings, best time display, level descriptions
 - **P3**: Internationalization, accessibility improvements
