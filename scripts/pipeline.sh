@@ -11,7 +11,7 @@ cd "$(dirname "$0")/.."
 # Step 1: Unit Tests (L1)
 echo ""
 echo "📝 Step 1: Running Unit Tests (L1)..."
-if ./bin/godot --headless --test res://tests/unit/ 2>&1; then
+if ./bin/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit 2>&1; then
     echo "✅ Unit tests passed"
 else
     echo "❌ Unit tests FAILED — blocking build"
@@ -21,7 +21,7 @@ fi
 # Step 2: Integration Tests (L2)
 echo ""
 echo "🔗 Step 2: Running Integration Tests (L2)..."
-if ./bin/godot --headless --test res://tests/playmode/ 2>&1; then
+if ./bin/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -gexit 2>&1; then
     echo "✅ Integration tests passed"
 else
     echo "❌ Integration tests FAILED — blocking build"
@@ -31,9 +31,8 @@ fi
 # Step 3: WebGL Build
 echo ""
 echo "🏗️ Step 3: Building WebGL Export..."
-rm -rf Builds/WebGL/
 mkdir -p Builds/WebGL
-if ./bin/godot --headless --export-release "Web" Builds/WebGL/ 2>&1; then
+if ./bin/godot --headless --export-release "Web" Builds/WebGL/index.html 2>&1; then
     echo "✅ Build complete"
     echo "   Files:"
     ls -lh Builds/WebGL/ | awk '{print "   " $9, "("$5")"}'

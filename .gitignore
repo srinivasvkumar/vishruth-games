@@ -74,3 +74,19 @@ user://
 
 # PCK files
 *.pck
+
+# Root-level WebGL export artifacts (duplicate of Builds/WebGL/)
+index.html
+index.js
+index.wasm
+index.pck
+index.css
+index.*.worklet.js
+index.*.png
+index.*.jpg
+index.apple-touch-icon.png
+index.icon.png
+index.png
+.nojekyll
+__dotworklets__
+__dotworklets__/
