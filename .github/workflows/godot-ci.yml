@@ -1,0 +1,45 @@
+name: Godot CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Godot 4.7.2
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q Godot_v4.7.2-stable_linux.x86_64.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+
+      - name: Install GUT addon
+        run: |
+          mkdir -p addons
+          git clone --depth 1 --branch godot_4_7 https://github.com/bitwes/Gut.git /tmp/gut-install
+          cp -r /tmp/gut-install/addons/gut addons/gut
+
+      - name: Run Unit Tests (L1)
+        run: ./Godot_v4.7.2-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -gexit
+
+      - name: Run Integration Tests (L2)
+        run: ./Godot_v4.7.2-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -gexit
+      
+      - name: Export WebGL
+        run: |
+          mkdir -p Builds/WebGL
+          ./Godot_v4.7.2-stable_linux.x86_64 --headless --export-release "Web" Builds/WebGL/
+      
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./Builds/WebGL
+          keep_files: true
