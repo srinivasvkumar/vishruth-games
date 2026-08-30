@@ -52,6 +52,6 @@ func _on_main_menu() -> void:
 	print("[EndScreenUI] Returning to main menu")
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
-func show(score: int) -> void:
+func set_score(score: int) -> void:
 	if score_label:
 		score_label.text = "Final Score: " + str(score)
