@@ -2,9 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './',
-  timeout: 30000,
+  // SwiftShader boots slow (CPU-rendered WebGL2); give each test 60s headroom.
+  timeout: 60000,
   expect: {
-    timeout: 10000
+    timeout: 10000,
   },
   use: {
     baseURL: 'http://localhost:8765',
@@ -15,22 +16,20 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
-        // Headless WebGL support
+        // Headless WebGL: SwiftShader (verified 2026-08-30 — PLAN.md §4 / G2).
+        // Without --enable-unsafe-swiftshader + angle/swiftshader the engine
+        // aborts at boot with "WebGL2 missing" (a test-env artifact, not a bug).
         launchOptions: {
           args: [
             '--no-sandbox',
-            '--disable-setuid-sandbox',
             '--disable-gpu',
-            '--disable-gpu-compositing',
-            '--use-gl=egl',
-            '--use-angle=egl',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding',
-          ]
-        }
+            '--enable-unsafe-swiftshader',
+            '--use-gl=angle',
+            '--use-angle=swiftshader',
+          ],
+        },
       },
     },
   ],

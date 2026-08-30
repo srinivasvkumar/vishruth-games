@@ -1,125 +1,75 @@
 /**
  * Cluster Rush — E2E Tests (Canvas-based Godot WebGL game)
  *
- * Godot WebGL renders all UI on a `<canvas>` element. Standard DOM selectors
- * (button labels, etc.) do NOT work with Playwright because there are no
- * HTML buttons — everything is drawn as pixels.
+ * Godot WebGL renders all UI on a `<canvas id="canvas">` element. Standard DOM
+ * selectors do NOT work — everything is drawn as pixels. Boot/pixel/click
+ * logic is centralized in tests/e2e/helpers/canvas.ts (PLAN.md §4).
  *
- * Strategy:
- * 1. Wait for the game canvas to appear and the splash overlay to hide.
- * 2. Verify the canvas renders a non-trivial image.
- * 3. Use page.evaluate() to inspect page title / canvas state.
- * 4. Click the canvas at known pixel coordinates to simulate player input.
+ * Launch args (SwiftShader) live in playwright.config.ts — verified 2026-08-30.
  */
 
 import { test, expect } from '@playwright/test';
+import { bootWait, canvasStats, clickCanvas } from './helpers/canvas.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. Game loads and renders on canvas
 // ─────────────────────────────────────────────────────────────────────────────
 test('game canvas loads and splash hides', async ({ page }) => {
-  await page.goto('http://localhost:8765/');
+  await page.goto('/');
+  await bootWait(page);
 
-  // Wait for the splash overlay to disappear (game started)
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
+  // The main menu is a dark-gray (non-black) bg with a light title + button
+  // column, so the sampled canvas reads ~100% non-black (background counts as
+  // non-black). The >5 threshold is the floor: a crashed/unrendered canvas
+  // reads ~0% (black) or an all-black clear color.
+  const stats = await canvasStats(page);
+  console.log('Canvas stats at menu boot:', JSON.stringify(stats));
+  expect(stats.cw).toBeGreaterThanOrEqual(1280);
+  expect(stats.ch).toBeGreaterThanOrEqual(720);
+  expect(stats.nonBlackPct, `nonBlackPct=${stats.nonBlackPct}%`).toBeGreaterThan(5);
 
-  // Give the WebGL context a moment to render
-  await page.waitForTimeout(2000);
-
-  // Verify canvas exists and has non-zero dimensions
-  const canvasSize = await page.evaluate(() => {
-    const c = document.querySelector('canvas');
-    if (!c) return { width: 0, height: 0 };
-    return { width: c.width, height: c.height };
-  });
-  console.log('Canvas size:', canvasSize);
-  expect(canvasSize.width).toBeGreaterThan(0);
-  expect(canvasSize.height).toBeGreaterThan(0);
-
-  // Save a screenshot for visual inspection
-  await page.screenshot({
-    path: 'tests/e2e/screenshots/game-loaded-main-menu.png',
-    fullPage: false,
-  });
-
-  // No JS errors in console
-  const errors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') errors.push(`${msg.type()}: ${msg.text()}`);
-  });
-  expect(errors.length).toBe(0);
+  // Evidence (PLAN.md §4: screenshot on every gate test).
+  await page.screenshot({ path: 'tests/e2e/screenshots/menu-boot.png', fullPage: false });
 });
 
 test('page title contains "Cluster"', async ({ page }) => {
-  await page.goto('http://localhost:8765/');
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
+  // Title is static in Builds/WebGL/index.html (Godot export, project name),
+  // so no boot wait is needed — the document title is available at DOM parse.
+  await page.goto('/');
   const title = await page.title();
-  console.log('Page title:', title);
-  // Godot WebGL templates use the project name; accept either variant
-  expect(title).toMatch(/cluster/i);
+  console.log('Page title:', JSON.stringify(title));
+  expect(title.toLowerCase()).toContain('cluster');
 });
 
 test('canvas pixel data is non-trivial', async ({ page }) => {
-  await page.goto('http://localhost:8765/');
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
-  await page.waitForTimeout(2000);
+  await page.goto('/');
+  await bootWait(page);
 
-  // Read a small patch of pixels from the center of the canvas
-  const pixelData = await page.evaluate(() => {
-    const c = document.querySelector('canvas');
-    if (!c) return null;
-    const ctx = c.getContext('2d');
-    if (!ctx) return null;
-    const data = ctx.getImageData(
-      Math.floor(c.width / 2) - 5,
-      Math.floor(c.height / 2) - 5,
-      10,
-      10,
-    );
-    // Return a compact summary: number of non-black pixels
-    let count = 0;
-    for (let i = 0; i < data.data.length; i += 4) {
-      if (data.data[i] > 0 || data.data[i + 1] > 0 || data.data[i + 2] > 0) {
-        count++;
-      }
-    }
-    return { width: c.width, height: c.height, nonBlackPixels: count };
-  });
-
-  expect(pixelData).not.toBeNull();
-  // A properly-rendered scene should have many non-black pixels
-  expect(pixelData.nonBlackPixels).toBeGreaterThan(50);
+  const stats = await canvasStats(page);
+  console.log('Canvas stats:', JSON.stringify(stats));
+  expect(stats.cw).toBeGreaterThan(0);
+  expect(stats.ch).toBeGreaterThan(0);
+  // Menu: light title text + 4 button outlines/fills over dark bg.
+  expect(stats.nonBlackPct, `nonBlackPct=${stats.nonBlackPct}%`).toBeGreaterThan(5);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. Keyboard input is accepted by the browser (game receives focus)
 // ─────────────────────────────────────────────────────────────────────────────
 test('canvas accepts keyboard focus and key events', async ({ page }) => {
-  await page.goto('http://localhost:8765/');
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
-  await page.waitForTimeout(1000);
+  await page.goto('/');
+  await bootWait(page);
+  // Give the menu a beat after boot before input.
+  await page.waitForTimeout(500);
 
-  // Click on the canvas to focus it
-  const canvas = await page.locator('canvas').first();
-  await canvas.click();
+  // Click the canvas to focus it (Godot sets focusCanvas=true on boot, but a
+  // click guarantees input focus in headless Chrome).
+  await clickCanvas(page, 640, 360);
 
-  // Send a key event
+  // Send a key event — the menu accepts Enter/Space for the focused button.
+  // No crash = canvas still present and visible afterwards.
   await page.keyboard.press('Space');
-
-  // No crash — verify the canvas is still visible
-  await expect(canvas).toBeVisible();
+  await expect(page.locator('#canvas')).toBeVisible();
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,25 +77,16 @@ test('canvas accepts keyboard focus and key events', async ({ page }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 test('no missing WASM or PCK files', async ({ page }) => {
   const notFound: string[] = [];
-
-  page.on('response', async (response) => {
-    if (response.status() === 404) {
-      notFound.push(response.url());
-    }
+  page.on('response', (response) => {
+    if (response.status() === 404) notFound.push(response.url());
   });
 
-  await page.goto('http://localhost:8765/');
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
-  await page.waitForTimeout(2000);
+  await page.goto('/');
+  await bootWait(page);
 
   // Filter out known non-critical 404s (favicon, etc.)
   const critical = notFound.filter(
-    (url) =>
-      !url.includes('favicon') &&
-      !url.includes('icon'),
+    (url) => !url.includes('favicon') && !url.includes('icon'),
   );
   expect(critical).toEqual([]);
 });
@@ -154,12 +95,23 @@ test('no missing WASM or PCK files', async ({ page }) => {
 // 4. Game scene loads via URL parameter / direct navigation
 // ─────────────────────────────────────────────────────────────────────────────
 test('game scene renders when loaded directly', async ({ page }) => {
-  await page.goto('http://localhost:8765/', { waitUntil: 'load' });
-  await page.waitForFunction(() => {
-    const overlay = document.getElementById('status');
-    return overlay && overlay.style.visibility === 'hidden';
-  }, { timeout: 30_000 });
+  await page.goto('/');
+  await bootWait(page);
+  const stats = await canvasStats(page);
+  expect(page.locator('#canvas')).toBeVisible();
+  expect(stats.nonBlackPct, `nonBlackPct=${stats.nonBlackPct}%`).toBeGreaterThan(5);
+});
 
-  const canvas = await page.locator('canvas').first();
-  await expect(canvas).toBeVisible();
+// ─────────────────────────────────────────────────────────────────────────────
+// M2 (gameplay core) — parked until M2 milestones land.
+// Coordinate-click specs for menu navigation / gameplay are tracked in the M2
+// milestone (PLAN.md §3 M2: "scripted input sequences produce expected state").
+// test.fixme keeps the suite green at M0 without pretending these pass.
+// ─────────────────────────────────────────────────────────────────────────────
+test.fixme('menu: clicking Start Game launches gameplay (M2)', async ({ page }) => {
+  await page.goto('/');
+  await bootWait(page);
+  // TODO(M2): locate "Start Game" button pixel coords and clickCanvas;
+  // assert the gameplay scene renders (HUD score/lives visible).
+  await clickCanvas(page, 640, 300);
 });
