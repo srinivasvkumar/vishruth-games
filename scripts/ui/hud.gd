@@ -71,7 +71,7 @@ func _update_progress_bar() -> void:
 		return
 	var player_node: CharacterBody3D = _find_player()
 	if player_node:
-		var progress: float = clampf(player_node.global_position.x / 140.0, 0.0, 1.0)
+		var progress: float = clampf(player_node.global_position.x / LevelManager.finish_x, 0.0, 1.0)
 		progress_bar.value = progress
 		# Apply style
 		var pb_style: StyleBoxFlat = StyleBoxFlat.new()

@@ -83,7 +83,7 @@ func _trigger_level_complete():
 	if player:
 		player.set_physics_process(false)
 		# Teleport player to finish line
-		player.global_position.x = 140.0
+		player.global_position.x = LevelManager.finish_x
 		player.velocity = Vector3.ZERO
 	
 	GameManager.complete_level()

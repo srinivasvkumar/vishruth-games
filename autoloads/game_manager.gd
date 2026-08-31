@@ -127,11 +127,6 @@ func get_level_time_bonus() -> float:
 func set_level_time_bonus(bonus: float):
 	level_time_bonus = bonus
 
-func save_progress(level: int):
-	var config: ConfigFile = ConfigFile.new()
-	config.set_value("progress", "highest_level", level)
-	config.save(_save_path)
-
 func load_progress():
 	var config: ConfigFile = ConfigFile.new()
 	var err: int = config.load(_save_path)
