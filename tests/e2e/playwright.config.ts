@@ -24,7 +24,7 @@ export default defineConfig({
         launchOptions: {
           args: [
             '--no-sandbox',
-            '--disable-gpu',
+            '--disable-setuid-sandbox',
             '--enable-unsafe-swiftshader',
             '--use-gl=angle',
             '--use-angle=swiftshader',
