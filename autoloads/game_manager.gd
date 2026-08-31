@@ -69,14 +69,33 @@ func complete_level():
 	
 	level_completed.emit()
 	
-	# Save progress immediately
-	save_progress(current_level + 1)
-	
-	# Save completion with stars
-	LevelManager.save_level_completion(current_level, stars)
+	# Save progress immediately (single writer — no LevelManager.save_level_completion)
+	_save_progress_with_stars(current_level + 1, current_level, stars)
 	
 	if current_level >= 35:
 		set_state("completed")
+
+# Single save writer: combines highest_level + level_data (stars) in one ConfigFile write
+func _save_progress_with_stars(highest_level: int, completed_level: int, stars: int):
+	var config := ConfigFile.new()
+	var err := config.load(_save_path)
+	var json_str := "{}"
+	if err == OK:
+		json_str = config.get_value("progress", "level_data", "{}")
+	
+	var data := JSON.parse_string(json_str) as Dictionary
+	if data == null:
+		data = {}
+	
+	var level_info := {"stars": stars, "completed": true}
+	data[str(completed_level)] = level_info
+	
+	var json := JSON.new()
+	config.set_value("progress", "level_data", json.stringify(data))
+	config.set_value("progress", "highest_level", highest_level)
+	config.save(_save_path)
+	
+	print("[GameManager] Saved progress: level ", highest_level, ", level ", completed_level, " with ", stars, " stars")
 
 func fail_level():
 	level_failed.emit()

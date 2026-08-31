@@ -74,6 +74,7 @@ var level_templates := {
 
 var current_level: int = 1
 var _scene_root: Node3D = null
+var finish_x: float = 140.0
 # Collected references for easy lookup
 var _trucks: Array[CharacterBody3D] = []
 var _hazards: Array[Area3D] = []
@@ -175,6 +176,10 @@ func load_level(level: int) -> void:
 	
 	print("[LevelManager] Loading level ", level)
 	_generate_level(level)
+	
+	# Set finish-x based on ground extent (ground is 300 units long, [-150, +150])
+	# Player must reach near the end (+140 is the finish line)
+	finish_x = 140.0
 	
 	level_loaded.emit()
 

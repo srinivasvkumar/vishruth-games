@@ -3,6 +3,9 @@ extends Node
 # Handles level generation, HUD wiring, UI buttons, and game state flow
 # Manages smooth transitions between level complete / game over / paused states
 
+var _GameManager := preload("res://autoloads/game_manager.gd")
+var _LevelManager := preload("res://autoloads/level_manager.gd")
+
 @onready var world: Node3D = $World
 @onready var hud: Control = $GameUI/HUD
 @onready var level_complete: Control = $GameUI/LevelComplete
@@ -69,8 +72,8 @@ func _process(delta):
 	if GameManager.get_state() == "playing" and world and not _is_transitioning:
 		var player_node = world.get_node_or_null("Player")
 		if player_node:
-			# Ground extends to +150 in X; consider level complete at +140
-			if player_node.global_position.x >= 140.0:
+			# Ground extends to +150 in X; use finish_x from level data
+			if player_node.global_position.x >= LevelManager.finish_x:
 				_trigger_level_complete()
 
 func _trigger_level_complete():

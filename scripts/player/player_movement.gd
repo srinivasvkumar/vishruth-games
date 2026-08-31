@@ -31,6 +31,7 @@ const FRICTION: float = 0.1
 const ACCELERATION: float = 12.0
 const WALL_DETECT_LENGTH: float = 1.0
 const WALL_DETECT_Y_OFFSET: float = 0.4  # raycasts aim from slightly below player centre
+const AUTO_RUN_SPEED: float = 5.0         # forward auto-run velocity
 
 # ---- State ----
 var jump_count: int = 0
@@ -301,6 +302,10 @@ func _apply_physics(delta: float):
 # Horizontal movement
 # =============================================================================
 func _handle_movement(delta: float):
+	# Apply auto-run forward velocity (constant forward motion along +Z)
+	if not is_climbing and not is_on_wall:
+		velocity.z = AUTO_RUN_SPEED
+	
 	if is_climbing:
 		var input_x := Input.get_axis("strafe_left", "strafe_right")
 		velocity.x = lerp(velocity.x, input_x * MOVE_SPEED, ACCELERATION * delta)

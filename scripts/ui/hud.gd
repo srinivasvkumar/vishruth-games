@@ -54,9 +54,13 @@ func updateHUD() -> void:
 	score_label.text = "Score: " + str(GameManager.score)
 	_setup_label_font(score_label)
 	
-	# Timer — "Time: 45s"
+	# Timer — "Time: 01:23.45"
 	var elapsed: float = GameManager.get_current_time()
-	timer_label.text = "Time: " + str(int(elapsed)) + "s"
+	var minutes: int = int(elapsed / 60.0)
+	var total_seconds: int = int(elapsed)
+	var seconds: int = total_seconds % 60
+	var ms: int = int((elapsed * 100.0) % 100.0)
+	timer_label.text = "Time: %02d:%02d.%02d" % [minutes, seconds, ms]
 	_setup_label_font(timer_label)
 	
 	# Progress bar — based on player position
@@ -99,7 +103,7 @@ func _find_player() -> CharacterBody3D:
 			var p: Node = world.get_node_or_null("Player")
 			if p is CharacterBody3D:
 				return p as CharacterBody3D
-	return null
+	return null as CharacterBody3D
 
 func _on_lives_changed() -> void:
 	# Flash effect when lives change
