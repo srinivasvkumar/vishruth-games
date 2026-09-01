@@ -45,7 +45,7 @@
     "[log] [LevelManager] Truck convoy: 1 trucks, spacing=16.0 units",
     "[log] [LevelManager] Placed 0 hazards on trucks",
     "[log] [LevelManager] Using existing Player from scene",
-    "[log] [LevelManager] Spawned falling debris at x=24.8 z=0.4",
-    "[log] [LevelManager] Spawned falling debris at x=71.6 z=-12.7"
+    "[log] [LevelManager] Spawned falling debris at x=22.6 z=0.6",
+    "[log] [LevelManager] Spawned falling debris at x=80.0 z=13.0"
   ]
 }

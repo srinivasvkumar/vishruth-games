@@ -302,25 +302,25 @@ func _apply_physics(delta: float):
 # Horizontal movement
 # =============================================================================
 func _handle_movement(delta: float):
-	# Apply auto-run forward velocity (constant forward motion along +Z)
+	# Apply auto-run forward velocity (constant forward motion along +X)
 	if not is_climbing and not is_on_wall:
-		velocity.z = AUTO_RUN_SPEED
+		velocity.x = AUTO_RUN_SPEED
 	
 	if is_climbing:
 		var input_x := Input.get_axis("strafe_left", "strafe_right")
-		velocity.x = lerp(velocity.x, input_x * MOVE_SPEED, ACCELERATION * delta)
+		velocity.z = lerp(velocity.z, input_x * MOVE_SPEED, ACCELERATION * delta)
 		velocity.y = WALL_CLIMB_SPEED
 		return
-
+	
 	var input_x := Input.get_axis("strafe_left", "strafe_right")
 
-	# Apply acceleration toward target velocity
+	# Apply acceleration toward target velocity (lateral = Z axis)
 	var target_velocity := input_x * MOVE_SPEED
-	velocity.x = lerp(velocity.x, target_velocity, ACCELERATION * delta)
+	velocity.z = lerp(velocity.z, target_velocity, ACCELERATION * delta)
 
 	# Apply friction when not moving
 	if input_x == 0:
-		velocity.x = lerp(velocity.x, 0, FRICTION * 60.0 * delta)
+		velocity.z = lerp(velocity.z, 0, FRICTION * 60.0 * delta)
 
 
 # =============================================================================

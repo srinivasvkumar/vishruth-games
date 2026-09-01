@@ -32,7 +32,18 @@ export default defineConfig({
         },
       },
     },
+    {
+      name: 'firefox',
+      // Headless Firefox uses its built-in software GL (llvmpipe) — no launch
+      // flags exist for SwiftShader. Boot is slower under CPU GL, so give this
+      // project extra headroom; the M5 campaign spec sets its own 120s anyway.
+      use: {
+        ...devices['Desktop Firefox'],
+      },
+    },
   ],
+  // Firefox software-GL boots slower than Chromium/SwiftShader.
+  workers: 1,
   retries: 1,
   reportSlowTests: { max: 5, threshold: 15000 },
 });
