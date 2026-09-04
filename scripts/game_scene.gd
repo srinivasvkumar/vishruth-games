@@ -40,11 +40,11 @@ func _m5_debug_tick() -> void:
 func _ready():
 	# Hide all overlays initially
 	level_complete.visible = false
-	level_complete.alpha = 0.0
+	level_complete.modulate.a = 0.0
 	game_over.visible = false
-	game_over.alpha = 0.0
+	game_over.modulate.a = 0.0
 	pause_menu.visible = false
-	pause_menu.alpha = 0.0
+	pause_menu.modulate.a = 0.0
 	loading_screen.visible = false
 	
 	# Connect button signals
