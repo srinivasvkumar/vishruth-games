@@ -1,11 +1,59 @@
-# Binary/build artifacts
-godot-editor-4.2.1/
-bin/
-Builds/
-.godot/
-export_templates/
-tests/
+# Godot engine
+Godot_v*.zip
+Godot_v*.exe
+Godot*Editor*
+godot
+.editorconfig
+.editordata
 
-# Game node_modules
-geometry-dash/node_modules/
-2048/
+# Godot generated
+project.godot
+godot.x11.*
+godot.editor.*
+export_presets.cfg
+export_templates/
+.godot/
+
+# Godot export output
+Builds/
+builds/
+build/
+temp/
+
+# Godot cache
+Library/
+Temp/
+obj/
+*.log
+
+# Godot generated imports (NOT the actual files)
+*.tscn.import
+*.tres.import
+*.import/
+*.uid
+
+# Godot export templates
+export_templates.tpz
+
+# Crash reports
+*.crash
+*.crash.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.vs/
+.idea/
+
+# Node
+node_modules/
+
+# Local Godot user data
+user://
+
+# PCK files
+*.pck

@@ -21,7 +21,12 @@ text = "Select Level"
 horizontal_alignment = 1
 alignment = 1
 
-[node name="LevelButtonsContainer" type="GridContainer" parent="VBoxContainer"]
+[node name="LevelButtonsScroll" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 2
+
+[node name="LevelButtonsContainer" type="GridContainer" parent="LevelButtonsScroll"]
 layout_mode = 2
 columns = 7
 

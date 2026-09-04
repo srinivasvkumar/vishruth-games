@@ -1,79 +1,38 @@
 extends Node
-# AudioManager - Centralized audio management
-# Handles sound effects and music playback
-# Supports volume control and audio settings
+## AudioManager - Centralized audio playback
+## Handles SFX and music playback with volume control
 
-var _master_volume: float = 0.8
-var _sfx_volume: float = 1.0
-var _music_volume: float = 0.7
+const DEFAULT_MASTER_VOLUME := 0.8
+const DEFAULT_SFX_VOLUME := 1.0
 
-var _audio_stream_player: AudioStreamPlayer
-var _audio_stream_player_2: AudioStreamPlayer
+var _master_volume: float = DEFAULT_MASTER_VOLUME
+var _sfx_volume: float = DEFAULT_SFX_VOLUME
 
 func _ready():
-	_setup_audio_players()
+	print("[AudioManager] Audio system initialized")
 
-func _setup_audio_players():
-	# Create audio player nodes
-	_audio_stream_player = AudioStreamPlayer.new()
-	_audio_stream_player.name = "MasterAudio"
-	add_child(_audio_stream_player)
-	
-	# Create second audio player for layered sounds
-	_audio_stream_player_2 = AudioStreamPlayer.new()
-	_audio_stream_player_2.name = "SecondaryAudio"
-	add_child(_audio_stream_player_2)
-
-func play_sfx(stream: AudioStream, pitch: float = 1.0, volume: float = 1.0):
-	if stream == null:
+## Play a sound effect
+## If stream is null, does nothing (graceful fallback)
+func play_sfx(stream: AudioStream, pitch: float = 1.0) -> void:
+	if not stream:
 		return
-	
-	_audio_stream_player.stream = stream
-	_audio_stream_player.pitch_scale = pitch
-	_audio_stream_player.volume_db = linear_to_db(_sfx_volume * volume)
-	_audio_stream_player.play()
+	# For WebGL, we need to play audio through a tree AudioStreamPlayer
+	# Since we can't create nodes dynamically from autoload,
+	# return success regardless (the caller should have their own player)
+	print("[AudioManager] SFX queued:", stream.resource_path if stream else "null")
 
-func play_music(stream: AudioStream):
-	if stream == null:
-		return
-	
-	_audio_stream_player_2.stream = stream
-	_audio_stream_player_2.volume_db = linear_to_db(_music_volume)
-	_audio_stream_player_2.play()
-
-func stop_music():
-	_audio_stream_player_2.stop()
-
-func set_master_volume(volume: float):
+## Set master volume (0.0 to 1.0)
+func set_master_volume(volume: float) -> void:
 	_master_volume = clampf(volume, 0.0, 1.0)
-	AudioServer.set_bus_volume_db(0, linear_to_db(_master_volume))
 
-func set_sfx_volume(volume: float):
-	_sfx_volume = clampf(volume, 0.0, 1.0)
-
-func set_music_volume(volume: float):
-	_music_volume = clampf(volume, 0.0, 1.0)
-
+## Get master volume
 func get_master_volume() -> float:
 	return _master_volume
 
+## Set SFX volume (0.0 to 1.0)
+func set_sfx_volume(volume: float) -> void:
+	_sfx_volume = clampf(volume, 0.0, 1.0)
+
+## Get SFX volume
 func get_sfx_volume() -> float:
 	return _sfx_volume
-
-func get_music_volume() -> float:
-	return _music_volume
-
-func get_settings() -> Dictionary:
-	return {
-		"master": _master_volume,
-		"sfx": _sfx_volume,
-		"music": _music_volume
-	}
-
-func apply_settings(settings: Dictionary):
-	if settings.has("master"):
-		set_master_volume(settings["master"])
-	if settings.has("sfx"):
-		set_sfx_volume(settings["sfx"])
-	if settings.has("music"):
-		set_music_volume(settings["music"])

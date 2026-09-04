@@ -1,43 +1,118 @@
 extends Control
-# HUD - Heads-up display showing level, lives, time, score
+# HUD - Heads-up display overlay
+# Shows level, lives, score, timer at top of screen
+# Uses white text, semi-transparent background, 24px font
 
-var _level_label: Label
-var _lives_label: Label
-var _time_label: Label
-var _score_label: Label
+@onready var score_label: Label = $ScoreLabel as Label
+@onready var lives_label: Label = $LivesLabel as Label
+@onready var level_label: Label = $LevelLabel as Label
+@onready var timer_label: Label = $TimeLabel as Label
+@onready var progress_bar: ProgressBar = $ProgressBar as ProgressBar
 
-func _ready():
-	_setup_hud()
+var _update_timer: float = 0.0
+var _hud_style: StyleBoxFlat
+var _font: Font
+
+func _ready() -> void:
+	_setup_visuals()
 	GameManager.lives_changed.connect(_on_lives_changed)
 
-func _setup_hud():
-	_level_label = $LevelLabel as Label
-	_lives_label = $LivesLabel as Label
-	_time_label = $TimeLabel as Label
-	_score_label = $ScoreLabel as Label
-
-func _process(delta: float):
-	# Update display
-	if _level_label:
-		_level_label.text = "Level: " + str(GameManager.current_level) + " / 35"
+func _setup_visuals() -> void:
+	# Semi-transparent dark background
+	_hud_style = StyleBoxFlat.new()
+	_hud_style.bg_color = Color(0, 0, 0, 0.6)
+	_hud_style.set_corner_radius_all(4)
+	_hud_style.set_border_width_left(2)
+	_hud_style.border_color = Color(0.3, 0.6, 1.0, 0.5)
+	add_theme_stylebox_override("panel", _hud_style)
 	
-	if _lives_label:
-		_lives_label.text = "Lives: " + str(GameManager.lives)
-	
-	if _time_label:
-		var time := GameManager.get_current_time()
-		_time_label.text = "Time: " + _format_time(time)
-	
-	if _score_label:
-		_score_label.text = "Score: " + str(GameManager.score)
+	# Common font settings (24px) — use default theme font
+	_font = null
 
-func _format_time(seconds: float) -> String:
-	var minutes := int(seconds / 60.0)
-	var remaining := seconds - minutes * 60.0
-	return "%02d:%05.2f" % [minutes, remaining]
+func _process(delta: float) -> void:
+	_update_timer += delta
+	if _update_timer > 0.1:  # Update every 100ms for smooth timer
+		_update_timer = 0.0
+		updateHUD()
 
-func _on_lives_changed():
-	# Flash the lives indicator
-	if _lives_label:
-		_lives_label.modulate = Color.YELLOW
-		create_tween().tween_property(_lives_label, "modulate", Color.WHITE, 0.3)
+func updateHUD() -> void:
+	if not GameManager:
+		return
+	
+	# Level — "Level: 5"
+	level_label.text = "Level: " + str(GameManager.current_level)
+	_setup_label_font(level_label)
+	
+	# Lives — "Lives: [hearts]"
+	var hearts: String = ""
+	for i in range(GameManager.lives):
+		hearts += "\u2764\uFE0F"  # Red heart emoji
+	lives_label.text = "Lives: " + hearts
+	_setup_label_font(lives_label)
+	
+	# Score — "Score: 150"
+	score_label.text = "Score: " + str(GameManager.score)
+	_setup_label_font(score_label)
+	
+	# Timer — "Time: 01:23.45"
+	var elapsed: float = GameManager.get_current_time()
+	var minutes: int = int(elapsed / 60.0)
+	var total_seconds: int = int(elapsed)
+	var seconds: int = total_seconds % 60
+	var ms: int = int(int(elapsed * 100.0) % 100)
+	timer_label.text = "Time: %02d:%02d.%02d" % [minutes, seconds, ms]
+	_setup_label_font(timer_label)
+	
+	# Progress bar — based on player position
+	_update_progress_bar()
+
+func _update_progress_bar() -> void:
+	if not progress_bar:
+		return
+	var player_node: CharacterBody3D = _find_player()
+	if player_node:
+		var progress: float = clampf(player_node.global_position.x / LevelManager.finish_x, 0.0, 1.0)
+		progress_bar.value = progress
+		# Apply style
+		var pb_style: StyleBoxFlat = StyleBoxFlat.new()
+		pb_style.bg_color = Color(0.2, 0.5, 0.9, 0.3)
+		pb_style.set_corner_radius_all(4)
+		progress_bar.add_theme_stylebox_override("finished", _bar_style())
+		progress_bar.add_theme_stylebox_override("fill", _bar_style())
+		progress_bar.add_theme_stylebox_override("bar", _bar_style())
+
+func _bar_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.2, 0.7, 1.0)
+	style.set_corner_radius_all(2)
+	return style
+
+func _setup_label_font(label: Label) -> void:
+	# White text, centered alignment
+	label.modulate = Color.WHITE
+	if label.text.contains("Score"):
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	elif label.text.contains("Time"):
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _find_player() -> CharacterBody3D:
+	var scene_root: Node = get_tree().get_current_scene()
+	if scene_root:
+		var world: Node = scene_root.get_node_or_null("World")
+		if world:
+			var p: Node = world.get_node_or_null("Player")
+			if p is CharacterBody3D:
+				return p
+	return null
+
+func _on_lives_changed() -> void:
+	# Flash effect when lives change
+	if lives_label:
+		lives_label.modulate = Color.YELLOW
+		create_tween().tween_property(lives_label, "modulate", Color.WHITE, 0.3)
+
+func showHUD() -> void:
+	visible = true
+
+func hideHUD() -> void:
+	visible = false

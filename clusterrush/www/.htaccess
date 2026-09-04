@@ -1,0 +1,32 @@
+# Apache config for Cluster Rush — COOP/COEP + Brotli
+# Place this in www/ or copy to /etc/apache2/sites-available/
+
+# Cross-Origin Isolation headers (REQUIRED for Godot 4.x)
+<IfModule mod_headers.c>
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+    Header set Cross-Origin-Resource-Policy "cross-origin"
+</IfModule>
+
+# Brotli compression
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html application/javascript application/json text/css application/wasm
+    BrotliCompressionQuality 11
+</IfModule>
+
+# Gzip fallback if Brotli not available
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html application/javascript application/json text/css application/wasm
+</IfModule>
+
+# Cache control — immutable for assets
+<FilesMatch "\.(wasm|pck|js|css|png|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# HTML files — no cache
+<FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</FilesMatch>

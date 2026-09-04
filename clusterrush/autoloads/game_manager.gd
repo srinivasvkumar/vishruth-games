@@ -9,6 +9,7 @@ signal level_failed
 signal game_paused
 signal game_resumed
 signal game_over
+signal game_completed
 signal level_started
 
 var current_level: int = 1
@@ -30,8 +31,10 @@ func set_state(new_state: String):
 		level_start_time = Time.get_ticks_msec() / 1000.0
 	elif new_state == "paused":
 		game_paused.emit()
-	elif new_state == "gameover" or new_state == "completed":
+	elif new_state == "gameover":
 		game_over.emit()
+	elif new_state == "completed":
+		game_completed.emit()
 
 func start_level(level_num: int):
 	current_level = level_num
@@ -54,14 +57,46 @@ func complete_level():
 	
 	var elapsed: float = Time.get_ticks_msec() / 1000.0 - level_start_time
 	var time_bonus: float = minf(elapsed * 10.0, 100.0)
+	level_time_bonus = time_bonus
 	score += 100 + time_bonus
+	
+	# Calculate star rating based on performance
+	var stars := 1
+	if lives >= 2:
+		stars = 2
+	if lives >= 3 and time_bonus >= 50:
+		stars = 3
 	
 	level_completed.emit()
 	
+	# Save progress immediately (single writer — no LevelManager.save_level_completion)
+	_save_progress_with_stars(current_level + 1, current_level, stars)
+	
 	if current_level >= 35:
 		set_state("completed")
-	else:
-		save_progress(current_level + 1)
+
+# Single save writer: combines highest_level + level_data (stars) in one ConfigFile write
+func _save_progress_with_stars(highest_level: int, completed_level: int, stars: int):
+	var config := ConfigFile.new()
+	var err := config.load(_save_path)
+	var json_str := "{}"
+	if err == OK:
+		json_str = config.get_value("progress", "level_data", "{}")
+	
+	var data := JSON.parse_string(json_str) as Dictionary
+	if data == null:
+		data = {}
+	
+	var level_info := {"stars": stars, "completed": true}
+	data[str(completed_level)] = level_info
+	
+	var json := JSON.new()
+	config.set_value("progress", "level_data", json.stringify(data))
+	config.set_value("progress", "highest_level", highest_level)
+	config.save(_save_path)
+	
+	print("[GameManager] Saved progress: level ", highest_level, ", level ", completed_level, " with ", stars, " stars")
+	print("[M5DBG] UNLOCK highest_level=", highest_level, " completed=", completed_level, " stars=", stars)
 
 func fail_level():
 	level_failed.emit()
@@ -78,16 +113,20 @@ func get_state() -> String:
 func is_player_alive() -> bool:
 	return game_state == "playing" and lives > 0
 
+func is_playing() -> bool:
+	return game_state == "playing"
+
+func is_paused() -> bool:
+	return game_state == "paused"
+
+func on_level_complete() -> void:
+	complete_level()
+
 func get_level_time_bonus() -> float:
 	return level_time_bonus
 
 func set_level_time_bonus(bonus: float):
 	level_time_bonus = bonus
-
-func save_progress(level: int):
-	var config: ConfigFile = ConfigFile.new()
-	config.set_value("progress", "highest_level", level)
-	config.save(_save_path)
 
 func load_progress():
 	var config: ConfigFile = ConfigFile.new()

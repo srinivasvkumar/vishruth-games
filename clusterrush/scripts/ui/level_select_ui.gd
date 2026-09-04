@@ -2,11 +2,18 @@ extends Control
 # LevelSelectUI - Dynamically generates level buttons for levels 1-35
 # Reads unlocked levels from GameManager.load_progress(), creates styled Button
 # nodes in the GridContainer, and handles navigation to levels and the main menu.
+#
+# P1 Visual Polish (2026-08-29):
+# - Tier color-coding: green=1-5, blue=6-10, yellow=11-20, orange=21-30, red=31-35
+# - ScrollContainer wrapping the grid for small viewports
+# - Star labels (1-3) below level numbers for completed levels
+# - Completed indicator (filled circle) for levels already beaten
 
 const GRID_COLUMNS := 7
 const TOTAL_LEVELS := 35
+const STAR_SYMBOLS := ["", "★", "★★", "★★★"]
 
-@onready var button_container: GridContainer = $VBoxContainer/LevelButtonsContainer
+@onready var button_container: GridContainer = $VBoxContainer/LevelButtonsScroll/LevelButtonsContainer
 @onready var back_button: Button = $VBoxContainer/BackButton
 
 var _unlock_threshold: int = 1
@@ -70,18 +77,28 @@ func _create_level_button(level_num: int) -> Button:
 	var btn := Button.new()
 
 	var unlocked := level_num <= _unlock_threshold
+	var completed := LevelManager.has_completed_level(level_num)
+	var stars := LevelManager.get_level_stars(level_num)
 
-	btn.text = "Level %d" % level_num
+	# Button text includes level number and star display
+	if completed:
+		btn.text = "L%d %s" % [level_num, STAR_SYMBOLS[stars]]
+	else:
+		btn.text = "L%d" % level_num
+
 	btn.disabled = not unlocked
 
-	# Tooltip: show whether the level is available or locked.
+	# Tooltip: show whether the level is available or locked, plus stars if completed
 	if unlocked:
-		btn.tooltip_text = "Level %d - Tap to play" % level_num
+		if completed:
+			btn.tooltip_text = "Level %d - Completed! %s" % [level_num, STAR_SYMBOLS[stars]]
+		else:
+			btn.tooltip_text = "Level %d - Tap to play" % level_num
 	else:
 		btn.tooltip_text = "Level %d - Complete earlier levels first" % level_num
 
-	# Style the button according to unlock state.
-	_apply_button_style(btn, unlocked)
+	# Apply tier color + unlock state styling
+	_apply_button_style(btn, unlocked, completed, stars)
 
 	# Connect the pressed signal so tapping starts the level.
 	btn.pressed.connect(_on_level_selected.bind(level_num))
@@ -90,21 +107,29 @@ func _create_level_button(level_num: int) -> Button:
 
 
 # ---------------------------------------------------------------------------
-# Button styling — enabled vs. greyed-out
+# Button styling — tier colors + unlock state + completion indicators
 # ---------------------------------------------------------------------------
 
-func _apply_button_style(btn: Button, unlocked: bool) -> void:
+func _apply_button_style(btn: Button, unlocked: bool, completed: bool, stars: int) -> void:
+	# Get tier color for this level
+	var tier_color := LevelManager.get_tier_color(btn.text.strip_edges().replace("L", "").to_int())
+
 	if unlocked:
-		# Enabled button: green accent to signal playable.
-		btn.add_theme_color_override("font_color", Color(0.2, 0.7, 0.2))
-		btn.add_theme_color_override("font_color_hover", Color(0.3, 0.85, 0.3))
-		btn.add_theme_color_override("font_color_pressed", Color(0.1, 0.55, 0.1))
-		btn.add_theme_color_override("font_color_hover_pressed", Color(0.15, 0.65, 0.15))
-		btn.add_theme_color_override("font_color_disabled", Color(0.5, 0.75, 0.5))
-		btn.add_theme_stylebox_override("normal", _enabled_stylebox())
-		btn.add_theme_stylebox_override("hover", _enabled_stylebox_hover())
-		btn.add_theme_stylebox_override("pressed", _enabled_stylebox_pressed())
-		btn.add_theme_stylebox_override("focus", _enabled_stylebox())
+		# Enabled button: colored border matching tier, light background
+		btn.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
+		btn.add_theme_color_override("font_color_hover", Color(0.0, 0.0, 0.0))
+		btn.add_theme_color_override("font_color_pressed", Color(0.0, 0.0, 0.0))
+		btn.add_theme_color_override("font_color_hover_pressed", Color(0.0, 0.0, 0.0))
+		btn.add_theme_color_override("font_color_disabled", Color(0.4, 0.4, 0.4))
+
+		btn.add_theme_stylebox_override("normal", _enabled_stylebox(tier_color, completed))
+		btn.add_theme_stylebox_override("hover", _enabled_stylebox_hover(tier_color, completed))
+		btn.add_theme_stylebox_override("pressed", _enabled_stylebox_pressed(tier_color, completed))
+		btn.add_theme_stylebox_override("focus", _enabled_stylebox(tier_color, completed))
+
+		# Completed levels get a subtle green tint overlay
+		if completed:
+			btn.add_theme_constant_override("separation", 4)
 	else:
 		# Locked button: greyed out, non-interactive.
 		btn.add_theme_color_override("font_color", Color(0.45, 0.45, 0.45))
@@ -117,53 +142,66 @@ func _apply_button_style(btn: Button, unlocked: bool) -> void:
 		btn.add_theme_stylebox_override("focus", _locked_stylebox())
 
 	# Size & alignment — consistent grid cells.
-	btn.custom_minimum_size = Vector2(80, 44)
+	btn.custom_minimum_size = Vector2(80, 50)
 	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	btn.clip_text = true
+	btn.autowrap_mode = TextServer.AUTOWRAP_WORD
 
 
-func _enabled_stylebox() -> StyleBoxFlat:
+# ---------------------------------------------------------------------------
+# StyleBox helpers — color-coded by tier + completion state
+# ---------------------------------------------------------------------------
+
+func _enabled_stylebox(tier_color: Color, completed: bool) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.92, 0.96, 0.92)
-	sb.border_color = Color(0.3, 0.8, 0.3)
-	sb.set_border_width_all(1)
+	# Light tint of tier color as background
+	sb.bg_color = tier_color.linear_to_srgb() * 0.12 + Color.WHITE * 0.88
+	sb.border_color = tier_color
+	sb.set_border_width_all(2)
+	if completed:
+		sb.set_border_width_top(3)  # Thicker top border for completed levels
 	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 8
-	sb.content_margin_right = 8
-	sb.content_margin_top = 6
-	sb.content_margin_bottom = 6
+	sb.content_margin_left = 4
+	sb.content_margin_right = 4
+	sb.content_margin_top = 4
+	sb.content_margin_bottom = 4
 	return sb
 
 
-func _enabled_stylebox_hover() -> StyleBoxFlat:
+func _enabled_stylebox_hover(tier_color: Color, completed: bool) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.85, 0.98, 0.85)
-	sb.border_color = Color(0.2, 0.9, 0.2)
-	sb.set_border_width_all(1)
+	sb.bg_color = tier_color.linear_to_srgb() * 0.18 + Color.WHITE * 0.82
+	sb.border_color = tier_color.darkened(0.2)
+	sb.set_border_width_all(2)
+	if completed:
+		sb.set_border_width_top(3)
 	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 8
-	sb.content_margin_right = 8
-	sb.content_margin_top = 6
-	sb.content_margin_bottom = 6
+	sb.content_margin_left = 4
+	sb.content_margin_right = 4
+	sb.content_margin_top = 4
+	sb.content_margin_bottom = 4
 	return sb
 
 
-func _enabled_stylebox_pressed() -> StyleBoxFlat:
+func _enabled_stylebox_pressed(tier_color: Color, completed: bool) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.75, 0.93, 0.75)
-	sb.border_color = Color(0.25, 0.82, 0.25)
-	sb.set_border_width_all(1)
+	sb.bg_color = tier_color.linear_to_srgb() * 0.25 + Color.WHITE * 0.75
+	sb.border_color = tier_color.darkened(0.1)
+	sb.set_border_width_all(2)
+	if completed:
+		sb.set_border_width_top(3)
 	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 8
-	sb.content_margin_right = 8
-	sb.content_margin_top = 6
-	sb.content_margin_bottom = 6
+	sb.content_margin_left = 4
+	sb.content_margin_right = 4
+	sb.content_margin_top = 4
+	sb.content_margin_bottom = 4
 	return sb
 
 
 func _locked_stylebox() -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.85, 0.85, 0.85)
-	sb.border_color = Color(0.6, 0.6, 0.6)
+	sb.bg_color = Color(0.9, 0.9, 0.9)
+	sb.border_color = Color(0.7, 0.7, 0.7)
 	sb.set_border_width_all(1)
 	sb.set_corner_radius_all(6)
 	sb.content_margin_left = 8
