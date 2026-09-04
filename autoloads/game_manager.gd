@@ -96,6 +96,7 @@ func _save_progress_with_stars(highest_level: int, completed_level: int, stars: 
 	config.save(_save_path)
 	
 	print("[GameManager] Saved progress: level ", highest_level, ", level ", completed_level, " with ", stars, " stars")
+	print("[M5DBG] UNLOCK highest_level=", highest_level, " completed=", completed_level, " stars=", stars)
 
 func fail_level():
 	level_failed.emit()

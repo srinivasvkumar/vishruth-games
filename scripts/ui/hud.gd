@@ -3,11 +3,11 @@ extends Control
 # Shows level, lives, score, timer at top of screen
 # Uses white text, semi-transparent background, 24px font
 
-@onready var score_label: Label = $ScoreLabel
-@onready var lives_label: Label = $LivesLabel
-@onready var level_label: Label = $LevelLabel
-@onready var timer_label: Label = $TimeLabel
-@onready var progress_bar: ProgressBar = $ProgressBar
+@onready var score_label: Label = $ScoreLabel as Label
+@onready var lives_label: Label = $LivesLabel as Label
+@onready var level_label: Label = $LevelLabel as Label
+@onready var timer_label: Label = $TimeLabel as Label
+@onready var progress_bar: ProgressBar = $ProgressBar as ProgressBar
 
 var _update_timer: float = 0.0
 var _hud_style: StyleBoxFlat
@@ -59,7 +59,7 @@ func updateHUD() -> void:
 	var minutes: int = int(elapsed / 60.0)
 	var total_seconds: int = int(elapsed)
 	var seconds: int = total_seconds % 60
-	var ms: int = int((elapsed * 100.0) % 100.0)
+	var ms: int = int(int(elapsed * 100.0) % 100)
 	timer_label.text = "Time: %02d:%02d.%02d" % [minutes, seconds, ms]
 	_setup_label_font(timer_label)
 	
@@ -102,8 +102,8 @@ func _find_player() -> CharacterBody3D:
 		if world:
 			var p: Node = world.get_node_or_null("Player")
 			if p is CharacterBody3D:
-				return p as CharacterBody3D
-	return null as CharacterBody3D
+				return p
+	return null
 
 func _on_lives_changed() -> void:
 	# Flash effect when lives change

@@ -26,6 +26,17 @@ var _transition_tween: Tween = null
 var _is_transitioning: bool = false
 var _is_paused: bool = false
 
+# M5DBG telemetry (temporary QA instrumentation — remove before ship)
+var _m5_debug_t: float = 0.0
+
+func _m5_debug_tick() -> void:
+	var p = world.get_node_or_null("Player") if world else null
+	if p:
+		var pos: Vector3 = p.global_position
+		print("[M5DBG] t=%.1f state=%s lives=%d p=(%.1f,%.1f,%.1f) finish_x=%.0f" % [
+			GameManager.get_current_time(), GameManager.get_state(),
+			GameManager.lives, pos.x, pos.y, pos.z, LevelManager.finish_x])
+
 func _ready():
 	# Hide all overlays initially
 	level_complete.visible = false
@@ -64,6 +75,12 @@ func _ready():
 	_load_level()
 
 func _process(delta):
+	# M5DBG telemetry (temporary QA instrumentation — remove before ship)
+	_m5_debug_t += delta
+	if _m5_debug_t >= 2.0:
+		_m5_debug_t = 0.0
+		_m5_debug_tick()
+
 	# Handle pause toggle (only when playing)
 	if not _is_transitioning and Input.is_action_just_pressed("pause"):
 		_toggle_pause()
@@ -78,6 +95,7 @@ func _process(delta):
 
 func _trigger_level_complete():
 	_is_transitioning = true
+	print("[M5DBG] EVENT complete_triggered level=", GameManager.current_level, " lives=", GameManager.lives)
 	# Stop player movement
 	var player = world.get_node_or_null("Player")
 	if player:
@@ -119,6 +137,7 @@ func _wire_player_death():
 		printerr("[GameScene] Player not found or has no player_died signal")
 
 func _on_player_died():
+	print("[M5DBG] EVENT player_died lives=", GameManager.lives, " state=", GameManager.get_state())
 	if GameManager.is_player_alive():
 		# Player has lives remaining — trigger death animation + respawn
 		_handle_death()
@@ -193,6 +212,7 @@ func _hide_overlay_with_animation(overlay: Control, callback: Callable) -> void:
 	_transition_tween.tween_callback(callback)
 
 func _on_game_over():
+	print("[M5DBG] EVENT game_over level=", GameManager.current_level, " score=", GameManager.score)
 	# Hide HUD
 	if hud:
 		hud.visible = false
