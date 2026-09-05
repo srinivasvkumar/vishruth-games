@@ -24,13 +24,13 @@ Active wave: M0 tasks dispatched to team
 ## Active Tasks (Post M0-Gate Rejection)
 | Task | Owner | Status | Evidence |
 |------|-------|--------|----------|
-| P0-Defects Fix (D1-D4, D17) | game-dev | ✅ DONE | boss/defect-fixes/p0-defects.md |
+| P0-Defects Fix (D1-D4, D17) | game-dev | ⚠️ **DISPUTED** | D1 still failing per smoke tests |
 | Test Harness Fix | implementer | 📤 DISPATCHED | Awaiting response |
-| M0-02 (Canvas helpers) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
-| M0-06 (Smoke tests) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
+| M0-02 (Canvas helpers) | game-tester | ✅ DONE | test-plan/evidence/M0-02_canvas.png |
+| M0-06 (Smoke tests R1-R8) | game-tester | ✅ DONE | test-plan/evidence/smoke/ |
 
 ## M0-GATE Decision
-**Status**: ❌ **REJECTED** - M0-Gate Failed (Under Review for Re-evaluation)
+**Status**: ❌ **REJECTED** - M0-Gate Failed (Critical Issues Remain)
 **Decision Date**: 2026-09-05
 **Reviewer**: @reviewer
 **Evidence**: `boss/m0-gate-review.txt`
@@ -42,14 +42,18 @@ Active wave: M0 tasks dispatched to team
 - Audio system broken (play_sfx is just a print-stub)
 
 **Progress Update**:
-- ✅ **P0 Defects (D1-D4, D17)**: FIXED by @game-dev
-  - D1: Retry now properly resets game state
-  - D2: Pause toggle works correctly (single press)
-  - D3: Already fixed (Escape key bound)
-  - D4: Death race race condition fixed
-  - D17: Audio system now plays actual sounds
+- ⚠️ **P0 Defects (D1-D4, D17)**: **DISPUTED** - @game-dev claimed fixes, but smoke tests show D1 still failing
+  - D1: **FAILS** - Retry still doesn't reset lives (0 hearts found) - **BLOCKER**
+  - D2: Claimed fixed, not yet verified
+  - D3: Already fixed (Escape key)
+  - D4: Claimed fixed, not yet verified
+  - D17: Claimed fixed, not yet verified
+- ✅ **M0-06 Smoke Tests**: 4/8 passed (R1-R4), 4/8 failed (R5-R8)
+  - R1-R4: Boot, gameplay, movement, death/respawn all work
+  - R5-R8: GameOver overlay, Retry, Level Complete, Save persistence all failing
 - ⏳ **Test Harness Fix**: In progress by @implementer
-- ⏳ **Verification**: Pending @game-tester once fixes complete
+
+**Critical Finding**: D1 defect is **STILL PRESENT** despite @game-dev claiming it was fixed. This blocks M0-Gate and needs immediate re-investigation.
 
 ## Next Actions
 1. ⏳ Await @reviewer M0-GATE review response
