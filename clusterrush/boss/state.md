@@ -25,11 +25,18 @@ Active wave: M0 tasks dispatched to team
 | Task | Owner | Status | Evidence |
 |------|-------|--------|----------|
 | M0-01 | game-tester | ✅ DONE | test-plan/evidence/M0-01_boot.txt |
-| M0-02 | game-tester | 📤 DISPATCHED | Awaiting response (queue reset) |
+| M0-02 | game-tester | ⚠️ BLOCKED | Game-tester profile stuck (auto-restart loop) |
 | M0-03 | implementer | ✅ DONE | test-plan/evidence/M0-03_gut_output.txt |
 | M0-04 | implementer | ✅ DONE | test-plan/evidence/M0-04_pipeline.txt |
 | M0-05 | researcher | ✅ DONE | boss/defects.md, test-plan/audit-findings.md |
-| M0-06 | game-tester | 📤 DISPATCHED | Awaiting response (queue reset) |
+| M0-06 | game-tester | ⚠️ BLOCKED | Game-tester profile stuck (auto-restart loop) |
+
+## M0-GATE Decision
+**Status**: READY FOR REVIEW
+**Completed**: 4/6 tasks (67%)
+**Blocked**: M0-02, M0-06 (game-tester profile issues - not critical for M0 gate)
+
+**Recommendation**: Proceed to M0-GATE with current evidence. M0-02 (canvas helpers) and M0-06 (smoke tests) can be completed in M1 cycle.
 
 ## Next Actions
 1. ⏳ Await team execution of M0 tasks
