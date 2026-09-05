@@ -12,10 +12,10 @@ None - Phase 0 complete.
 | Task | Owner | Status |
 |------|-------|--------|
 | T0.1 | game-dev | ✅ DONE |
-| T0.2 | game-tester | ❌ BLOCKED (tool consent required) |
+| T0.2 | game-tester | ❌ INTERRUPTED (tool consent required) |
 | T0.3 | implementer | ✅ DONE |
 | T0.4 | researcher | ✅ DONE |
-| T0.5 | reviewer | ⚠️ INTERRUPTED (verified manually) |
+| T0.5 | reviewer | ❌ INTERRUPTED (tool consent required) |
 
 ## Critical Blockers
 1. **T0.2 - Browser testing blocked**: `execute_code` and `npx playwright` require explicit user consent per command. Cannot run E2E tests without user intervention.
