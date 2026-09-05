@@ -1,0 +1,75 @@
+name: Godot CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Download Godot 4.7.2 (x86_64)
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q Godot_v4.7.2-stable_linux.x86_64.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+
+      - name: Cache Godot binary
+        uses: actions/cache@v4
+        with:
+          path: Godot_v4.7.2-stable_linux.x86_64
+          key: godot-4.7.2-linux-x86_64
+
+      - name: Install GUT addon (v9.7.1 for Godot 4.7)
+        run: |
+          mkdir -p addons
+          git clone --depth 1 --branch v9.7.1 https://github.com/bitwes/Gut.git /tmp/gut-install
+          cp -r /tmp/gut-install/addons/gut addons/gut
+
+      - name: Import warm-up (class-cache)
+        run: ./Godot_v4.7.2-stable_linux.x86_64 --headless --import --path . || true
+
+      - name: Run Unit Tests (L1)
+        run: ./Godot_v4.7.2-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -ginclude_subdirs -gexit -gignore_pause -glog=2
+
+      - name: Run Integration Tests (L2)
+        run: ./Godot_v4.7.2-stable_linux.x86_64 --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -ginclude_subdirs -gexit -gignore_pause -glog=2
+
+      - name: Export WebGL
+        run: |
+          mkdir -p Builds/WebGL
+          ./Godot_v4.7.2-stable_linux.x86_64 --headless --export-release "Web" Builds/WebGL/index.html
+
+      - name: Add .nojekyll
+        run: touch Builds/WebGL/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: Builds/WebGL
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/deploy-pages@v4
