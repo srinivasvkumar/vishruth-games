@@ -15,7 +15,8 @@ Last checkpoint: 2026-09-05 (initial bootstrap)
 10. Resume exact next action from `boss/state.md`.
 
 ## Last Known State
-- Milestone: PRE-PHASE-0 (bootstrap)
+- Branch: **main** (authoritative; master has unrelated 9-commit history, do not use)
+- Milestone: PRE-PHASE-0 (bootstrap complete, commit 31869f7)
 - No tasks dispatched yet.
 - All 5 specialist profiles IDLE.
 - No open P0/P1 defects beyond the documented D1–D19 ledger in `boss/defects.md`.
@@ -25,4 +26,4 @@ Last checkpoint: 2026-09-05 (initial bootstrap)
 - (none at bootstrap)
 
 ## Resume Point
-Bootstrap complete → dispatch T0.1–T0.5.
+Bootstrap complete → dispatch T0.1–T0.5 on branch `main`.
