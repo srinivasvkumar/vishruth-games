@@ -15,22 +15,23 @@ None - Phase 0 complete.
 | T0.2 | game-tester | ❌ BLOCKED (tool consent required) |
 | T0.3 | implementer | ✅ DONE |
 | T0.4 | researcher | ✅ DONE |
-| T0.5 | reviewer | ✅ DONE |
+| T0.5 | reviewer | ⚠️ INTERRUPTED (verified manually) |
 
 ## Critical Blockers
 1. **T0.2 - Browser testing blocked**: `execute_code` and `npx playwright` require explicit user consent per command. Cannot run E2E tests without user intervention.
 2. **Missing `project.godot`**: Game cannot launch - this file is critical and missing from project root.
-3. **Script errors**: GUT tests fail due to undefined `LevelManager` and other script errors.
+3. **Missing autoloads**: `LevelManager` and `GameManager` not registered in project configuration.
+4. **T0.5 - Reviewer interrupted**: Profile verified manually; playbook risks identified.
 
 ## Next Actions
 1. ⬜ Resolve T0.2 blocker (user consent for browser testing or alternative approach)
-2. ⬜ Create/restore `project.godot` file
-3. ⬜ Fix script errors preventing test execution
-4. ⬜ Re-run Phase 0 T0.2 once blockers resolved
+2. ⬜ Create/restore `project.godot` file with proper autoload registrations
+3. ⬜ Fix missing autoload issue (LevelManager, GameManager)
+4. ⬜ Re-run Phase 0 T0.2 and T0.5 once blockers resolved
 5. ⬜ Proceed to M0 only after all Phase 0 tasks complete successfully
 
 ## One-In-Progress Per Profile
 All profiles: IDLE (Phase 0 complete, awaiting blocker resolution)
 
 ## Evidence
-Full Phase 0 results: `boss/phase0-results.md`
+Full Phase 0 results: `boss/phase0-final-results.md`
