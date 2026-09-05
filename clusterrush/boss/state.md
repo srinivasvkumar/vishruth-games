@@ -28,7 +28,7 @@ Active wave: M0 tasks dispatched to team
 | M0-02 | game-tester | ⏳ QUEUED | Queue blocked (target_busy) |
 | M0-03 | implementer | ✅ DONE | test-plan/evidence/M0-03_gut_output.txt |
 | M0-04 | implementer | ✅ DONE | test-plan/evidence/M0-04_pipeline.txt |
-| M0-05 | researcher | 📤 DISPATCHED | Awaiting response |
+| M0-05 | researcher | ✅ DONE | boss/defects.md, test-plan/audit-findings.md |
 | M0-06 | game-tester | ⏳ QUEUED | Queue blocked (target_busy) |
 
 ## Next Actions
