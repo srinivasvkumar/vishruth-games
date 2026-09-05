@@ -1,0 +1,85 @@
+# M0-Gate Review Decision
+
+**Date:** 2026-09-05
+**Reviewer:** @reviewer
+**Decision:** ❌ **FAIL — M0-Gate REJECTED**
+
+---
+
+## Review Summary
+
+The M0 milestone evidence was reviewed against the Boss_Plan.md requirements for "Test Foundation." While some infrastructure components are functional, the evidence demonstrates **incomplete and inadequate test coverage** with critical gaps that prevent proceeding to M1.
+
+---
+
+## Critical Findings
+
+### 1. Test Scripts Fail to Load (4 scripts)
+
+The following test scripts have parse errors and cannot be executed:
+
+| File | Error | Impact |
+|------|-------|--------|
+| `test_level_templates.gd` | Identifier "LevelManager" not declared | 19 parse errors |
+| `test_gameplay_core.gd` | Direct autoload references | Cannot test core gameplay |
+| `test_levels.gd` | Direct LevelManager references | Cannot test level generation |
+| `test_save_migration.gd` | Does not extend GutTest | Cannot test save system |
+
+**Root Cause:** Tests directly reference autoloads (GameManager, LevelManager, etc.) instead of using proper test harness patterns (dependency injection, fixtures).
+
+### 2. P0 Defects Remain Unresolved
+
+All 19 defects (D1-D19) are still OPEN, including:
+
+| ID | Severity | Issue | Impact |
+|----|----------|-------|--------|
+| D1 | P0 | Retry after Game Over starts with 0 lives | Game unplayable |
+| D2 | P0 | Pause double-bound (toggle fires twice) | UI broken |
+| D3 | P0 | Pause bound to KP_Enter (numpad only) | Laptop users cannot pause |
+| D4 | P0 | Hazard death race at finish line | Race condition |
+
+**These P0 defects make the game unplayable. M0 cannot be complete with known unplayable defects.**
+
+### 3. False Confidence in Evidence
+
+The evidence shows "3/3 passed" and "5/5 passed" — but this is **only the tests that could load**:
+
+- **Unit tests:** 3 trivial tests (true_is_true, main_menu_loads, level_select_loads)
+- **Integration tests:** 2 scripts (main_menu instantiation, credits)
+- **Missing:** Gameplay core, level generation, save system, hazard mechanics, player movement
+
+**This is not comprehensive testing.**
+
+---
+
+## Blocking Findings for M1
+
+1. **Fix broken test scripts** — `test_level_templates.gd`, `test_gameplay_core.gd`, `test_levels.gd`, `test_save_migration.gd` must be corrected to use proper test harness patterns (dependency injection, not direct autoload references)
+
+2. **Resolve P0 defects** — D1, D2, D3, D4 must be fixed before M1 (unplayable game)
+
+3. **Execute full test suite** — All 19 defects must have corresponding passing tests
+
+4. **Verify audio system** — AudioManager.play_sfx() must be functional, not a print-stub
+
+---
+
+## Recommendations
+
+1. **Do NOT proceed to M1** until test scripts are fixed and P0 defects are resolved
+2. **Fix test harness pattern** — Tests should NOT directly reference autoloads. Use fixtures or dependency injection
+3. **Add regression tests** for each of the 19 defects
+4. **Re-run full pipeline** after fixes to verify all tests pass
+
+---
+
+## Final Decision
+
+**❌ FAIL — M0-Gate REJECTED**
+
+**Rationale:** The evidence does not demonstrate a complete test foundation. Critical test scripts fail to load, preventing testing of core gameplay functionality. 19 defects remain open, including P0 blockers that make the game unplayable. M1 cannot proceed until these issues are resolved.
+
+---
+
+*Sign-off by: @reviewer*  
+*Date: 2026-09-05*

@@ -32,11 +32,22 @@ Active wave: M0 tasks dispatched to team
 | M0-06 | game-tester | ⚠️ BLOCKED | Game-tester profile stuck (auto-restart loop) |
 
 ## M0-GATE Decision
-**Status**: READY FOR REVIEW
-**Completed**: 4/6 tasks (67%)
-**Blocked**: M0-02, M0-06 (game-tester profile issues - not critical for M0 gate)
+**Status**: ❌ **REJECTED** - M0-Gate Failed
+**Decision Date**: 2026-09-05
+**Reviewer**: @reviewer
+**Evidence**: `boss/m0-gate-review.txt`
 
-**Recommendation**: Proceed to M0-GATE with current evidence. M0-02 (canvas helpers) and M0-06 (smoke tests) can be completed in M1 cycle.
+**Rationale**: 
+- Critical test scripts fail to load (4 scripts with parse errors)
+- 19 defects remain OPEN including 4 P0 blockers that make game unplayable
+- Evidence shows only 5 trivial tests passed, not comprehensive gameplay testing
+- Audio system broken (play_sfx is just a print-stub)
+
+**Next Steps**: 
+1. Fix test harness pattern (dependency injection instead of direct autoload references)
+2. Resolve P0 defects (D1-D4) before M1
+3. Execute full test suite with all 19 defects having passing tests
+4. Verify audio system functionality
 
 ## Next Actions
 1. ⏳ Await @reviewer M0-GATE review response
