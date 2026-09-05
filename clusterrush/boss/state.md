@@ -21,15 +21,13 @@ Active wave: M0 tasks dispatched to team
 4. ⚠️ **Firefox WebGL NOT available** - Chrome is primary test browser
 5. ✅ **Reviewer config valid** - No invalid messaging toolset entry
 
-## Active Tasks (M0 Milestone)
+## Active Tasks (Post M0-Gate Rejection)
 | Task | Owner | Status | Evidence |
 |------|-------|--------|----------|
-| M0-01 | game-tester | ✅ DONE | test-plan/evidence/M0-01_boot.txt |
-| M0-02 | game-tester | ⚠️ BLOCKED | Game-tester profile stuck (auto-restart loop) |
-| M0-03 | implementer | ✅ DONE | test-plan/evidence/M0-03_gut_output.txt |
-| M0-04 | implementer | ✅ DONE | test-plan/evidence/M0-04_pipeline.txt |
-| M0-05 | researcher | ✅ DONE | boss/defects.md, test-plan/audit-findings.md |
-| M0-06 | game-tester | ⚠️ BLOCKED | Game-tester profile stuck (auto-restart loop) |
+| P0-Defects Fix (D1-D4, D17) | game-dev | 📤 DISPATCHED | Awaiting response |
+| Test Harness Fix | implementer | 📤 DISPATCHED | Awaiting response |
+| M0-02 (Canvas helpers) | game-tester | ⏳ BLOCKED | Pending P0 fixes |
+| M0-06 (Smoke tests) | game-tester | ⏳ BLOCKED | Pending P0 fixes |
 
 ## M0-GATE Decision
 **Status**: ❌ **REJECTED** - M0-Gate Failed
@@ -44,10 +42,10 @@ Active wave: M0 tasks dispatched to team
 - Audio system broken (play_sfx is just a print-stub)
 
 **Next Steps**: 
-1. Fix test harness pattern (dependency injection instead of direct autoload references)
-2. Resolve P0 defects (D1-D4) before M1
-3. Execute full test suite with all 19 defects having passing tests
-4. Verify audio system functionality
+1. ✅ @game-dev fixing P0 defects (D1-D4) and audio system (D17)
+2. ✅ @implementer fixing test harness pattern and broken test scripts
+3. ⏳ Await @game-tester to verify fixes once completed
+4. ⏳ Await @reviewer to validate fixes before M1
 
 ## Next Actions
 1. ⏳ Await @reviewer M0-GATE review response
