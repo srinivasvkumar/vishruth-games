@@ -24,13 +24,13 @@ Active wave: M0 tasks dispatched to team
 ## Active Tasks (Post M0-Gate Rejection)
 | Task | Owner | Status | Evidence |
 |------|-------|--------|----------|
-| P0-Defects Fix (D1-D4, D17) | game-dev | 📤 DISPATCHED | Awaiting response |
+| P0-Defects Fix (D1-D4, D17) | game-dev | ✅ DONE | boss/defect-fixes/p0-defects.md |
 | Test Harness Fix | implementer | 📤 DISPATCHED | Awaiting response |
 | M0-02 (Canvas helpers) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
 | M0-06 (Smoke tests) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
 
 ## M0-GATE Decision
-**Status**: ❌ **REJECTED** - M0-Gate Failed
+**Status**: ❌ **REJECTED** - M0-Gate Failed (Under Review for Re-evaluation)
 **Decision Date**: 2026-09-05
 **Reviewer**: @reviewer
 **Evidence**: `boss/m0-gate-review.txt`
@@ -41,11 +41,15 @@ Active wave: M0 tasks dispatched to team
 - Evidence shows only 5 trivial tests passed, not comprehensive gameplay testing
 - Audio system broken (play_sfx is just a print-stub)
 
-**Next Steps**: 
-1. ✅ @game-dev fixing P0 defects (D1-D4) and audio system (D17)
-2. ✅ @implementer fixing test harness pattern and broken test scripts
-3. ⏳ Await @game-tester to verify fixes once completed (queue currently blocked)
-4. ⏳ Await @reviewer to validate fixes before M1
+**Progress Update**:
+- ✅ **P0 Defects (D1-D4, D17)**: FIXED by @game-dev
+  - D1: Retry now properly resets game state
+  - D2: Pause toggle works correctly (single press)
+  - D3: Already fixed (Escape key bound)
+  - D4: Death race race condition fixed
+  - D17: Audio system now plays actual sounds
+- ⏳ **Test Harness Fix**: In progress by @implementer
+- ⏳ **Verification**: Pending @game-tester once fixes complete
 
 ## Next Actions
 1. ⏳ Await @reviewer M0-GATE review response
