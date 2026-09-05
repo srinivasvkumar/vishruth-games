@@ -77,8 +77,8 @@ func _create_level_button(level_num: int) -> Button:
 	var btn := Button.new()
 
 	var unlocked := level_num <= _unlock_threshold
-	var completed := get_node("/root/LevelManager").has_completed_level(level_num)
-	var stars := get_node("/root/LevelManager").get_level_stars(level_num)
+	var completed: bool = get_node("/root/LevelManager").has_completed_level(level_num)
+	var stars: int = get_node("/root/LevelManager").get_level_stars(level_num)
 
 	# Button text includes level number and star display
 	if completed:
@@ -112,7 +112,7 @@ func _create_level_button(level_num: int) -> Button:
 
 func _apply_button_style(btn: Button, unlocked: bool, completed: bool, stars: int) -> void:
 	# Get tier color for this level
-	var tier_color := get_node("/root/LevelManager").get_tier_color(btn.text.strip_edges().replace("L", "").to_int())
+	var tier_color: Color = get_node("/root/LevelManager").get_tier_color(btn.text.strip_edges().replace("L", "").to_int())
 
 	if unlocked:
 		# Enabled button: colored border matching tier, light background
