@@ -39,10 +39,17 @@ Active wave: M0 tasks dispatched to team
 **Recommendation**: Proceed to M0-GATE with current evidence. M0-02 (canvas helpers) and M0-06 (smoke tests) can be completed in M1 cycle.
 
 ## Next Actions
-1. ⏳ Await team execution of M0 tasks
-2. ⬜ Verify evidence from each task
-3. ⬜ @reviewer challenge and sign-off
-4. ⬜ M0-GATE: Boss decision with reviewer sign-off
+1. ⏳ Await @reviewer M0-GATE review response
+2. ⏳ Await @game-tester M0-02 and M0-06 responses (retried)
+3. ⬜ Make M0-GATE decision once all evidence received
+4. ⬜ Proceed to M1 if gate passes
+
+## M0-GATE Review Status
+| Item | Status |
+|------|--------|
+| Review dispatched to @reviewer | ✅ SENT (proc_23e080fc0d69) |
+| M0-02 retry dispatched to @game-tester | ✅ SENT |
+| M0-06 retry dispatched to @game-tester | ✅ SENT |
 
 ## One-In-Progress Per Profile
 - game-dev: IDLE
