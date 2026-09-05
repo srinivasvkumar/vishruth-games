@@ -26,8 +26,8 @@ Active wave: M0 tasks dispatched to team
 |------|-------|--------|----------|
 | P0-Defects Fix (D1-D4, D17) | game-dev | 📤 DISPATCHED | Awaiting response |
 | Test Harness Fix | implementer | 📤 DISPATCHED | Awaiting response |
-| M0-02 (Canvas helpers) | game-tester | ⏳ BLOCKED | Pending P0 fixes |
-| M0-06 (Smoke tests) | game-tester | ⏳ BLOCKED | Pending P0 fixes |
+| M0-02 (Canvas helpers) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
+| M0-06 (Smoke tests) | game-tester | ⏳ BLOCKED | Game-tester queue blocked + pending P0 fixes |
 
 ## M0-GATE Decision
 **Status**: ❌ **REJECTED** - M0-Gate Failed
@@ -44,7 +44,7 @@ Active wave: M0 tasks dispatched to team
 **Next Steps**: 
 1. ✅ @game-dev fixing P0 defects (D1-D4) and audio system (D17)
 2. ✅ @implementer fixing test harness pattern and broken test scripts
-3. ⏳ Await @game-tester to verify fixes once completed
+3. ⏳ Await @game-tester to verify fixes once completed (queue currently blocked)
 4. ⏳ Await @reviewer to validate fixes before M1
 
 ## Next Actions
