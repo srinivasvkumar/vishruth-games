@@ -22,14 +22,14 @@ Active wave: M0 tasks dispatched to team
 5. ✅ **Reviewer config valid** - No invalid messaging toolset entry
 
 ## Active Tasks (M0 Milestone)
-| Task | Owner | Status |
-|------|-------|--------|
-| M0-01 | game-tester | IN_PROGRESS |
-| M0-02 | game-tester | IN_PROGRESS |
-| M0-03 | implementer | IN_PROGRESS |
-| M0-04 | implementer | IN_PROGRESS |
-| M0-05 | researcher | IN_PROGRESS |
-| M0-06 | game-tester | IN_PROGRESS |
+| Task | Owner | Status | Evidence |
+|------|-------|--------|----------|
+| M0-01 | game-tester | ✅ DONE | test-plan/evidence/M0-01_boot.txt |
+| M0-02 | game-tester | ⏳ QUEUED | Queue blocked (target_busy) |
+| M0-03 | implementer | 📤 DISPATCHED | Awaiting response |
+| M0-04 | implementer | ✅ DONE | test-plan/evidence/M0-04_pipeline.txt |
+| M0-05 | researcher | 📤 DISPATCHED | Awaiting response |
+| M0-06 | game-tester | ⏳ QUEUED | Queue blocked (target_busy) |
 
 ## Next Actions
 1. ⏳ Await team execution of M0 tasks
