@@ -208,7 +208,7 @@ func _process(delta: float) -> void:
 func _on_start_game():
 	print("Starting new game")
 	# Start from level 1
-	var highest_level := LevelManager.get_unlocked_levels()
+	var highest_level: int = get_node("/root/LevelManager").get_unlocked_levels()
 	if highest_level <= 1:
 		highest_level = 1
 	# Change scene first, then let game.tscn generate the level
@@ -227,7 +227,7 @@ func _on_credits():
 	get_tree().change_scene_to_file("res://scenes/credits.tscn")
 
 func _toggle_pause():
-	var current_state: String = GameManager.get_state()
+	var current_state: String = get_node("/root/GameManager").get_state()
 	if current_state == "playing":
 		get_tree().paused = true
 		$PauseMenu.visible = true

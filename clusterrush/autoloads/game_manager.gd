@@ -49,7 +49,7 @@ func player_died():
 	if lives <= 0:
 		set_state("gameover")
 	else:
-		LevelManager.respawn_player()
+		get_node("/root/LevelManager").respawn_player()
 
 func complete_level():
 	if game_state != "playing":
@@ -69,7 +69,7 @@ func complete_level():
 	
 	level_completed.emit()
 	
-	# Save progress immediately (single writer — no LevelManager.save_level_completion)
+	# Save progress immediately (single writer — no get_node("/root/LevelManager").save_level_completion)
 	_save_progress_with_stars(current_level + 1, current_level, stars)
 	
 	if current_level >= 35:

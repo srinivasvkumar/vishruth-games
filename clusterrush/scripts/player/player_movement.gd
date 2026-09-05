@@ -360,8 +360,8 @@ func _play_sfx(audio: AudioStream) -> void:
 	if _sfx_player and audio:
 		_sfx_player.stream = audio
 		_sfx_player.play()
-	elif _sfx_player and AudioManager:
-		AudioManager.play_sfx(audio)
+	elif _sfx_player and get_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(audio)
 
 
 # =============================================================================

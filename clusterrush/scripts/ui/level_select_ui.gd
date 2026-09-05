@@ -1,6 +1,6 @@
 extends Control
 # LevelSelectUI - Dynamically generates level buttons for levels 1-35
-# Reads unlocked levels from GameManager.load_progress(), creates styled Button
+# Reads unlocked levels from get_node("/root/GameManager").load_progress(), creates styled Button
 # nodes in the GridContainer, and handles navigation to levels and the main menu.
 #
 # P1 Visual Polish (2026-08-29):
@@ -55,7 +55,7 @@ func _on_restart() -> void:
 func _setup_ui() -> void:
 	# Read highest unlocked level from LevelManager (reads user:// save file).
 	# If no save exists yet, the fallback is 1 so only level 1 is unlocked.
-	_unlock_threshold = LevelManager.get_unlocked_levels()
+	_unlock_threshold = get_node("/root/LevelManager").get_unlocked_levels()
 	_generate_buttons()
 
 
@@ -77,8 +77,8 @@ func _create_level_button(level_num: int) -> Button:
 	var btn := Button.new()
 
 	var unlocked := level_num <= _unlock_threshold
-	var completed := LevelManager.has_completed_level(level_num)
-	var stars := LevelManager.get_level_stars(level_num)
+	var completed := get_node("/root/LevelManager").has_completed_level(level_num)
+	var stars := get_node("/root/LevelManager").get_level_stars(level_num)
 
 	# Button text includes level number and star display
 	if completed:
@@ -112,7 +112,7 @@ func _create_level_button(level_num: int) -> Button:
 
 func _apply_button_style(btn: Button, unlocked: bool, completed: bool, stars: int) -> void:
 	# Get tier color for this level
-	var tier_color := LevelManager.get_tier_color(btn.text.strip_edges().replace("L", "").to_int())
+	var tier_color := get_node("/root/LevelManager").get_tier_color(btn.text.strip_edges().replace("L", "").to_int())
 
 	if unlocked:
 		# Enabled button: colored border matching tier, light background
@@ -221,7 +221,7 @@ func _on_level_selected(level_num: int) -> void:
 		return
 
 	print("Starting level %d" % level_num)
-	GameManager.start_level(level_num)
+	get_node("/root/GameManager").start_level(level_num)
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 

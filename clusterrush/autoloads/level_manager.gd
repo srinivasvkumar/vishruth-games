@@ -694,7 +694,7 @@ func _on_hazard_collided(body: Node) -> void:
 	while node:
 		if node == _player:
 			print("[LevelManager] Hazard collision! Player hit hazard")
-			GameManager.player_died()
+			get_node("/root/GameManager").player_died()
 			break
 		node = node.get_parent()
 
