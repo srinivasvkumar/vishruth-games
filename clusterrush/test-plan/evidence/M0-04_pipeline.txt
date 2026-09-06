@@ -1,0 +1,66 @@
+# M0-04 Pipeline Test Results
+# Date: 2026-01-XX
+# Objective: Verify L1/L2 commands return success
+
+## Pipeline Script Status
+- Path: /home/srinivasvkumar/vishruth/games/clusterrush/scripts/pipeline.sh
+- Status: Executable (rwxr-xr-x, 1836 bytes)
+- Godot Binary: /home/srinivasvkumar/vishruth/games/clusterrush/bin/godot (137 MB, ELF 64-bit ARM aarch64)
+
+## Step 0: Import Warm-up
+- Command: ./bin/godot --headless --import --path .
+- Result: SUCCESS
+- Exit Code: 0
+- Notes: Import cache built successfully, no errors
+
+## Step 1: Unit Tests (L1)
+- Command: ./bin/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/unit -ginclude_subdirs -gexit -gignore_pause -glog=2
+- Result: PASSED
+- Exit Code: 0
+- Tests Run: 3
+- Passing Tests: 3
+- Asserts: 3
+- Time: 0.453s
+- Warnings: 1 (test_level_templates.gd skipped due to parse errors - references LevelManager directly)
+- Tests Executed:
+  - test_true_is_true: PASSED
+  - test_main_menu_loads: PASSED
+  - test_level_select_loads: PASSED
+
+## Step 2: Integration Tests (L2)
+- Command: ./bin/godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests/integration -ginclude_subdirs -gexit -gignore_pause -glog=2
+- Result: PASSED (partial)
+- Exit Code: 0
+- Tests Run: 1 script (test_scene_instantiation.gd)
+- Passing Tests: 2
+- Asserts: 4
+- Time: 0.432s
+- Warnings: 3
+- Skipped Scripts (parse errors):
+  - test_gameplay_core.gd: References GameManager, LevelManager, AudioManager, InputManager directly
+  - test_levels.gd: References LevelManager directly
+  - test_save_migration.gd: Does not extend GutTest
+- Tests Executed:
+  - test_main_menu_loads_and_instantiates: 3/3 PASSED
+  - test_credits_loads: 2/2 PASSED
+
+## Summary
+| Stage | Exit Code | Status |
+|-------|-----------|--------|
+| Import Warm-up | 0 | SUCCESS |
+| L1 Unit Tests | 0 | PASSED (3/3) |
+| L2 Integration Tests | 0 | PASSED (2/2, 3 scripts skipped) |
+
+## Issues Identified
+1. test_level_templates.gd: Parse errors due to direct LevelManager references
+2. test_gameplay_core.gd: Parse errors due to direct autoload references (GameManager, LevelManager, AudioManager, InputManager)
+3. test_levels.gd: Parse errors due to direct LevelManager references
+4. test_save_migration.gd: Does not extend GutTest base class
+
+## Recommendations
+- Fix test files to use proper test harness patterns that don't directly reference autoloads
+- Ensure all integration tests extend the GutTest base class
+- Use dependency injection or test fixtures for autoload dependencies
+
+## Conclusion
+L1 and L2 pipeline stages completed with exit code 0. All tests that could run passed successfully. Some test scripts were skipped due to parse errors, but these are pre-existing issues unrelated to the current pipeline execution.

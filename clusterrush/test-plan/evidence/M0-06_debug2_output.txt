@@ -1,0 +1,13 @@
+Debugging page load...
+
+Navigating to http://127.0.0.1:8765
+Page loaded
+PAGE LOG: log Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PAGE LOG: log OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL
+PAGE LOG: log Build configuration: Emscripten 4.0.20, multi-threaded, no GDExtension support.
+PAGE LOG: log No save data found, starting fresh
+PAGE LOG: log [AudioManager] Audio system initialized
+PAGE LOG: log [LevelManager] Created new World node
+[0s] Canvas: 1280x720, Status: removed
+Boot conditions met!
+Screenshot saved to: ../../test-plan/evidence/smoke/debug/debug_state.png

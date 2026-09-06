@@ -1,0 +1,26 @@
+Starting M0-06 Smoke Test Suite (R1-R8)...
+
+=== R1: Boot to main menu ===
+Canvas: 1280x720, nonBlackPct: 100.00%
+R1: PASS - ../../test-plan/evidence/smoke/screenshots/R1_menu.png
+=== R2: Start Game → gameplay renders ===
+Canvas: 1280x720, nonBlackPct: 100.00%
+R2: PASS - ../../test-plan/evidence/smoke/screenshots/R2_gameplay.png
+=== R3: Run 10s with auto-advance + strafe + jump ===
+Canvas: 1280x720, nonBlackPct: 100.00%
+R3: PASS - ../../test-plan/evidence/smoke/screenshots/R3_running.png
+=== R4: Kill player → death → respawn ===
+Canvas: 1280x720, nonBlackPct: 100.00%
+R4: PASS - ../../test-plan/evidence/smoke/screenshots/R4_death_respawn.png
+=== R5: 2nd death → GameOver overlay ===
+R5: FAIL - ../../test-plan/evidence/smoke/screenshots/R5_gameover.png
+=== R6: Retry → lives = 3 (D1 gate) ===
+R6: FAIL (expected per D1) - ../../test-plan/evidence/smoke/screenshots/R6_retry.png
+=== R7: Complete Level 1 → Level Complete + Next ===
+R7: FAIL - ../../test-plan/evidence/smoke/screenshots/R7_level_complete.png
+=== R8: Save persists after refresh ===
+R8: FAIL - ../../test-plan/evidence/smoke/screenshots/R8_persistence.png
+
+=== M0-06 Smoke Test Summary ===
+Total: 8 | Passed: 4 | Failed: 4
+Summary: ../../test-plan/evidence/smoke/M0-06_smoke_summary.json

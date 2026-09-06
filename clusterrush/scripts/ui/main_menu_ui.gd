@@ -4,10 +4,16 @@ extends Control
 
 var _settings_open: bool = false
 var _main_font: Font
+var _audio_slider: HSlider
+var _music_slider: HSlider
+var AudioManager: Node
 
 func _ready():
+	# Get reference to AudioManager autoload
+	AudioManager = get_node("/root/AudioManager")
 	_setup_ui()
 	_setup_visuals()
+	_setup_settings_sliders()
 
 func _setup_visuals():
 	# Use system font for all labels
@@ -199,6 +205,36 @@ func _setup_ui():
 		
 		if credits_button:
 			credits_button.pressed.connect(_on_credits)
+
+func _setup_settings_sliders():
+	# Get references to sliders in the SettingsPanel
+	if has_node("SettingsPanel/Panel/VBoxContainer/AudioSlider"):
+		_audio_slider = get_node("SettingsPanel/Panel/VBoxContainer/AudioSlider") as HSlider
+		if _audio_slider:
+			# Initialize slider with current SFX volume
+			_audio_slider.value = AudioManager.get_sfx_volume()
+			# Connect signal to update AudioManager when slider changes
+			_audio_slider.value_changed.connect(_on_audio_volume_changed)
+			print("[MainMenuUI] Audio slider connected to AudioManager")
+	
+	if has_node("SettingsPanel/Panel/VBoxContainer/MusicSlider"):
+		_music_slider = get_node("SettingsPanel/Panel/VBoxContainer/MusicSlider") as HSlider
+		if _music_slider:
+			# Initialize slider with current Music volume
+			_music_slider.value = AudioManager.get_music_volume()
+			# Connect signal to update AudioManager when slider changes
+			_music_slider.value_changed.connect(_on_music_volume_changed)
+			print("[MainMenuUI] Music slider connected to AudioManager")
+
+func _on_audio_volume_changed(new_value: float):
+	# Update AudioManager SFX volume when slider changes
+	AudioManager.set_sfx_volume(new_value)
+	print("[MainMenuUI] SFX volume changed to: ", new_value)
+
+func _on_music_volume_changed(new_value: float):
+	# Update AudioManager Music volume when slider changes
+	AudioManager.set_music_volume(new_value)
+	print("[MainMenuUI] Music volume changed to: ", new_value)
 
 func _process(delta: float) -> void:
 	# Handle pause toggle

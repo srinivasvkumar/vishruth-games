@@ -60,6 +60,9 @@ var _click_sound: AudioStream
 var _wall_slide_sound: AudioStream
 var _wall_jump_sound: AudioStream
 
+# ---- Particle Effects ----
+var _particle_effects
+
 @onready var raycast_left: RayCast3D = $RayCastLeft
 @onready var raycast_right: RayCast3D = $RayCastRight
 @onready var ground_check: RayCast3D = $GroundCheck
@@ -144,6 +147,9 @@ func _physics_process(delta: float):
 	if is_on_ground and not was_on_ground:
 		jump_count = 0
 		landed_on_truck.emit(is_on_floor())
+		# FIX D17: Play land SFX when landing on a truck
+		if _land_sound:
+			_play_sfx(_land_sound)
 
 	if was_on_ground != is_on_ground:
 		on_ground_changed.emit()
@@ -195,8 +201,12 @@ func _update_wall_state(delta: float):
 		wall_jump_input_hang -= delta
 
 	# Wall slide SFX (subtle)
+	var was_wall_slide = wall_slide_active
 	if is_on_wall and not is_on_ground and not is_climbing:
 		wall_slide_active = true
+		# FIX D17: Play wall_slide SFX when wall slide starts
+		if not was_wall_slide and _wall_slide_sound:
+			_play_sfx(_wall_slide_sound)
 	else:
 		wall_slide_active = false
 
@@ -302,13 +312,31 @@ func _apply_physics(delta: float):
 # Horizontal movement
 # =============================================================================
 func _handle_movement(delta: float):
-	# Apply auto-run forward velocity (constant forward motion along +X)
+	# FIX D16: Auto-run should maintain minimum forward speed without overwriting momentum
 	if not is_climbing and not is_on_wall:
-		velocity.x = AUTO_RUN_SPEED
+		# Only set auto-run if current forward velocity is below threshold
+		# This preserves momentum from jumps, wall jumps, etc.
+		if velocity.x < AUTO_RUN_SPEED:
+			velocity.x = AUTO_RUN_SPEED
+		# If player is moving faster than auto-run (e.g., from a jump), keep that speed
 	
 	if is_climbing:
-		var input_x := Input.get_axis("strafe_left", "strafe_right")
-		velocity.z = lerp(velocity.z, input_x * MOVE_SPEED, ACCELERATION * delta)
+		# FIX D15: Use individual input checks to prevent drift when both strafe inputs are active
+		# get_axis returns 0 when both inputs are pressed, which causes drift
+		var strafe_left := Input.is_action_pressed("strafe_left")
+		var strafe_right := Input.is_action_pressed("strafe_right")
+		
+		if strafe_left and strafe_right:
+			# Both inputs active - stop lateral movement to prevent drift
+			velocity.z = 0
+		elif strafe_left:
+			velocity.z = lerp(velocity.z, -MOVE_SPEED, ACCELERATION * delta)
+		elif strafe_right:
+			velocity.z = lerp(velocity.z, MOVE_SPEED, ACCELERATION * delta)
+		else:
+			# No input - maintain current velocity or apply friction
+			velocity.z = lerp(velocity.z, 0, ACCELERATION * delta)
+		
 		velocity.y = WALL_CLIMB_SPEED
 		return
 	
@@ -357,11 +385,14 @@ func _check_fall_death():
 # Audio helpers
 # =============================================================================
 func _play_sfx(audio: AudioStream) -> void:
-	if _sfx_player and audio:
+	# Use AudioManager if available
+	if get_node("/root/AudioManager"):
+		# Try to play by name if we know it, otherwise use stream
+		# For now, just use the stream-based method for backward compatibility
+		get_node("/root/AudioManager").play_sfx_stream(audio)
+	elif _sfx_player and audio:
 		_sfx_player.stream = audio
 		_sfx_player.play()
-	elif _sfx_player and get_node("/root/AudioManager"):
-		get_node("/root/AudioManager").play_sfx(audio)
 
 
 # =============================================================================
@@ -387,12 +418,20 @@ func reset():
 func die():
 	velocity = Vector3.ZERO
 	jump_count = max_jumps  # prevent further jumps
-
-	# Death SFX
-	_death_sound = load("res://audio/sfx/death.wav") if FileAccess.file_exists("res://audio/sfx/death.wav") else null
-	if _death_sound and _sfx_player:
+	
+	# FIX D17: Play hit SFX when hitting a hazard (before death)
+	if _hazard_sound:
+		_play_sfx(_hazard_sound)
+	
+	# Emit hit_hazard signal
+	hit_hazard.emit()
+	
+	# Death SFX - use AudioManager
+	if get_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx("death")
+	elif _death_sound and _sfx_player:
 		_sfx_player.stream = _death_sound
 		_sfx_player.play()
-
+	
 	player_died.emit()
 	set_physics_process(false)

@@ -1,0 +1,43 @@
+Starting D1 Verification Test with Console Capture...
+
+
+=== D1 VERIFICATION TEST ===
+Objective: Verify Retry flow resets lives correctly
+
+[Step 1] Booting to main menu...
+[CONSOLE] log: Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+[CONSOLE] log: OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL
+[CONSOLE] log: Build configuration: Emscripten 4.0.20, multi-threaded, no GDExtension support.
+[CONSOLE] log: No save data found, starting fresh
+[CONSOLE] log: [AudioManager] Audio system initialized
+[CONSOLE] log: [LevelManager] Created new World node
+  Canvas: 1280x720, nonBlackPct: 100.00%
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_menu.png
+[Step 2] Clicking "Start Game"...
+  Canvas: 1280x720, nonBlackPct: 100.00%
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_start_game.png
+[Step 3] Checking initial HUD state...
+  Hearts: 0, Lives: null
+[Step 4] Killing player (Death 1)...
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_death1.png
+  After Death 1 - Hearts: 0, Lives: null
+[Step 5] Killing player (Death 2 - Game Over)...
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_death2_gameover.png
+  After Death 2 - Hearts: 0, Lives: null, Has GameOver: false
+[Step 6] Clicking "Retry" button...
+[CONSOLE] log: Showing credits
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_retry_clicked.png
+[Step 7] Checking HUD state after Retry...
+  After Retry - Hearts: 0, Lives: null
+  Screenshot: ../../test-plan/evidence/d1-debug/screenshots/d1_final_state.png
+
+=== D1 VERIFICATION ANALYSIS ===
+✗ FAIL: Lives = 0 (expected 3)
+  This confirms D1 defect: Retry does not reset lives
+
+Console logs saved to: ../../test-plan/evidence/d1-debug/console_logs.json
+Results summary saved to: ../../test-plan/evidence/d1-debug/d1_verification_summary.json
+
+=== D1 VERIFICATION TEST COMPLETE ===
+Status: FAIL
+Evidence: ../../test-plan/evidence/d1-debug/

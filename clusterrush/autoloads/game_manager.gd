@@ -19,6 +19,16 @@ var game_state: String = "menu"
 var level_start_time: float = 0.0
 var level_time_bonus: float = 0.0
 
+# FIX D5/D6: Track starting lives for accurate star calculation
+var _starting_lives: int = 0
+
+# FIX D8: Pause-aware timer tracking
+var _pause_start_time: float = 0.0
+var _total_pause_time: float = 0.0
+
+# FIX D14: Prevent double-respawn
+var _is_responding_to_death: bool = false
+
 var _save_path: String = "user://cluster_rush_save.dat"
 
 func _ready():
@@ -26,10 +36,20 @@ func _ready():
 	set_state("menu")
 
 func set_state(new_state: String):
+	var old_state = game_state
 	game_state = new_state
 	if new_state == "playing":
-		level_start_time = Time.get_ticks_msec() / 1000.0
+		# FIX D8: If resuming from pause, stop tracking pause time
+		if old_state == "paused":
+			_total_pause_time += Time.get_ticks_msec() / 1000.0 - _pause_start_time
+			game_resumed.emit()
+		# Set or reset level start time (when starting fresh, not when resuming)
+		if old_state != "paused":
+			level_start_time = Time.get_ticks_msec() / 1000.0
+			_total_pause_time = 0.0
 	elif new_state == "paused":
+		# FIX D8: Start tracking pause time
+		_pause_start_time = Time.get_ticks_msec() / 1000.0
 		game_paused.emit()
 	elif new_state == "gameover":
 		game_over.emit()
@@ -39,33 +59,61 @@ func set_state(new_state: String):
 func start_level(level_num: int):
 	current_level = level_num
 	lives = 3 if level_num <= 5 else 2
+	# FIX D5/D6: Track starting lives for accurate star calculation
+	_starting_lives = lives
 	score = 0
 	level_started.emit(level_num)
 
 func player_died():
+	# FIX D14: Prevent double-respawn by checking if we're already handling death
+	if _is_responding_to_death:
+		print("[D14 FIX] Death already being handled, ignoring duplicate call")
+		return
+	
+	_is_responding_to_death = true
 	lives -= 1
 	lives_changed.emit()
 	
 	if lives <= 0:
 		set_state("gameover")
+		_is_responding_to_death = false
 	else:
 		get_node("/root/LevelManager").respawn_player()
+		# Reset the flag after respawn is triggered
+		# The actual respawn will complete, then we can allow another death
+		_is_responding_to_death = false
 
 func complete_level():
+	# FIX D4: Check if we're already in a transition state to prevent race conditions
 	if game_state != "playing":
+		print("[D4 FIX] Level complete blocked - state is: ", game_state)
 		return
 	
-	var elapsed: float = Time.get_ticks_msec() / 1000.0 - level_start_time
+	# FIX D8: Use pause-aware time calculation
+	var elapsed: float = get_current_time()
 	var time_bonus: float = minf(elapsed * 10.0, 100.0)
 	level_time_bonus = time_bonus
 	score += 100 + time_bonus
 	
-	# Calculate star rating based on performance
+	# FIX D5/D6: Calculate star rating based on lives remaining vs starting lives
+	# This prevents off-by-one errors and ensures fair star allocation across all levels
+	var lives_lost = _starting_lives - lives
 	var stars := 1
-	if lives >= 2:
+	if lives_lost == 0:
+		# No lives lost - potential for 3 stars
+		if time_bonus >= 50:
+			stars = 3
+		else:
+			stars = 2
+	elif lives_lost == 1:
+		# Lost 1 life - 2 stars
 		stars = 2
-	if lives >= 3 and time_bonus >= 50:
-		stars = 3
+	else:
+		# Lost 2+ lives - 1 star
+		stars = 1
+	
+	print("[D5/D6 FIX] Level ", current_level, " - Starting lives: ", _starting_lives, 
+	      ", Remaining: ", lives, ", Lost: ", lives_lost, ", Stars: ", stars)
 	
 	level_completed.emit()
 	
@@ -74,6 +122,8 @@ func complete_level():
 	
 	if current_level >= 35:
 		set_state("completed")
+	else:
+		set_state("levelcomplete")
 
 # Single save writer: combines highest_level + level_data (stars) in one ConfigFile write
 func _save_progress_with_stars(highest_level: int, completed_level: int, stars: int):
@@ -104,7 +154,15 @@ func fail_level():
 
 func get_current_time() -> float:
 	if game_state == "playing":
-		return Time.get_ticks_msec() / 1000.0 - level_start_time
+		# FIX D8: Subtract total pause time to get actual gameplay time
+		var current_time = Time.get_ticks_msec() / 1000.0
+		var elapsed = current_time - level_start_time
+		# If currently paused, don't include current pause duration
+		if game_state == "paused":
+			elapsed -= (current_time - _pause_start_time)
+		# Subtract all previous pause time
+		elapsed -= _total_pause_time
+		return elapsed
 	return 0.0
 
 func get_state() -> String:

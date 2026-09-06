@@ -23,13 +23,8 @@ func _ready():
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_pressed():
-		# Check for pause
-		if Input.is_action_just_pressed("pause"):
-			pause_requested.emit()
-			get_tree().paused = not get_tree().paused
-			return
-		
-		# Buffer jump input for forgiving controls
+		# FIX D2: Pause is handled in game_scene.gd _process() to avoid double-toggle
+		# Only buffer jump input for forgiving controls
 		if Input.is_action_just_pressed("jump"):
 			_buffer_input("jump")
 			jump_requested.emit()

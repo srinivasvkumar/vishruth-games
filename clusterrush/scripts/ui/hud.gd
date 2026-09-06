@@ -13,6 +13,11 @@ var _update_timer: float = 0.0
 var _hud_style: StyleBoxFlat
 var _font: Font
 
+# FIX D7: Pre-create progress bar styles to avoid allocation churn
+var _progress_bar_style: StyleBoxFlat
+var _progress_bar_fill_style: StyleBoxFlat
+var _progress_bar_bg_style: StyleBoxFlat
+
 func _ready() -> void:
 	_setup_visuals()
 	GameManager.lives_changed.connect(_on_lives_changed)
@@ -28,6 +33,19 @@ func _setup_visuals() -> void:
 	
 	# Common font settings (24px) — use default theme font
 	_font = null
+	
+	# FIX D7: Pre-create progress bar styles to avoid allocation churn
+	_progress_bar_style = StyleBoxFlat.new()
+	_progress_bar_style.bg_color = Color(0.2, 0.7, 1.0)
+	_progress_bar_style.set_corner_radius_all(2)
+	
+	_progress_bar_fill_style = StyleBoxFlat.new()
+	_progress_bar_fill_style.bg_color = Color(0.2, 0.5, 0.9, 0.3)
+	_progress_bar_fill_style.set_corner_radius_all(4)
+	
+	_progress_bar_bg_style = StyleBoxFlat.new()
+	_progress_bar_bg_style.bg_color = Color(0.1, 0.1, 0.1, 0.5)
+	_progress_bar_bg_style.set_corner_radius_all(4)
 
 func _process(delta: float) -> void:
 	_update_timer += delta
@@ -73,19 +91,14 @@ func _update_progress_bar() -> void:
 	if player_node:
 		var progress: float = clampf(player_node.global_position.x / LevelManager.finish_x, 0.0, 1.0)
 		progress_bar.value = progress
-		# Apply style
-		var pb_style: StyleBoxFlat = StyleBoxFlat.new()
-		pb_style.bg_color = Color(0.2, 0.5, 0.9, 0.3)
-		pb_style.set_corner_radius_all(4)
-		progress_bar.add_theme_stylebox_override("finished", _bar_style())
-		progress_bar.add_theme_stylebox_override("fill", _bar_style())
-		progress_bar.add_theme_stylebox_override("bar", _bar_style())
+		# FIX D7: Use pre-created styles instead of allocating new ones every 100ms
+		if _progress_bar_fill_style:
+			progress_bar.add_theme_stylebox_override("finished", _progress_bar_fill_style)
+		if _progress_bar_style:
+			progress_bar.add_theme_stylebox_override("fill", _progress_bar_style)
+		if _progress_bar_bg_style:
+			progress_bar.add_theme_stylebox_override("bar", _progress_bar_bg_style)
 
-func _bar_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.7, 1.0)
-	style.set_corner_radius_all(2)
-	return style
 
 func _setup_label_font(label: Label) -> void:
 	# White text, centered alignment

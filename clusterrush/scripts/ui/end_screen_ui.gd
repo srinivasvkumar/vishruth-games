@@ -9,6 +9,14 @@ extends Control
 func _ready() -> void:
 	_setup_visuals()
 	_connect_buttons()
+	# FIX D9: Load and display the final score from GameManager
+	_load_final_score()
+
+func _load_final_score() -> void:
+	# Get the current score from GameManager and display it
+	if score_label:
+		score_label.text = "Final Score: " + str(GameManager.score)
+		print("[EndScreenUI] Final score displayed: ", GameManager.score)
 
 func _setup_visuals() -> void:
 	# Dark background

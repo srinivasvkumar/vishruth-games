@@ -1,0 +1,4 @@
+Error: Boot timeout
+    at bootWait (file:///home/srinivasvkumar/vishruth/games/clusterrush/tests/e2e/smoke_r1_r8.mjs:46:9)
+    at async testR1 (file:///home/srinivasvkumar/vishruth/games/clusterrush/tests/e2e/smoke_r1_r8.mjs:88:3)
+    at async main (file:///home/srinivasvkumar/vishruth/games/clusterrush/tests/e2e/smoke_r1_r8.mjs:294:5)

@@ -186,6 +186,10 @@ func load_level(level: int) -> void:
 func _generate_level(level: int) -> void:
 	var params = get_level_parameters(level)
 	
+	# FIX D18: Set random seed based on level number for reproducible level generation
+	# This ensures the same level always generates the same content
+	randomize_with_seed(level * 12345)  # Use level number as seed with a multiplier
+	
 	# Ensure we have a scene root to work with
 	_find_or_create_scene_root()
 	
@@ -354,6 +358,12 @@ func _create_hazards(count: int) -> Array[Area3D]:
 		var offset_y := 4.0        # just above truck top
 		var offset_x := randf_range(-1.5, 1.5)   # slight random offset on truck
 		var offset_z := randf_range(-0.8, 0.8)
+		
+		# FIX D13: Ensure ramps have minimum X position to be reachable
+		# Ramps at negative X may be unreachable by the player
+		if hazard_type == 1:  # Ramp
+			offset_x = maxf(offset_x, 0.0)  # Ensure ramp is at X >= 0
+		
 		hazard.position = Vector3(offset_x, offset_y, offset_z)
 		
 		# Configure type-specific behavior (assign script, set parameters)
