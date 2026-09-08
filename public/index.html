@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Rush - 3D Endless Runner</title>
+    <meta name="description" content="3D endless runner game built with Three.js, TypeScript, and Test-Driven Development">
+    <meta name="keywords" content="threejs, webgl, game, typescript, tdd, test-driven-development">
+    <link rel="stylesheet" href="/src/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 2px solid #334155;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            background: #1e293b;
+            position: relative;
+        }
+
+        .game-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #94a3b8;
+        }
+
+        .controls-panel {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .controls-panel h2 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .control-item {
+            background: rgba(51, 65, 85, 0.6);
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .key {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #334155;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            font-family: monospace;
+            font-weight: bold;
+            color: #f1f5f9;
+        }
+
+        .development-info {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .dev-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+            color: #064e3b;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-tdd {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #dbeafe;
+        }
+
+        .badge-spec {
+            background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+            color: #ede9fe;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 6px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tdd-phase {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            #game-container {
+                height: 400px;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cluster Rush</h1>
+            <p class="subtitle">3D Endless Runner - Built with Test-Driven Development</p>
+            
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Development Status: <strong>Phase 1 - TDD Implementation</strong></span>
+            </div>
+        </header>
+
+        <main>
+            <div id="game-container">
+                <canvas class="game-canvas" id="game-canvas"></canvas>
+                <div class="loading" id="loading-message">
+                    Loading Three.js renderer...
+                </div>
+            </div>
+
+            <div class="tdd-phase">
+                <h3>🔬 Current TDD Phase: Week 1 - Core Infrastructure</h3>
+                <p>Following RED→GREEN→REFACTOR cycle with 80%+ test coverage target</p>
+                <div class="dev-badge">TypeScript Strict Mode</div>
+                <div class="dev-badge badge-tdd">TDD Enforced</div>
+                <div class="dev-badge badge-spec">Spec-Driven</div>
+            </div>
+
+            <div class="controls-panel">
+                <h2>🎮 Controls</h2>
+                <div class="controls-grid">
+                    <div class="control-item">
+                        <h3>Movement</h3>
+                        <p><span class="key">W</span> Move Forward</p>
+                        <p><span class="key">S</span> Move Backward</p>
+                        <p><span class="key">A</span> Move Left</p>
+                        <p><span class="key">D</span> Move Right</p>
+                    </div>
+                    <div class="control-item">
+                        <h3>Actions</h3>
+                        <p><span class="key">SPACE</span> Jump</p>
+                        <p><span class="key">ESC</span> Pause Menu</p>
+                        <p><span class="key">R</span> Restart</p>
+                    </div>
+                    <div class="control-item">
+                        <h3>Camera</h3>
+                        <p><span class="key">Q</span> / <span class="key">E</span> Rotate</p>
+                        <p><span class="key">Scroll</span> Zoom</p>
+                        <p><span class="key">F</span> First/Third Person</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="development-info">
+                <h2>🧪 Development Methodology</h2>
+                <p>This game is being built using <strong>Spec-Driven Development</strong> and <strong>Test-Driven Development</strong>:</p>
+                
+                <h3>📋 Specification First</h3>
+                <ul>
+                    <li>Complete spec document with user stories</li>
+                    <li>Clear acceptance criteria and success metrics</li>
+                    <li>Technical architecture defined before coding</li>
+                </ul>
+
+                <h3>🔬 Test-Driven Development</h3>
+                <ul>
+                    <li>RED: Write failing test first for each feature</li>
+                    <li>GREEN: Implement minimal code to pass test</li>
+                    <li>REFACTOR: Clean up while maintaining passing tests</li>
+                    <li>Target: 90%+ test coverage</li>
+                </ul>
+
+                <h3>🚀 Modern Tech Stack</h3>
+                <ul>
+                    <li>Three.js for 3D rendering</li>
+                    <li>TypeScript with strict mode</li>
+                    <li>Vite for fast builds and HMR</li>
+                    <li>Vitest for testing (optimized for ESM)</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>Cluster Rush - Building with quality, testing with rigor</p>
+            <p>Development started September 7, 2026 | TDD + Spec-Driven approach</p>
+            <p>See <code>SPEC_DRIVEN_DEVELOPMENT.md</code> and <code>TDD_PLAN.md</code> for detailed documentation</p>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+    
+    <script>
+        // Development mode check
+        if (import.meta && import.meta.env && import.meta.env.MODE === 'development') {
+            console.log('🚀 Cluster Rush - Development Mode');
+            console.log('📋 Spec-driven development enabled');
+            console.log('🧪 TDD workflow enforced');
+            
+            // Add development helpers
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'F2') {
+                    console.log('[DEV] Toggle wireframe mode');
+                    // Wireframe toggle will be implemented in Phase 2
+                }
+                if (e.key === 'F3' && e.ctrlKey) {
+                    console.log('[DEV] Performance stats');
+                    // Performance monitoring will be implemented
+                }
+            });
+        }
+
+        // Loading indicator
+        const loadingMsg = document.getElementById('loading-message');
+        const updateLoading = (message) => {
+            if (loadingMsg) {
+                loadingMsg.textContent = message;
+            }
+        };
+
+        // Initial loading sequence
+        updateLoading('Initializing Three.js...');
+        
+        // Error handling
+        window.addEventListener('error', (e) => {
+            updateLoading(`Error: ${e.message}`);
+            console.error('Game initialization error:', e);
+        });
+    </script>
+</body>
+</html>
