@@ -23,12 +23,12 @@
   "current_status": {
     "phase": "Week 0: Infrastructure & Baseline",
     "day": 0.1,
-    "current_task": "0.1.3 - CI/CD Pipeline",
+    "current_task": "0.1.4 - Pre-commit Hooks",
     "status": "COMPLETED",
     "tdd_cycle": "complete",
     "start_date": "2026-09-08T13:42:39.443909",
-    "last_updated": "2026-09-08T19:10:00",
-    "completion_notes": "GitHub Actions workflow created at .github/workflows/test.yml. Runs tests on push to main and PRs, enforces 80% coverage threshold, includes linting and type checking jobs, uploads coverage reports to Codecov and as artifacts. All 16 CI/CD tests passing."
+    "last_updated": "2026-09-08T20:02:00",
+    "completion_notes": "Git repository initialized, Husky pre-commit hook configured with lint-staged. Runs tests and linting on staged .ts files before every commit. Verified working with initial commit f43d726."
   },
   "completed_tasks": [
     {
@@ -51,6 +51,13 @@
       "completion_date": "2026-09-08T19:10:00",
       "tdd_cycle": "complete",
       "notes": "GitHub Actions workflow created. Runs tests on push/PR, enforces 80% coverage, includes linting and type checking, uploads coverage reports."
+    },
+    {
+      "id": "0.1.4",
+      "description": "Pre-commit Hooks",
+      "completion_date": "2026-09-08T20:02:00",
+      "tdd_cycle": "complete",
+      "notes": "Git repo initialized, Husky + lint-staged configured. Runs tests and linting on staged .ts files before commits. Verified working with initial commit f43d726."
     }
   ],
   "agent_assignments": {
