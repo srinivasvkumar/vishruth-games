@@ -1,0 +1,145 @@
+{
+  "tdd_tasks": [
+    {
+      "phase": "Week 1: Core Infrastructure",
+      "days": [
+        {
+          "day": 1,
+          "tasks": [
+            {
+              "id": "TDD-1.1",
+              "description": "Initialize project with testing infrastructure",
+              "status": "pending",
+              "tdd_cycle": "red"
+            },
+            {
+              "id": "TDD-1.2",
+              "description": "TypeScript strict mode configuration",
+              "status": "pending",
+              "tdd_cycle": "green"
+            },
+            {
+              "id": "TDD-1.3",
+              "description": "Three.js rendering test",
+              "status": "pending",
+              "tdd_cycle": "refactor"
+            }
+          ]
+        },
+        {
+          "day": 2,
+          "tasks": [
+            {
+              "id": "TDD-2.1",
+              "description": "Game state management",
+              "status": "pending",
+              "tdd_cycle": "red"
+            },
+            {
+              "id": "TDD-2.2",
+              "description": "Frame loop timing",
+              "status": "pending",
+              "tdd_cycle": "green"
+            },
+            {
+              "id": "TDD-2.3",
+              "description": "Scene management system",
+              "status": "pending",
+              "tdd_cycle": "refactor"
+            }
+          ]
+        },
+        {
+          "day": 3,
+          "tasks": [
+            {
+              "id": "TDD-3.1",
+              "description": "Keyboard input detection",
+              "status": "pending",
+              "tdd_cycle": "red"
+            },
+            {
+              "id": "TDD-3.2",
+              "description": "Input buffering for frame independence",
+              "status": "pending",
+              "tdd_cycle": "green"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "Week 2: Gameplay Systems",
+      "days": [
+        {
+          "day": 4,
+          "tasks": [
+            {
+              "id": "TDD-4.1",
+              "description": "Player entity creation",
+              "status": "pending",
+              "tdd_cycle": "red"
+            },
+            {
+              "id": "TDD-4.2",
+              "description": "Player movement mechanics",
+              "status": "pending",
+              "tdd_cycle": "green"
+            },
+            {
+              "id": "TDD-4.3",
+              "description": "Jump mechanics",
+              "status": "pending",
+              "tdd_cycle": "refactor"
+            },
+            {
+              "id": "TDD-4.4",
+              "description": "Gravity application",
+              "status": "pending",
+              "tdd_cycle": "verify"
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "tasks": [
+            {
+              "id": "TDD-5.1",
+              "description": "Cannon-es physics integration",
+              "status": "pending",
+              "tdd_cycle": "red"
+            },
+            {
+              "id": "TDD-5.2",
+              "description": "Body synchronization",
+              "status": "pending",
+              "tdd_cycle": "green"
+            },
+            {
+              "id": "TDD-5.3",
+              "description": "Collision detection tests",
+              "status": "pending",
+              "tdd_cycle": "refactor"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "task_states": {
+    "pending": "Awaiting TDD RED phase",
+    "red": "Failing test written, awaiting verification",
+    "red_verified": "RED phase verified by tester",
+    "green": "Minimal implementation complete",
+    "green_verified": "GREEN phase verified by tester",
+    "refactor": "Code cleaned, awaiting verification",
+    "completed": "All TDD cycles complete",
+    "blocked": "Blocked - requires attention"
+  },
+  "completion_criteria": {
+    "red": "Failing test demonstrates expected behavior",
+    "green": "Test passes with minimal implementation",
+    "refactor": "Code cleaned, all tests still pass",
+    "done": "Manual browser test confirms functionality"
+  }
+}

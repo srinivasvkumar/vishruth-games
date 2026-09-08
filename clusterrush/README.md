@@ -1,24 +1,67 @@
-# Cluster Rush
+# Cluster Rush - 3D Endless Runner Game
 
-## Status: REBUILDING FROM SCRATCH
+## 🎮 About the Game
+Cluster Rush is a fast-paced 3D endless runner game built with Three.js and TypeScript. Navigate through procedurally generated obstacles, collect power-ups, and achieve the highest score!
 
-### Current State
-This project is being rebuilt from Godot WebGL to pure Node.js/Three.js to avoid CORS and rendering bugs.
+## 🚀 Quick Start
 
-### New Plan
-See `REBUILD_PLAN.md` for the complete implementation plan using:
-- Three.js for 3D rendering
-- Cannon-es for physics
-- TypeScript for type safety
-- Node.js for local serving
+### Prerequisites
+- Node.js >= 20.11.0
+- npm or yarn
 
-### Quick Start (After Rebuild)
+### Installation
 ```bash
 npm install
+```
+
+### Development
+```bash
 npm run dev
 ```
 
----
+### Production Build
+```bash
+npm run build
+npm run preview
+```
 
-**Rebuild Start Date**: September 7, 2026  
-**Status**: Planning complete, ready for implementation
+## 📁 Project Structure
+```
+clusterrush/
+├── src/                 # TypeScript source code
+├── public/             # Static assets and HTML
+├── tests/              # Test suite
+├── config/             # Configuration files
+└── scripts/            # Build/deployment scripts
+```
+
+## 🛠️ Built With
+- **Three.js** - 3D rendering engine
+- **TypeScript** - Type safety and tooling
+- **Vite** - Build tool and dev server
+- **Cannon-es** - Physics engine
+- **Vitest** - Testing framework
+- **Playwright** - End-to-end testing
+
+## 📄 Documentation
+- [Architecture](./docs/architecture.md)
+- [API Reference](./docs/api.md)
+- [Deployment Guide](./docs/deployment.md)
+
+## 🧪 Testing
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run end-to-end tests
+npm run test:e2e
+```
+
+## 🤝 Contributing
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
+
+## 📝 License
+MIT License - see [LICENSE](LICENSE) for details.
