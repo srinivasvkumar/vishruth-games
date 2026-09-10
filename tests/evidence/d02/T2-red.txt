@@ -1,0 +1,1330 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts
+
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/srinivasvkumar/vishruth/games/clusterrush[39m
+
+ [33m❯[39m tests/unit/game.test.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [33m❯[39m tests/unit/hello-three.test.ts [2m ([22m[2m11 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m4 skipped[39m[2m)[22m[90m 9[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/hello-three.test.ts[2m > [22mThree.js Integration - TDD Setup Verification[2m > [22mshould create a WebGL renderer (RED phase)[39m
+[31m     → expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/unit/mock-strategy.test.ts [2m ([22m[2m54 tests[22m[2m)[22m[90m 27[2mms[22m[39m
+ [32m✓[39m tests/unit/cicd-pipeline.test.ts [2m ([22m[2m16 tests[22m[2m)[22m[90m 24[2mms[22m[39m
+ [32m✓[39m tests/unit/input-system.test.ts [2m ([22m[2m9 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [33m❯[39m tests/unit/constants.test.ts [2m ([22m[2m12 tests[22m [2m|[22m [31m4 failed[39m[2m)[22m[90m 23[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have GAMEPAD_DEADZONE defined[39m
+[31m     → expected undefined not to be undefined[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have valid deadzone value[39m
+[31m     → actual value must be number or bigint, received "undefined"[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have PLAYER_DIED event defined[39m
+[31m     → expected undefined not to be undefined[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have SCORE_CHANGED event defined[39m
+[31m     → expected undefined not to be undefined[39m
+ [33m❯[39m tests/unit/physics-system.test.ts [2m ([22m[2m12 tests[22m [2m|[22m [31m12 failed[39m[2m)[22m[90m 20[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create PhysicsSystem instance[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould initialize physics world[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould set gravity[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould add body to world[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould remove body from world[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould update physics with deltaTime[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle multiple updates[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle variable deltaTime[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mRaycasting[2m > [22mshould perform raycast[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCollision Detection[2m > [22mshould handle collision events[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould cleanup physics world[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[31m   [33m❯[31m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould remove all bodies on cleanup[39m
+[31m     → Cannot read properties of undefined (reading 'set')[39m
+[31m     → Cannot read properties of undefined (reading 'cleanup')[39m
+[90mstdout[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLogging Behavior[2m > [22m[2mshould accept message and optional data[22m[39m
+[INFO] Test message 
+[INFO] Test message { key: [32m'value'[39m }
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLogging Behavior[2m > [22m[2mshould accept error objects[22m[39m
+[ERROR] Error message Error: Test
+    at [90m/home/srinivasvkumar/vishruth/games/clusterrush/[39mtests/unit/logger.test.ts:34:50
+    at Proxy.assertThrows [90m(/home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4mchai[24m/lib/chai/core/assertions.js:2644:7[90m)[39m
+    at Proxy.methodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4mchai[24m/lib/chai/utils/addMethod.js:57:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:850:16[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4mchai[24m/lib/chai/utils/overwriteMethod.js:78:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1324:19[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:800:17[90m)[39m
+    at Proxy.methodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4mchai[24m/lib/chai/utils/addMethod.js:57:25[90m)[39m
+    at [90m/home/srinivasvkumar/vishruth/games/clusterrush/[39mtests/unit/logger.test.ts:34:74
+    at [90mfile:///home/srinivasvkumar/vishruth/games/clusterrush/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+
+[90mstdout[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support info level logging[22m[39m
+[INFO] Info message 
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support warn level logging[22m[39m
+[WARN] Warning message 
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support error level logging[22m[39m
+[ERROR] Error message 
+
+ [32m✓[39m tests/unit/logger.test.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 37[2mms[22m[39m
+ [33m❯[39m tests/unit/scene-manager.test.ts [2m ([22m[2m20 tests[22m [2m|[22m [31m6 failed[39m[2m)[22m[90m 34[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould load a registered scene[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould pass data to scene load[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould exit current scene before loading new one[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould set previous scene when loading new scene[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Updates[2m > [22mshould update current scene[39m
+[31m     → expected "spy" to be called with arguments: [ 0.016 ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Rendering[2m > [22mshould render current scene[39m
+[31m     → expected "spy" to be called at least once[39m
+[90mstderr[2m | tests/unit/retroactive-core.test.ts[2m > [22m[2mCluster Rush - Retroactive Tests for Core Systems[2m > [22m[2mThree.js Integration[2m > [22m[2mshould create WebGLRenderer[22m[39m
+THREE.WebGLRenderer: Error creating WebGL context.
+
+ [33m❯[39m tests/unit/retroactive-core.test.ts [2m ([22m[2m46 tests[22m [2m|[22m [31m37 failed[39m[2m)[22m[90m 149[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Game class structure[39m
+[31m     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have GameLoop class structure[39m
+[31m     → Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have SceneManager class structure[39m
+[31m     → Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have InputSystem class structure[39m
+[31m     → Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have PhysicsSystem class structure[39m
+[31m     → Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Player class structure[39m
+[31m     → Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Obstacle class structure[39m
+[31m     → Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Constants module[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Logger module[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_HEALTH constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_LIVES constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_SPEED constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have JUMP_FORCE constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have GRAVITY constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have OBSTACLE_TYPES array[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mInputConstants Values[2m > [22mshould have GAMEPAD_DEADZONE constant[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have LEVEL_START event[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have PLAYER_DIED event[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have SCORE_CHANGED event[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have info method[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have warn method[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have error method[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have debug method[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould accept message and optional data[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mThree.js Integration[2m > [22mshould create WebGLRenderer[39m
+[31m     → Error creating WebGL context.[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mCannon-es Integration[2m > [22mshould create Box shape[39m
+[31m     → Cannot read properties of undefined (reading 'x')[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Architecture Patterns[2m > [22mshould follow component-based architecture[39m
+[31m     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Architecture Patterns[2m > [22mshould have proper module separation[39m
+[31m     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Game.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify GameLoop.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify SceneManager.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Input.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Physics.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Player.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Obstacle.ts exists and is importable[39m
+[31m     → Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Constants.ts exists and exports all constants[39m
+[31m     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[31m   [33m❯[31m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Logger.ts exists and exports Logger[39m
+[31m     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+ [33m❯[39m tests/unit/game-loop.test.ts [2m ([22m[2m13 tests[22m [2m|[22m [31m8 failed[39m[2m)[22m[90m 188[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould start the loop[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould stop the loop[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould not start if already running[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call update callback with deltaTime[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call render callback each frame[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould pass deltaTime to update[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould use 60 FPS as default[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould accumulate time for fixed updates[39m
+[31m     → Maximum call stack size exceeded[39m
+ [33m❯[39m tests/unit/obstacle.test.ts [2m ([22m[2m19 tests[22m [2m|[22m [31m19 failed[39m[2m)[22m[90m 128[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create Obstacle instance[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create obstacle at specified position[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould set obstacle type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould be active by default[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support static type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support moving type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support rotating type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support breakable type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support spike type[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mMovement[2m > [22mshould update position[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mMovement[2m > [22mshould handle different movement patterns[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mCollision[2m > [22mshould detect collision[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mCollision[2m > [22mshould return true for close positions[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould deactivate obstacle[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould activate obstacle[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould destroy obstacle[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide mesh access[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide position[39m
+[31m     → position.clone is not a function[39m
+[31m   [33m❯[31m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide type[39m
+[31m     → position.clone is not a function[39m
+ [33m❯[39m tests/unit/player.test.ts [2m ([22m[2m45 tests[22m [2m|[22m [31m3 failed[39m[2m)[22m[90m 151[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mJump Mechanics[2m > [22mshould not jump when already jumping[39m
+[31m     → expected 14.36 to be 14.68 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould restore health on respawn[39m
+[31m     → expected 50 to be 100 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould respawn at specified position[39m
+[31m     → expected +0 to be 5 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Suites 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game.test.ts [2m[ tests/unit/game.test.ts ][22m
+[31m[1mError[22m: Failed to resolve import "@/systems/Audio" from "tests/unit/game.test.ts". Does the file exist?[39m
+[90m [2m❯[22m TransformPluginContext._formatError node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m49258:41[22m[39m
+[90m [2m❯[22m TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m49253:16[22m[39m
+[90m [2m❯[22m normalizeUrl node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m64307:23[22m[39m
+[90m [2m❯[22m async file:/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m64439:39[22m[39m
+[90m [2m❯[22m TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m64366:7[22m[39m
+[90m [2m❯[22m PluginContainer.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m49099:18[22m[39m
+[90m [2m❯[22m loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:[2m51978:27[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/103]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 90 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have GAMEPAD_DEADZONE defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m47:47[22m[39m
+    [90m 45| [39m  [34mdescribe[39m([32m'InputConstants'[39m[33m,[39m () [33m=>[39m {
+    [90m 46| [39m    [34mit[39m([32m'should have GAMEPAD_DEADZONE defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 47| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                              [31m^[39m
+    [90m 48| [39m      [34mexpect[39m([35mtypeof[39m [33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+    [90m 49| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have valid deadzone value
+[31m[1mTypeError[22m: actual value must be number or bigint, received "undefined"[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m52:47[22m[39m
+    [90m 50| [39m
+    [90m 51| [39m    [34mit[39m([32m'should have valid deadzone value'[39m[33m,[39m () [33m=>[39m {
+    [90m 52| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeGreaterThanOrEqual[39m([34m0[39m…
+    [90m   | [39m                                              [31m^[39m
+    [90m 53| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeLessThanOrEqual[39m([34m1[39m)[33m;[39m
+    [90m 54| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have PLAYER_DIED event defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m64:38[22m[39m
+    [90m 62| [39m
+    [90m 63| [39m    [34mit[39m([32m'should have PLAYER_DIED event defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 64| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m 65| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+    [90m 66| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have SCORE_CHANGED event defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m69:40[22m[39m
+    [90m 67| [39m
+    [90m 68| [39m    [34mit[39m([32m'should have SCORE_CHANGED event defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 69| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                       [31m^[39m
+    [90m 70| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+    [90m 71| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould start the loop
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould not start if already running
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call update callback with deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call render callback each frame
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould pass deltaTime to update
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould use 60 FPS as default
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould accumulate time for fixed updates
+[31m[1mRangeError[22m: Maximum call stack size exceeded[39m
+[36m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:10[22m[39m
+    [90m 23| [39m    [90m// Mock requestAnimationFrame and cancelAnimationFrame[39m
+    [90m 24| [39m    vi[33m.[39m[34mspyOn[39m(window[33m,[39m [32m'requestAnimationFrame'[39m)[33m.[39m[34mmockImplementation[39m((cb) …
+    [90m 25| [39m      [34mcb[39m(performance[33m.[39m[34mnow[39m())[33m;[39m
+    [90m   | [39m         [31m^[39m
+    [90m 26| [39m      [35mreturn[39m [34m1[39m [35mas[39m any[33m;[39m
+    [90m 27| [39m    })[33m;[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+[90m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:7[22m[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould stop the loop
+[31m[1mRangeError[22m: Maximum call stack size exceeded[39m
+[36m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:5[22m[39m
+    [90m 69| [39m    
+    [90m 70| [39m    [90m// Schedule next frame[39m
+    [90m 71| [39m    [35mthis[39m[33m.[39mframeId [33m=[39m [34mrequestAnimationFrame[39m((time) [33m=>[39m [35mthis[39m[33m.[39m[34mrun[39m(time))[33m;[39m
+    [90m   | [39m    [31m^[39m
+    [90m 72| [39m  }
+    [90m 73| [39m  
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+[90m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:7[22m[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+[90m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/hello-three.test.ts[2m > [22mThree.js Integration - TDD Setup Verification[2m > [22mshould create a WebGL renderer (RED phase)
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/hello-three.test.ts:[2m31:19[22m[39m
+    [90m 29| [39m    
+    [90m 30| [39m    [90m// Act & Assert will be implemented in GREEN phase[39m
+    [90m 31| [39m    [34mexpect[39m([35mfalse[39m)[33m.[39m[34mtoBe[39m([35mtrue[39m) [90m// Intentionally failing - RED phase[39m
+    [90m   | [39m                  [31m^[39m
+    [90m 32| [39m  })
+    [90m 33| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create Obstacle instance
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create obstacle at specified position
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould set obstacle type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould be active by default
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support static type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support moving type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support rotating type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support breakable type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mObstacle Types[2m > [22mshould support spike type
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mMovement[2m > [22mshould update position
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mMovement[2m > [22mshould handle different movement patterns
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mCollision[2m > [22mshould detect collision
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mCollision[2m > [22mshould return true for close positions
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould deactivate obstacle
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould activate obstacle
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mState Management[2m > [22mshould destroy obstacle
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide mesh access
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide position
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/obstacle.test.ts[2m > [22mObstacle Class - Retroactive Tests[2m > [22mGetters[2m > [22mshould provide type
+[31m[1mTypeError[22m: position.clone is not a function[39m
+[36m [2m❯[22m new Obstacle src/entities/Obstacle.ts:[2m27:38[22m[39m
+    [90m 25| [39m  ) {
+    [90m 26| [39m    [35mthis[39m[33m.[39mtype [33m=[39m type[33m;[39m
+    [90m 27| [39m    [35mthis[39m[33m.[39moriginalPosition [33m=[39m position[33m.[39m[34mclone[39m()[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m 28| [39m    
+    [90m 29| [39m    [90m// Set damage based on type[39m
+[90m [2m❯[22m tests/unit/obstacle.test.ts:[2m24:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create PhysicsSystem instance
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould initialize physics world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould set gravity
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould add body to world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould remove body from world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould update physics with deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle multiple updates
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle variable deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mRaycasting[2m > [22mshould perform raycast
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCollision Detection[2m > [22mshould handle collision events
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould cleanup physics world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould remove all bodies on cleanup
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'set')[39m
+[36m [2m❯[22m new PhysicsSystem src/systems/Physics.ts:[2m18:24[22m[39m
+    [90m 16| [39m    [35mthis[39m[33m.[39mconfig [33m=[39m config[33m;[39m
+    [90m 17| [39m    [35mthis[39m[33m.[39mworld [33m=[39m [35mnew[39m [33mCANNON[39m[33m.[39m[33mWorld[39m()[33m;[39m
+    [90m 18| [39m    [35mthis[39m[33m.[39mworld[33m.[39mgravity[33m.[39m[35mset[39m([34m0[39m[33m,[39m [33m-[39mconfig[33m.[39mgravity[33m,[39m [34m0[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m 19| [39m    [35mthis[39m[33m.[39mworld[33m.[39mdefaultContactMaterial[33m.[39mfriction [33m=[39m [34m0.3[39m[33m;[39m
+    [90m 20| [39m    [35mthis[39m[33m.[39mworld[33m.[39mdefaultContactMaterial[33m.[39mrestitution [33m=[39m [34m0.3[39m[33m;[39m
+[90m [2m❯[22m tests/unit/physics-system.test.ts:[2m37:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould create PhysicsSystem instance
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould initialize physics world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mInitialization[2m > [22mshould set gravity
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould add body to world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mBody Management[2m > [22mshould remove body from world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould update physics with deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle multiple updates
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mPhysics Updates[2m > [22mshould handle variable deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mRaycasting[2m > [22mshould perform raycast
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCollision Detection[2m > [22mshould handle collision events
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould cleanup physics world
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/physics-system.test.ts[2m > [22mPhysicsSystem Class - Retroactive Tests[2m > [22mCleanup[2m > [22mshould remove all bodies on cleanup
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'cleanup')[39m
+[36m [2m❯[22m tests/unit/physics-system.test.ts:[2m41:19[22m[39m
+    [90m 39| [39m
+    [90m 40| [39m  [34mafterEach[39m(() [33m=>[39m {
+    [90m 41| [39m    physicsSystem[33m.[39m[34mcleanup[39m()[33m;[39m
+    [90m   | [39m                  [31m^[39m
+    [90m 42| [39m  })[33m;[39m
+    [90m 43| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mJump Mechanics[2m > [22mshould not jump when already jumping
+[31m[1mAssertionError[22m: expected 14.36 to be 14.68 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 14.68[39m
+[31m+ 14.36[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m153:38[22m[39m
+    [90m151| [39m      [35mconst[39m initialY [33m=[39m player[33m.[39m[34mgetVelocity[39m()[33m.[39my[33m;[39m
+    [90m152| [39m      player[33m.[39m[34mupdate[39m([34m0.016[39m[33m,[39m { [32m' '[39m[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m153| [39m      [34mexpect[39m(player[33m.[39m[34mgetVelocity[39m()[33m.[39my)[33m.[39m[34mtoBe[39m(initialY)[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m154| [39m    })[33m;[39m
+    [90m155| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould restore health on respawn
+[31m[1mAssertionError[22m: expected 50 to be 100 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 100[39m
+[31m+ 50[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m269:28[22m[39m
+    [90m267| [39m      player[33m.[39m[34mrespawn[39m()[33m;[39m
+    [90m268| [39m      [35mconst[39m state [33m=[39m player[33m.[39m[34mgetState[39m()[33m;[39m
+    [90m269| [39m      [34mexpect[39m(state[33m.[39mhealth)[33m.[39m[34mtoBe[39m([34m100[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m270| [39m    })[33m;[39m
+    [90m271| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould respawn at specified position
+[31m[1mAssertionError[22m: expected +0 to be 5 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 5[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m276:26[22m[39m
+    [90m274| [39m      player[33m.[39m[34mrespawn[39m(customPosition)[33m;[39m
+    [90m275| [39m      [35mconst[39m position [33m=[39m player[33m.[39m[34mgetPosition[39m()[33m;[39m
+    [90m276| [39m      [34mexpect[39m(position[33m.[39mx)[33m.[39m[34mtoBe[39m([34m5[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m277| [39m      [34mexpect[39m(position[33m.[39my)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m278| [39m      [34mexpect[39m(position[33m.[39mz)[33m.[39m[34mtoBe[39m([34m10[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Game class structure
+[31m[1mError[22m: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m68:26[22m[39m
+    [90m 66| [39m    [34mit[39m([32m'should have Game class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 67| [39m      [90m// Verify Game.ts exists and has expected structure[39m
+    [90m 68| [39m      [35mconst[39m gameModule [33m=[39m [34mrequire[39m([32m'../../src/core/Game'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m 69| [39m      [34mexpect[39m(gameModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 70| [39m      [34mexpect[39m([35mtypeof[39m gameModule[33m.[39m[33mGame[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have GameLoop class structure
+[31m[1mError[22m: Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m74:30[22m[39m
+    [90m 72| [39m
+    [90m 73| [39m    [34mit[39m([32m'should have GameLoop class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 74| [39m      [35mconst[39m gameLoopModule [33m=[39m [34mrequire[39m([32m'../../src/core/GameLoop'[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m 75| [39m      [34mexpect[39m(gameLoopModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 76| [39m      [34mexpect[39m([35mtypeof[39m gameLoopModule[33m.[39m[33mGameLoop[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have SceneManager class structure
+[31m[1mError[22m: Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m80:34[22m[39m
+    [90m 78| [39m
+    [90m 79| [39m    [34mit[39m([32m'should have SceneManager class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 80| [39m      [35mconst[39m sceneManagerModule [33m=[39m [34mrequire[39m([32m'../../src/core/SceneManager'[39m…
+    [90m   | [39m                                 [31m^[39m
+    [90m 81| [39m      [34mexpect[39m(sceneManagerModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 82| [39m      [34mexpect[39m([35mtypeof[39m sceneManagerModule[33m.[39m[33mSceneManager[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have InputSystem class structure
+[31m[1mError[22m: Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m86:27[22m[39m
+    [90m 84| [39m
+    [90m 85| [39m    [34mit[39m([32m'should have InputSystem class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 86| [39m      [35mconst[39m inputModule [33m=[39m [34mrequire[39m([32m'../../src/systems/Input'[39m)[33m;[39m
+    [90m   | [39m                          [31m^[39m
+    [90m 87| [39m      [34mexpect[39m(inputModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 88| [39m      [34mexpect[39m([35mtypeof[39m inputModule[33m.[39m[33mInputSystem[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have PhysicsSystem class structure
+[31m[1mError[22m: Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m92:29[22m[39m
+    [90m 90| [39m
+    [90m 91| [39m    [34mit[39m([32m'should have PhysicsSystem class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 92| [39m      [35mconst[39m physicsModule [33m=[39m [34mrequire[39m([32m'../../src/systems/Physics'[39m)[33m;[39m
+    [90m   | [39m                            [31m^[39m
+    [90m 93| [39m      [34mexpect[39m(physicsModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m 94| [39m      [34mexpect[39m([35mtypeof[39m physicsModule[33m.[39m[33mPhysicsSystem[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Player class structure
+[31m[1mError[22m: Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m98:28[22m[39m
+    [90m 96| [39m
+    [90m 97| [39m    [34mit[39m([32m'should have Player class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m 98| [39m      [35mconst[39m playerModule [33m=[39m [34mrequire[39m([32m'../../src/entities/Player'[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m 99| [39m      [34mexpect[39m(playerModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m100| [39m      [34mexpect[39m([35mtypeof[39m playerModule[33m.[39m[33mPlayer[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Obstacle class structure
+[31m[1mError[22m: Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m104:30[22m[39m
+    [90m102| [39m
+    [90m103| [39m    [34mit[39m([32m'should have Obstacle class structure'[39m[33m,[39m () [33m=>[39m {
+    [90m104| [39m      [35mconst[39m obstacleModule [33m=[39m [34mrequire[39m([32m'../../src/entities/Obstacle'[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m105| [39m      [34mexpect[39m(obstacleModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m106| [39m      [34mexpect[39m([35mtypeof[39m obstacleModule[33m.[39m[33mObstacle[39m)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Constants module
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m110:31[22m[39m
+    [90m108| [39m
+    [90m109| [39m    [34mit[39m([32m'should have Constants module'[39m[33m,[39m () [33m=>[39m {
+    [90m110| [39m      [35mconst[39m constantsModule [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                              [31m^[39m
+    [90m111| [39m      [34mexpect[39m(constantsModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m112| [39m      [34mexpect[39m(constantsModule[33m.[39m[33mGameConstants[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Core Architecture[2m > [22mshould have Logger module
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m118:28[22m[39m
+    [90m116| [39m
+    [90m117| [39m    [34mit[39m([32m'should have Logger module'[39m[33m,[39m () [33m=>[39m {
+    [90m118| [39m      [35mconst[39m loggerModule [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m119| [39m      [34mexpect[39m(loggerModule)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m120| [39m      [34mexpect[39m([35mtypeof[39m loggerModule[33m.[39m[33mLogger[39m[33m.[39minfo)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_HEALTH constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m129:33[22m[39m
+    [90m127| [39m  [34mdescribe[39m([32m'GameConstants Values'[39m[33m,[39m () [33m=>[39m {
+    [90m128| [39m    [34mit[39m([32m'should have PLAYER_HEALTH constant'[39m[33m,[39m () [33m=>[39m {
+    [90m129| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m130| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mPLAYER_HEALTH[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m131| [39m      [34mexpect[39m([35mtypeof[39m [33mGameConstants[39m[33m.[39m[33mPLAYER_HEALTH[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_LIVES constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m136:33[22m[39m
+    [90m134| [39m
+    [90m135| [39m    [34mit[39m([32m'should have PLAYER_LIVES constant'[39m[33m,[39m () [33m=>[39m {
+    [90m136| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m137| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mPLAYER_LIVES[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m138| [39m      [34mexpect[39m([35mtypeof[39m [33mGameConstants[39m[33m.[39m[33mPLAYER_LIVES[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have PLAYER_SPEED constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m143:33[22m[39m
+    [90m141| [39m
+    [90m142| [39m    [34mit[39m([32m'should have PLAYER_SPEED constant'[39m[33m,[39m () [33m=>[39m {
+    [90m143| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m144| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mPLAYER_SPEED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m145| [39m      [34mexpect[39m([35mtypeof[39m [33mGameConstants[39m[33m.[39m[33mPLAYER_SPEED[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have JUMP_FORCE constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m150:33[22m[39m
+    [90m148| [39m
+    [90m149| [39m    [34mit[39m([32m'should have JUMP_FORCE constant'[39m[33m,[39m () [33m=>[39m {
+    [90m150| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m151| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mJUMP_FORCE[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m152| [39m      [34mexpect[39m([35mtypeof[39m [33mGameConstants[39m[33m.[39m[33mJUMP_FORCE[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have GRAVITY constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m157:33[22m[39m
+    [90m155| [39m
+    [90m156| [39m    [34mit[39m([32m'should have GRAVITY constant'[39m[33m,[39m () [33m=>[39m {
+    [90m157| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m158| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mGRAVITY[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m159| [39m      [34mexpect[39m([35mtypeof[39m [33mGameConstants[39m[33m.[39m[33mGRAVITY[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameConstants Values[2m > [22mshould have OBSTACLE_TYPES array
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m164:33[22m[39m
+    [90m162| [39m
+    [90m163| [39m    [34mit[39m([32m'should have OBSTACLE_TYPES array'[39m[33m,[39m () [33m=>[39m {
+    [90m164| [39m      [35mconst[39m { [33mGameConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                [31m^[39m
+    [90m165| [39m      [34mexpect[39m([33mGameConstants[39m[33m.[39m[33mOBSTACLE_TYPES[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m166| [39m      [34mexpect[39m([33mArray[39m[33m.[39m[34misArray[39m([33mGameConstants[39m[33m.[39m[33mOBSTACLE_TYPES[39m))[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mInputConstants Values[2m > [22mshould have GAMEPAD_DEADZONE constant
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m173:34[22m[39m
+    [90m171| [39m  [34mdescribe[39m([32m'InputConstants Values'[39m[33m,[39m () [33m=>[39m {
+    [90m172| [39m    [34mit[39m([32m'should have GAMEPAD_DEADZONE constant'[39m[33m,[39m () [33m=>[39m {
+    [90m173| [39m      [35mconst[39m { [33mInputConstants[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                                 [31m^[39m
+    [90m174| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m175| [39m      [34mexpect[39m([35mtypeof[39m [33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have LEVEL_START event
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m183:30[22m[39m
+    [90m181| [39m  [34mdescribe[39m([32m'GameEvents Values'[39m[33m,[39m () [33m=>[39m {
+    [90m182| [39m    [34mit[39m([32m'should have LEVEL_START event'[39m[33m,[39m () [33m=>[39m {
+    [90m183| [39m      [35mconst[39m { [33mGameEvents[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m184| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mLEVEL_START[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m185| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mLEVEL_START[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have PLAYER_DIED event
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m189:30[22m[39m
+    [90m187| [39m
+    [90m188| [39m    [34mit[39m([32m'should have PLAYER_DIED event'[39m[33m,[39m () [33m=>[39m {
+    [90m189| [39m      [35mconst[39m { [33mGameEvents[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m190| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m191| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGameEvents Values[2m > [22mshould have SCORE_CHANGED event
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m195:30[22m[39m
+    [90m193| [39m
+    [90m194| [39m    [34mit[39m([32m'should have SCORE_CHANGED event'[39m[33m,[39m () [33m=>[39m {
+    [90m195| [39m      [35mconst[39m { [33mGameEvents[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                             [31m^[39m
+    [90m196| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m197| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have info method
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m203:26[22m[39m
+    [90m201| [39m  [34mdescribe[39m([32m'Logger Functionality'[39m[33m,[39m () [33m=>[39m {
+    [90m202| [39m    [34mit[39m([32m'should have info method'[39m[33m,[39m () [33m=>[39m {
+    [90m203| [39m      [35mconst[39m { [33mLogger[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m204| [39m      [34mexpect[39m([35mtypeof[39m [33mLogger[39m[33m.[39minfo)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+    [90m205| [39m      [34mexpect[39m(() [33m=>[39m [33mLogger[39m[33m.[39m[34minfo[39m([32m'Test message'[39m))[33m.[39mnot[33m.[39m[34mtoThrow[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have warn method
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m209:26[22m[39m
+    [90m207| [39m
+    [90m208| [39m    [34mit[39m([32m'should have warn method'[39m[33m,[39m () [33m=>[39m {
+    [90m209| [39m      [35mconst[39m { [33mLogger[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m210| [39m      [34mexpect[39m([35mtypeof[39m [33mLogger[39m[33m.[39mwarn)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+    [90m211| [39m      [34mexpect[39m(() [33m=>[39m [33mLogger[39m[33m.[39m[34mwarn[39m([32m'Warning message'[39m))[33m.[39mnot[33m.[39m[34mtoThrow[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have error method
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m215:26[22m[39m
+    [90m213| [39m
+    [90m214| [39m    [34mit[39m([32m'should have error method'[39m[33m,[39m () [33m=>[39m {
+    [90m215| [39m      [35mconst[39m { [33mLogger[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m216| [39m      [34mexpect[39m([35mtypeof[39m [33mLogger[39m[33m.[39merror)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+    [90m217| [39m      [34mexpect[39m(() [33m=>[39m [33mLogger[39m[33m.[39m[34merror[39m([32m'Error message'[39m))[33m.[39mnot[33m.[39m[34mtoThrow[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould have debug method
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m221:26[22m[39m
+    [90m219| [39m
+    [90m220| [39m    [34mit[39m([32m'should have debug method'[39m[33m,[39m () [33m=>[39m {
+    [90m221| [39m      [35mconst[39m { [33mLogger[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m222| [39m      [34mexpect[39m([35mtypeof[39m [33mLogger[39m[33m.[39mdebug)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+    [90m223| [39m      [34mexpect[39m(() [33m=>[39m [33mLogger[39m[33m.[39m[34mdebug[39m([32m'Debug message'[39m))[33m.[39mnot[33m.[39m[34mtoThrow[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mLogger Functionality[2m > [22mshould accept message and optional data
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m227:26[22m[39m
+    [90m225| [39m
+    [90m226| [39m    [34mit[39m([32m'should accept message and optional data'[39m[33m,[39m () [33m=>[39m {
+    [90m227| [39m      [35mconst[39m { [33mLogger[39m } [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m228| [39m      [34mexpect[39m(() [33m=>[39m [33mLogger[39m[33m.[39m[34minfo[39m([32m'Test message'[39m[33m,[39m { key[33m:[39m [32m'value'[39m }))[33m.[39mnot[33m.[39m…
+    [90m229| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mThree.js Integration[2m > [22mshould create WebGLRenderer
+[31m[1mError[22m: Error creating WebGL context.[39m
+[90m [2m❯[22m new WebGLRenderer node_modules/three/build/three.cjs:[2m28923:13[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m248:24[22m[39m
+    [90m246| [39m    [34mit[39m([32m'should create WebGLRenderer'[39m[33m,[39m () [33m=>[39m {
+    [90m247| [39m      [35mconst[39m { [33mWebGLRenderer[39m } [33m=[39m [34mrequire[39m([32m'three'[39m)[33m;[39m
+    [90m248| [39m      [35mconst[39m renderer [33m=[39m [35mnew[39m [33mWebGLRenderer[39m()[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m249| [39m      [34mexpect[39m(renderer)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m250| [39m      [34mexpect[39m(renderer[33m.[39mdomElement)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mCannon-es Integration[2m > [22mshould create Box shape
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'x')[39m
+[36m [2m❯[22m Box.updateConvexPolyhedronRepresentation node_modules/cannon-es/dist/cannon-es.cjs.js:[2m3090:33[22m[39m
+    [90m3088| [39m
+    [90m3089| [39m  updateConvexPolyhedronRepresentation() {
+    [90m3090| [39m    const sx = this.halfExtents.x;
+    [90m   | [39m                                [31m^[39m
+    [90m3091| [39m    const sy = this.halfExtents.y;
+    [90m3092| [39m    const sz = this.halfExtents.z;
+[90m [2m❯[22m new Box node_modules/cannon-es/dist/cannon-es.cjs.js:[2m3081:10[22m[39m
+[90m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m299:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Architecture Patterns[2m > [22mshould follow component-based architecture
+[31m[1mError[22m: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m315:20[22m[39m
+    [90m313| [39m    [34mit[39m([32m'should follow component-based architecture'[39m[33m,[39m () [33m=>[39m {
+    [90m314| [39m      [90m// Verify all core modules are properly structured[39m
+    [90m315| [39m      [35mconst[39m [33mGame[39m [33m=[39m [34mrequire[39m([32m'../../src/core/Game'[39m)[33m.[39m[33mGame[39m[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m316| [39m      [35mconst[39m [33mGameLoop[39m [33m=[39m [34mrequire[39m([32m'../../src/core/GameLoop'[39m)[33m.[39m[33mGameLoop[39m[33m;[39m
+    [90m317| [39m      [35mconst[39m [33mSceneManager[39m [33m=[39m [34mrequire[39m([32m'../../src/core/SceneManager'[39m)[33m.[39m[33mScen[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mGame Architecture Patterns[2m > [22mshould have proper module separation
+[31m[1mError[22m: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m334:14[22m[39m
+    [90m332| [39m    [34mit[39m([32m'should have proper module separation'[39m[33m,[39m () [33m=>[39m {
+    [90m333| [39m      [90m// Core logic[39m
+    [90m334| [39m      [34mexpect[39m([34mrequire[39m([32m'../../src/core/Game'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m             [31m^[39m
+    [90m335| [39m      [34mexpect[39m([34mrequire[39m([32m'../../src/core/GameLoop'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m336| [39m      [34mexpect[39m([34mrequire[39m([32m'../../src/core/SceneManager'[39m))[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Game.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m354:20[22m[39m
+    [90m352| [39m  [34mdescribe[39m([32m'Retroactive Test Coverage Verification'[39m[33m,[39m () [33m=>[39m {
+    [90m353| [39m    [34mit[39m([32m'should verify Game.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m354| [39m      [35mconst[39m [33mGame[39m [33m=[39m [34mrequire[39m([32m'../../src/core/Game'[39m)[33m;[39m
+    [90m   | [39m                   [31m^[39m
+    [90m355| [39m      [34mexpect[39m([33mGame[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m356| [39m      [34mexpect[39m([33mGame[39m[33m.[39m[33mGame[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify GameLoop.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m360:24[22m[39m
+    [90m358| [39m
+    [90m359| [39m    [34mit[39m([32m'should verify GameLoop.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m360| [39m      [35mconst[39m [33mGameLoop[39m [33m=[39m [34mrequire[39m([32m'../../src/core/GameLoop'[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m361| [39m      [34mexpect[39m([33mGameLoop[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m362| [39m      [34mexpect[39m([33mGameLoop[39m[33m.[39m[33mGameLoop[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify SceneManager.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m366:28[22m[39m
+    [90m364| [39m
+    [90m365| [39m    [34mit[39m([32m'should verify SceneManager.ts exists and is importable'[39m[33m,[39m () [33m=>[39m…
+    [90m366| [39m      [35mconst[39m [33mSceneManager[39m [33m=[39m [34mrequire[39m([32m'../../src/core/SceneManager'[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m367| [39m      [34mexpect[39m([33mSceneManager[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m368| [39m      [34mexpect[39m([33mSceneManager[39m[33m.[39m[33mSceneManager[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Input.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m372:21[22m[39m
+    [90m370| [39m
+    [90m371| [39m    [34mit[39m([32m'should verify Input.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m372| [39m      [35mconst[39m [33mInput[39m [33m=[39m [34mrequire[39m([32m'../../src/systems/Input'[39m)[33m;[39m
+    [90m   | [39m                    [31m^[39m
+    [90m373| [39m      [34mexpect[39m([33mInput[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m374| [39m      [34mexpect[39m([33mInput[39m[33m.[39m[33mInputSystem[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Physics.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m378:23[22m[39m
+    [90m376| [39m
+    [90m377| [39m    [34mit[39m([32m'should verify Physics.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m378| [39m      [35mconst[39m [33mPhysics[39m [33m=[39m [34mrequire[39m([32m'../../src/systems/Physics'[39m)[33m;[39m
+    [90m   | [39m                      [31m^[39m
+    [90m379| [39m      [34mexpect[39m([33mPhysics[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m380| [39m      [34mexpect[39m([33mPhysics[39m[33m.[39m[33mPhysicsSystem[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Player.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m384:22[22m[39m
+    [90m382| [39m
+    [90m383| [39m    [34mit[39m([32m'should verify Player.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m384| [39m      [35mconst[39m [33mPlayer[39m [33m=[39m [34mrequire[39m([32m'../../src/entities/Player'[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m385| [39m      [34mexpect[39m([33mPlayer[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m386| [39m      [34mexpect[39m([33mPlayer[39m[33m.[39m[33mPlayer[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Obstacle.ts exists and is importable
+[31m[1mError[22m: Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m390:24[22m[39m
+    [90m388| [39m
+    [90m389| [39m    [34mit[39m([32m'should verify Obstacle.ts exists and is importable'[39m[33m,[39m () [33m=>[39m {
+    [90m390| [39m      [35mconst[39m [33mObstacle[39m [33m=[39m [34mrequire[39m([32m'../../src/entities/Obstacle'[39m)[33m;[39m
+    [90m   | [39m                       [31m^[39m
+    [90m391| [39m      [34mexpect[39m([33mObstacle[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m392| [39m      [34mexpect[39m([33mObstacle[39m[33m.[39m[33mObstacle[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Constants.ts exists and exports all constants
+[31m[1mError[22m: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m396:25[22m[39m
+    [90m394| [39m
+    [90m395| [39m    [34mit[39m([32m'should verify Constants.ts exists and exports all constants'[39m[33m,[39m …
+    [90m396| [39m      [35mconst[39m [33mConstants[39m [33m=[39m [34mrequire[39m([32m'../../src/utils/Constants'[39m)[33m;[39m
+    [90m   | [39m                        [31m^[39m
+    [90m397| [39m      [34mexpect[39m([33mConstants[39m[33m.[39m[33mGameConstants[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m398| [39m      [34mexpect[39m([33mConstants[39m[33m.[39m[33mInputConstants[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/retroactive-core.test.ts[2m > [22mCluster Rush - Retroactive Tests for Core Systems[2m > [22mRetroactive Test Coverage Verification[2m > [22mshould verify Logger.ts exists and exports Logger
+[31m[1mError[22m: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts[39m
+[90m [2m❯[22m TracingChannel.traceSync node:diagnostics_channel:[2m328:14[22m[39m
+[36m [2m❯[22m tests/unit/retroactive-core.test.ts:[2m403:22[22m[39m
+    [90m401| [39m
+    [90m402| [39m    [34mit[39m([32m'should verify Logger.ts exists and exports Logger'[39m[33m,[39m () [33m=>[39m {
+    [90m403| [39m      [35mconst[39m [33mLogger[39m [33m=[39m [34mrequire[39m([32m'../../src/utils/Logger'[39m)[33m;[39m
+    [90m   | [39m                     [31m^[39m
+    [90m404| [39m      [34mexpect[39m([33mLogger[39m[33m.[39m[33mLogger[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m405| [39m      [34mexpect[39m([35mtypeof[39m [33mLogger[39m[33m.[39m[33mLogger[39m[33m.[39minfo)[33m.[39m[34mtoBe[39m([32m'function'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould load a registered scene
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m90:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould pass data to scene load
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m107:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould exit current scene before loading new one
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m137:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould set previous scene when loading new scene
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m164:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Updates[2m > [22mshould update current scene
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ 0.016 ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/scene-manager.test.ts:[2m222:26[22m[39m
+    [90m220| [39m      sceneManager[33m.[39m[34mupdate[39m([34m0.016[39m)[33m;[39m
+    [90m221| [39m      
+    [90m222| [39m      [34mexpect[39m(mockUpdate)[33m.[39m[34mtoHaveBeenCalledWith[39m([34m0.016[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m223| [39m    })[33m;[39m
+    [90m224| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/103]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Rendering[2m > [22mshould render current scene
+[31m[1mAssertionError[22m: expected "spy" to be called at least once[39m
+[36m [2m❯[22m tests/unit/scene-manager.test.ts:[2m246:26[22m[39m
+    [90m244| [39m      sceneManager[33m.[39m[34mrender[39m()[33m;[39m
+    [90m245| [39m      
+    [90m246| [39m      [34mexpect[39m(mockRender)[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m247| [39m    })[33m;[39m
+    [90m248| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/103]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Unhandled Errors [27m[22m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯[1m[7m Unhandled Rejection [27m[22m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+
+[31mThis error originated in "[1mtests/unit/scene-manager.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[1m[7m Unhandled Rejection [27m[22m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+
+[31mThis error originated in "[1mtests/unit/scene-manager.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+[2m Test Files [22m [1m[31m9 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (13)[39m
+[2m      Tests [22m [1m[31m90 failed[39m[22m[2m | [22m[1m[32m173 passed[39m[22m[2m | [22m[33m4 skipped[39m[90m (267)[39m
+[2m     Errors [22m [1m[31m2 errors[39m[22m
+[2m   Start at [22m 21:41:42
+[2m   Duration [22m 1.95s[2m (transform 1.46s, setup 430ms, collect 3.00s, tests 797ms, environment 4.49s, prepare 1.66s)[22m
+
