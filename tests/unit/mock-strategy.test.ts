@@ -1,3 +1,21 @@
+/**
+ * RED-ALLOWLISTED — D0.2 pre-commit gate (boss ruling option (b),
+ * 2026-09-10; pre-ruling for T1 commit 2026-09-10 20:35 AEST).
+ *
+ * Why listed: allowlisted per the boss D0.2 spec as a safety net for the
+ * mock-strategy suite during the RED baseline phase. Status at the T1
+ * evidence run (2026-09-10): all 54 tests PASS — this entry is currently
+ * inert and is retained only because the ruling lists it explicitly.
+ *
+ * Re-validated / turns green: Week 1, day 1 — TDD-1.1 "Initialize project
+ * with testing infrastructure" re-verifies the mock strategy; delete this
+ * entry from .husky/red-allowlist.txt once that task is complete (removal
+ * procedure documented in the allowlist file).
+ *
+ * Tracked in: .husky/red-allowlist.txt (PERMANENT entry),
+ * tests/baseline/INVENTORY.md ("D0.2 RED Allowlist" section),
+ * tracker/task_registry.json (0.2.1 notes).
+ */
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   Vector3,

@@ -59,8 +59,8 @@ playwright-report/
 # Vitest
 .vitest/
 
-# Husky
-.husky/
+# Husky (ignore shim dir only — hook scripts are version-controlled per D0.2 spec: .husky/pre-commit + .husky/red-allowlist.txt)
+.husky/_/
 
 # Temporary files
 .tmp/

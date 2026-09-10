@@ -29,14 +29,16 @@ export default defineConfig({
     host: true
   },
   resolve: {
+    // NOTE: this config file lives in <repo>/config/, so __dirname === <repo>/config.
+    // Aliases must therefore point one level up to reach the repo root (Task 0.2.1 fix).
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@core': resolve(__dirname, 'src/core'),
-      '@entities': resolve(__dirname, 'src/entities'),
-      '@systems': resolve(__dirname, 'src/systems'),
-      '@scenes': resolve(__dirname, 'src/scenes'),
-      '@utils': resolve(__dirname, 'src/utils'),
-      '@assets': resolve(__dirname, 'public/assets')
+      '@': resolve(__dirname, '../src'),
+      '@core': resolve(__dirname, '../src/core'),
+      '@entities': resolve(__dirname, '../src/entities'),
+      '@systems': resolve(__dirname, '../src/systems'),
+      '@scenes': resolve(__dirname, '../src/scenes'),
+      '@utils': resolve(__dirname, '../src/utils'),
+      '@assets': resolve(__dirname, '../public/assets')
     }
   },
   optimizeDeps: {
@@ -47,7 +49,13 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     include: ['tests/**/*.test.ts'],
-    exclude: ['node_modules', 'dist'],
+    // Task 0.2.1: <repo>/clusterrush/ is a nested duplicate of the root
+    // src/ + tests/ + tracker/ trees (out-of-scope copy). The root-anchored
+    // include pattern does not collect it (verified empirically in
+    // tests/evidence/d02/T1-nested-tree-check.txt), but the exclude is kept
+    // as an explicit guard so a future include-pattern change can never
+    // silently pick up the duplicate tree.
+    exclude: ['node_modules', 'dist', 'clusterrush/**'],
     
     // Coverage configuration
     coverage: {

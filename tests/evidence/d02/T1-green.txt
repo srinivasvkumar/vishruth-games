@@ -1,0 +1,1314 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ❯ tests/unit/game.test.ts  (0 test)
+ ❯ tests/unit/hello-three.test.ts  (11 tests | 1 failed | 4 skipped) 9ms
+   ❯ tests/unit/hello-three.test.ts > Three.js Integration - TDD Setup Verification > should create a WebGL renderer (RED phase)
+     → expected false to be true // Object.is equality
+ ✓ tests/unit/mock-strategy.test.ts  (54 tests) 15ms
+ ✓ tests/unit/cicd-pipeline.test.ts  (16 tests) 9ms
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept message and optional data
+[INFO] Test message 
+[INFO] Test message { key: 'value' }
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept error objects
+[ERROR] Error message Error: Test
+    at /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/logger.test.ts:34:50
+    at Proxy.assertThrows (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/core/assertions.js:2644:7)
+    at Proxy.methodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/addMethod.js:57:25)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:850:16)
+    at Proxy.overwritingMethodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/overwriteMethod.js:78:33)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:1324:19)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:800:17)
+    at Proxy.methodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/addMethod.js:57:25)
+    at /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/logger.test.ts:34:74
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:135:14
+
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support info level logging
+[INFO] Info message 
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support warn level logging
+[WARN] Warning message 
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support error level logging
+[ERROR] Error message 
+
+ ✓ tests/unit/logger.test.ts  (10 tests) 32ms
+ ✓ tests/unit/input-system.test.ts  (9 tests) 21ms
+ ❯ tests/unit/constants.test.ts  (12 tests | 4 failed) 39ms
+   ❯ tests/unit/constants.test.ts > Constants - Retroactive Tests > InputConstants > should have GAMEPAD_DEADZONE defined
+     → expected undefined not to be undefined
+   ❯ tests/unit/constants.test.ts > Constants - Retroactive Tests > InputConstants > should have valid deadzone value
+     → actual value must be number or bigint, received "undefined"
+   ❯ tests/unit/constants.test.ts > Constants - Retroactive Tests > GameEvents > should have PLAYER_DIED event defined
+     → expected undefined not to be undefined
+   ❯ tests/unit/constants.test.ts > Constants - Retroactive Tests > GameEvents > should have SCORE_CHANGED event defined
+     → expected undefined not to be undefined
+ ❯ tests/unit/physics-system.test.ts  (12 tests | 12 failed) 42ms
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should create PhysicsSystem instance
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should initialize physics world
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should set gravity
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should add body to world
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should remove body from world
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should update physics with deltaTime
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle multiple updates
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle variable deltaTime
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Raycasting > should perform raycast
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Collision Detection > should handle collision events
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should cleanup physics world
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+   ❯ tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should remove all bodies on cleanup
+     → Cannot read properties of undefined (reading 'set')
+     → Cannot read properties of undefined (reading 'cleanup')
+ ❯ tests/unit/scene-manager.test.ts  (20 tests | 6 failed) 76ms
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should load a registered scene
+     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should pass data to scene load
+     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should exit current scene before loading new one
+     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should set previous scene when loading new scene
+     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Updates > should update current scene
+     → expected "spy" to be called with arguments: [ 0.016 ]
+
+Received: 
+
+
+
+Number of calls: 0
+
+   ❯ tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Rendering > should render current scene
+     → expected "spy" to be called at least once
+ ❯ tests/unit/obstacle.test.ts  (19 tests | 19 failed) 14ms
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should create Obstacle instance
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should create obstacle at specified position
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should set obstacle type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should be active by default
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support static type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support moving type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support rotating type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support breakable type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support spike type
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Movement > should update position
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Movement > should handle different movement patterns
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Collision > should detect collision
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Collision > should return true for close positions
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should deactivate obstacle
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should activate obstacle
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should destroy obstacle
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide mesh access
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide position
+     → position.clone is not a function
+   ❯ tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide type
+     → position.clone is not a function
+ ❯ tests/unit/retroactive-core.test.ts  (46 tests | 37 failed) 209ms
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Game class structure
+     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have GameLoop class structure
+     → Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have SceneManager class structure
+     → Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have InputSystem class structure
+     → Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have PhysicsSystem class structure
+     → Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Player class structure
+     → Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Obstacle class structure
+     → Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Constants module
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Logger module
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_HEALTH constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_LIVES constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_SPEED constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have JUMP_FORCE constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have GRAVITY constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have OBSTACLE_TYPES array
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > InputConstants Values > should have GAMEPAD_DEADZONE constant
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have LEVEL_START event
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have PLAYER_DIED event
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have SCORE_CHANGED event
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have info method
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have warn method
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have error method
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have debug method
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should accept message and optional data
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Three.js Integration > should create WebGLRenderer
+     → Error creating WebGL context.
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Cannon-es Integration > should create Box shape
+     → Cannot read properties of undefined (reading 'x')
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Architecture Patterns > should follow component-based architecture
+     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Architecture Patterns > should have proper module separation
+     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Game.ts exists and is importable
+     → Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify GameLoop.ts exists and is importable
+     → Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify SceneManager.ts exists and is importable
+     → Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Input.ts exists and is importable
+     → Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Physics.ts exists and is importable
+     → Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Player.ts exists and is importable
+     → Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Obstacle.ts exists and is importable
+     → Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Constants.ts exists and exports all constants
+     → Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+   ❯ tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Logger.ts exists and exports Logger
+     → Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+stderr | tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Three.js Integration > should create WebGLRenderer
+THREE.WebGLRenderer: Error creating WebGL context.
+
+ ❯ tests/unit/game-loop.test.ts  (13 tests | 8 failed) 241ms
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should start the loop
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should stop the loop
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should not start if already running
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should call update callback with deltaTime
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should call render callback each frame
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should pass deltaTime to update
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Fixed Time Step > should use 60 FPS as default
+     → Maximum call stack size exceeded
+   ❯ tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Fixed Time Step > should accumulate time for fixed updates
+     → Maximum call stack size exceeded
+ ❯ tests/unit/player.test.ts  (45 tests | 3 failed) 45ms
+   ❯ tests/unit/player.test.ts > Player Class - Retroactive Tests > Jump Mechanics > should not jump when already jumping
+     → expected 14.36 to be 14.68 // Object.is equality
+   ❯ tests/unit/player.test.ts > Player Class - Retroactive Tests > Respawn > should restore health on respawn
+     → expected 50 to be 100 // Object.is equality
+   ❯ tests/unit/player.test.ts > Player Class - Retroactive Tests > Respawn > should respawn at specified position
+     → expected +0 to be 5 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/game.test.ts [ tests/unit/game.test.ts ]
+Error: Failed to resolve import "@/systems/Audio" from "tests/unit/game.test.ts". Does the file exist?
+ ❯ TransformPluginContext._formatError node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
+ ❯ async file:/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
+ ❯ PluginContainer.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/103]⎯
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 90 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/constants.test.ts > Constants - Retroactive Tests > InputConstants > should have GAMEPAD_DEADZONE defined
+AssertionError: expected undefined not to be undefined
+ ❯ tests/unit/constants.test.ts:47:47
+     45|   describe('InputConstants', () => {
+     46|     it('should have GAMEPAD_DEADZONE defined', () => {
+     47|       expect(InputConstants.GAMEPAD_DEADZONE).toBeDefined();
+       |                                               ^
+     48|       expect(typeof InputConstants.GAMEPAD_DEADZONE).toBe('number');
+     49|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/103]⎯
+
+ FAIL  tests/unit/constants.test.ts > Constants - Retroactive Tests > InputConstants > should have valid deadzone value
+TypeError: actual value must be number or bigint, received "undefined"
+ ❯ tests/unit/constants.test.ts:52:47
+     50| 
+     51|     it('should have valid deadzone value', () => {
+     52|       expect(InputConstants.GAMEPAD_DEADZONE).toBeGreaterThanOrEqual(0…
+       |                                               ^
+     53|       expect(InputConstants.GAMEPAD_DEADZONE).toBeLessThanOrEqual(1);
+     54|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/103]⎯
+
+ FAIL  tests/unit/constants.test.ts > Constants - Retroactive Tests > GameEvents > should have PLAYER_DIED event defined
+AssertionError: expected undefined not to be undefined
+ ❯ tests/unit/constants.test.ts:64:38
+     62| 
+     63|     it('should have PLAYER_DIED event defined', () => {
+     64|       expect(GameEvents.PLAYER_DIED).toBeDefined();
+       |                                      ^
+     65|       expect(typeof GameEvents.PLAYER_DIED).toBe('string');
+     66|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/103]⎯
+
+ FAIL  tests/unit/constants.test.ts > Constants - Retroactive Tests > GameEvents > should have SCORE_CHANGED event defined
+AssertionError: expected undefined not to be undefined
+ ❯ tests/unit/constants.test.ts:69:40
+     67| 
+     68|     it('should have SCORE_CHANGED event defined', () => {
+     69|       expect(GameEvents.SCORE_CHANGED).toBeDefined();
+       |                                        ^
+     70|       expect(typeof GameEvents.SCORE_CHANGED).toBe('string');
+     71|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/103]⎯
+
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should start the loop
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should stop the loop
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Lifecycle > should not start if already running
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should call update callback with deltaTime
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should call render callback each frame
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Update and Render Callbacks > should pass deltaTime to update
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Fixed Time Step > should use 60 FPS as default
+ FAIL  tests/unit/game-loop.test.ts > GameLoop Class - Retroactive Tests > Fixed Time Step > should accumulate time for fixed updates
+RangeError: Maximum call stack size exceeded
+ ❯ tests/unit/game-loop.test.ts:25:10
+     23|     // Mock requestAnimationFrame and cancelAnimationFrame
+     24|     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) …
+     25|       cb(performance.now());
+       |          ^
+     26|       return 1 as any;
+     27|     });
+ ❯ GameLoop.run src/core/GameLoop.ts:71:20
+ ❯ src/core/GameLoop.ts:71:57
+ ❯ tests/unit/game-loop.test.ts:25:7
+ ❯ GameLoop.run src/core/GameLoop.ts:71:20
+ ❯ src/core/GameLoop.ts:71:57
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/103]⎯
+
+ FAIL  tests/unit/hello-three.test.ts > Three.js Integration - TDD Setup Verification > should create a WebGL renderer (RED phase)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/hello-three.test.ts:17:19
+     15|     
+     16|     // Act & Assert will be implemented in GREEN phase
+     17|     expect(false).toBe(true) // Intentionally failing - RED phase
+       |                   ^
+     18|   })
+     19| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/103]⎯
+
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should create Obstacle instance
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should create obstacle at specified position
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should set obstacle type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Initialization > should be active by default
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support static type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support moving type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support rotating type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support breakable type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Obstacle Types > should support spike type
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Movement > should update position
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Movement > should handle different movement patterns
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Collision > should detect collision
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Collision > should return true for close positions
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should deactivate obstacle
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should activate obstacle
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > State Management > should destroy obstacle
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide mesh access
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide position
+ FAIL  tests/unit/obstacle.test.ts > Obstacle Class - Retroactive Tests > Getters > should provide type
+TypeError: position.clone is not a function
+ ❯ new Obstacle src/entities/Obstacle.ts:27:38
+     25|   ) {
+     26|     this.type = type;
+     27|     this.originalPosition = position.clone();
+       |                                      ^
+     28|     
+     29|     // Set damage based on type
+ ❯ tests/unit/obstacle.test.ts:24:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/103]⎯
+
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should create PhysicsSystem instance
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should initialize physics world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should set gravity
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should add body to world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should remove body from world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should update physics with deltaTime
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle multiple updates
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle variable deltaTime
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Raycasting > should perform raycast
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Collision Detection > should handle collision events
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should cleanup physics world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should remove all bodies on cleanup
+TypeError: Cannot read properties of undefined (reading 'set')
+ ❯ new PhysicsSystem src/systems/Physics.ts:18:24
+     16|     this.config = config;
+     17|     this.world = new CANNON.World();
+     18|     this.world.gravity.set(0, -config.gravity, 0);
+       |                        ^
+     19|     this.world.defaultContactMaterial.friction = 0.3;
+     20|     this.world.defaultContactMaterial.restitution = 0.3;
+ ❯ tests/unit/physics-system.test.ts:37:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/103]⎯
+
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should create PhysicsSystem instance
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should initialize physics world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Initialization > should set gravity
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should add body to world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Body Management > should remove body from world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should update physics with deltaTime
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle multiple updates
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Physics Updates > should handle variable deltaTime
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Raycasting > should perform raycast
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Collision Detection > should handle collision events
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should cleanup physics world
+ FAIL  tests/unit/physics-system.test.ts > PhysicsSystem Class - Retroactive Tests > Cleanup > should remove all bodies on cleanup
+TypeError: Cannot read properties of undefined (reading 'cleanup')
+ ❯ tests/unit/physics-system.test.ts:41:19
+     39| 
+     40|   afterEach(() => {
+     41|     physicsSystem.cleanup();
+       |                   ^
+     42|   });
+     43| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/103]⎯
+
+ FAIL  tests/unit/player.test.ts > Player Class - Retroactive Tests > Jump Mechanics > should not jump when already jumping
+AssertionError: expected 14.36 to be 14.68 // Object.is equality
+
+- Expected
++ Received
+
+- 14.68
++ 14.36
+
+ ❯ tests/unit/player.test.ts:153:38
+    151|       const initialY = player.getVelocity().y;
+    152|       player.update(0.016, { ' ': true });
+    153|       expect(player.getVelocity().y).toBe(initialY);
+       |                                      ^
+    154|     });
+    155| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/103]⎯
+
+ FAIL  tests/unit/player.test.ts > Player Class - Retroactive Tests > Respawn > should restore health on respawn
+AssertionError: expected 50 to be 100 // Object.is equality
+
+- Expected
++ Received
+
+- 100
++ 50
+
+ ❯ tests/unit/player.test.ts:269:28
+    267|       player.respawn();
+    268|       const state = player.getState();
+    269|       expect(state.health).toBe(100);
+       |                            ^
+    270|     });
+    271| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/103]⎯
+
+ FAIL  tests/unit/player.test.ts > Player Class - Retroactive Tests > Respawn > should respawn at specified position
+AssertionError: expected +0 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 0
+
+ ❯ tests/unit/player.test.ts:276:26
+    274|       player.respawn(customPosition);
+    275|       const position = player.getPosition();
+    276|       expect(position.x).toBe(5);
+       |                          ^
+    277|       expect(position.y).toBe(2);
+    278|       expect(position.z).toBe(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Game class structure
+Error: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:68:26
+     66|     it('should have Game class structure', () => {
+     67|       // Verify Game.ts exists and has expected structure
+     68|       const gameModule = require('../../src/core/Game');
+       |                          ^
+     69|       expect(gameModule).toBeDefined();
+     70|       expect(typeof gameModule.Game).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have GameLoop class structure
+Error: Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:74:30
+     72| 
+     73|     it('should have GameLoop class structure', () => {
+     74|       const gameLoopModule = require('../../src/core/GameLoop');
+       |                              ^
+     75|       expect(gameLoopModule).toBeDefined();
+     76|       expect(typeof gameLoopModule.GameLoop).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have SceneManager class structure
+Error: Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:80:34
+     78| 
+     79|     it('should have SceneManager class structure', () => {
+     80|       const sceneManagerModule = require('../../src/core/SceneManager'…
+       |                                  ^
+     81|       expect(sceneManagerModule).toBeDefined();
+     82|       expect(typeof sceneManagerModule.SceneManager).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have InputSystem class structure
+Error: Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:86:27
+     84| 
+     85|     it('should have InputSystem class structure', () => {
+     86|       const inputModule = require('../../src/systems/Input');
+       |                           ^
+     87|       expect(inputModule).toBeDefined();
+     88|       expect(typeof inputModule.InputSystem).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have PhysicsSystem class structure
+Error: Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:92:29
+     90| 
+     91|     it('should have PhysicsSystem class structure', () => {
+     92|       const physicsModule = require('../../src/systems/Physics');
+       |                             ^
+     93|       expect(physicsModule).toBeDefined();
+     94|       expect(typeof physicsModule.PhysicsSystem).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Player class structure
+Error: Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:98:28
+     96| 
+     97|     it('should have Player class structure', () => {
+     98|       const playerModule = require('../../src/entities/Player');
+       |                            ^
+     99|       expect(playerModule).toBeDefined();
+    100|       expect(typeof playerModule.Player).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Obstacle class structure
+Error: Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:104:30
+    102| 
+    103|     it('should have Obstacle class structure', () => {
+    104|       const obstacleModule = require('../../src/entities/Obstacle');
+       |                              ^
+    105|       expect(obstacleModule).toBeDefined();
+    106|       expect(typeof obstacleModule.Obstacle).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Constants module
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:110:31
+    108| 
+    109|     it('should have Constants module', () => {
+    110|       const constantsModule = require('../../src/utils/Constants');
+       |                               ^
+    111|       expect(constantsModule).toBeDefined();
+    112|       expect(constantsModule.GameConstants).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Core Architecture > should have Logger module
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:118:28
+    116| 
+    117|     it('should have Logger module', () => {
+    118|       const loggerModule = require('../../src/utils/Logger');
+       |                            ^
+    119|       expect(loggerModule).toBeDefined();
+    120|       expect(typeof loggerModule.Logger.info).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_HEALTH constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:129:33
+    127|   describe('GameConstants Values', () => {
+    128|     it('should have PLAYER_HEALTH constant', () => {
+    129|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    130|       expect(GameConstants.PLAYER_HEALTH).toBeDefined();
+    131|       expect(typeof GameConstants.PLAYER_HEALTH).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_LIVES constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:136:33
+    134| 
+    135|     it('should have PLAYER_LIVES constant', () => {
+    136|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    137|       expect(GameConstants.PLAYER_LIVES).toBeDefined();
+    138|       expect(typeof GameConstants.PLAYER_LIVES).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have PLAYER_SPEED constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:143:33
+    141| 
+    142|     it('should have PLAYER_SPEED constant', () => {
+    143|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    144|       expect(GameConstants.PLAYER_SPEED).toBeDefined();
+    145|       expect(typeof GameConstants.PLAYER_SPEED).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have JUMP_FORCE constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:150:33
+    148| 
+    149|     it('should have JUMP_FORCE constant', () => {
+    150|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    151|       expect(GameConstants.JUMP_FORCE).toBeDefined();
+    152|       expect(typeof GameConstants.JUMP_FORCE).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have GRAVITY constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:157:33
+    155| 
+    156|     it('should have GRAVITY constant', () => {
+    157|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    158|       expect(GameConstants.GRAVITY).toBeDefined();
+    159|       expect(typeof GameConstants.GRAVITY).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameConstants Values > should have OBSTACLE_TYPES array
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:164:33
+    162| 
+    163|     it('should have OBSTACLE_TYPES array', () => {
+    164|       const { GameConstants } = require('../../src/utils/Constants');
+       |                                 ^
+    165|       expect(GameConstants.OBSTACLE_TYPES).toBeDefined();
+    166|       expect(Array.isArray(GameConstants.OBSTACLE_TYPES)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > InputConstants Values > should have GAMEPAD_DEADZONE constant
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:173:34
+    171|   describe('InputConstants Values', () => {
+    172|     it('should have GAMEPAD_DEADZONE constant', () => {
+    173|       const { InputConstants } = require('../../src/utils/Constants');
+       |                                  ^
+    174|       expect(InputConstants.GAMEPAD_DEADZONE).toBeDefined();
+    175|       expect(typeof InputConstants.GAMEPAD_DEADZONE).toBe('number');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have LEVEL_START event
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:183:30
+    181|   describe('GameEvents Values', () => {
+    182|     it('should have LEVEL_START event', () => {
+    183|       const { GameEvents } = require('../../src/utils/Constants');
+       |                              ^
+    184|       expect(GameEvents.LEVEL_START).toBeDefined();
+    185|       expect(typeof GameEvents.LEVEL_START).toBe('string');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have PLAYER_DIED event
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:189:30
+    187| 
+    188|     it('should have PLAYER_DIED event', () => {
+    189|       const { GameEvents } = require('../../src/utils/Constants');
+       |                              ^
+    190|       expect(GameEvents.PLAYER_DIED).toBeDefined();
+    191|       expect(typeof GameEvents.PLAYER_DIED).toBe('string');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > GameEvents Values > should have SCORE_CHANGED event
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:195:30
+    193| 
+    194|     it('should have SCORE_CHANGED event', () => {
+    195|       const { GameEvents } = require('../../src/utils/Constants');
+       |                              ^
+    196|       expect(GameEvents.SCORE_CHANGED).toBeDefined();
+    197|       expect(typeof GameEvents.SCORE_CHANGED).toBe('string');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have info method
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:203:26
+    201|   describe('Logger Functionality', () => {
+    202|     it('should have info method', () => {
+    203|       const { Logger } = require('../../src/utils/Logger');
+       |                          ^
+    204|       expect(typeof Logger.info).toBe('function');
+    205|       expect(() => Logger.info('Test message')).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have warn method
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:209:26
+    207| 
+    208|     it('should have warn method', () => {
+    209|       const { Logger } = require('../../src/utils/Logger');
+       |                          ^
+    210|       expect(typeof Logger.warn).toBe('function');
+    211|       expect(() => Logger.warn('Warning message')).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have error method
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:215:26
+    213| 
+    214|     it('should have error method', () => {
+    215|       const { Logger } = require('../../src/utils/Logger');
+       |                          ^
+    216|       expect(typeof Logger.error).toBe('function');
+    217|       expect(() => Logger.error('Error message')).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should have debug method
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:221:26
+    219| 
+    220|     it('should have debug method', () => {
+    221|       const { Logger } = require('../../src/utils/Logger');
+       |                          ^
+    222|       expect(typeof Logger.debug).toBe('function');
+    223|       expect(() => Logger.debug('Debug message')).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Logger Functionality > should accept message and optional data
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:227:26
+    225| 
+    226|     it('should accept message and optional data', () => {
+    227|       const { Logger } = require('../../src/utils/Logger');
+       |                          ^
+    228|       expect(() => Logger.info('Test message', { key: 'value' })).not.…
+    229|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Three.js Integration > should create WebGLRenderer
+Error: Error creating WebGL context.
+ ❯ new WebGLRenderer node_modules/three/build/three.cjs:28923:13
+ ❯ tests/unit/retroactive-core.test.ts:248:24
+    246|     it('should create WebGLRenderer', () => {
+    247|       const { WebGLRenderer } = require('three');
+    248|       const renderer = new WebGLRenderer();
+       |                        ^
+    249|       expect(renderer).toBeDefined();
+    250|       expect(renderer.domElement).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Cannon-es Integration > should create Box shape
+TypeError: Cannot read properties of undefined (reading 'x')
+ ❯ Box.updateConvexPolyhedronRepresentation node_modules/cannon-es/dist/cannon-es.cjs.js:3090:33
+    3088| 
+    3089|   updateConvexPolyhedronRepresentation() {
+    3090|     const sx = this.halfExtents.x;
+       |                                 ^
+    3091|     const sy = this.halfExtents.y;
+    3092|     const sz = this.halfExtents.z;
+ ❯ new Box node_modules/cannon-es/dist/cannon-es.cjs.js:3081:10
+ ❯ tests/unit/retroactive-core.test.ts:299:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Architecture Patterns > should follow component-based architecture
+Error: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:315:20
+    313|     it('should follow component-based architecture', () => {
+    314|       // Verify all core modules are properly structured
+    315|       const Game = require('../../src/core/Game').Game;
+       |                    ^
+    316|       const GameLoop = require('../../src/core/GameLoop').GameLoop;
+    317|       const SceneManager = require('../../src/core/SceneManager').Scen…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Game Architecture Patterns > should have proper module separation
+Error: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:334:14
+    332|     it('should have proper module separation', () => {
+    333|       // Core logic
+    334|       expect(require('../../src/core/Game')).toBeDefined();
+       |              ^
+    335|       expect(require('../../src/core/GameLoop')).toBeDefined();
+    336|       expect(require('../../src/core/SceneManager')).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Game.ts exists and is importable
+Error: Cannot find module '../../src/core/Game'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:354:20
+    352|   describe('Retroactive Test Coverage Verification', () => {
+    353|     it('should verify Game.ts exists and is importable', () => {
+    354|       const Game = require('../../src/core/Game');
+       |                    ^
+    355|       expect(Game).toBeDefined();
+    356|       expect(Game.Game).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify GameLoop.ts exists and is importable
+Error: Cannot find module '../../src/core/GameLoop'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:360:24
+    358| 
+    359|     it('should verify GameLoop.ts exists and is importable', () => {
+    360|       const GameLoop = require('../../src/core/GameLoop');
+       |                        ^
+    361|       expect(GameLoop).toBeDefined();
+    362|       expect(GameLoop.GameLoop).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify SceneManager.ts exists and is importable
+Error: Cannot find module '../../src/core/SceneManager'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:366:28
+    364| 
+    365|     it('should verify SceneManager.ts exists and is importable', () =>…
+    366|       const SceneManager = require('../../src/core/SceneManager');
+       |                            ^
+    367|       expect(SceneManager).toBeDefined();
+    368|       expect(SceneManager.SceneManager).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Input.ts exists and is importable
+Error: Cannot find module '../../src/systems/Input'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:372:21
+    370| 
+    371|     it('should verify Input.ts exists and is importable', () => {
+    372|       const Input = require('../../src/systems/Input');
+       |                     ^
+    373|       expect(Input).toBeDefined();
+    374|       expect(Input.InputSystem).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Physics.ts exists and is importable
+Error: Cannot find module '../../src/systems/Physics'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:378:23
+    376| 
+    377|     it('should verify Physics.ts exists and is importable', () => {
+    378|       const Physics = require('../../src/systems/Physics');
+       |                       ^
+    379|       expect(Physics).toBeDefined();
+    380|       expect(Physics.PhysicsSystem).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Player.ts exists and is importable
+Error: Cannot find module '../../src/entities/Player'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:384:22
+    382| 
+    383|     it('should verify Player.ts exists and is importable', () => {
+    384|       const Player = require('../../src/entities/Player');
+       |                      ^
+    385|       expect(Player).toBeDefined();
+    386|       expect(Player.Player).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Obstacle.ts exists and is importable
+Error: Cannot find module '../../src/entities/Obstacle'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:390:24
+    388| 
+    389|     it('should verify Obstacle.ts exists and is importable', () => {
+    390|       const Obstacle = require('../../src/entities/Obstacle');
+       |                        ^
+    391|       expect(Obstacle).toBeDefined();
+    392|       expect(Obstacle.Obstacle).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Constants.ts exists and exports all constants
+Error: Cannot find module '../../src/utils/Constants'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:396:25
+    394| 
+    395|     it('should verify Constants.ts exists and exports all constants', …
+    396|       const Constants = require('../../src/utils/Constants');
+       |                         ^
+    397|       expect(Constants.GameConstants).toBeDefined();
+    398|       expect(Constants.InputConstants).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/103]⎯
+
+ FAIL  tests/unit/retroactive-core.test.ts > Cluster Rush - Retroactive Tests for Core Systems > Retroactive Test Coverage Verification > should verify Logger.ts exists and exports Logger
+Error: Cannot find module '../../src/utils/Logger'
+Require stack:
+- /home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts
+ ❯ TracingChannel.traceSync node:diagnostics_channel:328:14
+ ❯ tests/unit/retroactive-core.test.ts:403:22
+    401| 
+    402|     it('should verify Logger.ts exists and exports Logger', () => {
+    403|       const Logger = require('../../src/utils/Logger');
+       |                      ^
+    404|       expect(Logger.Logger).toBeDefined();
+    405|       expect(typeof Logger.Logger.info).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'MODULE_NOT_FOUND', requireStack: [ '/home/srinivasvkumar/vishruth/games/clusterrush/tests/unit/retroactive-core.test.ts' ] }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should load a registered scene
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+ ❯ tests/unit/scene-manager.test.ts:90:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should pass data to scene load
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+ ❯ tests/unit/scene-manager.test.ts:107:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should exit current scene before loading new one
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+ ❯ tests/unit/scene-manager.test.ts:137:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Loading > should set previous scene when loading new scene
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+ ❯ tests/unit/scene-manager.test.ts:164:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Updates > should update current scene
+AssertionError: expected "spy" to be called with arguments: [ 0.016 ]
+
+Received: 
+
+
+
+Number of calls: 0
+
+ ❯ tests/unit/scene-manager.test.ts:222:26
+    220|       sceneManager.update(0.016);
+    221|       
+    222|       expect(mockUpdate).toHaveBeenCalledWith(0.016);
+       |                          ^
+    223|     });
+    224| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/103]⎯
+
+ FAIL  tests/unit/scene-manager.test.ts > SceneManager Class - Retroactive Tests > Scene Rendering > should render current scene
+AssertionError: expected "spy" to be called at least once
+ ❯ tests/unit/scene-manager.test.ts:246:26
+    244|       sceneManager.render();
+    245|       
+    246|       expect(mockRender).toHaveBeenCalled();
+       |                          ^
+    247|     });
+    248| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/103]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+
+This error originated in "tests/unit/scene-manager.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.
+ ❯ GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:144:10
+ ❯ SceneManager.emit src/core/SceneManager.ts:191:12
+    189|   private emit(event: string, data?: any): void {
+    190|     const customEvent = new CustomEvent(event, { detail: data });
+    191|     window.dispatchEvent(customEvent);
+       |            ^
+    192|   }
+    193| }
+ ❯ SceneManager.loadScene src/core/SceneManager.ts:82:12
+
+This error originated in "tests/unit/scene-manager.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ Test Files  9 failed | 4 passed (13)
+      Tests  90 failed | 173 passed | 4 skipped (267)
+     Errors  2 errors
+   Start at  20:48:05
+   Duration  1.68s (transform 1.20s, setup 522ms, collect 2.28s, tests 752ms, environment 4.50s, prepare 1.27s)
+

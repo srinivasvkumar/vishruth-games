@@ -1,3 +1,17 @@
+/**
+ * RED-ALLOWLISTED — D0.2 pre-commit gate (boss ruling option (b),
+ * 2026-09-10; pre-ruling for T1 commit 2026-09-10 20:35 AEST).
+ *
+ * Why RED: contains the intentional RED-phase placeholder "should create a
+ * WebGL renderer (RED phase)" (expect(false).toBe(true)) plus 4 skipped
+ * stubs. It stays red until a real Three.js renderer integration exists.
+ *
+ * Turns green: Week 1, day 1 — TDD-1.3 "Three.js rendering test".
+ *
+ * Tracked in: .husky/red-allowlist.txt (PERMANENT entry),
+ * tests/baseline/INVENTORY.md ("D0.2 RED Allowlist" section),
+ * tracker/task_registry.json (0.2.1 notes).
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 describe('Three.js Integration - TDD Setup Verification', () => {
