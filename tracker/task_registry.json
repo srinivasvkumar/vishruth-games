@@ -56,9 +56,9 @@
             {
               "id": "0.2.2",
               "description": "Retroactive Tests for Existing Code",
-              "status": "blocked",
-              "tdd_cycle": "red",
-              "notes": "Paused by user 2026-09-10T21:53 AEST after 0.2.1 completion (commit 793ddb5). T0.2.2a RED verification (t_c30cb0cb) auto-started and blocked by user; partial untracked evidence at tests/evidence/d02/T2-red.txt. Remaining D0.2 kanban tasks (t_4d56647c, t_e79a4a24, t_7827b26c) held in triage by user. Resume pending user decision 2026-09-11. No new tasks to spawn."
+              "status": "red_verified",
+              "tdd_cycle": "red_verified",
+              "notes": "RED gate closed 2026-09-11 (T2-red-reverify.txt + GATE DECISION in T2-red-analysis.md). Re-decomposed task set R->G1..G6->GV->QG active; resume pending user signal."
             }
           ]
         }

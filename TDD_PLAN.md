@@ -77,6 +77,23 @@ Every implementation follows strict RED→GREEN→REFACTOR cycle.
 
 ---
 
+## TASK DECOMPOSITION PRINCIPLES (NEW)
+
+To prevent context overload and compression:
+
+1. **Task Scope Rule**: No task should require more than one context window of tool output. If a task needs multiple full-suite test runs or touches >3 deliverables, decompose it.
+
+2. **Decomposition Checklist**: Automatically decompose if task involves:
+   - Multiple full-codebase test runs
+   - Reading or updating >3 independent files/directories
+   - 3+ distinct verification steps (unit, integration, performance)
+
+3. **Checkpoint Discipline**: After each work item, write evidence to disk. Post-compaction re-orientation must be a file read, not a memory recall.
+
+4. **Sub-agent Use**: For heavy, parallelizable work (bulk reads, independent test groups), spawn sub-agents to isolate I/O load.
+
+5. **Task Size First**: Decomposition at planning time is primary; sub-agents are second-line.
+
 ## WEEK 0: INFRASTRUCTURE & BASELINE (NEW)
 
 ### Day 0.1: Testing Infrastructure Setup

@@ -323,3 +323,24 @@ in the tracker. T4 must assert the list == exactly the 2 PERMANENT files.
 - **W4 (evidence)**: this file + `tests/evidence/d02/T2-red.txt`.
 - **W5 (commit)**: committed with this evidence (pre-commit gate re-run on commit; standalone
   pre-check exit 0 — §4(d)).
+
+## 4. GATE DECISION (2026-09-11 resume)
+
+**RED gate = PASS** — 0 alias-class collection errors; 13/13 files in the run; 1 documented
+file-level RED (game.test.ts: missing src/systems/{Audio,UI}.ts, also imported by
+src/core/Game.ts:4-5 — owned by G1); all 90 failing tests classified (8 files class-a owned
+by 0.2.2 GREEN tasks G1-G5; hello-three class-b PERMANENT; mock-strategy class-b, currently
+GREEN/inert); no BLOCK. GREEN tasks G1-G6 may proceed.
+
+Re-verification for this closure (task R, kanban `t_275659a6`, game-tester, 2026-09-11 09:47
+AEST, tree HEAD `4edf450`):
+- `CI=1 npm run test:run > tests/evidence/d02/T2-red-reverify.txt 2>&1`
+- Summary identical to T2-red.txt: `Test Files 9 failed | 4 passed (13)`;
+  `Tests 90 failed | 173 passed | 4 skipped (267)`; `Errors 2 errors`.
+- Programmatic diff (ANSI-stripped): all 13 per-file report lines match; the 90-test FAIL set
+  is identical; 2 unhandled rejections (scene-manager, same condition); 0 `Failed to load
+  url`; the documented game.test.ts `@/systems/Audio` load failure present in both captures.
+- Tolerated diffs only: ANSI coloring, parallel output ordering, per-file timings,
+  Start/Duration timestamps.
+- BLOCK condition (alias-class collection error) NOT triggered — no T2-blocked-collection.txt
+  written.

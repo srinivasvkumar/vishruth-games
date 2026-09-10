@@ -24,11 +24,11 @@
     "phase": "Week 0: Infrastructure & Baseline",
     "day": 0.2,
     "current_task": "0.2.2 - Retroactive Tests for Existing Code",
-    "status": "PAUSED",
-    "tdd_cycle": "red",
+    "status": "ACTIVE",
+    "tdd_cycle": "red_verified",
     "start_date": "2026-09-08T13:42:39.443909",
-    "last_updated": "2026-09-10T21:53:00",
-    "completion_notes": "PAUSED by user 2026-09-10T21:53 AEST. 0.2.1 completed (commit 793ddb5; details in completed_tasks). 0.2.2 RED phase NOT verified: T0.2.2a (t_c30cb0cb) blocked by user mid-RUN; partial untracked evidence tests/evidence/d02/T2-red.txt. Kanban per user: 0.2.1 done, 0.2.2a blocked, 0.2.2/0.2.2b/reviewer-gate in triage. Resume pending user decision 2026-09-11. No new tasks to spawn; tasks held in user-set states."
+    "last_updated": "2026-09-11T09:52:37",
+    "completion_notes": "resumed 2026-09-11, RED gate verified, re-decomposition of 9 tasks (see tasks/plan.md + tasks/todo.md)."
   },
   "completed_tasks": [
     {
