@@ -23,12 +23,12 @@
   "current_status": {
     "phase": "Week 0: Infrastructure & Baseline",
     "day": 0.2,
-    "current_task": "0.2.1 - Code Inventory",
-    "status": "COMPLETED",
-    "tdd_cycle": "complete",
+    "current_task": "0.2.2 - Retroactive Tests for Existing Code",
+    "status": "PAUSED",
+    "tdd_cycle": "red",
     "start_date": "2026-09-08T13:42:39.443909",
-    "last_updated": "2026-09-10T21:22:00",
-    "completion_notes": "Vitest alias root-cause fixed (all 7 aliases in config/vite.config.ts now repo-root-anchored; clusterrush/** excluded as out-of-scope duplicate, documented in INVENTORY.md). T1 evidence: 13/13 test files collected, 0 collection errors, 267 tests (173 pass / 90 fail / 4 skip — expected RED phase). D0.2 pre-commit RED-allowlist gate in place (.husky/red-allowlist.txt: 2 permanent + 8 TEMP-D0.2-T1 entries, removal owner T3; scripts/red-gate-check.mjs). T1 commit passed the gate under the boss pre-ruling of 2026-09-10 20:35 AEST. Lint stage broken at baseline (ESLint 8 vs flat config) — reported, not gating, flagged to orchestrator."
+    "last_updated": "2026-09-10T21:53:00",
+    "completion_notes": "PAUSED by user 2026-09-10T21:53 AEST. 0.2.1 completed (commit 793ddb5; details in completed_tasks). 0.2.2 RED phase NOT verified: T0.2.2a (t_c30cb0cb) blocked by user mid-RUN; partial untracked evidence tests/evidence/d02/T2-red.txt. Kanban per user: 0.2.1 done, 0.2.2a blocked, 0.2.2/0.2.2b/reviewer-gate in triage. Resume pending user decision 2026-09-11. No new tasks to spawn; tasks held in user-set states."
   },
   "completed_tasks": [
     {
@@ -75,14 +75,14 @@
     },
     "game_dev": {
       "role": "Implementation - writes code after failing tests",
-      "current_assignment": "Awaking RED phase completion",
+      "current_assignment": "Paused - user decision pending 2026-09-11 (D0.2 task 0.2.2)",
       "dependencies": [
         "test_verification"
       ]
     },
     "game_tester": {
       "role": "QA - runs browser tests, verifies RED/GREEN cycles",
-      "current_assignment": "Verify TDD-1.1 RED phase",
+      "current_assignment": "Paused - user decision pending 2026-09-11 (D0.2 task 0.2.2 RED verification)",
       "dependencies": []
     }
   },

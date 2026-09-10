@@ -56,8 +56,9 @@
             {
               "id": "0.2.2",
               "description": "Retroactive Tests for Existing Code",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "blocked",
+              "tdd_cycle": "red",
+              "notes": "Paused by user 2026-09-10T21:53 AEST after 0.2.1 completion (commit 793ddb5). T0.2.2a RED verification (t_c30cb0cb) auto-started and blocked by user; partial untracked evidence at tests/evidence/d02/T2-red.txt. Remaining D0.2 kanban tasks (t_4d56647c, t_e79a4a24, t_7827b26c) held in triage by user. Resume pending user decision 2026-09-11. No new tasks to spawn."
             }
           ]
         }
