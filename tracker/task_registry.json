@@ -56,9 +56,10 @@
             {
               "id": "0.2.2",
               "description": "Retroactive Tests for Existing Code",
-              "status": "red_verified",
-              "tdd_cycle": "red_verified",
-              "notes": "RED gate closed 2026-09-11 (T2-red-reverify.txt + GATE DECISION in T2-red-analysis.md). Re-decomposed task set R->G1..G6->GV->QG active; resume pending user signal."
+              "status": "green_verified",
+              "tdd_cycle": "green_verified",
+              "completion_date": "2026-09-11T21:07:00",
+              "notes": "T0.2.2b verification complete: 353 tests = 348 pass / 1 intentional fail (hello-three) / 4 skip. All 8 TEMP allowlist entries removed via G1..G6. Allowlist now has exactly 2 PERMANENT entries. Evidence: tests/evidence/d02/T4-green.txt, tests/evidence/d02/T4-green-analysis.md."
             }
           ]
         }

@@ -25,10 +25,10 @@
     "day": 0.2,
     "current_task": "0.2.2 - Retroactive Tests for Existing Code",
     "status": "ACTIVE",
-    "tdd_cycle": "red_verified",
+    "tdd_cycle": "green_verified",
     "start_date": "2026-09-08T13:42:39.443909",
-    "last_updated": "2026-09-11T09:52:37",
-    "completion_notes": "resumed 2026-09-11, RED gate verified, re-decomposition of 9 tasks (see tasks/plan.md + tasks/todo.md)."
+    "last_updated": "2026-09-11T21:07:00",
+    "completion_notes": "D0.2 T0.2.2b VERIFIED: full suite GREEN (353 tests, 1 intentional RED in hello-three, 4 skipped, 348 passing). All TEMP allowlist entries removed. Coverage deferred to Week 1."
   },
   "completed_tasks": [
     {
