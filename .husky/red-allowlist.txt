@@ -62,5 +62,7 @@ tests/unit/mock-strategy.test.ts
 # list, no wildcards). ALL are removed by T3's commit. No new TEMP entries
 # after T1 without an explicit per-commit boss ruling (guardrail 5).
 # ----------------------------------------------------------------------------
-tests/unit/constants.test.ts # TEMP-D0.2-T1: 4/12 failing at T1 — expects GameEvents.PLAYER_DIED/SCORE_CHANGED + InputConstants.GAMEPAD_DEADZONE; impl has PLAYER_DEATH/PLAYER_SCORE and deadzone on GameConstants; removal owner: T3
-tests/unit/player.test.ts # TEMP-D0.2-T1: 3/45 failing at T1 — jump-while-jumping guard, respawn position, health restore on respawn; removal owner: T3
+# (empty as of D0.2 G5, 2026-09-11 — last two TEMP entries, constants.test.ts
+# and player.test.ts, removed in G5's commit; entries before G5: game-loop +
+# scene-manager removed in G4, retroactive-core in G3, obstacle +
+# physics-system in G2, game in G1.)

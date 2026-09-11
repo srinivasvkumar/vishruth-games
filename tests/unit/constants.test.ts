@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { GameConstants, InputConstants, GameEvents } from '@/utils/Constants';
+import { GameConstants, GameEvents } from '@/utils/Constants';
 
+/**
+ * D0.2 G5 alignment notes (see tests/evidence/d02/T2-red-analysis.md §3.1/§3.2):
+ * - The old tests expected `InputConstants.GAMEPAD_DEADZONE`; the implemented
+ *   module puts GAMEPAD_DEADZONE on `GameConstants` (value 0.15, src/utils/
+ *   Constants.ts). The two deadzone tests now assert against GameConstants.
+ * - The old tests expected `GameEvents.PLAYER_DIED` / `SCORE_CHANGED`; the
+ *   implemented event names are `PLAYER_DEATH` ('player:death') and
+ *   `PLAYER_SCORE` ('player:score'). Tests now pin the ACTUAL names.
+ * Task 0.2.2 rule: tests verify CURRENT behavior, not desired behavior —
+ * no src/ changes.
+ */
 describe('Constants - Retroactive Tests', () => {
   describe('GameConstants', () => {
     it('should have PLAYER_HEALTH defined', () => {
@@ -40,17 +51,17 @@ describe('Constants - Retroactive Tests', () => {
       expect(GameConstants.JUMP_FORCE).toBeGreaterThan(0);
       expect(GameConstants.GRAVITY).toBeGreaterThan(0);
     });
-  });
 
-  describe('InputConstants', () => {
+    // Deadzone lives on GameConstants in the implemented module (0.15) —
+    // aligned from InputConstants (D0.2 G5).
     it('should have GAMEPAD_DEADZONE defined', () => {
-      expect(InputConstants.GAMEPAD_DEADZONE).toBeDefined();
-      expect(typeof InputConstants.GAMEPAD_DEADZONE).toBe('number');
+      expect(GameConstants.GAMEPAD_DEADZONE).toBeDefined();
+      expect(typeof GameConstants.GAMEPAD_DEADZONE).toBe('number');
     });
 
     it('should have valid deadzone value', () => {
-      expect(InputConstants.GAMEPAD_DEADZONE).toBeGreaterThanOrEqual(0);
-      expect(InputConstants.GAMEPAD_DEADZONE).toBeLessThanOrEqual(1);
+      expect(GameConstants.GAMEPAD_DEADZONE).toBeGreaterThanOrEqual(0);
+      expect(GameConstants.GAMEPAD_DEADZONE).toBeLessThanOrEqual(1);
     });
   });
 
@@ -60,14 +71,16 @@ describe('Constants - Retroactive Tests', () => {
       expect(typeof GameEvents.LEVEL_START).toBe('string');
     });
 
-    it('should have PLAYER_DIED event defined', () => {
-      expect(GameEvents.PLAYER_DIED).toBeDefined();
-      expect(typeof GameEvents.PLAYER_DIED).toBe('string');
+    // Aligned from PLAYER_DIED to the implemented event name (D0.2 G5).
+    it('should have PLAYER_DEATH event defined', () => {
+      expect(GameEvents.PLAYER_DEATH).toBeDefined();
+      expect(typeof GameEvents.PLAYER_DEATH).toBe('string');
     });
 
-    it('should have SCORE_CHANGED event defined', () => {
-      expect(GameEvents.SCORE_CHANGED).toBeDefined();
-      expect(typeof GameEvents.SCORE_CHANGED).toBe('string');
+    // Aligned from SCORE_CHANGED to the implemented event name (D0.2 G5).
+    it('should have PLAYER_SCORE event defined', () => {
+      expect(GameEvents.PLAYER_SCORE).toBeDefined();
+      expect(typeof GameEvents.PLAYER_SCORE).toBe('string');
     });
   });
 });

@@ -22,6 +22,23 @@ vi.mock('@/utils/Constants', () => ({
   }
 }));
 
+/**
+ * D0.2 G5 alignment notes (see tests/evidence/d02/T2-red-analysis.md §3.1/§3.2):
+ * - "should not jump when already jumping": the guard IS implemented —
+ *   Player.update() only applies JUMP_FORCE when `!state.isJumping`
+ *   (src/entities/Player.ts). The old assertion expected velocity.y to be
+ *   unchanged between two updates, but gravity still integrates every
+ *   update (mock GRAVITY 20 * dt 0.016 = 0.32). Aligned: the 2nd jump input
+ *   while airborne must NOT add JUMP_FORCE — velocity.y changes only by the
+ *   gravity delta.
+ * - "should restore health on respawn" + "should respawn at specified
+ *   position": respawn() is a documented no-op on a LIVE player
+ *   (`if (this.isAlive) return;`, src/entities/Player.ts); the health-restore
+ *   and position-override behavior only apply to a dead player. Aligned:
+ *   both tests kill the player (damage(100)) before calling respawn().
+ * Task 0.2.2 rule: tests verify CURRENT behavior, not desired behavior —
+ * no src/ changes.
+ */
 describe('Player Class - Retroactive Tests', () => {
   let player: Player;
 
@@ -148,9 +165,13 @@ describe('Player Class - Retroactive Tests', () => {
 
     it('should not jump when already jumping', () => {
       player.update(0.016, { ' ': true });
-      const initialY = player.getVelocity().y;
+      const vyAfterFirstJump = player.getVelocity().y;
       player.update(0.016, { ' ': true });
-      expect(player.getVelocity().y).toBe(initialY);
+      // Aligned (D0.2 G5): the jump-while-jumping guard is implemented — the
+      // 2nd jump input adds no JUMP_FORCE; only gravity integrates between
+      // updates (mock GRAVITY: 20, dt: 0.016). A missing guard would add
+      // +15 (JUMP_FORCE) and fail this assertion.
+      expect(player.getVelocity().y).toBeCloseTo(vyAfterFirstJump - 20 * 0.016);
     });
 
     it('should apply gravity', () => {
@@ -263,13 +284,23 @@ describe('Player Class - Retroactive Tests', () => {
     });
 
     it('should restore health on respawn', () => {
-      player.damage(50);
+      // Aligned (D0.2 G5): respawn() is a no-op on a LIVE player
+      // (`if (this.isAlive) return;`) — the player must be dead first for
+      // the health-restore behavior to apply.
+      player.damage(100);
+      expect(player.isPlayerAlive()).toBe(false);
+
       player.respawn();
       const state = player.getState();
       expect(state.health).toBe(100);
     });
 
     it('should respawn at specified position', () => {
+      // Aligned (D0.2 G5): the position override only applies when the
+      // player is dead (respawn() early-returns on a live player).
+      player.damage(100);
+      expect(player.isPlayerAlive()).toBe(false);
+
       const customPosition = new Vector3(5, 2, 10);
       player.respawn(customPosition);
       const position = player.getPosition();

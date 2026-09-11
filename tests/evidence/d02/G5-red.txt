@@ -1,0 +1,132 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/srinivasvkumar/vishruth/games/clusterrush[39m
+
+ [33m❯[39m tests/unit/constants.test.ts [2m ([22m[2m12 tests[22m [2m|[22m [31m4 failed[39m[2m)[22m[90m 5[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have GAMEPAD_DEADZONE defined[39m
+[31m     → expected undefined not to be undefined[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have valid deadzone value[39m
+[31m     → actual value must be number or bigint, received "undefined"[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have PLAYER_DIED event defined[39m
+[31m     → expected undefined not to be undefined[39m
+[31m   [33m❯[31m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have SCORE_CHANGED event defined[39m
+[31m     → expected undefined not to be undefined[39m
+ [33m❯[39m tests/unit/player.test.ts [2m ([22m[2m45 tests[22m [2m|[22m [31m3 failed[39m[2m)[22m[90m 11[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mJump Mechanics[2m > [22mshould not jump when already jumping[39m
+[31m     → expected 14.36 to be 14.68 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould restore health on respawn[39m
+[31m     → expected 50 to be 100 // Object.is equality[39m
+[31m   [33m❯[31m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould respawn at specified position[39m
+[31m     → expected +0 to be 5 // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 7 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have GAMEPAD_DEADZONE defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m47:47[22m[39m
+    [90m 45| [39m  [34mdescribe[39m([32m'InputConstants'[39m[33m,[39m () [33m=>[39m {
+    [90m 46| [39m    [34mit[39m([32m'should have GAMEPAD_DEADZONE defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 47| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                              [31m^[39m
+    [90m 48| [39m      [34mexpect[39m([35mtypeof[39m [33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBe[39m([32m'number'[39m)[33m;[39m
+    [90m 49| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mInputConstants[2m > [22mshould have valid deadzone value
+[31m[1mTypeError[22m: actual value must be number or bigint, received "undefined"[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m52:47[22m[39m
+    [90m 50| [39m
+    [90m 51| [39m    [34mit[39m([32m'should have valid deadzone value'[39m[33m,[39m () [33m=>[39m {
+    [90m 52| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeGreaterThanOrEqual[39m([34m0[39m…
+    [90m   | [39m                                              [31m^[39m
+    [90m 53| [39m      [34mexpect[39m([33mInputConstants[39m[33m.[39m[33mGAMEPAD_DEADZONE[39m)[33m.[39m[34mtoBeLessThanOrEqual[39m([34m1[39m)[33m;[39m
+    [90m 54| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have PLAYER_DIED event defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m64:38[22m[39m
+    [90m 62| [39m
+    [90m 63| [39m    [34mit[39m([32m'should have PLAYER_DIED event defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 64| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m 65| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mPLAYER_DIED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+    [90m 66| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/constants.test.ts[2m > [22mConstants - Retroactive Tests[2m > [22mGameEvents[2m > [22mshould have SCORE_CHANGED event defined
+[31m[1mAssertionError[22m: expected undefined not to be undefined[39m
+[36m [2m❯[22m tests/unit/constants.test.ts:[2m69:40[22m[39m
+    [90m 67| [39m
+    [90m 68| [39m    [34mit[39m([32m'should have SCORE_CHANGED event defined'[39m[33m,[39m () [33m=>[39m {
+    [90m 69| [39m      [34mexpect[39m([33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBeDefined[39m()[33m;[39m
+    [90m   | [39m                                       [31m^[39m
+    [90m 70| [39m      [34mexpect[39m([35mtypeof[39m [33mGameEvents[39m[33m.[39m[33mSCORE_CHANGED[39m)[33m.[39m[34mtoBe[39m([32m'string'[39m)[33m;[39m
+    [90m 71| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mJump Mechanics[2m > [22mshould not jump when already jumping
+[31m[1mAssertionError[22m: expected 14.36 to be 14.68 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 14.68[39m
+[31m+ 14.36[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m153:38[22m[39m
+    [90m151| [39m      [35mconst[39m initialY [33m=[39m player[33m.[39m[34mgetVelocity[39m()[33m.[39my[33m;[39m
+    [90m152| [39m      player[33m.[39m[34mupdate[39m([34m0.016[39m[33m,[39m { [32m' '[39m[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m153| [39m      [34mexpect[39m(player[33m.[39m[34mgetVelocity[39m()[33m.[39my)[33m.[39m[34mtoBe[39m(initialY)[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m154| [39m    })[33m;[39m
+    [90m155| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould restore health on respawn
+[31m[1mAssertionError[22m: expected 50 to be 100 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 100[39m
+[31m+ 50[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m269:28[22m[39m
+    [90m267| [39m      player[33m.[39m[34mrespawn[39m()[33m;[39m
+    [90m268| [39m      [35mconst[39m state [33m=[39m player[33m.[39m[34mgetState[39m()[33m;[39m
+    [90m269| [39m      [34mexpect[39m(state[33m.[39mhealth)[33m.[39m[34mtoBe[39m([34m100[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m270| [39m    })[33m;[39m
+    [90m271| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/player.test.ts[2m > [22mPlayer Class - Retroactive Tests[2m > [22mRespawn[2m > [22mshould respawn at specified position
+[31m[1mAssertionError[22m: expected +0 to be 5 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 5[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/unit/player.test.ts:[2m276:26[22m[39m
+    [90m274| [39m      player[33m.[39m[34mrespawn[39m(customPosition)[33m;[39m
+    [90m275| [39m      [35mconst[39m position [33m=[39m player[33m.[39m[34mgetPosition[39m()[33m;[39m
+    [90m276| [39m      [34mexpect[39m(position[33m.[39mx)[33m.[39m[34mtoBe[39m([34m5[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m277| [39m      [34mexpect[39m(position[33m.[39my)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m278| [39m      [34mexpect[39m(position[33m.[39mz)[33m.[39m[34mtoBe[39m([34m10[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m50 passed[39m[22m[90m (57)[39m
+[2m   Start at [22m 12:57:11
+[2m   Duration [22m 502ms[2m (transform 67ms, setup 41ms, collect 84ms, tests 16ms, environment 221ms, prepare 80ms)[22m
+

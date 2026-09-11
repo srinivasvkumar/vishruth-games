@@ -1,0 +1,16 @@
+
+> cluster-rush@0.1.0 type-check
+> tsc --noEmit -p tsconfig.json
+
+src/index.ts(92,28): error TS1127: Invalid character.
+src/index.ts(150,1): error TS1160: Unterminated template literal.
+src/scenes/BootScene.ts(147,39): error TS1127: Invalid character.
+src/scenes/BootScene.ts(211,1): error TS1160: Unterminated template literal.
+src/scenes/GameScene.ts(272,39): error TS1127: Invalid character.
+src/scenes/GameScene.ts(328,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(328,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(332,41): error TS1005: ';' expected.
+src/scenes/GameScene.ts(332,49): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(336,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(336,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(422,1): error TS1160: Unterminated template literal.

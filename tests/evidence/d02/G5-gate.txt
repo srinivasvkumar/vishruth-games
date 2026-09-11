@@ -1,0 +1,15 @@
+[red-gate] D0.2 RED allowlist: 2 entries (tests/unit/hello-three.test.ts, tests/unit/mock-strategy.test.ts)
+[red-gate] running FULL vitest suite (npx vitest run --config config/vite.config.ts) ...
+[red-gate] running lint stage (npm run lint) ...
+[red-gate] WARNING: lint stage FAILED — pre-existing defect (ESLint 8.57.1 cannot load the flat-format config/eslint.config.js via --config).
+[red-gate] Lint is NOT a commit-gate during D0.2 (boss spec exit criterion = failing test files only); flagged to orchestrator.
+    at new CascadingConfigArrayFactory (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@eslint/eslintrc/dist/eslintrc.cjs:3735:29)
+    at new CLIEngine (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/eslint/lib/cli-engine/cli-engine.js:617:36)
+    at new ESLint (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/eslint/lib/eslint/eslint.js:430:27)
+    at Object.execute (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/eslint/lib/cli.js:410:24)
+    at async main (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/eslint/bin/eslint.js:152:22)
+
+
+[red-gate] suite result: 1 failing file(s) | allowlisted (tolerated): 1 | not allowlisted (blocking): 0
+[red-gate] tolerated via D0.2 RED allowlist: tests/unit/hello-three.test.ts
+[red-gate] PASS — all failing test files are on the D0.2 allowlist (or the suite is green). Commit allowed.
