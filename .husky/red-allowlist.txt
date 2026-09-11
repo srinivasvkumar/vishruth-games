@@ -63,6 +63,4 @@ tests/unit/mock-strategy.test.ts
 # after T1 without an explicit per-commit boss ruling (guardrail 5).
 # ----------------------------------------------------------------------------
 tests/unit/constants.test.ts # TEMP-D0.2-T1: 4/12 failing at T1 — expects GameEvents.PLAYER_DIED/SCORE_CHANGED + InputConstants.GAMEPAD_DEADZONE; impl has PLAYER_DEATH/PLAYER_SCORE and deadzone on GameConstants; removal owner: T3
-tests/unit/game-loop.test.ts # TEMP-D0.2-T1: 8/13 failing at T1 — lifecycle, fixed-timestep accumulation, update/render callback expectations; removal owner: T3
 tests/unit/player.test.ts # TEMP-D0.2-T1: 3/45 failing at T1 — jump-while-jumping guard, respawn position, health restore on respawn; removal owner: T3
-tests/unit/scene-manager.test.ts # TEMP-D0.2-T1: 6/20 failing at T1 — happy-dom CustomEvent dispatch in emit() + update/render call expectations; removal owner: T3

@@ -1,0 +1,213 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/srinivasvkumar/vishruth/games/clusterrush[39m
+
+ [33m❯[39m tests/unit/scene-manager.test.ts [2m ([22m[2m20 tests[22m [2m|[22m [31m6 failed[39m[2m)[22m[90m 10[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould load a registered scene[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould pass data to scene load[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould exit current scene before loading new one[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould set previous scene when loading new scene[39m
+[31m     → Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Updates[2m > [22mshould update current scene[39m
+[31m     → expected "spy" to be called with arguments: [ 0.016 ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[31m   [33m❯[31m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Rendering[2m > [22mshould render current scene[39m
+[31m     → expected "spy" to be called at least once[39m
+ [33m❯[39m tests/unit/game-loop.test.ts [2m ([22m[2m13 tests[22m [2m|[22m [31m8 failed[39m[2m)[22m[90m 90[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould start the loop[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould stop the loop[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould not start if already running[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call update callback with deltaTime[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call render callback each frame[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould pass deltaTime to update[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould use 60 FPS as default[39m
+[31m     → Maximum call stack size exceeded[39m
+[31m   [33m❯[31m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould accumulate time for fixed updates[39m
+[31m     → Maximum call stack size exceeded[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 14 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould start the loop
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould not start if already running
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call update callback with deltaTime
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould call render callback each frame
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mUpdate and Render Callbacks[2m > [22mshould pass deltaTime to update
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould use 60 FPS as default
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mFixed Time Step[2m > [22mshould accumulate time for fixed updates
+[31m[1mRangeError[22m: Maximum call stack size exceeded[39m
+[36m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:10[22m[39m
+    [90m 23| [39m    [90m// Mock requestAnimationFrame and cancelAnimationFrame[39m
+    [90m 24| [39m    vi[33m.[39m[34mspyOn[39m(window[33m,[39m [32m'requestAnimationFrame'[39m)[33m.[39m[34mmockImplementation[39m((cb) …
+    [90m 25| [39m      [34mcb[39m(performance[33m.[39m[34mnow[39m())[33m;[39m
+    [90m   | [39m         [31m^[39m
+    [90m 26| [39m      [35mreturn[39m [34m1[39m [35mas[39m any[33m;[39m
+    [90m 27| [39m    })[33m;[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+[90m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:7[22m[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/game-loop.test.ts[2m > [22mGameLoop Class - Retroactive Tests[2m > [22mLifecycle[2m > [22mshould stop the loop
+[31m[1mRangeError[22m: Maximum call stack size exceeded[39m
+[36m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:10[22m[39m
+    [90m 23| [39m    [90m// Mock requestAnimationFrame and cancelAnimationFrame[39m
+    [90m 24| [39m    vi[33m.[39m[34mspyOn[39m(window[33m,[39m [32m'requestAnimationFrame'[39m)[33m.[39m[34mmockImplementation[39m((cb) …
+    [90m 25| [39m      [34mcb[39m(performance[33m.[39m[34mnow[39m())[33m;[39m
+    [90m   | [39m         [31m^[39m
+    [90m 26| [39m      [35mreturn[39m [34m1[39m [35mas[39m any[33m;[39m
+    [90m 27| [39m    })[33m;[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+[90m [2m❯[22m src/core/GameLoop.ts:[2m71:57[22m[39m
+[90m [2m❯[22m tests/unit/game-loop.test.ts:[2m25:7[22m[39m
+[90m [2m❯[22m GameLoop.run src/core/GameLoop.ts:[2m71:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould load a registered scene
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m90:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould pass data to scene load
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m107:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould exit current scene before loading new one
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m137:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Loading[2m > [22mshould set previous scene when loading new scene
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+[90m [2m❯[22m tests/unit/scene-manager.test.ts:[2m164:7[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Updates[2m > [22mshould update current scene
+[31m[1mAssertionError[22m: expected "spy" to be called with arguments: [ 0.016 ][90m
+
+Received: 
+
+[31m[90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/scene-manager.test.ts:[2m222:26[22m[39m
+    [90m220| [39m      sceneManager[33m.[39m[34mupdate[39m([34m0.016[39m)[33m;[39m
+    [90m221| [39m      
+    [90m222| [39m      [34mexpect[39m(mockUpdate)[33m.[39m[34mtoHaveBeenCalledWith[39m([34m0.016[39m)[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m223| [39m    })[33m;[39m
+    [90m224| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/scene-manager.test.ts[2m > [22mSceneManager Class - Retroactive Tests[2m > [22mScene Rendering[2m > [22mshould render current scene
+[31m[1mAssertionError[22m: expected "spy" to be called at least once[39m
+[36m [2m❯[22m tests/unit/scene-manager.test.ts:[2m246:26[22m[39m
+    [90m244| [39m      sceneManager[33m.[39m[34mrender[39m()[33m;[39m
+    [90m245| [39m      
+    [90m246| [39m      [34mexpect[39m(mockRender)[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+    [90m   | [39m                         [31m^[39m
+    [90m247| [39m    })[33m;[39m
+    [90m248| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[1m[7m Unhandled Errors [27m[22m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯[1m[7m Unhandled Rejection [27m[22m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+
+[31mThis error originated in "[1mtests/unit/scene-manager.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+
+[31m⎯⎯⎯⎯[1m[7m Unhandled Rejection [27m[22m⎯⎯⎯⎯⎯[39m
+[31m[1mTypeError[22m: Failed to execute 'dispatchEvent' on 'EventTarget': parameter 1 is not of type 'Event'.[39m
+[90m [2m❯[22m GlobalWindow.dispatchEvent node_modules/happy-dom/src/event/EventTarget.ts:[2m144:10[22m[39m
+[36m [2m❯[22m SceneManager.emit src/core/SceneManager.ts:[2m191:12[22m[39m
+    [90m189| [39m  [35mprivate[39m [34memit[39m(event[33m:[39m string[33m,[39m data[33m?[39m[33m:[39m any)[33m:[39m [35mvoid[39m {
+    [90m190| [39m    [35mconst[39m customEvent [33m=[39m [35mnew[39m [33mCustomEvent[39m(event[33m,[39m { detail[33m:[39m data })[33m;[39m
+    [90m191| [39m    window[33m.[39m[34mdispatchEvent[39m(customEvent)[33m;[39m
+    [90m   | [39m           [31m^[39m
+    [90m192| [39m  }
+    [90m193| [39m}
+[90m [2m❯[22m SceneManager.loadScene src/core/SceneManager.ts:[2m82:12[22m[39m
+
+[31mThis error originated in "[1mtests/unit/scene-manager.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m14 failed[39m[22m[2m | [22m[1m[32m19 passed[39m[22m[90m (33)[39m
+[2m     Errors [22m [1m[31m2 errors[39m[22m
+[2m   Start at [22m 12:24:44
+[2m   Duration [22m 570ms[2m (transform 89ms, setup 50ms, collect 71ms, tests 100ms, environment 211ms, prepare 127ms)[22m
+

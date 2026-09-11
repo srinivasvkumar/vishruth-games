@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { SceneManager } from '@/core/SceneManager';
 import { Scene } from '@/scenes/Scene';
 import { Game } from '@/core/Game';
+import { GameEvents } from '@/utils/Constants';
 
 vi.mock('@/utils/Logger', () => ({
   Logger: {
@@ -12,6 +13,18 @@ vi.mock('@/utils/Logger', () => ({
   }
 }));
 
+/**
+ * D0.2 G4 alignment notes (see tests/evidence/d02/T2-red-analysis.md §3.1/§3.2):
+ * - The old `global.CustomEvent = vi.fn().mockImplementation(() => ({}))` mock broke
+ *   SceneManager.emit(): happy-dom's window.dispatchEvent() rejects the plain object
+ *   the mock returned ("parameter 1 is not of type 'Event'"). The mock is removed —
+ *   happy-dom's real CustomEvent is used, and emitted events are observed through a
+ *   window listener (listener-call outcome / observable state) instead of asserting
+ *   on dispatchEvent side effects.
+ * - loadScene() is async: currentScene is only set after `await scene.load()`, so
+ *   update()/render() tests must await loadScene() first (the previous fire-and-forget
+ *   calls also produced the 2 unhandled rejections in the T2 evidence).
+ */
 describe('SceneManager Class - Retroactive Tests', () => {
   let sceneManager: SceneManager;
   let mockGame: any;
@@ -21,9 +34,6 @@ describe('SceneManager Class - Retroactive Tests', () => {
       emit: vi.fn()
     };
     sceneManager = new SceneManager(mockGame);
-    
-    // Mock CustomEvent
-    global.CustomEvent = vi.fn().mockImplementation(() => ({}));
   });
 
   afterEach(() => {
@@ -76,6 +86,22 @@ describe('SceneManager Class - Retroactive Tests', () => {
   });
 
   describe('Scene Loading', () => {
+    // Observes the LEVEL_START event SceneManager.emit() dispatches on window —
+    // the observable outcome of emission, not the dispatchEvent call itself.
+    let levelStartEvents: CustomEvent[];
+    const onLevelStart = (e: Event) => {
+      levelStartEvents.push(e as CustomEvent);
+    };
+
+    beforeEach(() => {
+      levelStartEvents = [];
+      window.addEventListener(GameEvents.LEVEL_START, onLevelStart);
+    });
+
+    afterEach(() => {
+      window.removeEventListener(GameEvents.LEVEL_START, onLevelStart);
+    });
+
     it('should load a registered scene', async () => {
       const mockScene = {
         load: vi.fn().mockResolvedValue(undefined),
@@ -91,9 +117,10 @@ describe('SceneManager Class - Retroactive Tests', () => {
       
       expect(mockScene.load).toHaveBeenCalled();
       expect(mockScene.enter).toHaveBeenCalled();
+      expect(sceneManager.getCurrentScene()).toBe(mockScene);
     });
 
-    it('should pass data to scene load', async () => {
+    it('should emit LEVEL_START on window with scene name and data', async () => {
       const mockScene = {
         load: vi.fn().mockResolvedValue(undefined),
         enter: vi.fn(),
@@ -105,26 +132,34 @@ describe('SceneManager Class - Retroactive Tests', () => {
       
       sceneManager.registerScene('testScene', mockScene as any);
       await sceneManager.loadScene('testScene', { level: 1 });
-      
-      expect(mockScene.load).toHaveBeenCalled();
+
+      // Implemented wiring: load() takes no arguments; the data is delivered through
+      // the LEVEL_START event detail.
+      expect(mockScene.load).toHaveBeenCalledTimes(1);
+      expect(mockScene.load).toHaveBeenCalledWith();
+      expect(levelStartEvents).toHaveLength(1);
+      expect(levelStartEvents[0].type).toBe(GameEvents.LEVEL_START);
+      expect(levelStartEvents[0].detail).toEqual({ name: 'testScene', data: { level: 1 } });
     });
 
     it('should throw error for non-existent scene', async () => {
       await expect(sceneManager.loadScene('nonExistent')).rejects.toThrow('Scene "nonExistent" not found');
+      expect(levelStartEvents).toHaveLength(0);
     });
 
     it('should exit current scene before loading new one', async () => {
+      const calls: string[] = [];
       const scene1 = {
         load: vi.fn().mockResolvedValue(undefined),
         enter: vi.fn(),
-        exit: vi.fn(),
+        exit: vi.fn(() => { calls.push('scene1.exit'); }),
         update: vi.fn(),
         render: vi.fn(),
         cleanup: vi.fn()
       };
       const scene2 = {
-        load: vi.fn().mockResolvedValue(undefined),
-        enter: vi.fn(),
+        load: vi.fn().mockImplementation(async () => { calls.push('scene2.load'); }),
+        enter: vi.fn(() => { calls.push('scene2.enter'); }),
         exit: vi.fn(),
         update: vi.fn(),
         render: vi.fn(),
@@ -137,7 +172,11 @@ describe('SceneManager Class - Retroactive Tests', () => {
       await sceneManager.loadScene('scene1');
       await sceneManager.loadScene('scene2');
       
-      expect(scene1.exit).toHaveBeenCalled();
+      // Implemented order: exit current scene, then load, then enter the new one.
+      expect(calls).toEqual(['scene1.exit', 'scene2.load', 'scene2.enter']);
+      expect(scene1.exit).toHaveBeenCalledTimes(1);
+      expect(scene2.enter).toHaveBeenCalledTimes(1);
+      expect(sceneManager.getCurrentScene()).toBe(scene2);
     });
 
     it('should set previous scene when loading new scene', async () => {
@@ -204,10 +243,10 @@ describe('SceneManager Class - Retroactive Tests', () => {
   });
 
   describe('Scene Updates', () => {
-    it('should update current scene', () => {
+    it('should update current scene', async () => {
       const mockUpdate = vi.fn();
       const mockScene = {
-        load: vi.fn(),
+        load: vi.fn().mockResolvedValue(undefined),
         enter: vi.fn(),
         exit: vi.fn(),
         update: mockUpdate,
@@ -216,9 +255,10 @@ describe('SceneManager Class - Retroactive Tests', () => {
       };
       
       sceneManager.registerScene('testScene', mockScene as any);
-      sceneManager.loadScene('testScene');
+      await sceneManager.loadScene('testScene');
       sceneManager.update(0.016);
       
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
       expect(mockUpdate).toHaveBeenCalledWith(0.016);
     });
 
@@ -228,10 +268,10 @@ describe('SceneManager Class - Retroactive Tests', () => {
   });
 
   describe('Scene Rendering', () => {
-    it('should render current scene', () => {
+    it('should render current scene', async () => {
       const mockRender = vi.fn();
       const mockScene = {
-        load: vi.fn(),
+        load: vi.fn().mockResolvedValue(undefined),
         enter: vi.fn(),
         exit: vi.fn(),
         update: vi.fn(),
@@ -240,10 +280,10 @@ describe('SceneManager Class - Retroactive Tests', () => {
       };
       
       sceneManager.registerScene('testScene', mockScene as any);
-      sceneManager.loadScene('testScene');
+      await sceneManager.loadScene('testScene');
       sceneManager.render();
       
-      expect(mockRender).toHaveBeenCalled();
+      expect(mockRender).toHaveBeenCalledTimes(1);
     });
 
     it('should not render if no current scene', () => {
