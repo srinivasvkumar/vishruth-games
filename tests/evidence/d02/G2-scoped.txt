@@ -1,0 +1,23 @@
+# T0.2.2 G2 GREEN evidence (2026-09-11) — kanban task t_f9206b62
+# Task: align tests/unit/obstacle.test.ts + tests/unit/physics-system.test.ts
+#       with the current Obstacle/PhysicsSystem APIs (mock-cannon/mock-three
+#       divergence flagged at T2).
+# RED baseline: tests/evidence/d02/T2-red.txt (HEAD 4edf450)
+#   obstacle.test.ts       19/19 failing
+#   physics-system.test.ts 12/12 failing + 12 afterEach hook failures
+#
+## 1. Scoped vitest run (task verification criterion)
+##    command: CI=1 ./node_modules/.bin/vitest run tests/unit/obstacle.test.ts tests/unit/physics-system.test.ts --config config/vite.config.ts
+##    (npx package lookup is blocked by the host security scanner; identical local binary)
+##    result: Test Files 2 passed (2) | Tests 48 passed (48) — 0 failures, 0 hook failures
+--------------------------------------------------------------------------------
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ✓ tests/unit/physics-system.test.ts  (24 tests) 13ms
+ ✓ tests/unit/obstacle.test.ts  (24 tests) 10ms
+
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  11:13:55
+   Duration  1.06s (transform 168ms, setup 74ms, collect 173ms, tests 23ms, environment 411ms, prepare 158ms)
