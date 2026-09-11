@@ -108,8 +108,8 @@ function showErrorScreen(error: Error): void {
   
   errorDiv.innerHTML = `
     <h1>🚨 Game Initialization Failed</h1>
-    <p>\${error.message}</p>
-    <pre>\${error.stack}</pre>
+    <p>${error.message}</p>
+    <pre>${error.stack}</pre>
     <button onclick="location.reload()" style="
       background: #ff4444;
       color: white;

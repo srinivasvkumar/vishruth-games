@@ -15,12 +15,10 @@ export class Game {
   private physicsSystem: PhysicsSystem; 
   private audioSystem: AudioSystem;
   private uiSystem: UISystem;
-  private config: GameConfig;
   private isRunning: boolean = false;
   private lastTimestamp: number = 0;
   
   constructor(config: GameConfig) {
-    this.config = config;
     this.sceneManager = new SceneManager(this);
     this.inputSystem = new InputSystem();
     this.physicsSystem = new PhysicsSystem(config.physics);

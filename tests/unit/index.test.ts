@@ -118,8 +118,8 @@ describe('src/index.ts public API (side-effect bootstrap module)', () => {
     expect(mockGame.instances).toHaveLength(0);
     expect((window as any).game).toBeUndefined();
     expect(document.body.innerHTML).toContain('Game Initialization Failed');
-    // Source uses \${error.message} (literal), not interpolation — expect the literal string.
-    expect(document.body.innerHTML).toContain('${error.message}');
+    // Source uses template literal: \${error.message} interpolates the actual message.
+    expect(document.body.innerHTML).toContain(mockGame.behavior.constructorThrowMessage || 'Error');
     expect(Logger.error).toHaveBeenCalledWith(
       'Failed to initialize game',
       expect.anything()

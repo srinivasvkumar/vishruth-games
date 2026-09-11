@@ -7,15 +7,13 @@ import type { Scene } from '@/scenes/Scene';
  * SceneManager handles scene transitions and lifecycle
  */
 export class SceneManager {
-  private game: Game;
   private scenes: Map<string, Scene> = new Map();
   private currentScene: Scene | null = null;
   private previousScene: Scene | null = null;
   private sceneQueue: string[] = [];
   private isLoading: boolean = false;
   
-  constructor(game: Game) {
-    this.game = game;
+  constructor(_game: Game) {
     Logger.info('SceneManager initialized');
   }
   

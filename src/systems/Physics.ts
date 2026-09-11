@@ -1,6 +1,5 @@
 import * as CANNON from 'cannon-es';
 import { Logger } from '@/utils/Logger';
-import { CollisionLayers } from '@/utils/Constants';
 import type { PhysicsConfig } from '@/types/GameTypes';
 
 /**
@@ -9,7 +8,6 @@ import type { PhysicsConfig } from '@/types/GameTypes';
 export class PhysicsSystem {
   private world: CANNON.World;
   private bodies: Map<string, CANNON.Body> = new Map();
-  private debugMeshes: any[] = [];
   private config: PhysicsConfig;
   
   constructor(config: PhysicsConfig) {
@@ -147,7 +145,6 @@ export class PhysicsSystem {
    */
   cleanup(): void {
     this.bodies.clear();
-    this.debugMeshes = [];
     Logger.info('Physics system cleaned up');
   }
 }

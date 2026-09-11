@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { Scene } from './Scene';
-import { AssetLoader } from '@/utils/AssetLoader';
 import { Logger } from '@/utils/Logger';
-import { GameConstants } from '@/utils/Constants';
 import type { Game } from '@/core/Game';
 
 /**
@@ -10,8 +8,8 @@ import type { Game } from '@/core/Game';
  */
 export class BootScene extends Scene {
   private loadingManager: THREE.LoadingManager;
-  private progressBar: HTMLDivElement;
-  private loadingText: HTMLDivElement;
+  private progressBar!: HTMLDivElement;
+  private loadingText!: HTMLDivElement;
   private totalAssets: number = 0;
   private loadedAssets: number = 0;
   
@@ -67,7 +65,7 @@ export class BootScene extends Scene {
   /**
    * Update boot scene
    */
-  protected onUpdate(deltaTime: number): void {
+  protected onUpdate(_deltaTime: number): void {
     // Update loading animation
     if (this.progressBar) {
       const width = Math.min(100, (this.loadedAssets / this.totalAssets) * 100);
@@ -188,7 +186,7 @@ export class BootScene extends Scene {
    * Load essential assets
    */
   private async loadEssentialAssets(): Promise<void> {
-    const essentialAssets = [
+    const essentialAssets: Array<{ type: string; url: string }> = [
       // Core game assets would be listed here
       // { type: 'texture', url: '/assets/textures/player.png' },
       // { type: 'model', url: '/assets/models/player.glb' },

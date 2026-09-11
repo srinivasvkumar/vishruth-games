@@ -12,7 +12,6 @@ import type { Game } from '@/core/Game';
 export class GameScene extends Scene {
   private player: Player | null = null;
   private obstacles: Obstacle[] = [];
-  private score: number = 0;
   private level: number = 1;
   private isGameOver: boolean = false;
   private obstacleSpawnTimer: number = 0;

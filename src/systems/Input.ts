@@ -1,5 +1,5 @@
 import { Logger } from '@/utils/Logger';
-import { InputConstants } from '@/utils/Constants';
+import { GameConstants } from '@/utils/Constants';
 import type { InputState } from '@/types/GameTypes';
 
 /**
@@ -136,7 +136,7 @@ export class InputSystem {
     const value = this.gamepadState.axes[axis];
     
     // Apply deadzone
-    return Math.abs(value) > InputConstants.GAMEPAD_DEADZONE ? value : 0;
+    return Math.abs(value) > GameConstants.GAMEPAD_DEADZONE ? value : 0;
   }
   
   /**
