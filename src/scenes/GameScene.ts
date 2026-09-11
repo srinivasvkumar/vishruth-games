@@ -269,7 +269,7 @@ export class GameScene extends Scene {
   private setupUI(): void {
     // Score display
     this.scoreElement = document.createElement('div');
-    this.scoreElement.style.cssText = \`
+    this.scoreElement.style.cssText = `
       position: fixed;
       top: 10px;
       left: 10px;
@@ -279,13 +279,13 @@ export class GameScene extends Scene {
       text-shadow: 2px 2px 2px black;
       z-index: 100;
       display: none;
-    \`;
+    `;
     this.scoreElement.id = 'game-score';
     document.body.appendChild(this.scoreElement);
     
     // Health display
     this.healthElement = document.createElement('div');
-    this.healthElement.style.cssText = \`
+    this.healthElement.style.cssText = `
       position: fixed;
       top: 10px;
       right: 10px;
@@ -295,13 +295,13 @@ export class GameScene extends Scene {
       text-shadow: 2px 2px 2px black;
       z-index: 100;
       display: none;
-    \`;
+    `;
     this.healthElement.id = 'game-health';
     document.body.appendChild(this.healthElement);
     
     // Level display
     this.levelElement = document.createElement('div');
-    this.levelElement.style.cssText = \`
+    this.levelElement.style.cssText = `
       position: fixed;
       top: 50px;
       left: 10px;
@@ -311,7 +311,7 @@ export class GameScene extends Scene {
       text-shadow: 2px 2px 2px black;
       z-index: 100;
       display: none;
-    \`;
+    `;
     this.levelElement.id = 'game-level';
     document.body.appendChild(this.levelElement);
   }
@@ -376,7 +376,7 @@ export class GameScene extends Scene {
     
     // Show game over screen
     const gameOverDiv = document.createElement('div');
-    gameOverDiv.style.cssText = \`
+    gameOverDiv.style.cssText = `
       position: fixed;
       top: 0;
       left: 0;
@@ -391,11 +391,11 @@ export class GameScene extends Scene {
       font-family: monospace;
       font-size: 24px;
       z-index: 1000;
-    \`;
+    `;
     
     if (this.player) {
       const state = this.player.getState();
-      gameOverDiv.innerHTML = \`
+      gameOverDiv.innerHTML = `
         <h1>GAME OVER</h1>
         <p>Score: ${state.score}</p>
         <p>Level: ${this.level}</p>
@@ -408,7 +408,7 @@ export class GameScene extends Scene {
           margin-top: 20px;
           cursor: pointer;
         " onclick="location.reload()">PLAY AGAIN</button>
-      \`;
+      `;
     }
     
     document.body.appendChild(gameOverDiv);

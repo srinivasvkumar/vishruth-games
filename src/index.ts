@@ -89,7 +89,7 @@ function setupWindowEvents(game: Game): void {
  */
 function showErrorScreen(error: Error): void {
   const errorDiv = document.createElement('div');
-  errorDiv.style.cssText = \`
+  errorDiv.style.cssText = `
     position: fixed;
     top: 0;
     left: 0;
@@ -104,9 +104,9 @@ function showErrorScreen(error: Error): void {
     font-family: monospace;
     padding: 20px;
     z-index: 9999;
-  \`;
+  `;
   
-  errorDiv.innerHTML = \`
+  errorDiv.innerHTML = `
     <h1>🚨 Game Initialization Failed</h1>
     <p>\${error.message}</p>
     <pre>\${error.stack}</pre>
@@ -119,7 +119,7 @@ function showErrorScreen(error: Error): void {
       cursor: pointer;
       margin-top: 20px;
     ">Retry</button>
-  \`;
+  `;
   
   document.body.appendChild(errorDiv);
 }

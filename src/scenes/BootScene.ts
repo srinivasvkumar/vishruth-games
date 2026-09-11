@@ -144,7 +144,7 @@ export class BootScene extends Scene {
   private setupLoadingUI(): void {
     // Create progress bar container
     const progressContainer = document.createElement('div');
-    progressContainer.style.cssText = \`
+    progressContainer.style.cssText = `
       position: fixed;
       top: 50%;
       left: 10%;
@@ -154,20 +154,20 @@ export class BootScene extends Scene {
       border: 2px solid #00ff00;
       transform: translateY(-50%);
       overflow: hidden;
-    \`;
+    `;
     
     // Create progress bar
     this.progressBar = document.createElement('div');
-    this.progressBar.style.cssText = \`
+    this.progressBar.style.cssText = `
       height: 100%;
       width: 0%;
       background: #00ff00;
       transition: width 0.3s ease;
-    \`;
+    `;
     
     // Create loading text
     this.loadingText = document.createElement('div');
-    this.loadingText.style.cssText = \`
+    this.loadingText.style.cssText = `
       position: fixed;
       top: calc(50% - 30px);
       left: 0;
@@ -176,7 +176,7 @@ export class BootScene extends Scene {
       color: #00ff00;
       font-family: monospace;
       font-size: 20px;
-    \`;
+    `;
     this.loadingText.textContent = 'Loading... 0%';
     
     progressContainer.appendChild(this.progressBar);
