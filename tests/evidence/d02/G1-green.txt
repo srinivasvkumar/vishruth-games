@@ -1,0 +1,61 @@
+# T0.2.2 G1 GREEN evidence (2026-09-11) — kanban task t_013c1b58
+# Task: minimal src/systems/{Audio,UI}.ts stubs + aligned tests/unit/game.test.ts
+# RED baseline: HEAD 4edf450 (file-level load failure, 0 tests — T2-red-analysis.md §3.1)
+# Working HEAD at GREEN: 5a318f9
+
+## 1. Scoped vitest run (task verification criterion)
+##    command: npx vitest run tests/unit/game.test.ts --config config/vite.config.ts
+##    (executed via ./node_modules/.bin/vitest — npx package lookup was blocked
+##     by the host security scanner; identical local binary)
+--------------------------------------------------------------------------------
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ✓ tests/unit/game.test.ts  (17 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  10:34:57
+   Duration  458ms (transform 46ms, setup 26ms, collect 29ms, tests 6ms, environment 100ms, prepare 31ms)
+
+
+## 2. TypeScript check (task verification criterion: npx tsc --noEmit -> clean)
+##    command: ./node_modules/.bin/tsc --noEmit -p tsconfig.json
+##    Baseline at HEAD 5a318f9 (pre-G1, clean tree): 12 pre-existing errors in
+##    src/index.ts + src/scenes/BootScene.ts + src/scenes/GameScene.ts
+##    (committed corruption since initial commit 6e8c4fa: literal
+##     backslash-escaped backticks at template-literal sites — 20 occurrences
+##     across the 3 files; OUT OF G1 SCOPE, not in G1 file list).
+##    Post-G1 run (below) is byte-identical to the baseline:
+##    0 new tsc errors introduced by src/systems/Audio.ts + src/systems/UI.ts.
+--------------------------------------------------------------------------------
+src/index.ts(92,28): error TS1127: Invalid character.
+src/index.ts(150,1): error TS1160: Unterminated template literal.
+src/scenes/BootScene.ts(147,39): error TS1127: Invalid character.
+src/scenes/BootScene.ts(211,1): error TS1160: Unterminated template literal.
+src/scenes/GameScene.ts(272,39): error TS1127: Invalid character.
+src/scenes/GameScene.ts(328,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(328,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(332,41): error TS1005: ';' expected.
+src/scenes/GameScene.ts(332,49): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(336,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(336,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(422,1): error TS1160: Unterminated template literal.
+
+diff(baseline, post-G1): no differences (verified 2026-09-11)
+
+## 3. .husky/red-allowlist.txt diff
+##    (task verification criterion: exactly one TEMP line removed)
+--------------------------------------------------------------------------------
+diff --git a/.husky/red-allowlist.txt b/.husky/red-allowlist.txt
+index 37ff207..be27957 100644
+--- a/.husky/red-allowlist.txt
++++ b/.husky/red-allowlist.txt
+@@ -64,7 +64,6 @@ tests/unit/mock-strategy.test.ts
+ # ----------------------------------------------------------------------------
+ tests/unit/constants.test.ts # TEMP-D0.2-T1: 4/12 failing at T1 — expects GameEvents.PLAYER_DIED/SCORE_CHANGED + InputConstants.GAMEPAD_DEADZONE; impl has PLAYER_DEATH/PLAYER_SCORE and deadzone on GameConstants; removal owner: T3
+ tests/unit/game-loop.test.ts # TEMP-D0.2-T1: 8/13 failing at T1 — lifecycle, fixed-timestep accumulation, update/render callback expectations; removal owner: T3
+-tests/unit/game.test.ts # TEMP-D0.2-T1: 0 tests collected at T1 — load failure: src/core/Game imports non-existent src/systems/Audio.ts + src/systems/UI.ts; removal owner: T3
+ tests/unit/obstacle.test.ts # TEMP-D0.2-T1: 19/19 failing at T1 — tests expect an API surface (static type, getPosition, destroy, collision) the Obstacle class does not expose; removal owner: T3
+ tests/unit/physics-system.test.ts # TEMP-D0.2-T1: 12/12 failing at T1 — tests/setup/mock-cannon divergence; tests expect raycast/collision-event API not on PhysicsSystem; removal owner: T3
+ tests/unit/player.test.ts # TEMP-D0.2-T1: 3/45 failing at T1 — jump-while-jumping guard, respawn position, health restore on respawn; removal owner: T3
