@@ -4,6 +4,7 @@ import { Logger } from '@/utils/Logger';
 import { GameConstants, GameEvents } from '@/utils/Constants';
 import { Player } from '@/entities/Player';
 import { Obstacle } from '@/entities/Obstacle';
+import type { ObstacleType } from '@/entities/Obstacle';
 import type { Game } from '@/core/Game';
 
 /**
@@ -12,9 +13,9 @@ import type { Game } from '@/core/Game';
 export class GameScene extends Scene {
   private player: Player | null = null;
   private obstacles: Obstacle[] = [];
-  private level: number = 1;
-  private isGameOver: boolean = false;
-  private obstacleSpawnTimer: number = 0;
+  private level = 1;
+  private isGameOver = false;
+  private obstacleSpawnTimer = 0;
   private scoreElement: HTMLElement | null = null;
   private healthElement: HTMLElement | null = null;
   private levelElement: HTMLElement | null = null;
@@ -43,6 +44,7 @@ export class GameScene extends Scene {
   /**
    * Load game assets
    */
+  // eslint-disable-next-line @typescript-eslint/require-await -- preserves the base class async contract; asset loading is synchronous in the retroactive baseline
   protected async onLoad(): Promise<void> {
     Logger.info('Loading game scene assets...');
     
@@ -80,7 +82,7 @@ export class GameScene extends Scene {
    * Update game scene
    */
   protected onUpdate(deltaTime: number): void {
-    if (this.isGameOver || !this.player || !this.player.isPlayerAlive()) return;
+    if (this.isGameOver || !this.player?.isPlayerAlive()) return;
     
     // Update player
     const inputState = this.game.getInputSystem().getInputState();
@@ -212,8 +214,8 @@ export class GameScene extends Scene {
   /**
    * Get random obstacle type
    */
-  private getRandomObstacleType(): import('@/entities/Obstacle').ObstacleType {
-    const types: import('@/entities/Obstacle').ObstacleType[] = [
+  private getRandomObstacleType(): ObstacleType {
+    const types: ObstacleType[] = [
       'block', 'spike', 'moving', 'rotating', 'breakable'
     ];
     return types[Math.floor(Math.random() * types.length)];
@@ -340,24 +342,18 @@ export class GameScene extends Scene {
    * Remove UI elements
    */
   private removeUI(): void {
-    if (this.scoreElement && this.scoreElement.parentNode) {
-      this.scoreElement.parentNode.removeChild(this.scoreElement);
-    }
-    if (this.healthElement && this.healthElement.parentNode) {
-      this.healthElement.parentNode.removeChild(this.healthElement);
-    }
-    if (this.levelElement && this.levelElement.parentNode) {
-      this.levelElement.parentNode.removeChild(this.levelElement);
-    }
+    this.scoreElement?.parentNode?.removeChild(this.scoreElement);
+    this.healthElement?.parentNode?.removeChild(this.healthElement);
+    this.levelElement?.parentNode?.removeChild(this.levelElement);
   }
   
   /**
    * Setup event listeners
    */
   private setupEventListeners(): void {
-    window.addEventListener(GameEvents.PLAYER_SCORE, (e: any) => {
-      const { points } = e.detail;
-      if (this.player) {
+    window.addEventListener(GameEvents.PLAYER_SCORE, (e: Event) => {
+      const points = (e as CustomEvent<{ points: number }>).detail?.points;
+      if (this.player && typeof points === 'number') {
         this.player.addScore(points);
       }
     });
@@ -413,7 +409,7 @@ export class GameScene extends Scene {
     document.body.appendChild(gameOverDiv);
     
     Logger.info('Game over', { 
-      score: this.player?.getState().score || 0,
+      score: this.player?.getState().score ?? 0,
       level: this.level
     });
   }

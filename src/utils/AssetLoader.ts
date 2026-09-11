@@ -14,7 +14,7 @@ export class AssetLoader {
   private static textureLoader = new THREE.TextureLoader();
   private static gltfLoader = new GLTFLoader();
   private static audioContext: AudioContext | null = null;
-  private static cache = new Map<string, any>();
+  private static cache = new Map<string, unknown>();
   
   /**
    * Load an asset by URL and type
@@ -30,7 +30,7 @@ export class AssetLoader {
     try {
       Logger.debug('Loading asset', { url, type });
       
-      let asset: any;
+      let asset: unknown;
       
       switch (type) {
         case 'texture':
@@ -49,7 +49,9 @@ export class AssetLoader {
           asset = await this.loadJSON(url);
           break;
         default:
-          throw new Error(`Unknown asset type: ${type}`);
+          // Exhaustive switch: `type` narrows to never here; this is a
+          // runtime guard for AssetType additions that missed a case.
+          throw new Error(`Unknown asset type: ${String(type)}`);
       }
       
       // Cache the asset
@@ -105,7 +107,7 @@ export class AssetLoader {
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
     
-    return this.audioContext!.decodeAudioData(arrayBuffer);
+    return this.audioContext.decodeAudioData(arrayBuffer);
   }
   
   /**
@@ -114,7 +116,10 @@ export class AssetLoader {
   private static loadFont(url: string): Promise<FontFace> {
     return new Promise(async (resolve, reject) => {
       try {
-        const fontName = url.split('/').pop()?.split('.')[0] || 'CustomFont';
+        // Fallback when the last path segment has no parsable name
+        // (empty string is a valid split result, so test for truthiness)
+        const parsedName = url.split('/').pop()?.split('.')[0];
+        const fontName = parsedName ? parsedName : 'CustomFont';
         const fontFace = new FontFace(fontName, `url(${url})`);
         
         await fontFace.load();
@@ -130,7 +135,7 @@ export class AssetLoader {
   /**
    * Load JSON
    */
-  private static async loadJSON(url: string): Promise<any> {
+  private static async loadJSON(url: string): Promise<unknown> {
     const response = await fetch(url);
     return response.json();
   }
@@ -138,7 +143,7 @@ export class AssetLoader {
   /**
    * Preload multiple assets
    */
-  static async preload(assets: Array<{ url: string; type: AssetType }>): Promise<void> {
+  static async preload(assets: { url: string; type: AssetType }[]): Promise<void> {
     Logger.info('Preloading assets', { count: assets.length });
     
     const promises = assets.map(asset => this.load(asset.url, asset.type));

@@ -33,7 +33,7 @@ async function analyzeBuild() {
     
     // Show largest files
     console.log('📈 Largest files:');
-    const largestFiles = files
+    files
       .sort((a, b) => b.size - a.size)
       .slice(0, 10)
       .forEach(file => {

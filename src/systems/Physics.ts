@@ -7,7 +7,7 @@ import type { PhysicsConfig } from '@/types/GameTypes';
  */
 export class PhysicsSystem {
   private world: CANNON.World;
-  private bodies: Map<string, CANNON.Body> = new Map();
+  private bodies = new Map<string, CANNON.Body>();
   private config: PhysicsConfig;
   
   constructor(config: PhysicsConfig) {
@@ -59,7 +59,7 @@ export class PhysicsSystem {
     id: string,
     position: { x: number; y: number; z: number },
     size: { x: number; y: number; z: number },
-    mass: number = 0
+    mass = 0
   ): CANNON.Body {
     const body = new CANNON.Body({
       mass,
@@ -78,7 +78,7 @@ export class PhysicsSystem {
     id: string,
     position: { x: number; y: number; z: number },
     radius: number,
-    mass: number = 0
+    mass = 0
   ): CANNON.Body {
     const body = new CANNON.Body({
       mass,
@@ -93,7 +93,7 @@ export class PhysicsSystem {
   /**
    * Create a ground plane
    */
-  createGround(id: string = 'ground'): CANNON.Body {
+  createGround(id = 'ground'): CANNON.Body {
     const body = new CANNON.Body({
       mass: 0,
       position: new CANNON.Vec3(0, 0, 0),

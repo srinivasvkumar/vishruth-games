@@ -13,9 +13,9 @@ export class Obstacle {
   private mesh: Group;
   private type: ObstacleType;
   private damage: number;
-  private isActive: boolean = true;
-  private movementSpeed: number = 0;
-  private rotationSpeed: number = 0;
+  private isActive = true;
+  private movementSpeed = 0;
+  private rotationSpeed = 0;
   private originalPosition: Vector3;
   
   constructor(

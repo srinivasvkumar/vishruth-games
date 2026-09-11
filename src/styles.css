@@ -1,0 +1,9 @@
+/* Cluster Rush — global styles.
+ * Most UI styling is inline in public/index.html <style> block.
+ * This file is linked from index.html (<link rel="stylesheet" href="/src/styles.css">)
+ * so the reference resolves at build and dev time. */
+
+canvas {
+  display: block;
+  outline: none;
+}

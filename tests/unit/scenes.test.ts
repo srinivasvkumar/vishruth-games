@@ -58,7 +58,7 @@ function createMockGame() {
   return {
     _inputState: inputState,
     getInputSystem: vi.fn(() => ({ getInputState: () => inputState })),
-    switchScene: vi.fn(),
+    switchScene: vi.fn().mockResolvedValue(undefined),
     isGameRunning: () => true,
     pause: vi.fn(),
     stop: vi.fn(),
@@ -412,18 +412,29 @@ describe('GameScene', () => {
   });
 
   it('update() damages the player on collision with an obstacle', async () => {
-    const gs = await loadedScene();
-    gs.enter();
-    const obstacle = findGroups(gs.getScene()).find((g) => g.position.y === 0.5);
-    obstacle.position.set(0.4, 1, 0); // 0.4 < player radius 0.5 + obstacle radius 0.7
+    // Pin spawn-time randomness so obstacle 0 is a static 'block' type.
+    // 'moving' obstacles overwrite mesh.position.x in Obstacle.update()
+    // (which runs before checkCollisions()), teleporting the obstacle back
+    // to its spawn position (z <= -10) and skipping damage — this made the
+    // test fail ~1/5 of the time (surfaced as the T5 "hook false positive").
+    // 0.1 → types[floor(0.1 * 5)] = types[0] = 'block'; x = -8.
+    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    try {
+      const gs = await loadedScene();
+      gs.enter();
+      const obstacle = findGroups(gs.getScene()).find((g) => g.position.y === 0.5);
+      obstacle.position.set(0.4, 1, 0); // 0.4 < player radius 0.5 + obstacle radius 0.7
 
-    gs.update(0.016);
+      gs.update(0.016);
 
-    const health = Number(
-      document.getElementById('game-health')!.textContent!.replace('HEALTH: ', '')
-    );
-    expect(health).toBeLessThan(100);
-    expect(health).toBeGreaterThanOrEqual(75); // maximum obstacle damage is 25
+      const health = Number(
+        document.getElementById('game-health')!.textContent!.replace('HEALTH: ', '')
+      );
+      expect(health).toBeLessThan(100);
+      expect(health).toBeGreaterThanOrEqual(75); // maximum obstacle damage is 25
+    } finally {
+      randomSpy.mockRestore();
+    }
   });
 
   it('PLAYER_SCORE event adds points, shown on the next update', async () => {

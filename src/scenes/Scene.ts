@@ -10,13 +10,13 @@ export abstract class Scene {
   protected camera: THREE.Camera;
   protected renderer: THREE.WebGLRenderer;
   protected game: Game;
-  protected isLoaded: boolean = false;
-  protected isActive: boolean = false;
+  protected isLoaded = false;
+  protected isActive = false;
   
   constructor(game: Game, camera?: THREE.Camera) {
     this.game = game;
     this.scene = new THREE.Scene();
-    this.camera = camera || this.createCamera();
+    this.camera = camera ?? this.createCamera();
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     
     Logger.debug('Scene created', { name: this.constructor.name });

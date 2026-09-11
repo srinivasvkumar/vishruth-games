@@ -10,7 +10,7 @@ export class Player {
   private mesh: Group;
   private velocity: Vector3;
   private state: PlayerState;
-  private isAlive: boolean = true;
+  private isAlive = true;
   
   constructor(position: Vector3) {
     this.velocity = new Vector3(0, 0, 0);

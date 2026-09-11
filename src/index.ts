@@ -3,6 +3,13 @@ import { GameConstants } from '@/utils/Constants';
 import { Logger } from '@/utils/Logger';
 import type { GameConfig } from '@/types/GameTypes';
 
+// Typed global debug handle (window.game), set in initGame()
+declare global {
+  interface Window {
+    game?: Game;
+  }
+}
+
 /**
  * Default game configuration
  */
@@ -44,7 +51,7 @@ function initGame(): void {
     const game = new Game(defaultConfig);
     
     // Store reference globally for debugging
-    (window as any).game = game;
+    window.game = game;
     
     // Start the game
     game.start();

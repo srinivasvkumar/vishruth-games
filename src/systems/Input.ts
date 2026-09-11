@@ -50,7 +50,7 @@ export class InputSystem {
     
     // Gamepad events
     window.addEventListener('gamepadconnected', (e) => {
-      this.gamepadState = navigator.getGamepads()[e.gamepad.index] || null;
+      this.gamepadState = navigator.getGamepads()[e.gamepad.index] ?? null;
       Logger.info('Gamepad connected', { id: e.gamepad.id });
     });
     
@@ -124,7 +124,7 @@ export class InputSystem {
    * Check if a gamepad button is pressed
    */
   isGamepadButtonPressed(button: number): boolean {
-    if (!this.gamepadState || !this.gamepadState.buttons[button]) return false;
+    if (!this.gamepadState?.buttons[button]) return false;
     return this.gamepadState.buttons[button].pressed;
   }
   
@@ -132,7 +132,7 @@ export class InputSystem {
    * Get gamepad axis value
    */
   getGamepadAxis(axis: number): number {
-    if (!this.gamepadState || !this.gamepadState.axes[axis]) return 0;
+    if (!this.gamepadState?.axes[axis]) return 0;
     const value = this.gamepadState.axes[axis];
     
     // Apply deadzone

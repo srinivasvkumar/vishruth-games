@@ -15,8 +15,8 @@ export class Game {
   private physicsSystem: PhysicsSystem; 
   private audioSystem: AudioSystem;
   private uiSystem: UISystem;
-  private isRunning: boolean = false;
-  private lastTimestamp: number = 0;
+  private isRunning = false;
+  private lastTimestamp = 0;
   
   constructor(config: GameConfig) {
     this.sceneManager = new SceneManager(this);
@@ -80,7 +80,7 @@ export class Game {
   /**
    * Switch to a different scene
    */
-  switchScene(sceneName: string, data?: Record<string, any>): Promise<void> {
+  switchScene(sceneName: string, data?: Record<string, unknown>): Promise<void> {
     return this.sceneManager.loadScene(sceneName, data);
   }
   
@@ -117,7 +117,7 @@ export class Game {
   /**
    * Emit game events
    */
-  private emit(event: string, data?: any): void {
+  private emit(event: string, data?: unknown): void {
     const customEvent = new CustomEvent(event, { detail: data });
     window.dispatchEvent(customEvent);
   }

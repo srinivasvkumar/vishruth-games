@@ -7,11 +7,11 @@ import type { Scene } from '@/scenes/Scene';
  * SceneManager handles scene transitions and lifecycle
  */
 export class SceneManager {
-  private scenes: Map<string, Scene> = new Map();
+  private scenes = new Map<string, Scene>();
   private currentScene: Scene | null = null;
   private previousScene: Scene | null = null;
   private sceneQueue: string[] = [];
-  private isLoading: boolean = false;
+  private isLoading = false;
   
   constructor(_game: Game) {
     Logger.info('SceneManager initialized');
@@ -44,7 +44,7 @@ export class SceneManager {
   /**
    * Load and switch to a scene
    */
-  async loadScene(name: string, data?: Record<string, any>): Promise<void> {
+  async loadScene(name: string, data?: Record<string, unknown>): Promise<void> {
     if (this.isLoading) {
       Logger.warn('Already loading a scene, queuing request', { name });
       this.sceneQueue.push(name);
@@ -184,7 +184,7 @@ export class SceneManager {
   /**
    * Emit events
    */
-  private emit(event: string, data?: any): void {
+  private emit(event: string, data?: unknown): void {
     const customEvent = new CustomEvent(event, { detail: data });
     window.dispatchEvent(customEvent);
   }

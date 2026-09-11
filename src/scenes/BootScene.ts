@@ -10,8 +10,8 @@ export class BootScene extends Scene {
   private loadingManager: THREE.LoadingManager;
   private progressBar!: HTMLDivElement;
   private loadingText!: HTMLDivElement;
-  private totalAssets: number = 0;
-  private loadedAssets: number = 0;
+  private totalAssets = 0;
+  private loadedAssets = 0;
   
   constructor(game: Game) {
     super(game);
@@ -80,7 +80,9 @@ export class BootScene extends Scene {
     if (this.loadedAssets >= this.totalAssets && this.isActive) {
       setTimeout(() => {
         this.exit();
-        this.game.switchScene('menu');
+        this.game.switchScene('menu').catch((error) => {
+          Logger.error('Failed to switch to menu scene', { error });
+        });
       }, 500);
     }
   }
@@ -102,12 +104,8 @@ export class BootScene extends Scene {
    * Clean up boot scene
    */
   protected onCleanup(): void {
-    if (this.progressBar && this.progressBar.parentNode) {
-      this.progressBar.parentNode.removeChild(this.progressBar);
-    }
-    if (this.loadingText && this.loadingText.parentNode) {
-      this.loadingText.parentNode.removeChild(this.loadingText);
-    }
+    this.progressBar?.parentNode?.removeChild(this.progressBar);
+    this.loadingText?.parentNode?.removeChild(this.loadingText);
     
     Logger.debug('Boot scene cleaned up');
   }
@@ -185,8 +183,9 @@ export class BootScene extends Scene {
   /**
    * Load essential assets
    */
+  // eslint-disable-next-line @typescript-eslint/require-await -- async contract: asset loads will be awaited as the essential-asset list is enabled
   private async loadEssentialAssets(): Promise<void> {
-    const essentialAssets: Array<{ type: string; url: string }> = [
+    const essentialAssets: { type: string; url: string }[] = [
       // Core game assets would be listed here
       // { type: 'texture', url: '/assets/textures/player.png' },
       // { type: 'model', url: '/assets/models/player.glb' },

@@ -4,13 +4,13 @@ import { Logger } from '@/utils/Logger';
  * GameLoop manages the timing and scheduling of the game update cycle
  */
 export class GameLoop {
-  private isRunning: boolean = false;
-  private lastTime: number = 0;
-  private accumulatedTime: number = 0;
+  private isRunning = false;
+  private lastTime = 0;
+  private accumulatedTime = 0;
   private timeStep: number = 1000 / 60; // 60 FPS target
   private updateCallback: (deltaTime: number) => void;
   private renderCallback: () => void;
-  private frameId: number = 0;
+  private frameId = 0;
   
   constructor(
     updateCallback: (deltaTime: number) => void,

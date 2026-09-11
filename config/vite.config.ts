@@ -1,9 +1,13 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import { resolve } from 'path'
 
+// NOTE: this config file lives in <repo>/config/, so __dirname === <repo>/config.
+// Root-anchored values must therefore point one level up to the repo root
+// (Task 0.2.1 fix). Values relative to `root` (publicDir, test.include,
+// setupFiles, coverage paths) resolve against the repo root as expected.
 export default defineConfig({
   base: './',
-  root: './',
+  root: resolve(__dirname, '..'),
   publicDir: 'public',
   build: {
     outDir: 'dist',
@@ -11,14 +15,14 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'public/index.html')
+        main: resolve(__dirname, '../public/index.html')
       },
       output: {
+        // NOTE: rollup manualChunks object values must be resolvable module
+        // specifiers — glob patterns ('./src/core/**/*.ts') are NOT expanded
+        // and break the build. Vendor splitting only.
         manualChunks: {
-          vendor: ['three', 'cannon-es'],
-          core: ['./src/core/**/*.ts'],
-          entities: ['./src/entities/**/*.ts'],
-          systems: ['./src/systems/**/*.ts']
+          vendor: ['three', 'cannon-es']
         }
       }
     }
@@ -29,8 +33,6 @@ export default defineConfig({
     host: true
   },
   resolve: {
-    // NOTE: this config file lives in <repo>/config/, so __dirname === <repo>/config.
-    // Aliases must therefore point one level up to reach the repo root (Task 0.2.1 fix).
     alias: {
       '@': resolve(__dirname, '../src'),
       '@core': resolve(__dirname, '../src/core'),
@@ -56,7 +58,7 @@ export default defineConfig({
     // as an explicit guard so a future include-pattern change can never
     // silently pick up the duplicate tree.
     exclude: ['node_modules', 'dist', 'clusterrush/**'],
-    
+
     // Coverage configuration
     coverage: {
       provider: 'v8',
@@ -78,10 +80,10 @@ export default defineConfig({
         }
       }
     },
-    
+
     // Test timeout
     testTimeout: 10000,
-    
+
     // Mock three.js and cannon-es for unit tests
     mockReset: true,
     setupFiles: ['tests/setup/mock-three.ts', 'tests/setup/mock-cannon.ts']

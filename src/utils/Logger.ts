@@ -22,7 +22,7 @@ export class Logger {
   /**
    * Log debug message
    */
-  static debug(message: string, data?: any): void {
+  static debug(message: string, data?: unknown): void {
     if (this.currentLevel <= this.LOG_LEVELS.DEBUG) {
       console.debug(`[DEBUG] ${message}`, data || '');
     }
@@ -31,7 +31,7 @@ export class Logger {
   /**
    * Log info message
    */
-  static info(message: string, data?: any): void {
+  static info(message: string, data?: unknown): void {
     if (this.currentLevel <= this.LOG_LEVELS.INFO) {
       console.log(`[INFO] ${message}`, data || '');
     }
@@ -40,7 +40,7 @@ export class Logger {
   /**
    * Log warning message
    */
-  static warn(message: string, data?: any): void {
+  static warn(message: string, data?: unknown): void {
     if (this.currentLevel <= this.LOG_LEVELS.WARN) {
       console.warn(`[WARN] ${message}`, data || '');
     }
@@ -49,7 +49,7 @@ export class Logger {
   /**
    * Log error message
    */
-  static error(message: string, data?: any): void {
+  static error(message: string, data?: unknown): void {
     if (this.currentLevel <= this.LOG_LEVELS.ERROR) {
       console.error(`[ERROR] ${message}`, data || '');
     }
@@ -71,7 +71,7 @@ export class Logger {
   /**
    * Group related logs
    */
-  static group(label: string, collapsed: boolean = false): void {
+  static group(label: string, collapsed = false): void {
     if (this.currentLevel <= this.LOG_LEVELS.DEBUG) {
       if (collapsed) {
         console.groupCollapsed(label);
