@@ -1,0 +1,22 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should have info method
+[INFO] Test message 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have warn method
+[WARN] Test warning 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have error method
+[ERROR] Test error 
+
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should accept message and optional data
+[INFO] Test message { key: 'value' }
+
+ ✓ tests/unit/retroactive-core.test.ts  (46 tests) 5ms
+
+ Test Files  1 passed (1)
+      Tests  46 passed (46)
+   Start at  12:09:32
+   Duration  556ms (transform 121ms, setup 23ms, collect 115ms, tests 5ms, environment 91ms, prepare 76ms)
+
