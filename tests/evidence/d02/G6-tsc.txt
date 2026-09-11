@@ -1,0 +1,35 @@
+src/index.ts(92,28): error TS1127: Invalid character.
+src/index.ts(150,1): error TS1160: Unterminated template literal.
+src/scenes/BootScene.ts(147,39): error TS1127: Invalid character.
+src/scenes/BootScene.ts(211,1): error TS1160: Unterminated template literal.
+src/scenes/GameScene.ts(272,39): error TS1127: Invalid character.
+src/scenes/GameScene.ts(328,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(328,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(332,41): error TS1005: ';' expected.
+src/scenes/GameScene.ts(332,49): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(336,40): error TS1005: ';' expected.
+src/scenes/GameScene.ts(336,47): error TS1434: Unexpected keyword or identifier.
+src/scenes/GameScene.ts(422,1): error TS1160: Unterminated template literal.
+
+=== Defect: literal backslash+backtick sequences in src/ (grep -rnF) ===
+src/index.ts:92:  errorDiv.style.cssText = \`
+src/index.ts:107:  \`;
+src/index.ts:109:  errorDiv.innerHTML = \`
+src/index.ts:122:  \`;
+src/scenes/BootScene.ts:147:    progressContainer.style.cssText = \`
+src/scenes/BootScene.ts:157:    \`;
+src/scenes/BootScene.ts:161:    this.progressBar.style.cssText = \`
+src/scenes/BootScene.ts:166:    \`;
+src/scenes/BootScene.ts:170:    this.loadingText.style.cssText = \`
+src/scenes/BootScene.ts:179:    \`;
+src/scenes/GameScene.ts:272:    this.scoreElement.style.cssText = \`
+src/scenes/GameScene.ts:282:    \`;
+src/scenes/GameScene.ts:288:    this.healthElement.style.cssText = \`
+src/scenes/GameScene.ts:298:    \`;
+src/scenes/GameScene.ts:304:    this.levelElement.style.cssText = \`
+src/scenes/GameScene.ts:314:    \`;
+src/scenes/GameScene.ts:379:    gameOverDiv.style.cssText = \`
+src/scenes/GameScene.ts:394:    \`;
+src/scenes/GameScene.ts:398:      gameOverDiv.innerHTML = \`
+src/scenes/GameScene.ts:411:      \`;
+=== git status src/ (empty = matches HEAD cddbe81) ===

@@ -1,0 +1,67 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ❯ tests/unit/index.test.ts  (7 tests | 7 failed) 21ms
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > exposes no named exports
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > bootstraps on import: constructs and starts Game with the default config, exposed on window.game
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > shows the error screen when Game construction fails
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > enables debug logging when ?debug=true is present in the URL
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > pauses the running game when the tab becomes hidden (visibilitychange)
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > stops the game on beforeunload
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+   ❯ tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > defers initialization until DOMContentLoaded when the document is still loading
+     → Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+ ❯ tests/unit/scenes.test.ts  (0 test)
+ ✓ tests/unit/asset-loader.test.ts  (18 tests) 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/scenes.test.ts [ tests/unit/scenes.test.ts ]
+Error: Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/scenes/BootScene.ts:147:39: ERROR: Syntax error "`"
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1472:15
+ ❯ node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:600:7
+ ❯ Socket.emit node:events:519:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > exposes no named exports
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > bootstraps on import: constructs and starts Game with the default config, exposed on window.game
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > shows the error screen when Game construction fails
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > enables debug logging when ?debug=true is present in the URL
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > pauses the running game when the tab becomes hidden (visibilitychange)
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > stops the game on beforeunload
+ FAIL  tests/unit/index.test.ts > src/index.ts public API (side-effect bootstrap module) > defers initialization until DOMContentLoaded when the document is still loading
+Error: Transform failed with 1 error:
+/home/srinivasvkumar/vishruth/games/clusterrush/src/index.ts:92:28: ERROR: Syntax error "`"
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1472:15
+ ❯ node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:600:7
+ ❯ Socket.emit node:events:519:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  7 failed | 18 passed (25)
+   Start at  15:33:26
+   Duration  511ms (transform 133ms, setup 68ms, collect 114ms, tests 27ms, environment 337ms, prepare 119ms)
+
