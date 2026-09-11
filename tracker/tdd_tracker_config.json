@@ -24,11 +24,12 @@
     "phase": "Week 0: Infrastructure & Baseline",
     "day": 0.2,
     "current_task": "0.2.2 - Retroactive Tests for Existing Code",
-    "status": "ACTIVE",
-    "tdd_cycle": "green_verified",
+    "status": "D0.2-COMPLETE",
+    "tdd_cycle": "complete",
     "start_date": "2026-09-08T13:42:39.443909",
-    "last_updated": "2026-09-11T21:07:00",
-    "completion_notes": "D0.2 T0.2.2b VERIFIED: full suite GREEN (353 tests, 1 intentional RED in hello-three, 4 skipped, 348 passing). All TEMP allowlist entries removed. Coverage deferred to Week 1."
+    "last_updated": "2026-09-11T21:58:34",
+    "completion_date": "2026-09-11T21:58:34",
+    "completion_notes": "D0.2 quality gate + sign-off COMPLETE. RED phase (4edf450) -> GREEN phase (30c2660 via G1..G6) -> verification (T4, QG). 353 tests = 348 pass / 1 intentional RED (hello-three) / 4 skip. Allowlist final: 2 PERMANENT (hello-three, mock-strategy), 0 TEMP. TDD discipline verified: no --no-verify in history, every src/ change preceded by RED evidence. Escalated: pre-commit hook false positive on scenes.test.ts (T5), ESLint flat-config defect (T1)."
   },
   "completed_tasks": [
     {

@@ -2,9 +2,9 @@
 
 ## Overview
 - **Generated**: 2026-09-10 (T0.2.1 refresh — replaces 2026-09-08 stale version)
-- **Total Source Files**: 16 (.ts under src/)
-- **Total Test Files**: 13 (tests/unit/*.test.ts) + 2 setup files (tests/setup/)
-- **T1 evidence run**: `npm run test:run` @ 2026-09-10T20:48 AEST — 13/13 test files collected, **zero "Failed to load url" collection errors**, 267 tests: 173 pass / 90 fail / 4 skip (RED-phase expected failures; evidence: `tests/evidence/d02/T1-green.txt` — this run is the derivation source for the TEMP-D0.2-T1 allowlist entries)
+- **Total Source Files**: 18 (.ts under src/)
+- **Total Test Files**: 16 (tests/unit/*.test.ts) + 2 setup files (tests/setup/)
+- **T1 evidence run**: `npm run test:run` @ 2026-09-10T20:48 AEST — 13/13 test files collected, **zero "Failed to load url" collection errors**, 267 tests: 173 pass / 90 fail / 4 skip (RED-phase expected failures; evidence: `tests/evidence/d02/T1-green.txt` — this run is the derivation source for the TEMP-D0.2-T1 allowlist entries). **D0.2 QG rerun**: 2026-09-11T21:57 AEST — 16/16 collected, 353 tests: 348 pass / 1 fail (intentional RED) / 4 skip (evidence: `tests/evidence/d02/QG-rerun.txt`)
 
 ## Technology Stack
 - **Language**: TypeScript
