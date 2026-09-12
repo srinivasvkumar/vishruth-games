@@ -1,6 +1,15 @@
 /**
  * Mock Three.js for unit tests
  * Provides stub implementations of Three.js classes
+ *
+ * TDD-1.3 GREEN (W1-A, 2026-09-12): WebGLRenderer extended for the new
+ * src/core/Renderer.ts wrapper (documented exception, task t_0f69a68a):
+ *   - added `setClearColor(color)` and `dispose()` — symbols core/Renderer.ts
+ *     genuinely needs (acceptance: "clears screen properly", "dispose/cleanup")
+ *   - added `clearColor` / `clearCount` / `disposed` fields so tests can
+ *     assert clear and disposal behavior (mock `clear()` records a call)
+ * Purely additive — the 54 existing mock-strategy.test.ts tests are
+ * unaffected (they only assert domElement, setSize, render, clear-not-throw).
  */
 
 // Mock Vector3
@@ -86,6 +95,9 @@ export class PerspectiveCamera {
 // Mock Renderer
 export class WebGLRenderer {
   domElement: HTMLCanvasElement
+  clearColor: number = 0x000000
+  clearCount: number = 0
+  disposed: boolean = false
   private size: { width: number; height: number }
 
   constructor(parameters: { antialias?: boolean } = {}) {
@@ -104,12 +116,20 @@ export class WebGLRenderer {
     // Mock - no-op
   }
 
+  setClearColor(color: number): void {
+    this.clearColor = color
+  }
+
   render(scene: Scene, camera: PerspectiveCamera): void {
     // Mock - no-op
   }
 
   clear(): void {
-    // Mock - no-op
+    this.clearCount++
+  }
+
+  dispose(): void {
+    this.disposed = true
   }
 }
 

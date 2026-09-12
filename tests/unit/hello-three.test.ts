@@ -1,18 +1,26 @@
 /**
- * RED-ALLOWLISTED — D0.2 pre-commit gate (boss ruling option (b),
- * 2026-09-10; pre-ruling for T1 commit 2026-09-10 20:35 AEST).
+ * TDD-1.3 GREEN (W1-A, 2026-09-12) — Three.js renderer integration.
  *
- * Why RED: contains the intentional RED-phase placeholder "should create a
- * WebGL renderer (RED phase)" (expect(false).toBe(true)) plus 4 skipped
- * stubs. It stays red until a real Three.js renderer integration exists.
+ * History: this file was the D0.2 RED-allowlist entry — it contained the
+ * intentional RED placeholder "should create a WebGL renderer (RED phase)"
+ * (expect(false).toBe(true)) plus 4 skipped stubs. That placeholder is now
+ * replaced by real assertions against src/core/Renderer.ts (W1-A / TDD-1.3
+ * GREEN); the 4 skipped stubs are removed in favor of the pointer comments
+ * at the bottom of this file (each duplicates a dedicated test file —
+ * per-stub decisions recorded in tests/evidence/d02/W1-TDD1.3-green.txt).
  *
- * Turns green: Week 1, day 1 — TDD-1.3 "Three.js rendering test".
+ * The .husky/red-allowlist.txt entry REMAINS until W1-B (TDD-1.1) removes it.
  *
- * Tracked in: .husky/red-allowlist.txt (PERMANENT entry),
- * tests/baseline/INVENTORY.md ("D0.2 RED Allowlist" section),
- * tracker/task_registry.json (0.2.1 notes).
+ * Mock strategy: 'three' is replaced by tests/setup/mock-three.ts for this
+ * file only, so Renderer constructs the stub WebGLRenderer whose clear
+ * color, clear calls, and disposal are recorded and assertable.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+vi.mock('three', () => import('../setup/mock-three'))
+
+import { Renderer } from '@/core/Renderer'
+import { WebGLRenderer, Scene, PerspectiveCamera } from 'three'
 
 describe('Three.js Integration - TDD Setup Verification', () => {
   beforeEach(() => {
@@ -20,15 +28,48 @@ describe('Three.js Integration - TDD Setup Verification', () => {
     vi.resetModules()
   })
 
-  // RED: First failing test for Three.js renderer
-  // This test WILL fail initially - that's expected in TDD
-  it('should create a WebGL renderer (RED phase)', () => {
-    // Arrange
-    // We expect Three.js to be available
-    // This test will fail until we implement the renderer
-    
-    // Act & Assert will be implemented in GREEN phase
-    expect(false).toBe(true) // Intentionally failing - RED phase
+  // GREEN (TDD-1.3): was the intentional RED placeholder
+  // "should create a WebGL renderer (RED phase)" — now asserts on the real
+  // Renderer (src/core/Renderer.ts) running against the mock three.
+  it('should create a WebGL renderer', () => {
+    // Arrange & Act — WebGL context created through the wrapper
+    const renderer = new Renderer({ width: 1024, height: 768 })
+    const mockRenderer = renderer.getRenderer()
+    expect(renderer.getRenderer()).toBeInstanceOf(WebGLRenderer)
+    expect(renderer.domElement).toBeInstanceOf(HTMLCanvasElement)
+
+    // Correct dimensions + initial clear + default clear color (constructor)
+    expect(renderer.width).toBe(1024)
+    expect(renderer.height).toBe(768)
+    expect(mockRenderer.clearColor).toBe(0x000000)
+    expect(mockRenderer.clearCount).toBe(1) // constructor cleared once
+
+    // Resize path updates dimensions and clears
+    renderer.resize(640, 480)
+    expect(renderer.width).toBe(640)
+    expect(renderer.height).toBe(480)
+    expect(mockRenderer.clearCount).toBe(2)
+
+    // Default dimensions when no options are given
+    const defaults = new Renderer()
+    expect(defaults.width).toBe(800)
+    expect(defaults.height).toBe(600)
+
+    // Clear color change applies; further clears are recorded by the mock
+    renderer.setClearColor(0x336699)
+    renderer.clear()
+    expect(mockRenderer.clearColor).toBe(0x336699)
+    expect(mockRenderer.clearCount).toBe(3)
+
+    // render() pass-through works against the mock (no scene ownership)
+    const scene = new Scene()
+    const camera = new PerspectiveCamera()
+    expect(() => renderer.render(scene, camera)).not.toThrow()
+
+    // dispose() releases the context; idempotent
+    renderer.dispose()
+    expect(mockRenderer.disposed).toBe(true)
+    expect(() => renderer.dispose()).not.toThrow()
   })
 
   // This test verifies our test infrastructure works
@@ -108,22 +149,20 @@ describe('TDD Workflow Verification', () => {
   })
 })
 
-// Placeholder for future game-specific tests
-describe('Game System Tests (Placeholders)', () => {
-  it.skip('should initialize game with default state', () => {
-    // TO BE IMPLEMENTED: Game class tests
-    // Will fail until Game class is created
-  })
-
-  it.skip('should handle player input correctly', () => {
-    // TO BE IMPLEMENTED: Input system tests
-  })
-
-  it.skip('should render 3D scene with Three.js', () => {
-    // TO BE IMPLEMENTED: Rendering system tests
-  })
-
-  it.skip('should apply physics to game objects', () => {
-    // TO BE IMPLEMENTED: Physics system tests
-  })
-})
+// ----------------------------------------------------------------------------
+// Game System Tests (placeholders — W1-A 2026-09-12)
+//
+// The 4 skipped stubs previously in this describe block were replaced with
+// pointers: each duplicates an existing dedicated test file, so re-adding
+// them here would only create maintenance duplication. Decisions recorded
+// in tests/evidence/d02/W1-TDD1.3-green.txt:
+//
+//   - 'should initialize game with default state'
+//       -> tests/unit/game.test.ts (Game init, state, system wiring)
+//   - 'should handle player input correctly'
+//       -> tests/unit/input-system.test.ts (InputSystem key handling)
+//   - 'should render 3D scene with Three.js'
+//       -> tests/unit/scenes.test.ts (Scene / BootScene / GameScene rendering)
+//   - 'should apply physics to game objects'
+//       -> tests/unit/physics-system.test.ts (PhysicsSystem bodies/forces)
+// ----------------------------------------------------------------------------

@@ -1,0 +1,33 @@
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/srinivasvkumar/vishruth/games/clusterrush[39m
+
+ [33m❯[39m tests/unit/hello-three.test.ts [2m ([22m[2m11 tests[22m [2m|[22m [31m1 failed[39m [2m|[22m [33m4 skipped[39m[2m)[22m[90m 8[2mms[22m[39m
+[31m   [33m❯[31m tests/unit/hello-three.test.ts[2m > [22mThree.js Integration - TDD Setup Verification[2m > [22mshould create a WebGL renderer (RED phase)[39m
+[31m     → expected false to be true // Object.is equality[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/unit/hello-three.test.ts[2m > [22mThree.js Integration - TDD Setup Verification[2m > [22mshould create a WebGL renderer (RED phase)
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/unit/hello-three.test.ts:[2m31:19[22m[39m
+    [90m 29| [39m    
+    [90m 30| [39m    [90m// Act & Assert will be implemented in GREEN phase[39m
+    [90m 31| [39m    [34mexpect[39m([35mfalse[39m)[33m.[39m[34mtoBe[39m([35mtrue[39m) [90m// Intentionally failing - RED phase[39m
+    [90m   | [39m                  [31m^[39m
+    [90m 32| [39m  })
+    [90m 33| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[2m | [22m[33m4 skipped[39m[90m (11)[39m
+[2m   Start at [22m 11:02:05
+[2m   Duration [22m 886ms[2m (transform 66ms, setup 41ms, collect 19ms, tests 8ms, environment 169ms, prepare 66ms)[22m
+
