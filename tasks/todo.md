@@ -36,3 +36,4 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 
 # Week 2 Lane (started 2026-09-13)
 - [x] W2-A.1 — Renderer attaches to existing canvas (RendererOptions.canvas + resizeToContainer) — game-dev — `t_2deaadf6`
+- [x] W2-A.2 — Game owns shared Renderer; start() boots scene; gameLoop calls sceneManager.render(); AssetLoader.load() hook — game-dev — `t_f1aa3f33`

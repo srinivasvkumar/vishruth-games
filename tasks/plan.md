@@ -89,3 +89,8 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
 - [x] W2-A.1 — Renderer attaches to existing canvas (RendererOptions.canvas + resizeToContainer) — game-dev — `t_2deaadf6` — 2026-09-13T17:02
   - RED: tests/evidence/w2/W2-A1-RED.txt (2 failed / 1 passed)
   - GREEN: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed), full suite 390/390
+- [x] W2-A.2 — Game owns shared Renderer; start() boots scene; gameLoop calls sceneManager.render(); AssetLoader.load() hook — game-dev — `t_f1aa3f33` — 2026-09-13T17:30
+  - RED: 4/4 W2-A.2 tests failed pre-change (no getRenderer, no boot path, no render call, no AssetLoader hook)
+  - GREEN: 21/21 in game.test.ts; full suite 394/394; tsc clean; eslint clean on src/
+  - Evidence: tests/evidence/w2/W2-A2-GREEN.txt
+  - DECISION D1: minimal AssetLoader.load() manifest hook in boot path; W3 extends with scene-specific manifests

@@ -1,0 +1,67 @@
+W2-A.2 GREEN EVIDENCE — 2026-09-13
+=====================================
+
+Task: t_f1aa3f33 — W2-A.2: shared renderer + boot path in Game
+
+=== TEST RUN (W2-A.2 RED → GREEN) ===
+Command: ./node_modules/.bin/vitest run --config config/vite.config.ts tests/unit/game.test.ts
+
+RED state (pre-implementation, commit base):
+  4 RED tests in 'W2-A.2: shared renderer + boot path (RED)' describe block:
+  - 'RED: Game constructor accepts a shared renderer and exposes it' FAILED
+    (Game had no getRenderer() / no GameOptions renderer param)
+  - 'RED: start() registers a scene and boots it (active after start)' FAILED
+    (Game.start() never called loadScene; SceneManager.getCurrentScene() returned null)
+  - 'RED: gameLoop calls sceneManager.render() at the end of every frame' FAILED
+    (Game.gameLoop never called sceneManager.render(); render spy count = 0)
+  - 'RED: start() wires the AssetLoader.load() hook into the boot path' FAILED
+    (Game.start() never called AssetLoader.load; loadSpy count = 0)
+
+GREEN state (post-implementation):
+  21 passed (21) — all 17 legacy + 4 W2-A.2 tests
+  Duration: 499ms
+
+=== FULL SUITE ===
+Command: ./node_modules/.bin/vitest run --config config/vite.config.ts
+Result: Test Files 18 passed (18) / Tests 394 passed (394)
+Note: 394 = 390 baseline + 4 new W2-A.2 tests
+
+=== TYPE CHECK ===
+Command: ./node_modules/.bin/tsc -p tsconfig.json --noEmit
+Result: exit 0 (no errors)
+
+=== LINT (src/) ===
+Command: ESLINT_USE_FLAT_CONFIG=true ./node_modules/.bin/eslint --config config/eslint.config.js src/core/Game.ts
+Result: exit 0 (no errors)
+
+=== CHANGED FILES ===
+1. src/core/Game.ts — GREEN implementation
+   - Added GameOptions interface (renderer?: Renderer)
+   - Constructor accepts optional renderer, creates shared Renderer on #game-canvas when omitted
+   - start() fires AssetLoader.load('/assets/manifest/boot.json', 'json') — DECISION D1 hook
+   - start() boots first registered scene via sceneManager.loadScene()
+   - gameLoop() calls sceneManager.render() after all system updates
+   - cleanup() calls renderer.dispose()
+   - getRenderer() getter added
+
+2. tests/unit/game.test.ts — RED tests + mock infrastructure
+   - 4 new tests in 'W2-A.2: shared renderer + boot path (RED)' describe block
+   - reapplyMockShapes() helper: re-applies all mock impls after mockReset:true
+   - vi.mock('three', () => import('../setup/mock-three')) for this file
+   - vi.mock('@/scenes/Scene') with mockSceneImpl (this-style ctor)
+   - Renderer mock with full instance shape (dispose, domElement, setSize, etc.)
+   - Legacy SceneManager mock REMOVED (real SceneManager under test in W2-A.2 block)
+
+3. tests/unit/retroactive-core.test.ts — mock gap fix
+   - Added TextureLoader + SRGBColorSpace to three mock (Game.ts now imports AssetLoader)
+   - Added vi.mock('three/addons/loaders/GLTFLoader.js') with GLTFLoader stub
+
+=== DECISIONS (D1) ===
+D1: AssetLoader.load() hook in boot path — minimal manifest load.
+    Game.start() calls AssetLoader.load('/assets/manifest/boot.json', 'json').
+    Fire-and-forget (void + .catch → Logger.error). W3 extends with
+    scene-specific asset manifests passed via loadScene(data).
+
+=== REGRESSION CHECK ===
+All 390 pre-existing tests still pass. No behavior changes to
+SceneManager, Scene, Renderer, or AssetLoader.

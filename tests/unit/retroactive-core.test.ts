@@ -163,6 +163,32 @@ function clockImpl(this: any) {
   this.stop = () => {};
 }
 
+// W2-A.2: Game.ts now imports AssetLoader (src/utils/AssetLoader.ts), which
+// instantiates THREE.TextureLoader and GLTFLoader at module scope. The mock
+// must expose both so the module graph can load.
+function textureLoaderImpl(this: any) {
+  this.load = (url: string, onLoad?: (t: any) => void, onProgress?: () => void, onError?: (e: unknown) => void) => {
+    // Resolve immediately with a no-op texture; AssetLoader tests mock
+    // load at the class level (vi.mock('@/utils/AssetLoader')) so this
+    // shape is only reached when the real AssetLoader is used.
+    const texture: any = { colorSpace: '', dispose: () => {} };
+    if (onLoad) texturePromise.then(() => onLoad(texture));
+    else texturePromise.catch(() => {});
+    return texture;
+  };
+}
+const texturePromise = Promise.resolve();
+
+function gltfLoaderImpl(this: any) {
+  this.load = (url: string, onLoad?: (g: any) => void, onProgress?: () => void, onError?: (e: unknown) => void) => {
+    const gltf: any = { scene: { children: [] } };
+    Promise.resolve().then(() => {
+      if (onLoad) onLoad(gltf);
+    });
+    return gltf;
+  };
+}
+
 vi.mock('three', () => ({
   Scene: vi.fn().mockImplementation(sceneImpl),
   PerspectiveCamera: vi.fn().mockImplementation(cameraImpl),
@@ -176,7 +202,13 @@ vi.mock('three', () => ({
   Quaternion: vi.fn().mockImplementation(quaternionImpl),
   Euler: vi.fn().mockImplementation(eulerImpl),
   Raycaster: vi.fn().mockImplementation(raycasterImpl),
-  Clock: vi.fn().mockImplementation(clockImpl)
+  Clock: vi.fn().mockImplementation(clockImpl),
+  TextureLoader: vi.fn().mockImplementation(textureLoaderImpl),
+  SRGBColorSpace: 'srgb'
+}));
+
+vi.mock('three/addons/loaders/GLTFLoader.js', () => ({
+  GLTFLoader: vi.fn().mockImplementation(gltfLoaderImpl)
 }));
 
 // --- cannon-es mock implementations ---

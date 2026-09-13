@@ -296,6 +296,8 @@ To prevent context overload and compression:
 
 > **W2-A.1 progress (2026-09-13):** `RendererOptions.canvas` + `resizeToContainer()` implemented and tested (3/3 green, full suite 390/390). This is the foundation sub-step for Task 4.3; the remaining DOM wiring (`initGame()` → `#game-canvas`) and AssetLoader fix are separate sub-tasks.
 
+> **W2-A.2 progress (2026-09-13):** `Game` now owns a shared `Renderer` (created on `#game-canvas` when no renderer is injected), `start()` fires `AssetLoader.load('/assets/manifest/boot.json', 'json')` (DECISION D1 boot hook) and boots the first registered scene via `SceneManager.loadScene()`, `gameLoop()` calls `sceneManager.render()` at the end of every frame, `cleanup()` disposes the renderer. Evidence: `tests/evidence/w2/W2-A2-GREEN.txt`. Full suite 394/394, tsc clean, eslint clean on `src/`.
+
 ---
 
 ## WEEK 2: GAMEPLAY SYSTEMS

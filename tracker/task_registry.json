@@ -180,6 +180,14 @@
               "notes": "Kanban t_2deaadf6. RED evidence: tests/evidence/w2/W2-A1-RED.txt (2 failed, 1 passed — canvas not honored, resizeToContainer not a function). GREEN evidence: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed). Full suite 390/390 green. Changes: src/core/Renderer.ts (RendererOptions.canvas, new THREE.WebGLRenderer({antialias, canvas}), resizeToContainer()), tests/setup/mock-three.ts (additive: WebGLRenderer accepts canvas param), tests/unit/renderer.test.ts (3 new tests)."
             },
             {
+              "id": "W2-A.2",
+              "description": "Game owns shared Renderer; start() boots scene; gameLoop calls sceneManager.render(); AssetLoader.load() hook",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T17:30:00",
+              "notes": "Kanban t_f1aa3f33. RED: 4/4 W2-A.2 tests failed pre-change (no getRenderer, no boot path, no render call, no AssetLoader hook). GREEN: 21/21 in game.test.ts; full suite 394/394; tsc clean; eslint clean on src/. Changes: src/core/Game.ts (GameOptions renderer, shared Renderer on #game-canvas, AssetLoader.load('/assets/manifest/boot.json','json') in start(), boot first registered scene, sceneManager.render() in gameLoop, renderer.dispose() in cleanup, getRenderer()); tests/unit/game.test.ts (4 new W2-A.2 tests + reapplyMockShapes + vi.mock three/Scene/Renderer); tests/unit/retroactive-core.test.ts (TextureLoader + GLTFLoader mock gap fix). Evidence: tests/evidence/w2/W2-A2-GREEN.txt. DECISION D1: minimal AssetLoader.load() manifest hook in boot path; W3 extends with scene-specific manifests."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",
