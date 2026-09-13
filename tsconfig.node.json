@@ -10,6 +10,8 @@
   },
   "include": [
     "config/**/*.ts",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "playwright.config.ts",
+    "tests/e2e/**/*.ts"
   ]
 }
