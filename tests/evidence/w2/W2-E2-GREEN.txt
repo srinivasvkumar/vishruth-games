@@ -1,0 +1,64 @@
+W2-E.2 — GREEN: FPS baseline @ 20 obstacles (D4 gate)
+========================================================
+Date: 2026-09-14 (07:20 AEST)
+Kanban task: t_71338ca5
+Branch: wt/t_71338ca5
+RED commit: 8cc268c (tests/e2e/fps.spec.ts + negative control evidence)
+
+COMMAND (in worktree, Node v22.22.2 via NVM, DISPLAY=:1)
+---------------------------------------------------------
+./node_modules/.bin/playwright test --project=chromium-boot --grep "W2-E.2"
+
+RESULT
+------
+  ✓ 1 [chromium-boot] › tests/e2e/fps.spec.ts:219:1 › W2-E.2: FPS baseline
+    @ 20 obstacles (D4 gate) (16.4s)
+  1 passed (17.3s)
+
+D4 GATE: PASS — mean FPS 60.0 >= 30. No W3 re-scope needed.
+
+BASELINE (tests/evidence/w2/w2-e2-fps-20.log)
+--------------------------------------------
+frames sampled: 601
+mean FPS:      60.0
+median FPS:    59.9
+min FPS (worst single frame): 59.5
+p95 frame time: 16.7 ms
+sample duration: 10016 ms
+obstacles: 20 (THREE Group+BoxGeometry+MeshStandardMaterial in the live
+           scene graph + 20 static mass=0 cannon-es box bodies in the live
+           world)
+method: requestAnimationFrame tick counting in-page, 3 s warm-up + 10 s
+        sample window, real headed Chrome (chromium-boot project)
+
+TDD CYCLE
+---------
+RED   (8cc268c): spec committed; negative control D4_MIN_FPS=61 ran in real
+                 headed Chrome and FAILED as designed — 'Expected: >= 61,
+                 Received: 60.002795471336434' (fps.spec.ts:309). Proved the
+                 gate assertion discriminates on the measured FPS and the
+                 measurement pipeline is live end-to-end (20/20 obstacles
+                 injected, 601 rAF frames over 10016 ms).
+GREEN (this commit): D4_MIN_FPS restored to 30; same spec PASSES; baseline
+                 recorded above.
+
+OBSERVATIONS (documented, out of scope)
+---------------------------------------
+1. FPS_OBSTACLES=100 probe (env-configurable obstacle count) also measured
+   60.0 mean FPS — the rAF-capped display cannot go higher, and the
+   frame-loop cadence is not currently bottlenecked by injected obstacle
+   render/physics load at this scale. The 60-FPS / 100-objects benchmark
+   remains a W4 target (D4), not a W2 gate.
+2. Known repo finding (carried in the spec header): the game canvas renders
+   BLACK in W2 e2e screenshots (per-scene detached renderer,
+   src/scenes/Scene.ts:20 vs the shared #game-canvas renderer). The rAF
+   cadence measurement is still a valid frame-loop load measurement; the
+   renderer/scene wiring is a W3-A candidate.
+
+EVIDENCE (tests/evidence/w2/)
+---------------------------
+w2-e2-fps-20.log   (GREEN-run baseline, this commit)
+w2-e2-fps-20.png   (GREEN-run scene screenshot; black-canvas known finding)
+W2-E2-RED.txt      (RED-phase record, commit 8cc268c)
+
+No src/ changes in this task (test + evidence + trackers only).

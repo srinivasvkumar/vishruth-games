@@ -24,12 +24,12 @@
     "phase": "Week 2: Gameplay Systems",
     "day": 4,
     "current_task": "W2-E.2: FPS baseline @ 20 obstacles (D4 gate)",
-    "status": "W2-E.2-RED",
-    "tdd_cycle": "red",
+    "status": "W2-E.2-COMPLETE",
+    "tdd_cycle": "complete",
     "start_date": "2026-09-13T18:51:00",
-    "last_updated": "2026-09-14T07:15:00",
-    "completion_date": null,
-    "completion_notes": "W2-E.2 RED: tests/e2e/fps.spec.ts committed (D4 gate spec — FPS baseline @ 20 obstacles in real headed Chrome; rAF tick counting, 3s warm-up + 10s sample; evidence w2-e2-fps-20.log/.png). RED negative control verified in real Chrome with D4_MIN_FPS=61: gate assertion FAILED as designed ('Expected: >= 61, Received: 60.002...'), measurement pipeline proven live (20/20 obstacles injected into live scene graph + cannon-es world, 601 rAF frames over 10016ms). Observation (out of scope): FPS_OBSTACLES=100 probe also measured 60.0 — rAF-capped display. GREEN pending: restore D4_MIN_FPS=30, re-run, record baseline number; if <30, ESCALATE W3 re-scope before W3 starts."
+    "last_updated": "2026-09-14T07:20:00",
+    "completion_date": "2026-09-14T07:20:00",
+    "completion_notes": "W2-E.2 complete (RED 8cc268c -> GREEN). D4 gate PASS: FPS baseline @ 20 obstacles = mean 60.0 / median 59.9 / min 59.5 FPS over 601 rAF frames (10016 ms sample, 3 s warm-up, in-page tick counting, real headed Chrome) with 20 static obstacles in the live scene graph + cannon-es world; p95 frame time 16.7 ms; gate >=30 cleared with 20 FPS headroom - NO W3 re-scope needed. Week-2 success criterion #7 satisfied. RED negative control (D4_MIN_FPS=61) failed in real Chrome as designed ('Expected: >= 61, Received: 60.002...'), proving the gate assertion discriminates on the measured number. Observations carried forward (out of scope): FPS_OBSTACLES=100 probe also 60.0 (rAF-capped display; frame-loop cadence not yet load-bottlenecked; 60-FPS/100-objects remains W4 target D4); game canvas renders BLACK in W2 e2e screenshots (per-scene detached renderer, src/scenes/Scene.ts:20 vs shared #game-canvas renderer) - rAF cadence still a valid frame-loop measurement, renderer/scene wiring is a W3-A candidate. Evidence: tests/evidence/w2/W2-E2-GREEN.txt + W2-E2-RED.txt + w2-e2-fps-20.log + w2-e2-fps-20.png. No src/ changes."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

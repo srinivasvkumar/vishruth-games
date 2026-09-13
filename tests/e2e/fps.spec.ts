@@ -231,10 +231,9 @@ test('W2-E.2: FPS baseline @ 20 obstacles (D4 gate)', async ({ page }) => {
   // D4 gate (week-2 criterion #7): the 20-obstacle baseline must hold >=30
   // mean FPS, else W3 is re-scoped before it starts (TDD_PLAN D4). This
   // assertion makes the gate part of the test itself, not just prose in
-  // the evidence log. RED-phase negative control: 61 — any rAF-capped
-  // display (59–60 FPS) fails, proving the gate assertion fires; the
-  // GREEN commit restores the real D4 threshold (30).
-  const D4_MIN_FPS = 61;
+  // the evidence log. (RED-phase negative control at 61 verified the
+  // assertion fires: 'Expected: >= 61, Received: 60.002...'.)
+  const D4_MIN_FPS = 30;
 
   await enterGameScene(page);
   expect(
