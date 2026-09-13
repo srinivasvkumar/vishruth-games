@@ -709,8 +709,9 @@ To prevent context overload and compression:
 
 ### Week 2 Success Criteria (added 2026-09-13 — all must pass before W3 starts):
 1. Game runs in Chrome (and Firefox at verification) — canvas renders, player moves
-   - ✅ **Chrome leg satisfied** (W2-E.1a, 2026-09-13): `tests/e2e/smoke.spec.ts` — 6/6 scenarios green in real headed Chrome: boot→menu→game, WASD movement, jump, score increment, game-over+restart, console clean. Evidence: `tests/evidence/w2/W2-E1a-GREEN.txt` + 7 screenshots + console capture.
-   - ☐ Firefox leg: W2-E.1b (pending).
+   - ✅ **Chrome leg satisfied** (W2-E.1a, 2026-09-13): `tests/e2e/smoke/smoke.spec.ts` — 6/6 scenarios green in real headed Chrome: boot→menu→game, WASD movement, jump, score increment, game-over+restart, console clean. Evidence: `tests/evidence/w2/W2-E1a-GREEN.txt` + 7 screenshots + console capture.
+   - ✅ **Firefox leg satisfied** (W2-E.1b, 2026-09-13): same spec, 6/6 green in real headed Firefox (`firefox` project added to playwright.config.ts). No functional diff vs Chrome; Firefox-only observation: 2x non-fatal "AudioContext prevented from starting automatically" boot warnings (stricter Firefox autoplay gesture policy; documented in `tests/evidence/w2/W2-E1b-GREEN.txt`, out of scope — cross-browser audio policy is W3-C). Evidence: `tests/evidence/w2/W2-E1b-GREEN.txt` (Chrome-vs-Firefox result table + diff) + 7 Firefox screenshots + `w2-e1a-smoke-console-firefox.txt` + 7 fresh Chrome screenshots + `w2-e1a-smoke-console-chrome.txt`.
+   - **Criterion #1 complete: both legs (Chrome + Firefox) green.**
 2. Physics body positions sync with visual meshes — **verified in real browser**, not just mocks
 3. Jump/collision audio triggers
 4. Score persists via LocalStorage

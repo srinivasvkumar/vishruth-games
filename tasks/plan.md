@@ -107,6 +107,15 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - RED: tests/e2e/physics-sync.spec.ts committed (49c21d5); two live-app RED failures in real Chrome (bare three import; cannon-es Body has no userData)
   - GREEN: 1/1 e2e passed in real headed Chrome; teleport proof (body->y=25, mesh follows within 1e-3); 30 frame-over-frame samples, 0 drift
   - Evidence: tests/evidence/w2/W2-B2-RED.txt, W2-B2-GREEN.txt, w2-b2-physics-sync.png + -2.png, w2-b2-physics-sync-trace.json, w2-b2-physics-sync.txt
+- [x] W2-E.1a — Smoke suite (Chrome): boot/WASD/jump/score/restart, 5 scenarios — game-tester — `t_8ac76c86` — 2026-09-13T23:10
+  - RED: tests/e2e/smoke.spec.ts committed (4010dd8); jump scenario initially RED (keyboard.press too fast for InputSystem; spec fix: keydown + 150ms hold + keyup)
+  - GREEN: 6/6 e2e passed in real headed Chrome; no src/ changes
+  - Evidence: tests/evidence/w2/W2-E1a-GREEN.txt + 7 screenshots + w2-e1a-smoke-console.txt
+- [x] W2-E.1b — Cross-browser (Firefox): add firefox project, re-run smoke suite, diff Chrome vs Firefox — game-tester — `t_7844ca73` — 2026-09-13T23:30
+  - RED: 59f1e05 (firefox project in playwright.config.ts; spec moved to tests/e2e/smoke/; per-browser evidence via BROWSER env)
+  - GREEN: 6/6 e2e passed in real headed Firefox AND 6/6 re-pass in headed Chrome; no functional diff; Firefox-only observation: 2x non-fatal "AudioContext prevented from starting automatically" boot warnings (documented, not fixed — W3-C territory)
+  - Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff) + 7 Firefox screenshots + w2-e1a-smoke-console-firefox.txt + 7 fresh Chrome screenshots + w2-e1a-smoke-console-chrome.txt
+  - Week-2 success criterion #1: BOTH legs (Chrome + Firefox) satisfied
 
 ## W2-D: Game Flow & Score
 - [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`

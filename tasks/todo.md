@@ -46,3 +46,5 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W2-A.4 — Real-Chrome boot smoke test (Task 4.3) — first e2e in project — game-tester — `t_9b7d154e`
 - [x] W2-B.1 — BodySync: body synchronization system + Game frame-loop wiring (Task 6.2) — game-dev — `t_f438f119`
 - [x] W2-B.2 — Browser verify: physics moves the visual in real Chrome (Task 6.2 browser-verification) — game-tester — `t_14c82dd1`
+- [x] W2-E.1a — Smoke suite (Chrome): 5 scenarios, 6/6 e2e green in real headed Chrome — game-tester — `t_8ac76c86`
+- [x] W2-E.1b — Cross-browser (Firefox): 6/6 green in headed Firefox + Chrome re-pass; Week-2 criterion #1 both legs done — game-tester — `t_7844ca73`

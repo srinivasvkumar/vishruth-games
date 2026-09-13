@@ -1,0 +1,79 @@
+W2-E.1b — GREEN: Firefox leg of Week-2 success criterion #1
+================================================================
+Date: 2026-09-13
+Kanban task: t_7844ca73
+Branch: wt/t_7844ca73
+
+COMMANDS (real headed browsers, X11 display :1):
+  BROWSER=firefox ./node_modules/.bin/playwright test --project=firefox
+  BROWSER=chrome ./node_modules/.bin/playwright test --project=chromium-boot
+
+RESULT: 6/6 tests pass in BOTH browsers (same spec, unchanged assertions).
+
+CHROME vs FIREFOX RESULT TABLE
+------------------------------
+Scenario                                  Chrome (chromium-boot)  Firefox
+1. boot to playable scene (menu→game,      PASS (3.6s)            PASS (5.0s)
+   WebGL live, window.game, HUD, 0 fatal)
+2. WASD movement (D→+x, A→-x, W→-z)       PASS (4.9s)            PASS (5.4s)
+3. jump (space → y>0.5, lands back)       PASS (5.7s)            PASS (6.9s)
+4. score increment (player:score +50)     PASS (3.5s)            PASS (3.8s)
+5. game-over (player:death) + restart     PASS (6.4s)            PASS (6.9s)
+   (reload → clean spawn, score=0, running)
+6. full boot→menu→game console capture,   PASS (3.3s)            PASS (3.7s)
+   0 fatal errors
+Full suite duration: Chrome 28.5s | Firefox 33.6s (single worker, workers=1)
+
+DIFF OBSERVATIONS (documented per task: do NOT fix by weakening the spec)
+------------------------------------------------------------------------
+1. No functional differences: all 5 behavioral scenarios + console-clean
+   assert identical, all green in both browsers. No scenario is
+   Chrome-only by design.
+2. Firefox-only console noise (informational, NOT fatal, NOT asserted):
+   2x "[JavaScript Warning: An AudioContext was prevented from starting
+   automatically. It must be created or resumed after a user gesture on
+   the page.]" from src/systems/Audio.ts:62/77. Firefox enforces the
+   autoplay gesture policy more strictly than Chromium at boot time.
+   Chrome console shows 0 such warnings. The warning does not block
+   audio later (user-gesture-driven SFX works) and is outside this
+   task's scope (audio is W2-C.2; cross-browser audio policy tuning is
+   W3-C territory).
+3. Timing: Firefox ~1.1x slower per scenario on this box (headed,
+   GPU-rendered). No timeouts hit (limits 45–90s).
+4. Spec mechanics identical: keyboard.down/up holds, CustomEvent
+   (player:score, player:death) dispatch, scene-graph position reads,
+   and reload-based restart all behave the same in Firefox.
+
+TDD CYCLE
+---------
+RED:  59f1e05 — firefox project + per-browser evidence plumbing
+      (spec moved to tests/e2e/smoke/, BROWSER env suffix on all
+      artifacts); Firefox run not yet executed.
+GREEN: this commit — 6/6 Firefox pass + 6/6 Chrome re-pass with
+      per-browser artifacts; diff table above.
+
+EVIDENCE (tests/evidence/w2/)
+---------------------------
+Firefox:
+  w2-e1a-smoke-1-boot-firefox.png
+  w2-e1a-smoke-1-game-firefox.png
+  w2-e1a-smoke-2-wasd-firefox.png
+  w2-e1a-smoke-3-jump-firefox.png
+  w2-e1a-smoke-4-score-firefox.png
+  w2-e1a-smoke-5-gameover-firefox.png
+  w2-e1a-smoke-5-restart-firefox.png
+  w2-e1a-smoke-console-firefox.txt
+Chrome (fresh E.1b run, BROWSER=chrome):
+  w2-e1a-smoke-1-boot-chrome.png
+  w2-e1a-smoke-1-game-chrome.png
+  w2-e1a-smoke-2-wasd-chrome.png
+  w2-e1a-smoke-3-jump-chrome.png
+  w2-e1a-smoke-4-score-chrome.png
+  w2-e1a-smoke-5-gameover-chrome.png
+  w2-e1a-smoke-5-restart-chrome.png
+  w2-e1a-smoke-console-chrome.txt
+
+WEEK-2 SUCCESS CRITERION #1
+--------------------------
+"Game runs in Chrome (and Firefox at verification) — canvas renders,
+player moves." → BOTH LEGS SATISFIED.

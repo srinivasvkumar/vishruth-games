@@ -82,11 +82,11 @@ Empty directories on disk: `src/game/` (no files — vestigial).
 - `tests/evidence/d02/T1-nested-tree-check.txt` — pre-exclude run proving the nested `clusterrush/tests/` tree is NOT collected by the root-anchored include pattern.
 - `tests/evidence/d02/T1-hook-error.txt` — NOT generated: the task's contingency (T1 commit blocked by the pre-commit gate) was superseded by the boss pre-ruling (TEMP-D0.2-T1 allowlist entries), so the T1 commit passed the gate instead of being blocked.
 
-### tests/e2e/ — 4 spec files (Playwright, real headed Chrome via `chromium-boot` project)
+### tests/e2e/ — 4 spec files (Playwright, real headed Chrome via `chromium-boot` project + Firefox via `firefox` project)
 - `tests/e2e/boot.smoke.spec.ts` — W2-A.4: first e2e test; asserts WebGL context, loading cleared, menu visible, no THREE/CORS/uncaught errors. 1 test.
 - `tests/e2e/physics-sync.spec.ts` — W2-B.2: drives the RUNNING frame loop in real Chrome; proves BodySync moves the visual (teleport proof + 30-frame drift trace). 1 test.
 - `tests/e2e/audio.spec.ts` — W2-C.2: AudioContext running in real Chrome, AudioSystem available, pause/resume without errors. 1 test.
-- `tests/e2e/smoke.spec.ts` — W2-E.1a: 5-scenario smoke suite (Chrome leg of Week-2 criterion #1): (1) boot→menu→game, WebGL live, window.game running, HUD visible, 0 fatal console errors; (2) WASD movement (D→+x, A→-x, W→-z, all >0.1 delta); (3) jump (space→y>0.5, lands back); (4) score increment (player:score +50→HUD updated); (5) game-over→restart (player:death→GAME OVER overlay→reload→clean state). 6 tests total. Evidence: `tests/evidence/w2/W2-E1a-GREEN.txt` + 7 screenshots + `w2-e1a-smoke-console.txt`.
+- `tests/e2e/smoke/smoke.spec.ts` — W2-E.1a/W2-E.1b: 5-scenario smoke suite run per-browser (Week-2 criterion #1, BOTH legs): (1) boot→menu→game, WebGL live, window.game running, HUD visible, 0 fatal console errors; (2) WASD movement (D→+x, A→-x, W→-z, all >0.1 delta); (3) jump (space→y>0.5, lands back); (4) score increment (player:score +50→HUD updated); (5) game-over→restart (player:death→GAME OVER overlay→reload→clean state). 6 tests total, green in Chrome (chromium-boot) AND Firefox (firefox project, added W2-E.1b). Per-browser evidence via `BROWSER` env: `tests/evidence/w2/w2-e1a-smoke-{1..5}-*-{chrome|firefox}.png` + `w2-e1a-smoke-console-{chrome|firefox}.txt`. Chrome leg: `W2-E1a-GREEN.txt`; Firefox leg + Chrome-vs-Firefox diff table: `W2-E1b-GREEN.txt`. Known cross-browser diff (documented, not fixed): Firefox-only 2x non-fatal "AudioContext prevented from starting automatically" boot warnings.
 
 ### tests/fixtures/, tests/integration/
 - Both directories exist and are EMPTY on disk. Reserved for fixtures and integration tests (future work).
