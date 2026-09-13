@@ -1,0 +1,29 @@
+W2-B.2 GREEN evidence (tests/e2e/physics-sync.spec.ts, Task 6.2 browser verification)
+date: 2026-09-13
+run: ./node_modules/.bin/playwright test tests/e2e/physics-sync.spec.ts --project=chromium-boot
+
+> Running 1 test using 1 worker
+>   ✓  1 [chromium-boot] › tests/e2e/physics-sync.spec.ts:244:1 › W2-B.2 physics sync: running frame loop moves the visual with the body (real Chrome) (5.3s)
+>   1 passed (6.7s)
+
+What the passing run proves (in real Chrome, headed, against the live vite dev server):
+1. Boot → menu transition completed; window.game live, isGameRunning() true.
+2. window.game.getPhysicsSystem() + getPhysicsSync() exist (W2-B.1 wiring live in the app).
+3. A static ground plane + a dynamic sphere body (mass=1, spawned y=5) exist in the
+   app's real cannon-es world; a THREE mesh (red sphere, from the app's own
+   three.js, via the dev-server module URL) is registered with the app's BodySync.
+4. TELEPORT PROOF: the body was teleported to y=25 WITHOUT touching the mesh;
+   after ~1s of real frames the mesh's y matched the body's y within 1e-3 —
+   i.e. the RUNNING frame loop's per-frame BodySync.sync() moved the visual.
+   (meshBefore.y < 10, meshAfter.y ≈ bodyYNow ≈ 25 − g·t²/2 fall.)
+5. 30 frame-over-frame samples over ~483 ms: body moved (falling from y≈19.9 to
+   y≈13.9 under gravity after teleport), mesh moved identically, max
+   mesh/body drift = 0 (BodySync copies exact values each frame).
+6. rAF frame counter advanced through 30 distinct values — samples are distinct
+   real frames of the running loop, not one paused frame.
+
+Artifacts:
+- w2-b2-physics-sync.png          (before: ball mid-fall near floor)
+- w2-b2-physics-sync-2.png        (after: 30 frames sampled)
+- w2-b2-physics-sync-trace.json   (full 30-sample position trace, body + mesh)
+- w2-b2-physics-sync.txt          (summary)

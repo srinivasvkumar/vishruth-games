@@ -70,8 +70,8 @@ async function runInPage(page: Page, bodyId: string, samples: number, spanMs: nu
         const g = (window as unknown as { game: unknown }).game as {
           getPhysicsSystem: () => {
             getBody: (id: string) => {
+              id: number;
               position: { x: number; y: number; z: number };
-              userData: Record<string, unknown>;
             };
           };
         };
@@ -85,7 +85,9 @@ async function runInPage(page: Page, bodyId: string, samples: number, spanMs: nu
           position: P3;
           userData: Record<string, unknown>;
         }
-        if (!body || !(body.userData?.mesh as MeshLike | undefined)?.position) {
+        const meshMap = (window as unknown as { __w2b2Meshes?: Map<number, MeshLike> }).__w2b2Meshes;
+        const found = body ? meshMap?.get(body.id) : undefined;
+        if (!body || !found?.position) {
           resolve({
             samples: [],
             moved: false,
@@ -95,7 +97,7 @@ async function runInPage(page: Page, bodyId: string, samples: number, spanMs: nu
           });
           return;
         }
-        const mesh = body.userData.mesh as MeshLike;
+        const mesh = found;
 
         // rAF frame counter — only the game loop's rAF chain increments this
         // in the same tab, so it proves frames actually advanced.
@@ -184,8 +186,8 @@ async function setupPhysicsDrivenMesh(page: Page): Promise<string> {
           radius: number,
           mass?: number
         ) => {
+          id: number;
           position: { x: number; y: number; z: number };
-          userData: Record<string, unknown>;
         };
       };
       getPhysicsSync: () => {
@@ -203,17 +205,33 @@ async function setupPhysicsDrivenMesh(page: Page): Promise<string> {
     const body = physics.createSphere(ballId, { x: 0, y: 5, z: 0 }, 0.5, 1);
 
     // THREE mesh via the app's own three dependency, served by the vite dev
-    // server as an ES module — same library, same Object3D interface that
-    // BodySync writes to. (In-page import; the app's bundle already loads it
-    // so this resolves from the dev-server module cache.)
-    const THREE = await import(/* @vite-ignore */ 'three');
+    // server as a pre-bundled ES module — same library, same Object3D
+    // interface BodySync writes to. optimizeDeps.include has 'three', so
+    // the dev server serves it at /node_modules/.vite/deps/three.js.
+    // Runtime URL import (served by the vite dev server; no TS module
+    // resolution for it) — typed manually below.
+    // @ts-expect-error url-based import has no TS module declaration
+    const THREE = (await import(/* @vite-ignore */ '/node_modules/.vite/deps/three.js')) as {
+      Mesh: new (
+        geometry: unknown,
+        material: unknown
+      ) => {
+        position: { x: number; y: number; z: number; set: (x: number, y: number, z: number) => void };
+        userData: Record<string, unknown>;
+      };
+      SphereGeometry: new (radius: number, widthSegments?: number, heightSegments?: number) => unknown;
+      MeshBasicMaterial: new (params: { color: number }) => unknown;
+    };
     const mesh = new THREE.Mesh(
       new THREE.SphereGeometry(0.5, 16, 16),
       new THREE.MeshBasicMaterial({ color: 0xff0000 })
     );
     mesh.position.set(body.position.x, body.position.y, body.position.z);
     mesh.userData.bodyId = ballId;
-    body.userData.mesh = mesh;
+
+    // cannon-es Body has no userData; use its numeric id as the lookup key.
+    (window as unknown as { __w2b2Meshes?: Map<number, unknown> }).__w2b2Meshes ??= new Map();
+    (window as unknown as { __w2b2Meshes: Map<number, unknown> }).__w2b2Meshes.set(body.id, mesh);
 
     // Register with the app's BodySync — the running frame loop will now
     // copy body → mesh every frame (W2-B.1 wiring in Game.gameLoop).
@@ -250,11 +268,58 @@ test('W2-B.2 physics sync: running frame loop moves the visual with the body (re
   const bodyId = await setupPhysicsDrivenMesh(page);
   expect(bodyId).toBe('w2-b2-ball');
 
-  // BEFORE screenshot — ball is at its spawn (y=5), above the menu view.
+  // BEFORE screenshot — ball is mid-fall (it spawned at y=5 above a ground
+  // plane; by boot+setup time it is near the floor, about to bounce).
   await page.screenshot({ path: EVIDENCE_PNG_1 });
 
+  // Proof that the RUNNING loop (not this test) drives the visual: read the
+  // mesh position, teleport the body far away WITHOUT touching the mesh, and
+  // wait ~1s of real frames. If the game loop's per-frame BodySync.sync() is
+  // wired, the mesh must snap to the body's new position on its own.
+  const teleport = await page.evaluate(async (id) => {
+    const g = (window as unknown as { game: unknown }).game as {
+      getPhysicsSystem: () => {
+        getBody: (id: string) => {
+          id: number;
+          position: { x: number; y: number; z: number; set: (x: number, y: number, z: number) => void };
+          velocity: { x: number; y: number; z: number; set: (x: number, y: number, z: number) => void };
+        };
+      };
+    };
+    const body = g.getPhysicsSystem().getBody(id);
+    const meshMap = (window as unknown as { __w2b2Meshes?: Map<number, { position: { x: number; y: number; z: number } }> }).__w2b2Meshes;
+    const mesh = body ? meshMap?.get(body.id) : undefined;
+    if (!body || !mesh) {
+      return {
+        ok: false,
+        reason: 'body or mesh missing',
+        meshBefore: { x: 0, y: 0, z: 0 },
+        meshAfter: { x: 0, y: 0, z: 0 },
+        bodyYNow: 0,
+        meshFollowed: false
+      };
+    }
+    const meshBefore = { x: mesh.position.x, y: mesh.position.y, z: mesh.position.z };
+    // Move ONLY the physics body — the mesh is deliberately left where it is.
+    body.position.set(0, 25, 0);
+    body.velocity.set(0, 0, 0);
+    await new Promise<void>((r) => window.setTimeout(r, 1000));
+    const meshAfter = { x: mesh.position.x, y: mesh.position.y, z: mesh.position.z };
+    return {
+      ok: true,
+      meshBefore,
+      meshAfter,
+      bodyYNow: body.position.y,
+      meshFollowed: Math.abs(meshAfter.y - body.position.y) < 1e-3
+    };
+  }, bodyId);
+  expect(teleport.ok, 'teleport setup must succeed').toBe(true);
+  expect(teleport.meshFollowed, `mesh must follow the teleported body via the running loop's sync (meshBefore.y=${teleport.meshBefore?.y}, meshAfter.y=${teleport.meshAfter?.y}, bodyY=${teleport.bodyYNow})`).toBe(true);
+  expect(teleport.meshBefore?.y, 'mesh must be at its old position before the loop syncs it').toBeLessThan(10);
+
   // Sample the live running frame loop: 30 samples over ~2s of real frames.
-  // Gravity should move the body (and, via BodySync, the mesh) in that time.
+  // Gravity + restitution should move the body (and, via BodySync, the mesh)
+  // in that time — it bounces on the ground plane at y=0.
   const result = await runInPage(page, bodyId, 30, 2_000);
 
   // AFTER screenshot — ball has fallen.

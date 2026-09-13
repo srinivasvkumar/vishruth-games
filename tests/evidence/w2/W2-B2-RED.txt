@@ -1,0 +1,35 @@
+W2-B.2 RED evidence (tests/e2e/physics-sync.spec.ts, Task 6.2 browser verification)
+date: 2026-09-13
+
+The spec was committed RED at 49c21d5 and exercised against the live app in
+real Chrome (vite dev server, headed Chromium, project chromium-boot).
+Two RED runs against two spec revisions both failed with in-page runtime
+errors — proving the spec drives the REAL app (window.game live, boot →
+menu OK, three.js dev-server module URL serving HTTP 200) while the
+physics-driven-visual assertion was not yet passing.
+
+--- RED run 1 (2026-09-13T10:34Z, spec rev: bare 'three' import) ---
+1 failed
+  tests/e2e/physics-sync.spec.ts:226:1 › W2-B.2 physics sync
+  Error: page.evaluate: TypeError: Failed to resolve module specifier 'three'
+    at setupPhysicsDrivenMesh (tests/e2e/physics-sync.spec.ts:177:15)
+
+Spec fix: import three via the vite dev-server URL
+/node_modules/.vite/deps/three.js (optimizeDeps.include: ['three']).
+
+--- RED run 2 (2026-09-13T10:40Z, spec rev: body.userData.mesh) ---
+1 failed
+  tests/e2e/physics-sync.spec.ts:239:1 › W2-B.2 physics sync
+  Error: page.evaluate: TypeError: Cannot set properties of undefined
+    (setting 'mesh')
+    at setupPhysicsDrivenMesh (tests/e2e/physics-sync.spec.ts:177:15)
+
+Cause: cannon-es CANNON.Body has no userData property (verified in
+node_modules/cannon-es/dist/cannon-es.js, class Body constructor).
+
+Spec fix: keep the mesh in window.__w2b2Meshes keyed by the body's numeric
+id; BodySync still registers by string id (the app's own API).
+
+--- GREEN run (follows in W2-B2-GREEN.txt) ---
+1 passed (5.3s) — full evidence in w2-b2-physics-sync.txt /
+w2-b2-physics-sync-trace.json / w2-b2-physics-sync.png + w2-b2-physics-sync-2.png.

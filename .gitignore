@@ -51,6 +51,8 @@ Thumbs.db
 # Playwright
 test-results/
 playwright-report/
+tests/evidence/w2/playwright-artifacts/
+tests/evidence/w2/playwright-report-html/
 
 # Vite
 .cache/

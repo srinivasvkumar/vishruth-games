@@ -40,3 +40,4 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W2-A.3 — Minimal MenuScene + fix 'menu' transition (boot path lands in valid registered active scene) — game-dev — `t_16b337f1`
 - [x] W2-A.4 — Real-Chrome boot smoke test (Task 4.3) — first e2e in project — game-tester — `t_9b7d154e`
 - [x] W2-B.1 — BodySync: body synchronization system + Game frame-loop wiring (Task 6.2) — game-dev — `t_f438f119`
+- [x] W2-B.2 — Browser verify: physics moves the visual in real Chrome (Task 6.2 browser-verification) — game-tester — `t_14c82dd1`

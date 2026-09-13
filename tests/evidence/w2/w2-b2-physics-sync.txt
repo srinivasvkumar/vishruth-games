@@ -1,0 +1,9 @@
+W2-B.2 browser verification — physics moves the visual (Task 6.2)
+date: 2026-09-13T10:52:10.160Z
+bodyId: w2-b2-ball
+samples: 30 frames over 483 ms
+body:   start(0, 19.864244035319608, 0) -> end(0, 13.896368798919534, 0)  moved=true
+mesh:   start(0, 19.864244035319608, 0) -> end(0, 13.896368798919534, 0)  moved=true
+mesh/body drift max: 0
+frame counter advanced: 30 distinct frame values
+verdict: PASS

@@ -103,3 +103,7 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - RED: #loading-message still showed 'Loading Three.js renderer...' after boot
   - GREEN: 1/1 e2e passed in 3.8s; full suite 397/397; build clean; lint 0 errors
   - Evidence: tests/evidence/w2/w2-a4-boot-smoke.png (348KB), w2-a4-boot-smoke-errors.txt
+- [x] W2-B.2 — Browser verify: physics moves the visual in real Chrome (Task 6.2 browser-verification) — game-tester — `t_14c82dd1` — 2026-09-13T21:08
+  - RED: tests/e2e/physics-sync.spec.ts committed (49c21d5); two live-app RED failures in real Chrome (bare three import; cannon-es Body has no userData)
+  - GREEN: 1/1 e2e passed in real headed Chrome; teleport proof (body->y=25, mesh follows within 1e-3); 30 frame-over-frame samples, 0 drift
+  - Evidence: tests/evidence/w2/W2-B2-RED.txt, W2-B2-GREEN.txt, w2-b2-physics-sync.png + -2.png, w2-b2-physics-sync-trace.json, w2-b2-physics-sync.txt

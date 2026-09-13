@@ -387,7 +387,7 @@ To prevent context overload and compression:
   - [ ] Visual mesh follows physics body
   - [ ] Synchronization happens every frame
   - [ ] No visual lag or jitter
-  - [ ] **Browser verification (added 2026-09-13):** in real Chrome, player mesh moves in response to physics step — unit tests alone do NOT satisfy this task
+  - [x] **Browser verification (added 2026-09-13):** in real Chrome, player mesh moves in response to physics step — unit tests alone do NOT satisfy this task *(W2-B.2, kanban t_14c82dd1, 2026-09-13: tests/e2e/physics-sync.spec.ts drives the live app's running frame loop via the window.game debug handle — real cannon-es world, BodySync-registered THREE mesh, 30 frame-over-frame samples with 0 drift + teleport proof; evidence tests/evidence/w2/w2-b2-physics-sync.* + W2-B2-RED/GREEN.txt)*
 
 **Task 6.3: Collision detection tests**
 - RED: Test collision events trigger game logic
