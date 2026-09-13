@@ -116,6 +116,12 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - GREEN: 6/6 e2e passed in real headed Firefox AND 6/6 re-pass in headed Chrome; no functional diff; Firefox-only observation: 2x non-fatal "AudioContext prevented from starting automatically" boot warnings (documented, not fixed — W3-C territory)
   - Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff) + 7 Firefox screenshots + w2-e1a-smoke-console-firefox.txt + 7 fresh Chrome screenshots + w2-e1a-smoke-console-chrome.txt
   - Week-2 success criterion #1: BOTH legs (Chrome + Firefox) satisfied
+- [ ] W2-E.2 — FPS baseline @ 20 obstacles (D4 gate) — week-2 success criterion #7 — game-tester — `t_71338ca5` — 2026-09-14 (RED)
+  - RED: tests/e2e/fps.spec.ts (new) — real headed Chrome; inject 20 static obstacles into live scene graph + cannon-es world; rAF tick counting (3s warm-up + 10s sample); D4 gate as in-test assertion. Negative control (D4_MIN_FPS=61) FAILED in real Chrome as designed: 'Expected: >= 61, Received: 60.002...'
+  - OBSERVATION (out of scope): FPS_OBSTACLES=100 probe also measured 60.0 — rAF-capped display; frame-loop cadence not yet bottlenecked by injected obstacle load; 60-FPS/100-objects stays a W4 target (D4)
+  - KNOWN: game canvas renders black in W2 e2e screenshots (detached per-scene renderer) — rAF cadence still a valid frame-loop measurement; revisit in W3-A
+  - GREEN pending: restore D4_MIN_FPS=30, re-run, record baseline in tests/evidence/w2/w2-e2-fps-20.log
+  - Evidence: tests/evidence/w2/W2-E2-RED.txt, w2-e2-fps-20.log, w2-e2-fps-20.png
 
 ## W2-D: Game Flow & Score
 - [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`

@@ -23,13 +23,17 @@
   "current_status": {
     "phase": "Week 2: Gameplay Systems",
     "day": 4,
-    "current_task": "W2-E.1b: Cross-browser (Firefox) - add project, re-run smoke suite, diff",
-    "status": "W2-E.1b-COMPLETE",
-    "tdd_cycle": "complete",
+    "current_task": "W2-E.2: FPS baseline @ 20 obstacles (D4 gate)",
+    "status": "W2-E.2-RED",
+    "tdd_cycle": "red",
     "start_date": "2026-09-13T18:51:00",
-    "last_updated": "2026-09-13T23:30:00",
-    "completion_date": "2026-09-13T23:30:00",
-    "completion_notes": "W2-E.1b complete: Firefox leg of Week-2 success criterion #1 (both legs now satisfied). RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; per-browser evidence via BROWSER env: screenshots + console capture suffixed chrome|firefox). GREEN: 6/6 smoke tests pass in real headed Firefox (project 'firefox', Desktop Firefox, headless:false) AND 6/6 re-pass in real headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional Chrome-vs-Firefox diff: all 5 behavioral scenarios (boot→menu→game, WASD movement, jump, score increment, game-over+restart) + console-clean assert identically in both browsers; no scenario Chrome-only by design. Documented diff observation: Firefox-only 2x non-fatal 'AudioContext prevented from starting automatically' boot warnings (src/systems/Audio.ts:62/77 — stricter Firefox autoplay gesture policy; out of scope, W3-C territory). Timing: Firefox suite 33.6s vs Chrome 28.5s, no timeouts. No src/ changes. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff), w2-e1a-smoke-{1..5}-*-{firefox,chrome}.png (14 screenshots), w2-e1a-smoke-console-{firefox,chrome}.txt."
+    "last_updated": "2026-09-14T07:15:00",
+    "completion_date": null,
+    "completion_notes": "W2-E.2 RED: tests/e2e/fps.spec.ts committed (D4 gate spec — FPS baseline @ 20 obstacles in real headed Chrome; rAF tick counting, 3s warm-up + 10s sample; evidence w2-e2-fps-20.log/.png). RED negative control verified in real Chrome with D4_MIN_FPS=61: gate assertion FAILED as designed ('Expected: >= 61, Received: 60.002...'), measurement pipeline proven live (20/20 obstacles injected into live scene graph + cannon-es world, 601 rAF frames over 10016ms). Observation (out of scope): FPS_OBSTACLES=100 probe also measured 60.0 — rAF-capped display. GREEN pending: restore D4_MIN_FPS=30, re-run, record baseline number; if <30, ESCALATE W3 re-scope before W3 starts."
+  },
+  "w2_e1b_completion": {
+    "date": "2026-09-13T23:30:00",
+    "notes": "W2-E.1b complete: Firefox leg of Week-2 success criterion #1 (both legs now satisfied). RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; per-browser evidence via BROWSER env: screenshots + console capture suffixed chrome|firefox). GREEN: 6/6 smoke tests pass in real headed Firefox (project 'firefox', Desktop Firefox, headless:false) AND 6/6 re-pass in real headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional Chrome-vs-Firefox diff: all 5 behavioral scenarios (boot→menu→game, WASD movement, jump, score increment, game-over+restart) + console-clean assert identically in both browsers; no scenario Chrome-only by design. Documented diff observation: Firefox-only 2x non-fatal 'AudioContext prevented from starting automatically' boot warnings (src/systems/Audio.ts:62/77 — stricter Firefox autoplay gesture policy; out of scope, W3-C territory). Timing: Firefox suite 33.6s vs Chrome 28.5s, no timeouts. No src/ changes. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff), w2-e1a-smoke-{1..5}-*-{firefox,chrome}.png (14 screenshots), w2-e1a-smoke-console-{firefox,chrome}.txt."
   },
   "plan_update": {
     "updated_at": "2026-09-13T05:38:07Z",

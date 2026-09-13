@@ -48,3 +48,4 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W2-B.2 — Browser verify: physics moves the visual in real Chrome (Task 6.2 browser-verification) — game-tester — `t_14c82dd1`
 - [x] W2-E.1a — Smoke suite (Chrome): 5 scenarios, 6/6 e2e green in real headed Chrome — game-tester — `t_8ac76c86`
 - [x] W2-E.1b — Cross-browser (Firefox): 6/6 green in headed Firefox + Chrome re-pass; Week-2 criterion #1 both legs done — game-tester — `t_7844ca73`
+- [ ] W2-E.2 — FPS baseline @ 20 obstacles (D4 gate); RED committed 2026-09-14 (negative control failed as designed); GREEN pending — game-tester — `t_71338ca5`

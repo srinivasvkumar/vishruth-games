@@ -1,0 +1,62 @@
+W2-E.2 — RED: FPS baseline @ 20 obstacles (D4 gate)
+=====================================================
+Date: 2026-09-14 (07:13 AEST)
+Kanban task: t_71338ca5
+Branch: wt/t_71338ca5
+
+WHAT WAS WRITTEN
+----------------
+tests/e2e/fps.spec.ts (new): W2-E.2 / week-2 success criterion #7.
+Boots real headed Chrome (chromium-boot project), enters the game scene
+via window.game, injects 20 static obstacles — 20 THREE
+Group+BoxGeometry+MeshStandardMaterial meshes in the live scene graph +
+20 static (mass=0) box bodies in the app's real cannon-es world — then
+measures the running frame loop's FPS in-page via requestAnimationFrame
+tick counting (3 s warm-up + 10 s sample window) and writes
+tests/evidence/w2/w2-e2-fps-20.log (+ w2-e2-fps-20.png scene
+screenshot). The D4 gate is an in-test assertion, not just prose:
+mean FPS < threshold fails the test and flags W3 re-scope.
+
+RED PHASE — negative control (proves the gate assertion fires)
+----------------------------------------------------------------
+Ran the spec with D4_MIN_FPS deliberately set to 61 (above any
+rAF-capped display) in real headed Chrome:
+
+COMMAND: ./node_modules/.bin/playwright test --project=chromium-boot --grep "W2-E.2"
+
+RESULT: 1 FAILED — the D4 gate assertion fired exactly as designed:
+
+  Error: D4 gate: mean FPS 60.0 at 20 obstacles must be >= 61 — if <30,
+  ESCALATE: re-scope W3 before it starts
+  expect(received).toBeGreaterThanOrEqual(expected)
+  Expected: >= 61
+  Received:   60.002795471336434
+    at tests/e2e/fps.spec.ts:309
+
+The measurement pipeline is proven live end-to-end:
+  - boot → menu → game scene OK (window.game running)
+  - 20/20 obstacles injected into the live scene graph (assertion
+    "Obstacle groups must be present in the scene graph" passed)
+  - 20 static mass=0 cannon-es box bodies created in the live world
+  - rAF sampling advanced: 601 frames over 10016 ms (loop is real,
+    not paused)
+  - the ONLY failing assertion is the D4 gate threshold itself —
+    i.e. the test discriminates on the measured FPS number, so a
+    sub-30 baseline would genuinely fail this test.
+
+OBSERVATION (documented, out of scope): with 100 injected obstacles
+(FPS_OBSTACLES=100 probe run) the measured mean FPS is still 60.0 —
+the rAF-capped display cannot go higher, and the frame loop cadence is
+not currently bottlenecked by injected obstacle render/physics load at
+this scale. The 60-FPS/100-objects benchmark remains a W4 target (D4).
+
+GREEN PHASE (next commit)
+--------------------------
+Restore the real D4 threshold (D4_MIN_FPS = 30), re-run: the gate
+assertion must PASS and the baseline number must land in
+w2-e2-fps-20.log.
+
+EVIDENCE (tests/evidence/w2/)
+---------------------------
+w2-e2-fps-20.log  (RED-run log; will be overwritten by the GREEN run)
+w2-e2-fps-20.png  (RED-run scene screenshot; will be overwritten)
