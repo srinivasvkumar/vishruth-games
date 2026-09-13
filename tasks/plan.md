@@ -63,3 +63,21 @@ one deterministic serial lane. No monoliths. Created 2026-09-11 by orchestrator 
 
 ## Open questions
 - Boss sanity-check on D2 (G1 src stubs) — flagged in the 2026-09-11 plan report.
+
+---
+# Week 1 Lane — COMPLETE (2026-09-13, sign-off 7e23596)
+
+## Lane
+W1-A (Renderer TDD-1.3) → W1-B (allowlist closure, requires A) ∥ W1-C (gap-fill) ∥ W1-S (stability) → W1-D (sign-off, requires B+C+S)
+Plus W1-INFRA (node_modules untrack) inserted mid-lane per boss ruling.
+
+## Outcome
+- Coverage 93.38% (target 50%+) · 387/387 tests green · flake-free (20x+5x verified)
+- RED allowlist fully closed; pre-commit gate restored to full-suite (npm run test:run)
+- Known issues carried to W2: KI-1 (Renderer 0% in sign-off run — since resolved, now 100%),
+  KI-4 (barrel/type-only files at 0% — accepted), KI-5 (duplicate commit subjects — cosmetic)
+
+## Tracker maintenance
+Per boss rule 2026-09-13: every completed task MUST update the trackers
+(tracker/task_registry.json, tracker/tdd_tracker_config.json, tasks/plan.md, tasks/todo.md)
+in the same commit as its evidence. W1-D's late scope addendum was superseded by this rule.

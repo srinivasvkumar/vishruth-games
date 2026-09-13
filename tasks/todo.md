@@ -4,19 +4,32 @@ Board: `cluster-rush` — serial lane, dependency-enforced. CREATED NOT DISPATCH
 blocked (needs_input); nothing runs until the user's resume signal (orchestrator unblocks R).
 
 ## Lane
-- [ ] R  — T0.2.2a RED gate closure: verify committed RED evidence, lift PAUSE — game-tester — `t_275659a6` (parent: —)
-- [ ] G1 — T0.2.2 G1: align game.test.ts + minimal Audio/UI stubs (Game loadable) — game-dev — `t_013c1b58` (parent: R)
-- [ ] G2 — T0.2.2 G2: align obstacle + physics-system tests (mock-cannon/mock-three) — game-dev — `t_f9206b62` (parent: G1)
-- [ ] G3 — T0.2.2 G3: align retroactive-core.test.ts (46 cross-cutting tests) — game-dev — `t_072d14ba` (parent: G2)
-- [ ] G4 — T0.2.2 G4: align scene-manager + game-loop tests — game-dev — `t_d69e44a7` (parent: G3)
-- [ ] G5 — T0.2.2 G5: align constants + player tests — game-dev — `t_5a0db934` (parent: G4)
-- [ ] G6 — T0.2.2 G6: new retroactive tests for coverage gaps (AssetLoader, scenes, index) — game-dev — `t_f85aba71` (parent: G5)
-- [ ] GV — T0.2.2b GREEN + final D0.2 verification — game-tester — `t_e14de10c` (parent: G6)
-- [ ] QG — D0.2 quality gate + sign-off — reviewer — `t_0ade5caa` (parent: GV)
+- [x] R  — T0.2.2a RED gate closure: verify committed RED evidence, lift PAUSE — game-tester — `t_275659a6` (parent: —)
+- [x] G1 — T0.2.2 G1: align game.test.ts + minimal Audio/UI stubs (Game loadable) — game-dev — `t_013c1b58` (parent: R)
+- [x] G2 — T0.2.2 G2: align obstacle + physics-system tests (mock-cannon/mock-three) — game-dev — `t_f9206b62` (parent: G1)
+- [x] G3 — T0.2.2 G3: align retroactive-core.test.ts (46 cross-cutting tests) — game-dev — `t_072d14ba` (parent: G2)
+- [x] G4 — T0.2.2 G4: align scene-manager + game-loop tests — game-dev — `t_d69e44a7` (parent: G3)
+- [x] G5 — T0.2.2 G5: align constants + player tests — game-dev — `t_5a0db934` (parent: G4)
+- [x] G6 — T0.2.2 G6: new retroactive tests for coverage gaps (AssetLoader, scenes, index) — game-dev — `t_f85aba71` (parent: G5)
+- [x] GV — T0.2.2b GREEN + final D0.2 verification — game-tester — `t_e14de10c` (parent: G6)
+- [x] QG — D0.2 quality gate + sign-off — reviewer — `t_0ade5caa` (parent: GV)
 
 ## Checkpoints
-- [ ] After R: RED gate closed, PAUSE lifted, tracker 0.2.2 = red_verified / ACTIVE
-- [ ] After G5: all 8 TEMP-D0.2-T1 allowlist entries removed
-- [ ] After G6: coverage-gap modules tested
-- [ ] After GV: allowlist == exactly 2 PERMANENT; suite GREEN except hello-three; tracker green_verified
-- [ ] After QG: sign-off committed; tracker 0.2.2 = completed; D0.2-COMPLETE
+- [x] After R: RED gate closed, PAUSE lifted, tracker 0.2.2 = red_verified / ACTIVE
+- [x] After G5: all 8 TEMP-D0.2-T1 allowlist entries removed
+- [x] After G6: coverage-gap modules tested
+- [x] After GV: allowlist == exactly 2 PERMANENT; suite GREEN except hello-three; tracker green_verified
+- [x] After QG: sign-off committed; tracker 0.2.2 = completed; D0.2-COMPLETE
+
+# Week 1 Lane (2026-09-12 → 2026-09-13) — COMPLETE
+- [x] W1-A — TDD-1.3 GREEN: Renderer implementation (core/Renderer.ts) — game-dev — `t_0f69a68a` → c41f977
+- [x] W1-B — TDD-1.1 RED allowlist FULL closure + pre-commit restore — implementer — `t_b3e4d7c9` → 1eea718/77167de/7e970e6
+- [x] W1-C — Gap-fill: core coverage gaps (gamepad/logger/audio/ui stubs) — game-dev — `t_fa4d5774` → 76711d8
+- [x] W1-S — Stability verification (20x scenes + 5x full suite, flake-free) — game-tester — `t_24e2fffd` → ca4e9a2
+- [x] W1-D — Week 1 sign-off: quality gate — reviewer — `t_509c2314` → 7e23596
+- [x] W1-INFRA — Untrack geometry-dash/node_modules + gitignore — implementer — `t_2826c78d` → baa9459
+
+## W1 Final State
+- [x] Suite: 387/387 green · Coverage: 93.38% (target 50%+) · tsc 0 · eslint 0 · build ok
+- [x] RED gate closed: allowlist deleted, red-gate script deleted, pre-commit = npm run test:run
+- [x] main @ 7e23596; all W1 work merged and verified on main
