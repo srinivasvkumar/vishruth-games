@@ -245,9 +245,11 @@ test('W2-E.1a scenario 3: jump', async ({ page }) => {
   const grounded = await getPlayerPosition(page);
   expect(grounded.y, 'Player must start on the ground (y ≈ 0)').toBeLessThanOrEqual(0.1);
 
-  // Press space to jump
-  await page.keyboard.press(' ');
-  await page.waitForTimeout(200);
+  // Press space (hold for ~150ms so InputSystem sees it in a frame)
+  await page.keyboard.down(' ');
+  await page.waitForTimeout(150);
+  await page.keyboard.up(' ');
+  await page.waitForTimeout(100);
 
   const midJump = await getPlayerPosition(page);
   expect(

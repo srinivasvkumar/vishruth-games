@@ -13,7 +13,7 @@
 - **3D Engine**: Three.js v0.162.0
 - **Physics Engine**: Cannon-es v0.20.0
 - **Test Environment**: happy-dom
-- **E2E**: Playwright (tests/e2e/ currently empty)
+- **E2E**: Playwright 1.62.0 (`tests/e2e/`: boot.smoke.spec.ts, physics-sync.spec.ts, audio.spec.ts, smoke.spec.ts — 4 spec files, 9 tests total)
 
 ## Files by Category
 | Category | Count |
@@ -82,8 +82,14 @@ Empty directories on disk: `src/game/` (no files — vestigial).
 - `tests/evidence/d02/T1-nested-tree-check.txt` — pre-exclude run proving the nested `clusterrush/tests/` tree is NOT collected by the root-anchored include pattern.
 - `tests/evidence/d02/T1-hook-error.txt` — NOT generated: the task's contingency (T1 commit blocked by the pre-commit gate) was superseded by the boss pre-ruling (TEMP-D0.2-T1 allowlist entries), so the T1 commit passed the gate instead of being blocked.
 
-### tests/e2e/, tests/fixtures/, tests/integration/
-- All three directories exist and are EMPTY on disk (no files). Reserved for Playwright e2e, fixtures, and integration tests (future work).
+### tests/e2e/ — 4 spec files (Playwright, real headed Chrome via `chromium-boot` project)
+- `tests/e2e/boot.smoke.spec.ts` — W2-A.4: first e2e test; asserts WebGL context, loading cleared, menu visible, no THREE/CORS/uncaught errors. 1 test.
+- `tests/e2e/physics-sync.spec.ts` — W2-B.2: drives the RUNNING frame loop in real Chrome; proves BodySync moves the visual (teleport proof + 30-frame drift trace). 1 test.
+- `tests/e2e/audio.spec.ts` — W2-C.2: AudioContext running in real Chrome, AudioSystem available, pause/resume without errors. 1 test.
+- `tests/e2e/smoke.spec.ts` — W2-E.1a: 5-scenario smoke suite (Chrome leg of Week-2 criterion #1): (1) boot→menu→game, WebGL live, window.game running, HUD visible, 0 fatal console errors; (2) WASD movement (D→+x, A→-x, W→-z, all >0.1 delta); (3) jump (space→y>0.5, lands back); (4) score increment (player:score +50→HUD updated); (5) game-over→restart (player:death→GAME OVER overlay→reload→clean state). 6 tests total. Evidence: `tests/evidence/w2/W2-E1a-GREEN.txt` + 7 screenshots + `w2-e1a-smoke-console.txt`.
+
+### tests/fixtures/, tests/integration/
+- Both directories exist and are EMPTY on disk. Reserved for fixtures and integration tests (future work).
 
 ## Coverage Gaps — public methods without (passing) tests
 

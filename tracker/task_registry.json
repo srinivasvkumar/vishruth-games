@@ -236,6 +236,14 @@
               "notes": "Kanban t_f22844e8. RED: 8/8 W2-C.2 tests failed pre-change (bindToGameEvents not a function). GREEN: 422/422 unit tests; 2/2 e2e tests; tsc clean; eslint 0 errors; build clean. Changes: src/systems/Audio.ts (bindToGameEvents() — 6 window-event listeners: player:jump/collide/powerup → playSfx, game:pause/stop → stopMusic, game:resume → startMusic), src/core/Game.ts (start() calls bindToGameEvents() + init().then(startMusic)), src/entities/Player.ts (emit player:jump on jump), src/scenes/GameScene.ts (emit player:collide in handleCollision), tests/unit/audio-system.test.ts (8 new W2-C.2 tests), tests/e2e/audio.spec.ts (new Playwright: AudioContext running, AudioSystem available, pause/resume without errors), tests/unit/game.test.ts (audioImpl mock: bindToGameEvents, init, startMusic), tests/unit/player.test.ts (Constants mock: add GameEvents). Evidence: tests/evidence/w2/w2-c2-audio.log."
             },
             {
+              "id": "W2-E.1a",
+              "description": "Smoke suite (Chrome) - boot/WASD/jump/score/restart, 5 scenarios",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T23:10:00",
+              "notes": "Kanban t_8ac76c86. RED: tests/e2e/smoke.spec.ts committed (4010dd8); jump scenario initially RED (y=0 after keyboard.press(' ') — keydown+keyup too fast for InputSystem to register in a frame; spec fix: keyboard.down + 150ms hold + keyboard.up). GREEN: 6/6 tests passed in real headed Chrome (chromium-boot project). Scenario 1: boot → menu → game scene, WebGL live, window.game running, HUD visible, 0 fatal console errors. Scenario 2: WASD movement — D→+x, A→-x, W→-z (all >0.1 unit delta via scene-graph position read). Scenario 3: jump — space keydown/hold → player y > 0.5, lands back to y ≤ 0.1. Scenario 4: score increment — player:score event (+50) → HUD score ≥ start+50. Scenario 5: game-over (player:death event → GAME OVER overlay) → page reload → re-enter game → player at spawn (|x|<1, |z|<1), score=0, running=true. 6th test: full boot→menu→game console capture, 0 fatal errors. No src/ changes (game already implements all 5 behaviors). Evidence: tests/evidence/w2/W2-E1a-GREEN.txt, w2-e1a-smoke-1-boot.png, w2-e1a-smoke-1-game.png, w2-e1a-smoke-2-wasd.png, w2-e1a-smoke-3-jump.png, w2-e1a-smoke-4-score.png, w2-e1a-smoke-5-gameover.png, w2-e1a-smoke-5-restart.png, w2-e1a-smoke-console.txt. TDD: RED (4010dd8) → GREEN. Week-2 success criterion #1 Chrome leg satisfied."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

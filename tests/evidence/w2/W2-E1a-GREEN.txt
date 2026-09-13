@@ -1,0 +1,27 @@
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+
+Running 6 tests using 1 worker
+
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  1 [chromium-boot] › tests/e2e/smoke.spec.ts:124:1 › W2-E.1a scenario 1: boot to a playable scene (3.5s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  2 [chromium-boot] › tests/e2e/smoke.spec.ts:177:1 › W2-E.1a scenario 2: move with WASD (4.7s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  3 [chromium-boot] › tests/e2e/smoke.spec.ts:237:1 › W2-E.1a scenario 3: jump (5.7s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  4 [chromium-boot] › tests/e2e/smoke.spec.ts:273:1 › W2-E.1a scenario 4: score increments on collect (3.5s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  5 [chromium-boot] › tests/e2e/smoke.spec.ts:303:1 › W2-E.1a scenario 5: game-over then restart returns to a clean playable state (6.4s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  6 [chromium-boot] › tests/e2e/smoke.spec.ts:369:1 › W2-E.1a console capture: no fatal errors across a full boot→menu→game cycle (3.3s)
+
+  6 passed (28.1s)
