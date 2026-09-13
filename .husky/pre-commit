@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pre-commit gate: lint-staged (auto-detects staged files per lint-staged config).
+# Pre-commit gate: full test suite + tracker drift check.
 #
 # 2026-09-13 (boss ruling + post-ruling correction, W1-B t_b3e4d7c9):
 # Known defect (tracked legacy geometry-dash/node_modules/bs-logger/package.json
@@ -11,4 +11,30 @@
 # broken code committed). The hook is NOT bypassed — this IS the gate, and it
 # is stricter than lint-staged (full suite vs staged files only).
 # Revert to `npx lint-staged` after the node_modules untrack lands.
+#
+# 2026-09-13 (boss rule): tracker drift check. Evidence-only commits must not
+# touch the tracker files. If tests/evidence/ files are staged, all four
+# trackers must be in the same commit — the tracker update is part of the
+# task, not an afterthought.
 npm run test:run
+
+# --- Tracker drift check (boss rule 2026-09-13) ---
+if git diff --cached --name-only | grep -q '^tests/evidence/'; then
+  TRACKERS="tracker/task_registry.json
+tracker/tdd_tracker_config.json
+tasks/plan.md
+tasks/todo.md"
+  MISSING=""
+  for f in $TRACKERS; do
+    git diff --cached --name-only | grep -qx "$f" || MISSING="$MISSING  - $f\n"
+  done
+  if [ -n "$MISSING" ]; then
+    echo ""
+    echo "TRACKER DRIFT: this commit stages tests/evidence/ files but is missing:"
+    printf "%b" "$MISSING"
+    echo "Per boss rule 2026-09-13: evidence commits MUST update all four trackers"
+    echo "in the same commit. Update the trackers and git add them, or split the"
+    echo "commit if the evidence is interim (not final task output)."
+    exit 1
+  fi
+fi
