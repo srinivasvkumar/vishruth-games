@@ -1,0 +1,53 @@
+# W2-B.1 RED evidence (kanban t_f438f119, Task 6.2 — Body synchronization)
+# Captured 2026-09-13 19:35 AEST, HEAD baa2ec5 (after W2-A.4 fast-forward)
+#
+# RED state: the mesh is NOT synced today — src/systems/BodySync.ts does not
+# exist. New test file tests/unit/body-sync.test.ts (4 tests, mock-cannon +
+# real three mesh) asserts that after a physics step the mesh transform
+# equals the body transform. With no sync system the suite fails at
+# collection:
+#
+#   Error: Failed to resolve import "@/systems/BodySync" from
+#          "tests/unit/body-sync.test.ts". Does the file exist?
+#   Test Files  1 failed (1)  /  Tests  no tests
+#
+# (Vite pre-bundles the test file at collection time, so the dynamic
+# import of the not-yet-existing module fails the whole suite — RED at
+# collection level rather than 4 individual test failures.)
+#
+# Pre-change baseline (all green, 4 files, same run style):
+#   ✓ tests/unit/physics-system.test.ts  (24 tests)
+#   ✓ tests/unit/obstacle.test.ts        (24 tests)
+#   ✓ tests/unit/player.test.ts          (45 tests)
+#   ✓ tests/unit/scenes.test.ts          (28 tests)
+#   Test Files  4 passed (4)  /  Tests  121 passed (121)
+
+--- raw vitest output: npm run test:run -- tests/unit/body-sync.test.ts ---
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/body-sync.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_f438f119
+
+ ❯ tests/unit/body-sync.test.ts  (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/body-sync.test.ts [ tests/unit/body-sync.test.ts ]
+Error: Failed to resolve import "@/systems/BodySync" from "tests/unit/body-sync.test.ts". Does the file exist?
+ ❯ TransformPluginContext._formatError ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
+ ❯ TransformPluginContext.error ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
+ ❯ normalizeUrl ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
+ ❯ async file:/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
+ ❯ TransformPluginContext.transform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
+ ❯ PluginContainer.transform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
+ ❯ loadAndTransform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  19:35:23
+   Duration  880ms (transform 49ms, setup 47ms, collect 0ms, tests 0ms, environment 178ms, prepare 56ms)
+
