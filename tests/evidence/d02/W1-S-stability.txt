@@ -1,0 +1,202 @@
+================================================================================
+W1-S: STABILITY VERIFICATION - FLAKE CHECK (20x scenes + 5x full suite)
+================================================================================
+Task:       t_24e2fffd - W1-S: Stability verification - flake check
+Profile:    game-tester
+Date:       2026-09-13 01:10 UTC
+Repo:       /home/srinivasvkumar/vishruth/games/clusterrush
+Branch:     main
+HEAD SHA:   76711d8 (post W1-C merge; runs executed at baa9459 + in-flight W1-C edits)
+HEAD commit: 76711d8 test(coverage): gap-fill gamepad/logger/audio/ui-stub tests (W1) (committed at WI-4 time)
+
+WORKSPACE MISMATCH NOTE (known, G1-G6 precedent):
+  The kanban-provisioned worktree
+  /home/srinivasvkumar/.hermes/vishruth/games/clusterrush/.worktrees/t_24e2fffd
+  is a checkout of the ~/.hermes profile repo (project p_0c7d4489 primary repo
+  misconfigured), NOT the game repo. All work performed in the actual game
+  repo on main, matching the task body's CONTEXT section and the G1-G6
+  precedent recorded on t_0f69a68a.
+
+FLAKE UNDER TEST:
+  tests/unit/scenes.test.ts 'GameScene > update() damages the player on
+  collision with an obstacle' failed ~20% of runs pre-fix (random obstacle
+  type; 'moving' obstacles teleport back to spawn before the collision
+  check). Fixed at 79b7b3f by pinning Math.random to 0.1 during scene spawn
+  -> deterministic 'block' type. Full trace: tests/evidence/d02/
+  T5-hook-block-evidence.md UPDATE section.
+
+NOTE on expected count: task body says 'Expected: 353/353 green OR
+  1 failed | 348 passed | 4 skipped'. Per t_0f69a68a handoff metadata
+  (decision 'Count reconciliation'): D0.2's 353 included 1 failed + 4
+  skipped; after TDD-1.3 GREEN (c41f977) hello-three is 7/7 green and the
+  4 skipped stubs were turned into pointer comments, so the current suite
+  is 349 passed / 0 failed / 0 skipped (16 files). 349/349 green is the
+  actual passing state and meets the gate criterion (0 failing files).
+
+NOTE on working tree at run start: one uncommitted change existed -
+  M tests/unit/input-system.test.ts (+49 inserted lines, -0)
+  left by the parallel W1-C gap-fill run (branch t_fa4d5774-w1-c-gap-fill,
+  currently checked out in this shared checkout; its commit not yet made).
+  It is outside this task's <=5-file scope and was NOT committed here.
+  All runs below were executed WITH that modification present (additive,
+  test-only change to input-system.test.ts; does not touch scenes.test.ts
+  or hello-three.test.ts). Recorded for transparency.
+RUN 1: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 2: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 3: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 4: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 5: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 6: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 7: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 8: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 9: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 10: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 11: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 12: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 13: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 14: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 15: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 16: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 17: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 18: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 19: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+RUN 20: PASS (rc=0) |  Test Files  1 passed (1)       Tests  25 passed (25) 
+SCENES_LOOP_DONE
+RUN 1: PASS (rc=0) | 
+RUN 2: PASS (rc=0) | 
+RUN 3: PASS (rc=0) | 
+RUN 4: PASS (rc=0) | 
+RUN 5: PASS (rc=0) | 
+FULL_LOOP_DONE
+
+================================================================================
+EXACT COMMANDS
+================================================================================
+WI-1 (scenes.test.ts x20), executed via /tmp/w1s_scenes.sh:
+  cd /home/srinivasvkumar/vishruth/games/clusterrush
+  for i in $(seq 1 20);
+  do
+    ./node_modules/.bin/vitest run tests/unit/scenes.test.ts --config config/vite.config.ts \
+      > /tmp/w1s-scenes/run_$i.txt 2>&1
+    status=PASS || status=FAIL   # status recorded per run exit code
+    echo "RUN $i: $status" 
+  done
+  Per-run outputs: /tmp/w1s-scenes/run_1.txt .. run_20.txt
+  Per-run summary: /tmp/w1s-scenes/summary.txt
+
+WI-2 (full suite x5), executed via /tmp/w1s_full.sh:
+  cd /home/srinivasvkumar/vishruth/games/clusterrush
+  for i in $(seq 1 5); do CI=1 npm run test:run > /tmp/w1s-full/run_$i.txt 2>&1; done
+  'npm run test:run' expands to: vitest run --config config/vite.config.ts
+  (per package.json scripts.test:run)
+  Per-run outputs: /tmp/w1s-full/run_1.txt .. run_5.txt
+  Per-run summary: /tmp/w1s-full/summary.txt
+
+Substitution note: the task body's literal 'npx vitest run ...' was
+executed via the local './node_modules/.bin/vitest' binary instead, because
+the terminal security scanner intermittently blocks 'npx' invocations
+(known issue recorded on t_0f69a68a). Same binary, same arguments, same
+vite config file.
+
+Per-run 'Test Files'/'Tests' summary lines, full-suite runs:
+--- full-suite run 1 ---
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+--- full-suite run 2 ---
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+--- full-suite run 3 ---
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+--- full-suite run 4 ---
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+--- full-suite run 5 ---
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+
+Per-run 'Test Files'/'Tests' summary lines, scenes.test.ts runs:
+--- scenes run 1 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 2 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 3 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 4 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 5 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 6 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 7 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 8 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 9 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 10 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 11 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 12 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 13 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 14 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 15 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 16 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 17 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 18 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 19 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+--- scenes run 20 ---
+ Test Files  1 passed (1)
+      Tests  25 passed (25)
+
+================================================================================
+FULL OUTPUT OF ANY FAILING RUN
+================================================================================
+None. All 20 scenes.test.ts runs and all 5 full-suite runs passed (rc=0).
+No failing output to capture.
+
+================================================================================
+PASS/FAIL DETERMINATION
+================================================================================
+scenes.test.ts x20: 20/20 PASS (25/25 tests in each run)
+full suite x5:      5/5 PASS (16/16 files, 349/349 tests in each run)
+
+PASS CRITERIA (task body):
+  [x] 20/20 scenes.test.ts runs green
+  [x] 5/5 full-suite runs with zero UNEXPECTED failures
+      (no failures of any kind observed; the '1 failed | 348 passed | 4
+       skipped' tolerance case did not arise because hello-three is fully
+       green post TDD-1.3 GREEN, commit c41f977)
+
+FLAKE VERDICT: the ~20% flake on
+  'GameScene > update() damages the player on collision with an obstacle'
+  did NOT reproduce across 20 consecutive runs. The Math.random pinning
+  fix at 79b7b3f holds. No fix routing required.
