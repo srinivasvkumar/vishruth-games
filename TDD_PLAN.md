@@ -271,16 +271,51 @@ To prevent context overload and compression:
 
 **Task 4.2: Loading progress tracking**
 - RED: Test progress events fire during load
-- GREEN: Progress events with percentage tracking
+- GREEN: Implement progress events with percentage tracking
 - VERIFY: Progress bar updates during asset load
 - Acceptance Criteria:
   - [ ] Progress events fire at correct intervals
   - [ ] 100% fires when all assets loaded
   - [ ] Error events fire on failure
 
+> **Status (2026-09-13): NOT DONE in W1.** Task 4.1/4.2 were marked "MOVED FROM WEEK 3" but never executed. `AssetLoader.ts` remains a stub. Carried into W2 as Task 4.3 (D1) alongside DOM integration.
+
+**Task 4.3: DOM / boot wiring (W2-A, added 2026-09-13 — GATES ALL OF WEEK 2)**
+- Context: `public/index.html` renders "Loading Three.js renderer..." forever because nothing calls the boot path — `initGame()` in `src/index.ts` is never connected to `#game-canvas`.
+- RED: Browser test asserting `#game-canvas` gets a WebGL context and `window.game` is set after page load (fails today: canvas count 1 but renderer never starts)
+- GREEN: Wire `initGame()` in `src/index.ts` to: (a) acquire `#game-canvas`, (b) create `Renderer` on it, (c) boot `BootScene` → `GameScene`, (d) start the game loop
+- VERIFY: Real Chrome (headed, not headless): canvas renders the scene, loading indicator clears, player mesh visible
+- Acceptance Criteria:
+  - [ ] Game loads and runs in real Chrome
+  - [ ] No `THREE`/CORS/console errors on load
+  - [ ] Player mesh visible at spawn position
+  - [ ] Loading indicator replaced by running game
+
 ---
 
 ## WEEK 2: GAMEPLAY SYSTEMS
+
+### W2 GATE NOTES (added 2026-09-13 after W1 retroactive gap analysis)
+
+**Critical lessons from W1 execution:**
+1. **DOM wiring was assumed working but wasn't** — browser testing revealed the game never starts (`initGame()` not wired to `#game-canvas`). **No W2 sprint starts until W2-A passes.**
+2. **"AssetLoader moved from W3" was never implemented** — `AssetLoader.ts` is still a stub. See decision D1 below.
+3. **Coverage ≠ playability** — 93% coverage achieved, yet the game does not run in a real browser. Browser verification is a first-class deliverable, not a W4 afterthought.
+4. **Real browser checks must happen every week, not only in W4.**
+5. **Physics↔visual sync (Task 6.2) is unverified in a real browser** despite green unit tests.
+
+**W2 execution order (sprints; A gates B–E):**
+- **W2-A: DOM Integration** (Task 4.3 below) — game must load & run in real Chrome before anything else.
+- **W2-B: Physics↔Visual Sync** (Task 6.2) — verify in browser, not just mocks.
+- **W2-C: Audio Core** (Tasks 6.5.1–6.5.2)
+- **W2-D: Gameplay Systems** (Tasks 7.1–7.3)
+- **W2-E: Verification** — smoke test, cross-browser (Chrome/Firefox), FPS baseline with 20 obstacles.
+
+**Fool-proof rules:**
+- D1: **AssetLoader decision** — implement (Task 4.3 scope) OR formally descope for MVP with a tracked decision. No silent stubs.
+- D2: **UI split decision (before W3)** — in-game HUD stays canvas-rendered (GameScene); menus/overlays are DOM-based per Week 3. Document the split in this plan.
+- D3: **One pattern first** — implement Shield power-up fully (Task 7.3 Phase 1); only expand to the other 3 types after Shield works in-browser.
+- D4: **Performance early warning** — measure FPS at end of W2-E with 20 obstacles; if <30 FPS, re-scope W3 before starting it. The 60-FPS/100-objects benchmark is a W4 target, not a W2 gate.
 
 ### Day 5: Player Entity TDD
 
@@ -335,7 +370,7 @@ To prevent context overload and compression:
   - [ ] Gravity configured correctly
   - [ ] **Mocking**: Physics can be stubbed for unit tests
 
-**Task 6.2: Body synchronization**
+**Task 6.2: Body synchronization** *(W2-B, Priority 2 — runs AFTER Task 4.3)*
 - RED: Test that physics body updates visual mesh
 - GREEN: Mesh-Body synchronization system
 - VERIFY: Physics simulation moves visual objects
@@ -343,6 +378,7 @@ To prevent context overload and compression:
   - [ ] Visual mesh follows physics body
   - [ ] Synchronization happens every frame
   - [ ] No visual lag or jitter
+  - [ ] **Browser verification (added 2026-09-13):** in real Chrome, player mesh moves in response to physics step — unit tests alone do NOT satisfy this task
 
 **Task 6.3: Collision detection tests**
 - RED: Test collision events trigger game logic
@@ -397,12 +433,15 @@ To prevent context overload and compression:
   - [ ] Invalid transitions blocked
   - [ ] State change events emitted
 
-**Task 7.3: Power-up system**
+**Task 7.3: Power-up system** *(phased per D3, added 2026-09-13)*
 - RED: Test power-up collection triggers effects
 - GREEN: Power-up entity with collection handlers
 - VERIFY: Power-ups disappear, effects apply
+- **Phase 1 (W2): Shield only** — implement, collect, 5s invincibility, visual feedback; must work in-browser before Phase 2
+- **Phase 2 (W3, only after Phase 1 verified): Speed Boost, Magnet, Score Multiplier**
 - Acceptance Criteria:
-  - [ ] All 4 power-up types work
+  - [ ] Phase 1: Shield works end-to-end in real browser
+  - [ ] All 4 power-up types work (W3)
   - [ ] Effects duration correct
   - [ ] Power-up visual feedback
   - [ ] **Edge Case**: Multiple power-ups collected simultaneously
@@ -602,9 +641,18 @@ To prevent context overload and compression:
 ### Phase Targets:
 - **Week 0**: 20%+ coverage (baseline established)
 - **Week 1**: 50%+ coverage (core systems)
-- **Week 2**: 70%+ coverage (gameplay systems)
+- **Week 2**: 70%+ coverage (gameplay systems) + **game must actually run in a real browser** (see W2 success criteria below)
 - **Week 3**: 85%+ coverage (integration)
 - **Week 4**: 90%+ coverage (complete game)
+
+### Week 2 Success Criteria (added 2026-09-13 — all must pass before W3 starts):
+1. Game runs in Chrome (and Firefox at verification) — canvas renders, player moves
+2. Physics body positions sync with visual meshes — **verified in real browser**, not just mocks
+3. Jump/collision audio triggers
+4. Score persists via LocalStorage
+5. Shield power-up collectible with visual effect (Phase 1 of Task 7.3)
+6. Game states formalized (menu → playing → paused → gameOver → restart)
+7. FPS baseline recorded with 20 obstacles (D4 gate)
 
 ### Critical Paths (100% coverage required):
 1. Game initialization and cleanup
@@ -914,3 +962,4 @@ test('game starts from menu', async ({ page }) => {
 
 *This plan supersedes all previous versions. Strict TDD enforcement required for all development.*
 *Updated: Retroactive TDD strategy, 4-week timeline, real browser E2E testing emphasis.*
+*Updated 2026-09-13 (W1 retro): W2 gate notes + execution order (W2-A…E), Task 4.3 DOM/boot wiring (gates Week 2), Task 6.2 browser-verification criterion, Task 7.3 phased power-ups (D3), W2 success criteria.*

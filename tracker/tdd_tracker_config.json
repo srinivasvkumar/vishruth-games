@@ -31,6 +31,10 @@
     "completion_date": "2026-09-13T13:11:00",
     "completion_notes": "W1 sign-off (W1-D, 7e23596): 387/387 green, coverage 93.38% (target 50%+), tsc 0, eslint 0, build ok, flake-free (20x scenes + 5x full-suite). Lanes: W1-A c41f977 (Renderer TDD-1.3 GREEN), W1-B 1eea718/77167de/7e970e6 (RED allowlist FULL closure), W1-C 76711d8 (gap-fill +719 lines), W1-S ca4e9a2 (stability), W1-INFRA baa9459 (node_modules untracked, gitignore). Known issues KI-1..KI-5 non-blocking, in tests/evidence/d02/W1-SIGNOFF-reviewer.txt. Next: Week 2 gameplay systems (70%+ target already met at 93.38%)."
   },
+  "plan_update": {
+    "date": "2026-09-13",
+    "note": "TDD_PLAN.md enriched in-place after W1 retro: W2 gate notes + execution order (W2-A..E), new Task 4.3 DOM/boot wiring (gates all of W2), Task 6.2 browser-verification criterion, Task 7.3 phased power-ups (Shield first), W2 success criteria. Sidecar ENRICHED_TDD_PLAN.md removed — single source of truth is TDD_PLAN.md."
+  },
   "d02_gate_closure": {
     "task": "TDD-1.1 (W1-B)",
     "date": "2026-09-13",
