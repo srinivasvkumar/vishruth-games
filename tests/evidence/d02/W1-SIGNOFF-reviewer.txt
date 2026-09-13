@@ -1,0 +1,152 @@
+================================================================================
+W1 SIGN-OFF — INDEPENDENT REVIEWER VERIFICATION (task t_509c2314)
+================================================================================
+Reviewer:   reviewer (quality gatekeeper profile)
+Date:       2026-09-13 13:35 AEST (UTC+10)
+Repo:       /home/srinivasvkumar/vishruth/games/clusterrush
+Branch:     main
+HEAD:       36122b3c467c7e96b9bef00f888f4e67793c3827 (merge: W1-B gate-closure
+            artifacts; first parent ca4e9a2, second parent 7e970e6)
+Node:       v22.22.2
+Note:       the kanban-provisioned worktree (~/.hermes/.../.worktrees/t_509c2314)
+            is a checkout of the ~/.hermes profile repo (project p_0c7d4489
+            misconfigured), NOT the game repo. All verification performed in
+            the actual game repo on main, matching the G1-G6 / W1-S precedent.
+            boss_bot merged W1-B into main at 36122b3 (13:00 AEST) prior to
+            this sign-off.
+
+--------------------------------------------------------------------------------
+WI-1 — W1-B closure artifacts present on main (re-run after boss merge)
+--------------------------------------------------------------------------------
+[PASS] tests/evidence/d02/W1-TDD1.1-closure.txt — present on main (git show
+       main:tests/evidence/d02/W1-TDD1.1-closure.txt verified; content read in
+       full: full-suite 349/349 green, WI-2 mock-strategy 54/54 revalidation,
+       WI-7 npx lint-staged probe + root-cause CORRECTION, final verification
+       pass 10:19 AEST 349/349, D0.2/W1 status block).
+[PASS] tests/evidence/d02/W1-TDD1.3-red.txt — present on main. RED evidence
+       authentic: captured 2026-09-11 11:02:05 against parent 79b7b3f, BEFORE
+       c41f977 (2026-09-12 11:13:15) added src/core/Renderer.ts. Shows
+       hello-three failing with "No test suite found in file" + 1 fail, 7 pass
+       (348 pass / 1 fail / 4 skipped — matches D0.2 baseline).
+[PASS] .husky/pre-commit — amended gate on main: node>=22 version guard +
+       `npx lint-staged`, per boss ruling at 1eea718 (W1-B). 15-line header
+       documents the one-time --no-verify exception and that the hook was NOT
+       bypassed.
+[PASS] .husky/red-allowlist.txt — DELETED on main (ls: No such file or
+       directory).
+[PASS] scripts/red-gate-check.mjs — DELETED on main (ls: No such file or
+       directory).
+Merge integrity: git diff main 36122b3^1 --stat shows exactly the 5-file
+W1-B artifact set (.husky/pre-commit, .husky/red-allowlist.txt deleted,
+scripts/red-gate-check.mjs deleted, W1-TDD1.1-closure.txt added,
+tracker/tdd_tracker_config.json updated). main's W1-C (76711d8) and W1-S
+(ca4e9a2) content intact.
+
+--------------------------------------------------------------------------------
+WI-2 — D0.2 RED/GREEN cycle authenticity
+--------------------------------------------------------------------------------
+[PASS] hello-three RED: W1-TDD1.3-red.txt captured 2026-09-11 11:02:05,
+       parent commit 79b7b3f, pre-implementation. Failure mode is genuine
+       ("No test suite found in file tests/unit/hello-three.test.ts" —
+       implementation absent), not a synthetic/forced failure.
+[PASS] hello-three GREEN: W1-TDD1.3-green.txt — full suite 349 passed /
+       0 failed / 0 skipped, Start at 11:08:47, 2026-09-12, exit 0.
+[PASS] mock-strategy: 54/54 green in W1-TDD1.3-green.txt AND revalidated
+       standalone in W1-TDD1.1-closure.txt (WI-2, 2026-09-13 09:55).
+[PASS] TDD ordering audit (independent, this sign-off): across the W1 line
+       (c41f977..36122b3), exactly ONE commit touches src/: c41f977
+       (src/core/Renderer.ts, src/core/index.ts), and its evidence files
+       prove RED-first (red captured 2026-09-11 11:02:05 against 79b7b3f,
+       26 hours before the commit). All other W1 commits are test/docs/infra
+       only. No src/ change in the range lacks RED evidence.
+       (Note: 77167de and 7e970e6 carry identical subjects/content — the
+       evidence-correction commit was re-committed during the W1-B closure
+       run; 77167de was superseded by 7e970e6 and is NOT on the merge
+       first-parent line. No duplication defect.)
+
+--------------------------------------------------------------------------------
+WI-3 — Suite stability: 5x targeted + 2x full (independent re-runs)
+--------------------------------------------------------------------------------
+Command (targeted):
+  ./node_modules/.bin/vitest run tests/unit/hello-three.test.ts
+       tests/unit/mock-strategy.test.ts --config config/vite.config.ts
+Command (full):
+  CI=1 npm run test:run   (== vitest run --config config/vite.config.ts)
+
+Targeted (61 tests = hello-three 7 + mock-strategy 54):
+  RUN 1: rc=0  61 passed (61)
+  RUN 2: rc=0  61 passed (61)
+  RUN 3: rc=0  61 passed (61)
+  RUN 4: rc=0  61 passed (61)
+  RUN 5: rc=0  61 passed (61)
+Full suite:
+  FULL 1: rc=0  Test Files 17 passed (17)  Tests 387 passed (387)
+  FULL 2: rc=0  Test Files 17 passed (17)  Tests 387 passed (387)
+Raw output: /tmp/t509_h3_ms_1..5.txt, /tmp/t509_full_1..2.txt
+No flakes observed. 387/387 matches boss's post-merge count (17 files after
+W1-C gap-fill added systems-stub.test.ts + 13 tests; input-system 9->26,
+logger 10->18).
+
+--------------------------------------------------------------------------------
+WI-4 — Coverage gate
+--------------------------------------------------------------------------------
+Command: npx vitest run --config config/vite.config.ts --coverage
+         --exclude 'tests/unit/hello-three.test.ts'
+Result:  All files  89.72% Stmts | 94.24% Branch | 94.61% Funcs | 89.72% Lines
+PASS:    89.72% >= 80% required threshold.
+Per-file: 23 of 24 src files at 90%+; systems 98.67%, utils 99.5%.
+Uncovered: Renderer.ts 0% and core/index.ts 0% — see known-issue KI-1.
+
+--------------------------------------------------------------------------------
+WI-5 — Type-check + build + lint
+--------------------------------------------------------------------------------
+[PASS] npm run type-check (tsc --noEmit -p tsconfig.json): exit 0, 0 errors
+[PASS] npm run build (vite build): built in 933ms
+       dist/assets/main-BIMfsVI4.js  11.79 kB | gzip 4.28 kB
+       dist/assets/vendor-DCNxauju.js 83.18 kB | gzip 24.26 kB
+[PASS] npm run lint: exit 0 — 0 errors, 7 warnings (all pre-existing
+       no-console in src/utils/Logger.ts, intentional logger output; same
+       7 warnings recorded in W1-TDD1.3-green.txt)
+
+--------------------------------------------------------------------------------
+Known issues (non-blocking for W1 sign-off; all pre-W1 or accepted trade-offs)
+--------------------------------------------------------------------------------
+KI-1: src/core/Renderer.ts 0% coverage — hello-three.test.ts excluded from
+      the coverage run by task spec, and no other suite imports
+      src/core/Renderer.ts (only the barrel + hello-three). Renderer
+      behavior IS asserted in hello-three (7/7 green, 5x re-run). Acceptable
+      trade-off per task spec; flag for W2: either import Renderer via the
+      barrel in a covered path or add a dedicated suite outside the exclude.
+KI-2: W1-TDD1.3-red.txt shows 12 tests collected in the hello-three file
+      (7 pass + 1 fail + 4 skipped), W1-TDD1.3-green.txt shows 7 tests —
+      the 4 skipped placeholder stubs were converted to pointer comments
+      (WI-3 decision, documented in W1-TDD1.3-green.txt, all four
+      duplicating dedicated suites). Test-count reconciliation documented
+      (353 baseline = 348+1+4; final 349 = 353-4).
+KI-3: Geometry-dash legacy node_modules defect — RESOLVED at baa9459
+      (untracked 10,043 files + gitignore, evidence W1-INFRA-untrack-
+      node_modules.md). The W1-TDD1.1-closure.txt "open infra defect" note
+      predates baa9459 and is stale. Note for boss: the amended
+      pre-commit hook (1eea718 form: node>=22 guard + `npx lint-staged`)
+      is now expected to work cleanly post-untrack; the closure-evidence
+      file still carries the outdated open-defect line.
+KI-4: Pre-existing, out of W1 scope: src/core/index.ts 0% (barrel),
+      src/types/GameTypes.ts 0% (type-only file), Renderer.ts (see KI-1),
+      SceneManager.ts 85.86% (lines 100-104, 158-162).
+KI-5: 77167de/7e970e6 commit-subject duplication (superseded re-commit
+      during W1-B closure; 77167de not on first-parent line — no functional
+      impact).
+
+--------------------------------------------------------------------------------
+Sign-off
+--------------------------------------------------------------------------------
+All 5 work items PASS. D0.2 gate closed. W1 (TDD-1.1/1.2/1.3) complete:
+TDD-1.3 GREEN verified (renderer + tests, RED-first proven), D0.2 RED/GREEN
+cycle authentic, suite stable (387/387 x2 full, 61/61 targeted x5), coverage
+89.72% >= 80%, type-check/build/lint clean.
+
+RECOMMENDATION: APPROVE W1 sign-off; D0.2 gate CLOSED.
+File this sign-off; proceed to W2 (Day 2: Game state management / frame loop
+/ scene management per TDD_PLAN.md) with KI-1 as a W2 follow-up.
+
+================================================================================
