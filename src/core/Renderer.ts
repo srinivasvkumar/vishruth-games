@@ -12,6 +12,11 @@ export interface RendererOptions {
   antialias?: boolean;
   /** Initial clear color as a hex number (default 0x000000). */
   clearColor?: number;
+  /**
+   * Existing canvas to attach the WebGL renderer to (W2-A.1).
+   * When omitted the renderer creates its own detached canvas.
+   */
+  canvas?: HTMLCanvasElement;
 }
 
 /**
@@ -35,10 +40,11 @@ export class Renderer {
       width = 800,
       height = 600,
       antialias = false,
-      clearColor = 0x000000
+      clearColor = 0x000000,
+      canvas
     } = options;
 
-    this.renderer = new THREE.WebGLRenderer({ antialias });
+    this.renderer = new THREE.WebGLRenderer({ antialias, canvas });
     this.renderer.setSize(width, height);
     this.renderer.setClearColor(clearColor);
     this.renderer.clear();
@@ -68,6 +74,16 @@ export class Renderer {
   resize(width: number, height: number): void {
     this.renderer.setSize(width, height);
     this.renderer.clear();
+  }
+
+  /**
+   * Resize the viewport to fit a parent element's content box (W2-A.1).
+   * Reads `clientWidth` / `clientHeight` from the element (excludes
+   * margins, borders, scrollbars). Intended to be called on window resize
+   * or after layout changes so the canvas always fills its container.
+   */
+  resizeToContainer(container: HTMLElement): void {
+    this.resize(container.clientWidth, container.clientHeight);
   }
 
   /** Clear the screen using the current clear color. */

@@ -1,0 +1,54 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/renderer.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_2deaadf6
+
+ ❯ tests/unit/renderer.test.ts  (3 tests | 2 failed) 9ms
+   ❯ tests/unit/renderer.test.ts > W2-A.1: Renderer canvas attachment (RED) > RED: accepts an existing canvas and passes it to WebGLRenderer
+     → expected <canvas width="800" …(1)></canvas> to be <canvas></canvas> // Object.is equality
+   ❯ tests/unit/renderer.test.ts > W2-A.1: Renderer canvas attachment (RED) > RED: resizeToContainer resizes to the parent element dimensions
+     → renderer.resizeToContainer is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/renderer.test.ts > W2-A.1: Renderer canvas attachment (RED) > RED: accepts an existing canvas and passes it to WebGLRenderer
+AssertionError: expected <canvas width="800" …(1)></canvas> to be <canvas></canvas> // Object.is equality
+
+- Expected
++ Received
+
+- <canvas />
++ <canvas
++   height="600"
++   width="800"
++ />
+
+ ❯ tests/unit/renderer.test.ts:36:33
+     34| 
+     35|     // The wrapper must use the supplied canvas — not create its own.
+     36|     expect(renderer.domElement).toBe(providedCanvas)
+       |                                 ^
+     37|     // The mock records what THREE.WebGLRenderer actually received.
+     38|     expect(renderer.getRenderer().domElement).toBe(providedCanvas)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/renderer.test.ts > W2-A.1: Renderer canvas attachment (RED) > RED: resizeToContainer resizes to the parent element dimensions
+TypeError: renderer.resizeToContainer is not a function
+ ❯ tests/unit/renderer.test.ts:54:14
+     52| 
+     53|     const renderer = new Renderer({ width: 800, height: 600 })
+     54|     renderer.resizeToContainer(container)
+       |              ^
+     55| 
+     56|     expect(renderer.width).toBe(512)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  17:00:02
+   Duration  973ms (transform 58ms, setup 35ms, collect 30ms, tests 9ms, environment 175ms, prepare 61ms)
+

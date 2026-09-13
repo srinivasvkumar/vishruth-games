@@ -172,6 +172,14 @@
           "day": 4,
           "tasks": [
             {
+              "id": "W2-A.1",
+              "description": "Renderer attaches to existing canvas (RendererOptions.canvas + resizeToContainer)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T17:02:00",
+              "notes": "Kanban t_2deaadf6. RED evidence: tests/evidence/w2/W2-A1-RED.txt (2 failed, 1 passed — canvas not honored, resizeToContainer not a function). GREEN evidence: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed). Full suite 390/390 green. Changes: src/core/Renderer.ts (RendererOptions.canvas, new THREE.WebGLRenderer({antialias, canvas}), resizeToContainer()), tests/setup/mock-three.ts (additive: WebGLRenderer accepts canvas param), tests/unit/renderer.test.ts (3 new tests)."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

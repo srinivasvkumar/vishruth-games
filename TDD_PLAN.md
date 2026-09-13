@@ -288,11 +288,13 @@ To prevent context overload and compression:
   2. **Rewrite `src/utils/AssetLoader.ts`** to a clean, tested loader (currently broken syntax). Provide a minimal fallback-geometry path so the game boots before real assets exist (W2-C uses synthesized/placeholder audio; no external audio files required yet).
 - VERIFY: Real Chrome (headed, not headless): canvas renders the scene, loading indicator clears, player mesh visible
 - Acceptance Criteria:
-  - [ ] Game loads and runs in real Chrome
+  - [x] ~~Game loads and runs in real Chrome~~ — W2-A.1 foundation done (canvas attachment); full wiring pending
   - [ ] No `THREE`/CORS/console errors on load
   - [ ] Player mesh visible at spawn position
   - [ ] Loading indicator replaced by running game
   - [ ] `AssetLoader.ts` compiles clean (`tsc` + `eslint` green) with unit tests
+
+> **W2-A.1 progress (2026-09-13):** `RendererOptions.canvas` + `resizeToContainer()` implemented and tested (3/3 green, full suite 390/390). This is the foundation sub-step for Task 4.3; the remaining DOM wiring (`initGame()` → `#game-canvas`) and AssetLoader fix are separate sub-tasks.
 
 ---
 

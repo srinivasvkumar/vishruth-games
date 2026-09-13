@@ -81,3 +81,11 @@ Plus W1-INFRA (node_modules untrack) inserted mid-lane per boss ruling.
 Per boss rule 2026-09-13: every completed task MUST update the trackers
 (tracker/task_registry.json, tracker/tdd_tracker_config.json, tasks/plan.md, tasks/todo.md)
 in the same commit as its evidence. W1-D's late scope addendum was superseded by this rule.
+
+---
+# Week 2 Lane (started 2026-09-13)
+
+## W2-A: DOM Integration (gates all of W2)
+- [x] W2-A.1 — Renderer attaches to existing canvas (RendererOptions.canvas + resizeToContainer) — game-dev — `t_2deaadf6` — 2026-09-13T17:02
+  - RED: tests/evidence/w2/W2-A1-RED.txt (2 failed / 1 passed)
+  - GREEN: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed), full suite 390/390

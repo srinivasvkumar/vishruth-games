@@ -33,3 +33,6 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] Suite: 387/387 green · Coverage: 93.38% (target 50%+) · tsc 0 · eslint 0 · build ok
 - [x] RED gate closed: allowlist deleted, red-gate script deleted, pre-commit = npm run test:run
 - [x] main @ 7e23596; all W1 work merged and verified on main
+
+# Week 2 Lane (started 2026-09-13)
+- [x] W2-A.1 — Renderer attaches to existing canvas (RendererOptions.canvas + resizeToContainer) — game-dev — `t_2deaadf6`

@@ -1,0 +1,14 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/renderer.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_2deaadf6
+
+ ✓ tests/unit/renderer.test.ts  (3 tests) 3ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  17:02:28
+   Duration  928ms (transform 57ms, setup 37ms, collect 26ms, tests 3ms, environment 172ms, prepare 53ms)
+

@@ -100,8 +100,8 @@ export class WebGLRenderer {
   disposed: boolean = false
   private size: { width: number; height: number }
 
-  constructor(parameters: { antialias?: boolean } = {}) {
-    this.domElement = document.createElement('canvas')
+  constructor(parameters: { antialias?: boolean; canvas?: HTMLCanvasElement } = {}) {
+    this.domElement = parameters.canvas ?? document.createElement('canvas')
     this.size = { width: 800, height: 600 }
   }
 
