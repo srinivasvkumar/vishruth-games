@@ -1,0 +1,81 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts
+
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90m/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9[39m
+
+ [32m✓[39m tests/unit/cicd-pipeline.test.ts [2m ([22m[2m16 tests[22m[2m)[22m[90m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/constants.test.ts [2m ([22m[2m12 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+[90mstdout[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLogging Behavior[2m > [22m[2mshould accept message and optional data[22m[39m
+[INFO] Test message 
+[INFO] Test message { key: [32m'value'[39m }
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLogging Behavior[2m > [22m[2mshould accept error objects[22m[39m
+[ERROR] Error message Error: Test
+    at [90m/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mtests/unit/logger.test.ts:34:50
+    at Proxy.assertThrows [90m(/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4mchai[24m/lib/chai/core/assertions.js:2644:7[90m)[39m
+    at Proxy.methodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4mchai[24m/lib/chai/utils/addMethod.js:57:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:850:16[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4mchai[24m/lib/chai/utils/overwriteMethod.js:78:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1324:19[90m)[39m
+    at Proxy.<anonymous> [90m(file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:800:17[90m)[39m
+    at Proxy.methodWrapper [90m(/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4mchai[24m/lib/chai/utils/addMethod.js:57:25[90m)[39m
+    at [90m/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mtests/unit/logger.test.ts:34:74
+    at [90mfile:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:135:14
+
+[90mstdout[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support info level logging[22m[39m
+[INFO] Info message 
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support warn level logging[22m[39m
+[WARN] Warning message 
+
+[90mstderr[2m | tests/unit/logger.test.ts[2m > [22m[2mLogger - Retroactive Tests[2m > [22m[2mLog Levels[2m > [22m[2mshould support error level logging[22m[39m
+[ERROR] Error message 
+
+ [32m✓[39m tests/unit/logger.test.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/mock-strategy.test.ts [2m ([22m[2m54 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-manager.test.ts [2m ([22m[2m20 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/game.test.ts [2m ([22m[2m17 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/hello-three.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/game-loop.test.ts [2m ([22m[2m15 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/input-system.test.ts [2m ([22m[2m9 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+[90mstdout[2m | tests/unit/retroactive-core.test.ts[2m > [22m[2mLogger Functionality[2m > [22m[2mshould have info method[22m[39m
+[INFO] Test message 
+
+[90mstderr[2m | tests/unit/retroactive-core.test.ts[2m > [22m[2mLogger Functionality[2m > [22m[2mshould have warn method[22m[39m
+[WARN] Test warning 
+
+[90mstderr[2m | tests/unit/retroactive-core.test.ts[2m > [22m[2mLogger Functionality[2m > [22m[2mshould have error method[22m[39m
+[ERROR] Test error 
+
+[90mstdout[2m | tests/unit/retroactive-core.test.ts[2m > [22m[2mLogger Functionality[2m > [22m[2mshould accept message and optional data[22m[39m
+[INFO] Test message { key: [32m'value'[39m }
+
+ [32m✓[39m tests/unit/retroactive-core.test.ts [2m ([22m[2m46 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32m✓[39m tests/unit/physics-system.test.ts [2m ([22m[2m24 tests[22m[2m)[22m[90m 27[2mms[22m[39m
+ [32m✓[39m tests/unit/index.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 60[2mms[22m[39m
+ [32m✓[39m tests/unit/asset-loader.test.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/obstacle.test.ts [2m ([22m[2m24 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32m✓[39m tests/unit/scenes.test.ts [2m ([22m[2m25 tests[22m[2m)[22m[90m 72[2mms[22m[39m
+ [32m✓[39m tests/unit/player.test.ts [2m ([22m[2m45 tests[22m[2m)[22m[90m 25[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m      Tests [22m [1m[32m349 passed[39m[22m[90m (349)[39m
+[2m   Start at [22m 09:54:44
+[2m   Duration [22m 1.45s[2m (transform 1.26s, setup 534ms, collect 1.91s, tests 302ms, environment 3.54s, prepare 1.58s)[22m
+
+
+=== WI-2: mock-strategy revalidation (2026-09-13 09:55 AEST) ===
+$ npx vitest run tests/unit/mock-strategy.test.ts --config config/vite.config.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9
+
+ ✓ tests/unit/mock-strategy.test.ts  (54 tests) 11ms
+
+ Test Files  1 passed (1)
+      Tests  54 passed (54)
+   Start at  09:55:08
+   Duration  934ms (transform 61ms, setup 36ms, collect 36ms, tests 11ms, environment 161ms, prepare 69ms)
+
