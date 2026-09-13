@@ -29,7 +29,12 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W1-D — Week 1 sign-off: quality gate — reviewer — `t_509c2314` → 7e23596
 - [x] W1-INFRA — Untrack geometry-dash/node_modules + gitignore — implementer — `t_2826c78d` → baa9459
 
-## W1 Final State
+## Week 2 Lane (2026-09-13 →) — IN PROGRESS
+- [x] W2-A.1 — Renderer attaches to existing canvas (RED->GREEN) — game-dev
+- [x] W2-A.2 — Shared renderer + boot path in Game (RED->GREEN) — game-dev
+- [x] W2-A.3 — Minimal MenuScene + fix 'menu' transition (RED->GREEN) — game-dev
+- [x] W2-A.4 — First e2e test: real-Chrome boot smoke — game-dev
+- [x] W2-D.1 — Score manager pure fns + LocalStorage (RED->GREEN) — game-dev — `t_5bff9ff6`
 - [x] Suite: 387/387 green · Coverage: 93.38% (target 50%+) · tsc 0 · eslint 0 · build ok
 - [x] RED gate closed: allowlist deleted, red-gate script deleted, pre-commit = npm run test:run
 - [x] main @ 7e23596; all W1 work merged and verified on main

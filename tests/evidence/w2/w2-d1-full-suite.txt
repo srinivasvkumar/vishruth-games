@@ -1,0 +1,8 @@
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept message and optional data
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept error objects
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support info level logging
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support warn level logging
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support error level logging
+ Test Files  18 passed (18)
+      Tests  428 passed (428)
+   Duration  1.57s (transform 2.29s, setup 1.60s, collect 3.60s, tests 496ms, environment 5.95s, prepare 1.82s)

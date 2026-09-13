@@ -1,0 +1,16 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_5bff9ff6
+
+ ✓ tests/unit/score.test.ts  (41 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  41 passed (41)
+   Start at  19:39:05
+   Duration  932ms (transform 90ms, setup 56ms, collect 39ms, tests 6ms, environment 189ms, prepare 56ms)
+
+=== RED phase (pre-implementation) ===
+Test: tests/unit/score.test.ts
+Result: FAILED - module '@/systems/Score' does not exist
+Error: Failed to resolve import @/systems/Score
+
+=== GREEN phase (post-implementation) ===

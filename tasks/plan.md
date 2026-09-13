@@ -81,3 +81,17 @@ Plus W1-INFRA (node_modules untrack) inserted mid-lane per boss ruling.
 Per boss rule 2026-09-13: every completed task MUST update the trackers
 (tracker/task_registry.json, tracker/tdd_tracker_config.json, tasks/plan.md, tasks/todo.md)
 in the same commit as its evidence. W1-D's late scope addendum was superseded by this rule.
+
+---
+# Week 2 Lane — IN PROGRESS (2026-09-13 →)
+
+## Completed
+- W2-A.1: Renderer attaches to existing canvas (RED->GREEN)
+- W2-A.2: Shared renderer + boot path in Game (RED->GREEN)
+- W2-A.3: Minimal MenuScene + fix 'menu' transition (RED->GREEN)
+- W2-A.4: First e2e test: real-Chrome boot smoke (1/1 e2e, 397/397 unit)
+- W2-D.1: Score manager pure fns + LocalStorage (RED->GREEN) — t_5bff9ff6
+  - 41 new tests: pure functions (computeScore, subtractScore, applyMultiplier, clampScore)
+  - ScoreManager class with injectable Storage, overflow/underflow clamping
+  - GameScene HUD wired to ScoreManager (score display, game-over high score)
+  - 428/428 full suite · tsc 0 errors
