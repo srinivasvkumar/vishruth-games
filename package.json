@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "1.62.0",
     "@types/node": "^20.11.0",
     "@types/three": "^0.162.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

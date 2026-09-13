@@ -196,6 +196,14 @@
               "notes": "Kanban t_16b337f1. RED: 3/3 W2-A.3 tests failed pre-change (no scene registered, window.game undefined in happy-dom without three mock). GREEN: 28/28 in scenes.test.ts; full suite 397/397; tsc clean; eslint clean on src/. Changes: src/scenes/MenuScene.ts (new, minimal placeholder DOM per D2 boundary), src/index.ts (import BootScene/MenuScene/GameScene + register with SceneManager in initGame, 'boot' first), tests/unit/scenes.test.ts (3 new W2-A.3 tests with comprehensive three mock in importFreshIndex helper), tests/unit/index.test.ts (mock scene classes + getSceneManager on mock Game). Evidence: tests/evidence/w2/W2-A3-RED.txt, tests/evidence/w2/W2-A3-GREEN.txt. DECISION D2: minimal MenuScene with placeholder DOM only; full menu UI stays in W3 Task 8.2."
             },
             {
+              "id": "W2-A.4",
+              "description": "Real-Chrome boot smoke test (Task 4.3) - first e2e test in this project",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T19:15:00",
+              "notes": "Kanban t_9b7d154e. RED: #loading-message still showed 'Loading Three.js renderer...' after boot. GREEN: 1/1 e2e passed in 3.8s; full suite 397/397; build clean; lint 0 errors. Changes: playwright.config.ts (first e2e scaffold, real Chrome headed, vite webServer), tests/e2e/boot.smoke.spec.ts (asserts WebGL context, loading cleared, menu visible, no errors), BootScene.onExit() (clears static #loading-message), public/index.html (fix import.meta in non-module script), public/assets/manifest/boot.json (empty manifest for Game.start hook), package.json (pin @playwright/test 1.62.0). Evidence: tests/evidence/w2/w2-a4-boot-smoke.png (348KB), w2-a4-boot-smoke-errors.txt."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

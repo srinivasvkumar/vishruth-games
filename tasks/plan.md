@@ -99,3 +99,7 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - GREEN: 28/28 in scenes.test.ts; full suite 397/397; tsc clean; eslint clean on src/
   - Evidence: tests/evidence/w2/W2-A3-RED.txt, tests/evidence/w2/W2-A3-GREEN.txt
   - DECISION D2: minimal MenuScene with placeholder DOM only; full menu UI stays in W3 Task 8.2
+- [x] W2-A.4 — Real-Chrome boot smoke test (Task 4.3) — first e2e in project — game-tester — `t_9b7d154e` — 2026-09-13T19:15
+  - RED: #loading-message still showed 'Loading Three.js renderer...' after boot
+  - GREEN: 1/1 e2e passed in 3.8s; full suite 397/397; build clean; lint 0 errors
+  - Evidence: tests/evidence/w2/w2-a4-boot-smoke.png (348KB), w2-a4-boot-smoke-errors.txt

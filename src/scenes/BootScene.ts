@@ -96,7 +96,14 @@ export class BootScene extends Scene {
       this.progressBar.style.display = 'none';
       this.loadingText.style.display = 'none';
     }
-    
+
+    // Clear the static #loading-message from index.html
+    const loadingMsg = document.getElementById('loading-message');
+    if (loadingMsg) {
+      loadingMsg.textContent = '';
+      loadingMsg.style.display = 'none';
+    }
+
     Logger.debug('Boot scene exited');
   }
   

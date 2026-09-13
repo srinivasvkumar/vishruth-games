@@ -291,8 +291,9 @@
     <script type="module" src="/src/index.ts"></script>
     
     <script>
-        // Development mode check
-        if (import.meta && import.meta.env && import.meta.env.MODE === 'development') {
+        // Development mode check — use window location as a proxy for dev mode
+        // since import.meta is only available in module scripts.
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
             console.log('🚀 Cluster Rush - Development Mode');
             console.log('📋 Spec-driven development enabled');
             console.log('🧪 TDD workflow enforced');
