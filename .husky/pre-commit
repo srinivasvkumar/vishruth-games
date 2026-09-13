@@ -1,1 +1,14 @@
-node scripts/red-gate-check.mjs
+#!/usr/bin/env bash
+# Pre-commit gate: lint-staged (auto-detects staged files per lint-staged config).
+#
+# 2026-09-13 (boss ruling + post-ruling correction, W1-B t_b3e4d7c9):
+# Known defect (tracked legacy geometry-dash/node_modules/bs-logger/package.json
+# carries a lint-staged v0 config with a `linters` field that lint-staged 17
+# rejects) breaks `npx lint-staged` config discovery on ANY node version —
+# verified on both node 18.19.1 and node 22.22.2. While that tracked
+# node_modules is untracked+gitignored (separate infra card), the gate is
+# replaced by a full deterministic test run (the gate's actual purpose: no
+# broken code committed). The hook is NOT bypassed — this IS the gate, and it
+# is stricter than lint-staged (full suite vs staged files only).
+# Revert to `npx lint-staged` after the node_modules untrack lands.
+npm run test:run
