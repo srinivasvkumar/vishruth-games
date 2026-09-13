@@ -27,6 +27,7 @@
  *   becomes a no-op and isAvailable() returns false. No throws.
  */
 import { Logger } from '@/utils/Logger';
+import { GameEvents } from '@/utils/Constants';
 import type { AudioConfig } from '@/types/GameTypes';
 
 /**
@@ -116,6 +117,8 @@ export class AudioSystem {
   private initialized = false;
   /** True once cleanup() has closed the context (idempotency guard). */
   private cleanedUp = false;
+  /** True once bindToGameEvents() has attached listeners (idempotency guard). */
+  private eventsBound = false;
 
   constructor(config: AudioConfig) {
     this.context = this.createContext();
@@ -254,6 +257,56 @@ export class AudioSystem {
       return;
     }
     gain.gain.value = clampVolume(volume);
+  }
+
+  /**
+   * W2-C.2 (Task 6.5.2) — wire game events to audio triggers.
+   *
+   * Subscribes to the GameEvents defined in Constants.ts that are
+   * dispatched on `window` by the game logic (Player, GameScene, Game):
+   *
+   *   player:jump     -> playSfx('jump')
+   *   player:collide  -> playSfx('collide')
+   *   player:powerup  -> playSfx('powerup')
+   *   game:pause      -> stopMusic()
+   *   game:resume     -> startMusic()
+   *   game:stop       -> stopMusic()
+   *
+   * Idempotent: a second call returns without attaching duplicate
+   * listeners. Safe in degraded mode: no listeners are attached when
+   * the AudioContext was not created, and the method never throws.
+   *
+   * The audio system owns the subscriptions (not Game or a scene), so
+   * the binding is testable in isolation: dispatch a CustomEvent on
+   * window and assert the right node graph was touched.
+   */
+  bindToGameEvents(): void {
+    if (this.eventsBound || !this.context) {
+      return;
+    }
+    this.eventsBound = true;
+
+    // SFX triggers — fired synchronously so there is no audio lag.
+    window.addEventListener(GameEvents.PLAYER_JUMP, () => {
+      this.playSfx('jump');
+    });
+    window.addEventListener(GameEvents.PLAYER_COLLIDE, () => {
+      this.playSfx('collide');
+    });
+    window.addEventListener(GameEvents.PLAYER_POWERUP, () => {
+      this.playSfx('powerup');
+    });
+
+    // Music lifecycle — stop on pause/stop, restart on resume.
+    window.addEventListener(GameEvents.GAME_PAUSE, () => {
+      this.stopMusic();
+    });
+    window.addEventListener(GameEvents.GAME_RESUME, () => {
+      this.startMusic();
+    });
+    window.addEventListener(GameEvents.GAME_STOP, () => {
+      this.stopMusic();
+    });
   }
 
   /** False in degraded mode (no WebAudio context was created). */

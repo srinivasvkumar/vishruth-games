@@ -263,3 +263,131 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
     });
   });
 });
+
+/**
+ * W2-C.2 (Task 6.5.2) — Audio synchronization: wire SFX triggers to game
+ * events and stop music when the game stops/pauses.
+ *
+ * TDD evidence:
+ *   RED: AudioSystem exposes no bindToGameEvents() — every test in this
+ *        block fails (method is not a function) until GREEN lands the
+ *        window-event → playSfx/startMusic/stopMusic wiring in Audio.ts.
+ *   GREEN: AudioSystem.bindToGameEvents() subscribes to the GameEvents
+ *        window events the game logic already defines in Constants.ts:
+ *          player:jump     -> playSfx('jump')
+ *          player:collide  -> playSfx('collide')
+ *          player:powerup  -> playSfx('powerup')
+ *          game:pause      -> stopMusic()
+ *          game:resume     -> startMusic()
+ *          game:stop       -> stopMusic() (cleanup() closes the context)
+ *        The audio system owns the subscriptions (not Game or a scene),
+ *        so the binding is testable in isolation against the mock
+ *        AudioContext: dispatch a CustomEvent on window and assert the
+ *        right node graph was touched.
+ *
+ * Acceptance criteria (TDD_PLAN.md Task 6.5.2):
+ *   - [x] Audio events triggered correctly (unit: SFX fires on the right events)
+ *   - [x] No audio lag or desync (SFX is fired synchronously from the event)
+ *   - [x] Audio stops when game stops (game:stop + game:pause -> stopMusic)
+ *   VERIFY (browser): tests/e2e/audio.spec.ts — a jump produces an audio
+ *   node in real Chrome. Audibility itself is a manual VERIFY, recorded
+ *   in tests/evidence/w2/.
+ */
+describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
+  const JUMP_EVENT = 'player:jump';
+  const COLLIDE_EVENT = 'player:collide';
+  const POWERUP_EVENT = 'player:powerup';
+  const PAUSE_EVENT = 'game:pause';
+  const RESUME_EVENT = 'game:resume';
+  const STOP_EVENT = 'game:stop';
+
+  it('bindToGameEvents() is a no-op until the system is available', () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    expect(() => audio.bindToGameEvents()).not.toThrow();
+  });
+
+  it('player:jump fires the jump SFX (oscillator through the sfx gain)', () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(JUMP_EVENT));
+    const osc = ctx.nodes.oscillators[0];
+    expect(osc).toBeDefined();
+    expect(osc.started).toBe(true);
+    // jump SFX = 880 Hz (SFX_FREQUENCIES.jump in Audio.ts).
+    expect((osc.frequency as { value: number }).value).toBe(880);
+    expect(osc.target).toBe(ctx.nodes.gains[1]); // sfx gain
+  });
+
+  it('player:collide fires the collide SFX with a distinct frequency', () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(JUMP_EVENT));
+    window.dispatchEvent(new CustomEvent(COLLIDE_EVENT));
+    const jump = ctx.nodes.oscillators[0];
+    const collide = ctx.nodes.oscillators[1];
+    expect((jump.frequency as { value: number }).value).not.toBe(
+      (collide.frequency as { value: number }).value
+    );
+    // collide SFX = 160 Hz (low thud, SFX_FREQUENCIES.collide in Audio.ts).
+    expect((collide.frequency as { value: number }).value).toBe(160);
+  });
+
+  it('player:powerup fires the powerup SFX', () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(POWERUP_EVENT));
+    const osc = ctx.nodes.oscillators[0];
+    expect(osc.started).toBe(true);
+    // powerup SFX = 1320 Hz (SFX_FREQUENCIES.powerup in Audio.ts).
+    expect((osc.frequency as { value: number }).value).toBe(1320);
+  });
+
+  it('game:pause stops the music; game:resume restarts it', async () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    await audio.init();
+    audio.startMusic();
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(PAUSE_EVENT));
+    const src = ctx.nodes.bufferSources[0];
+    expect(src.stopped).toBe(true);
+    // Resuming re-creates the looping source (startMusic is the restart).
+    window.dispatchEvent(new CustomEvent(RESUME_EVENT));
+    expect(ctx.nodes.bufferSources.length).toBe(2);
+    expect(ctx.nodes.bufferSources[1].started).toBe(true);
+  });
+
+  it('game:stop stops the music', async () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    await audio.init();
+    audio.startMusic();
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(STOP_EVENT));
+    expect(ctx.nodes.bufferSources[0].stopped).toBe(true);
+  });
+
+  it('bindToGameEvents() is idempotent (no duplicate listeners)', () => {
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    const ctx = lastMockContext(audio);
+    audio.bindToGameEvents();
+    audio.bindToGameEvents();
+    window.dispatchEvent(new CustomEvent(JUMP_EVENT));
+    // Two bound listeners would create two oscillators for one jump.
+    expect(ctx.nodes.oscillators.length).toBe(1);
+  });
+
+  it('event wiring survives degraded mode (no listeners, no throw)', () => {
+    // No WebAudio at all: bind + dispatch must be a silent no-op.
+    removeMockAudioContext();
+    const audio = new AudioSystem(AUDIO_CONFIG);
+    expect(audio.isAvailable()).toBe(false);
+    expect(() => audio.bindToGameEvents()).not.toThrow();
+    expect(
+      () => window.dispatchEvent(new CustomEvent(JUMP_EVENT))
+    ).not.toThrow();
+  });
+});

@@ -204,6 +204,22 @@
               "notes": "Kanban t_9b7d154e. RED: #loading-message still showed 'Loading Three.js renderer...' after boot. GREEN: 1/1 e2e passed in 3.8s; full suite 397/397; build clean; lint 0 errors. Changes: playwright.config.ts (first e2e scaffold, real Chrome headed, vite webServer), tests/e2e/boot.smoke.spec.ts (asserts WebGL context, loading cleared, menu visible, no errors), BootScene.onExit() (clears static #loading-message), public/index.html (fix import.meta in non-module script), public/assets/manifest/boot.json (empty manifest for Game.start hook), package.json (pin @playwright/test 1.62.0). Evidence: tests/evidence/w2/w2-a4-boot-smoke.png (348KB), w2-a4-boot-smoke-errors.txt."
             },
             {
+              "id": "W2-C.1",
+              "description": "AudioSystem placeholder audio (oscillator SFX + generated music buffer)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T20:00:00",
+              "notes": "Kanban t_ccce7f37. RED: 13/13 W2-C.1 tests failed pre-change (AudioSystem was a 26-line no-op stub). GREEN: 25/25 in audio-system.test.ts; full suite 414/414; tsc clean; eslint clean on src/. Changes: src/systems/Audio.ts (full rewrite — WebAudio synthesized placeholder: 4 SFX frequencies, 2s music buffer, 3 gain nodes, degraded mode), tests/setup/mock-audio.ts (full mock AudioContext), tests/unit/audio-system.test.ts (17 W2-C.1 tests). Evidence: tests/evidence/w2/W2-C1-RED.txt, W2-C1-GREEN-full.txt."
+            },
+            {
+              "id": "W2-C.2",
+              "description": "Audio synchronization: wire SFX triggers to game events + stop music on pause/stop",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T20:50:00",
+              "notes": "Kanban t_f22844e8. RED: 8/8 W2-C.2 tests failed pre-change (bindToGameEvents not a function). GREEN: 422/422 unit tests; 2/2 e2e tests; tsc clean; eslint 0 errors; build clean. Changes: src/systems/Audio.ts (bindToGameEvents() — 6 window-event listeners: player:jump/collide/powerup → playSfx, game:pause/stop → stopMusic, game:resume → startMusic), src/core/Game.ts (start() calls bindToGameEvents() + init().then(startMusic)), src/entities/Player.ts (emit player:jump on jump), src/scenes/GameScene.ts (emit player:collide in handleCollision), tests/unit/audio-system.test.ts (8 new W2-C.2 tests), tests/e2e/audio.spec.ts (new Playwright: AudioContext running, AudioSystem available, pause/resume without errors), tests/unit/game.test.ts (audioImpl mock: bindToGameEvents, init, startMusic), tests/unit/player.test.ts (Constants mock: add GameEvents). Evidence: tests/evidence/w2/w2-c2-audio.log."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

@@ -249,9 +249,15 @@ export class GameScene extends Scene {
    */
   private handleCollision(obstacle: Obstacle): void {
     if (!this.player) return;
-    
+
     this.player.damage(obstacle.getDamage());
-    
+
+    // W2-C.2: fire the collide SFX trigger. The AudioSystem (bound in
+    // Game.start()) listens for this window event and calls
+    // playSfx('collide'). Emitted on every collision so the SFX stays
+    // in sync with the physics.
+    window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_COLLIDE));
+
     if (obstacle.getType() === 'breakable') {
       obstacle.deactivate();
       this.player.addScore(100);

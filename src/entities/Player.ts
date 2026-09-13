@@ -1,5 +1,5 @@
 import { Vector3, Group, Mesh, MeshStandardMaterial, BoxGeometry } from 'three';
-import { GameConstants } from '@/utils/Constants';
+import { GameConstants, GameEvents } from '@/utils/Constants';
 import { Logger } from '@/utils/Logger';
 import type { PlayerState } from '@/types/GameTypes';
 
@@ -63,6 +63,11 @@ export class Player {
     if ((inputState[' '] || inputState.arrowup) && !this.state.isJumping) {
       this.velocity.y = GameConstants.JUMP_FORCE;
       this.state.isJumping = true;
+      // W2-C.2: fire the jump SFX trigger. The AudioSystem (bound in
+      // Game.start()) listens for this window event and calls
+      // playSfx('jump'). Emitted here — at the exact moment the jump
+      // is applied — so the SFX is in sync with the physics.
+      window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_JUMP));
       Logger.debug('Player jumped');
     }
     

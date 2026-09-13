@@ -60,6 +60,9 @@ function physicsImpl(this: any) {
 
 function audioImpl(this: any) {
   this.cleanup = vi.fn();
+  this.bindToGameEvents = vi.fn();
+  this.init = vi.fn().mockResolvedValue(undefined);
+  this.startMusic = vi.fn();
 }
 
 function uiImpl(this: any) {

@@ -413,13 +413,14 @@ To prevent context overload and compression:
   - [ ] **Error Handling**: Audio load failure doesn't crash game
 
 **Task 6.5.2: Audio synchronization** *(W2-C)*
-- RED: Test audio syncs with game events
-- GREEN: Audio triggers from game logic
-- VERIFY: Jump sound plays on jump, collision sound on hit
+- RED: 8/8 tests failed — `AudioSystem.bindToGameEvents` is not a function
+- GREEN: `AudioSystem.bindToGameEvents()` subscribes to 6 window events; `Game.start()` calls it + `init().then(startMusic)`; `Player.update()` emits `player:jump`; `GameScene.handleCollision()` emits `player:collide`
+- VERIFY: `tests/e2e/audio.spec.ts` — real-Chrome: AudioContext 'running', `AudioSystem.isAvailable()===true`, `pause()`/`resume()` no-throw
 - Acceptance Criteria:
-  - [ ] Audio events triggered correctly
-  - [ ] No audio lag or desync
-  - [ ] Audio stops when game stops
+  - [x] Audio events triggered correctly (W2-C.2: `bindToGameEvents()` wires player:jump/collide/powerup → playSfx)
+  - [x] No audio lag or desync (SFX fired synchronously from window events, 2026-09-13)
+  - [x] Audio stops when game stops (game:stop + game:pause → stopMusic, 2026-09-13)
+- **Progress (2026-09-13):** W2-C.2 COMPLETE. 422/422 unit tests, 2/2 e2e tests, tsc clean, eslint 0 errors, build clean. Evidence: `tests/evidence/w2/w2-c2-audio.log`. Note: `player:powerup` listener is wired but has no emitter yet — GameScene has no powerup pickup code; that lands with Task 7.3 Phase 1 (W2 shield) or W3.
 
 ### Day 7: Scoring & Game Systems
 
