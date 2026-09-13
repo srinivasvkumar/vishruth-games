@@ -113,6 +113,22 @@ export class Game {
       });
     }
 
+    // W2-C.2 (Task 6.5.2): wire game events to audio triggers. The AudioSystem
+    // subscribes to the GameEvents window events that Game already dispatches
+    // (game:pause/resume/stop via emit(), player:jump/collide from the
+    // Player, player:powerup from GameScene). Binding here — before the boot
+    // scene loads — means the SFX and music-stop wiring is live for the
+    // whole session, not just after a scene switch.
+    this.audioSystem.bindToGameEvents();
+
+    // W2-C.2: start the placeholder music loop on boot. The AudioContext may
+    // be 'suspended' until a user gesture (browser autoplay policy); init()
+    // resumes it, and startMusic() is a no-op if the context never becomes
+    // available (degraded mode). Fire-and-forget — never blocks the loop.
+    void this.audioSystem.init().then(() => {
+      this.audioSystem.startMusic();
+    });
+
     this.gameLoop(this.lastTimestamp);
     
     this.emit('game:start');

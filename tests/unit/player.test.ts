@@ -19,6 +19,11 @@ vi.mock('@/utils/Constants', () => ({
     JUMP_FORCE: 15,
     GRAVITY: 20,
     MAX_JUMP_VELOCITY: 30
+  },
+  GameEvents: {
+    PLAYER_JUMP: 'player:jump',
+    PLAYER_COLLIDE: 'player:collide',
+    PLAYER_POWERUP: 'player:powerup'
   }
 }));
 

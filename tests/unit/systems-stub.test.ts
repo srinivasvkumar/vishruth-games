@@ -1,25 +1,27 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AudioSystem } from '@/systems/Audio';
 import { UISystem } from '@/systems/UI';
 import type { AudioConfig, UIConfig } from '@/types/GameTypes';
+import { installMockAudioContext, removeMockAudioContext } from '../setup/mock-audio';
 
 /**
  * W1-C gap-fill (t_fa4d5774): stub-method coverage for the D0.2 G1 GREEN
  * stubs (boss ruling D0.2 / task G1):
  *
- *   src/systems/Audio.ts — AudioSystem: constructor(config) + cleanup()
- *   src/systems/UI.ts    — UISystem:    constructor(config) + update(dt) + cleanup()
+ *   src/systems/UI.ts — UISystem: constructor(config) + update(dt) + cleanup()
  *
- * These are RETROACTIVE tests against frozen production code: the stubs are
- * no-ops by documented design (each class's header comment states "Stub
- * surface = exactly what src/core/Game.ts references ... No business logic
- * beyond that surface"). The tests verify CURRENT behavior:
+ * The UISystem is still a no-op stub by documented design ("Stub surface =
+ * exactly what src/core/Game.ts references ... No business logic beyond
+ * that surface"). Tests verify CURRENT behavior:
  *   - construction succeeds and is repeatable
  *   - every stub method is callable, no-throw, returns undefined
  *   - repeated (idempotent) calls stay no-op
  *
- * No console output is produced by the stub bodies — we assert call
- * acceptance instead of side effects, because no side effects exist.
+ * NOTE (W2-C.1, Task 6.5.1): AudioSystem is NO LONGER a stub — the full
+ * behavioral suite lives in tests/unit/audio-system.test.ts. What remains
+ * here is the Game.ts call-shape check (constructor + cleanup stay in the
+ * public surface), run against the REAL AudioSystem on the mocked WebAudio
+ * platform from tests/setup/mock-audio.ts.
  */
 
 const AUDIO_CONFIG: AudioConfig = {
@@ -36,7 +38,17 @@ const UI_CONFIG: UIConfig = {
   showDebug: false
 };
 
-describe('AudioSystem stub (W1-C gap-fill)', () => {
+describe('AudioSystem (W1-C call-shape; real system since W2-C.1)', () => {
+  // W2-C.1: AudioSystem is the real WebAudio implementation — these
+  // construct it for real (mocked platform), so install the AudioContext
+  // mock around the suite.
+  beforeEach(() => {
+    installMockAudioContext();
+  });
+  afterEach(() => {
+    removeMockAudioContext();
+  });
+
   it('constructs without error with a valid AudioConfig', () => {
     expect(() => new AudioSystem(AUDIO_CONFIG)).not.toThrow();
   });
@@ -56,25 +68,24 @@ describe('AudioSystem stub (W1-C gap-fill)', () => {
   it('cleanup() is callable and no-throw', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
     expect(() => audio.cleanup()).not.toThrow();
-    expect(audio.cleanup()).toBeUndefined();
   });
 
-  it('cleanup() is idempotent (multiple calls stay no-op)', () => {
+  it('cleanup() is idempotent (multiple calls stay safe)', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
     audio.cleanup();
     audio.cleanup();
     audio.cleanup();
-    // Stub retains no state — repeated calls must never throw.
+    // Repeated calls must never throw (Game.cleanup() runs on every stop).
     expect(() => audio.cleanup()).not.toThrow();
   });
 
-  it('exposes exactly the documented stub surface (constructor + cleanup)', () => {
+  it('keeps the documented Game.ts call shape (constructor + cleanup)', () => {
+    // W2-C.1 added the Week-1 surface (init, playSfx, startMusic, ...).
+    // The Game.ts call shape — `new AudioSystem(config.audio)` +
+    // `audioSystem.cleanup()` (src/core/Game.ts:27,114) — must survive.
     const audio = new AudioSystem(AUDIO_CONFIG);
-    // The stub class declares only `cleanup` as an instance method
-    // (constructor is implicit). No Week-1 surface (playMusic, playSfx,
-    // setVolume, ...) may exist yet.
     const protoNames = Object.getOwnPropertyNames(Object.getPrototypeOf(audio)).sort();
-    expect(protoNames).toEqual(['cleanup', 'constructor']);
+    expect(protoNames).toContain('cleanup');
   });
 });
 
