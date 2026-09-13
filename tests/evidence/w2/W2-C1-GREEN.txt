@@ -1,0 +1,23 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37
+
+ ✓ tests/unit/audio-system.test.ts  (17 tests) 28ms
+stderr | tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > AudioContext constructor failure -> degraded mode, no crash
+[ERROR] AudioSystem: AudioContext construction failed — degraded Error: simulated WebAudio unavailable
+    at new <anonymous> (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37/tests/unit/audio-system.test.ts:251:17)
+    at AudioSystem.createContext (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37/src/systems/Audio.ts:154:14)
+    at new AudioSystem (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37/src/systems/Audio.ts:121:25)
+    at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37/tests/unit/audio-system.test.ts:255:21
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:135:14
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:60:26
+    at runTest (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:781:17)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  20:00:51
+   Duration  725ms (transform 88ms, setup 39ms, collect 60ms, tests 28ms, environment 135ms, prepare 52ms)
+

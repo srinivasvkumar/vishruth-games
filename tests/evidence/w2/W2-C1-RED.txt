@@ -1,0 +1,264 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_ccce7f37
+
+ ❯ tests/unit/audio-system.test.ts  (17 tests | 17 failed) 11ms
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > constructs an AudioContext from the platform class on construction
+     → expected undefined to be an instance of MockAudioContext
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > init() resumes a suspended context (browser autoplay policy)
+     → Cannot read properties of undefined (reading 'state')
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > init() is idempotent (a second call is a no-op, not a re-resume)
+     → audio.init is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > playSfx("jump") starts a new oscillator through the sfx gain
+     → audio.playSfx is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > each playSfx call creates its own oscillator (no node reuse)
+     → audio.playSfx is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > SFX oscillators are scheduled to stop (envelopes, not run-away nodes)
+     → audio.playSfx is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > different SFX ids use distinct frequencies (audible variety)
+     → audio.playSfx is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > unknown SFX ids still play a valid placeholder tone (no throw)
+     → expected [Function] to not throw an error but 'TypeError: audio.playSfx is not a fun…' was thrown
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > startMusic() runs a looping buffer source through the music gain
+     → audio.init is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > the music buffer is synthesized, not loaded from a file
+     → audio.init is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > startMusic() is idempotent (no duplicate sources on repeat)
+     → audio.init is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > stopMusic() stops the looping source
+     → audio.init is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > constructor applies the config volumes to the gain chain
+     → Cannot read properties of undefined (reading 'nodes')
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > setMasterVolume / setMusicVolume / setSfxVolume each update exactly their gain
+     → audio.setMasterVolume is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > volume setters clamp out-of-range values into [0, 1]
+     → audio.setMasterVolume is not a function
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > cleanup() closes the context and is idempotent
+     → Cannot read properties of undefined (reading 'state')
+   ❯ tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > AudioContext constructor failure -> degraded mode, no crash
+     → expected [Function] to not throw an error but 'TypeError: audio.playSfx is not a fun…' was thrown
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 17 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > constructs an AudioContext from the platform class on construction
+AssertionError: expected undefined to be an instance of MockAudioContext
+ ❯ tests/unit/audio-system.test.ts:67:19
+     65|       const audio = new AudioSystem(AUDIO_CONFIG);
+     66|       const ctx = lastMockContext(audio);
+     67|       expect(ctx).toBeInstanceOf(MockCtx);
+       |                   ^
+     68|       expect(ctx.state).toBe('suspended');
+     69|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > init() resumes a suspended context (browser autoplay policy)
+TypeError: Cannot read properties of undefined (reading 'state')
+ ❯ tests/unit/audio-system.test.ts:73:35
+     71|     it('init() resumes a suspended context (browser autoplay policy)',…
+     72|       const audio = new AudioSystem(AUDIO_CONFIG);
+     73|       expect(lastMockContext(audio).state).toBe('suspended');
+       |                                   ^
+     74|       await audio.init();
+     75|       expect(lastMockContext(audio).state).toBe('running');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > context init > init() is idempotent (a second call is a no-op, not a re-resume)
+TypeError: audio.init is not a function
+ ❯ tests/unit/audio-system.test.ts:80:19
+     78|     it('init() is idempotent (a second call is a no-op, not a re-resum…
+     79|       const audio = new AudioSystem(AUDIO_CONFIG);
+     80|       await audio.init();
+       |                   ^
+     81|       const ctx = lastMockContext(audio);
+     82|       const resumeSpy = vi.spyOn(ctx, 'resume');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > playSfx("jump") starts a new oscillator through the sfx gain
+TypeError: audio.playSfx is not a function
+ ❯ tests/unit/audio-system.test.ts:93:13
+     91|       const audio = new AudioSystem(AUDIO_CONFIG);
+     92|       const ctx = lastMockContext(audio);
+     93|       audio.playSfx('jump');
+       |             ^
+     94|       const sfxGain = ctx.nodes.gains[1]; // gains[0] = master
+     95|       const osc = ctx.nodes.oscillators[0];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > each playSfx call creates its own oscillator (no node reuse)
+TypeError: audio.playSfx is not a function
+ ❯ tests/unit/audio-system.test.ts:107:13
+    105|       const audio = new AudioSystem(AUDIO_CONFIG);
+    106|       const ctx = lastMockContext(audio);
+    107|       audio.playSfx('jump');
+       |             ^
+    108|       audio.playSfx('collide');
+    109|       audio.playSfx('powerup');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > SFX oscillators are scheduled to stop (envelopes, not run-away nodes)
+TypeError: audio.playSfx is not a function
+ ❯ tests/unit/audio-system.test.ts:116:13
+    114|       const audio = new AudioSystem(AUDIO_CONFIG);
+    115|       const ctx = lastMockContext(audio);
+    116|       audio.playSfx('jump');
+       |             ^
+    117|       const osc = ctx.nodes.oscillators[0];
+    118|       expect(osc.stopped).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > different SFX ids use distinct frequencies (audible variety)
+TypeError: audio.playSfx is not a function
+ ❯ tests/unit/audio-system.test.ts:125:13
+    123|       const audio = new AudioSystem(AUDIO_CONFIG);
+    124|       const ctx = lastMockContext(audio);
+    125|       audio.playSfx('jump');
+       |             ^
+    126|       audio.playSfx('collide');
+    127|       const jump = ctx.nodes.oscillators[0];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > synthesized SFX trigger > unknown SFX ids still play a valid placeholder tone (no throw)
+AssertionError: expected [Function] to not throw an error but 'TypeError: audio.playSfx is not a fun…' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"TypeError: audio.playSfx is not a function"
+
+ ❯ tests/unit/audio-system.test.ts:137:57
+    135|       const audio = new AudioSystem(AUDIO_CONFIG);
+    136|       const ctx = lastMockContext(audio);
+    137|       expect(() => audio.playSfx('not-a-real-sfx')).not.toThrow();
+       |                                                         ^
+    138|       expect(ctx.nodes.oscillators.length).toBe(1);
+    139|       expect(ctx.nodes.oscillators[0].started).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > startMusic() runs a looping buffer source through the music gain
+TypeError: audio.init is not a function
+ ❯ tests/unit/audio-system.test.ts:147:19
+    145|       const audio = new AudioSystem(AUDIO_CONFIG);
+    146|       const ctx = lastMockContext(audio);
+    147|       await audio.init();
+       |                   ^
+    148|       audio.startMusic();
+    149|       const src = ctx.nodes.bufferSources[0];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > the music buffer is synthesized, not loaded from a file
+TypeError: audio.init is not a function
+ ❯ tests/unit/audio-system.test.ts:163:19
+    161|       const audio = new AudioSystem(AUDIO_CONFIG);
+    162|       const ctx = lastMockContext(audio);
+    163|       await audio.init();
+       |                   ^
+    164|       audio.startMusic();
+    165|       // createBuffer was used (0 files on disk in W2).
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > startMusic() is idempotent (no duplicate sources on repeat)
+TypeError: audio.init is not a function
+ ❯ tests/unit/audio-system.test.ts:176:19
+    174|       const audio = new AudioSystem(AUDIO_CONFIG);
+    175|       const ctx = lastMockContext(audio);
+    176|       await audio.init();
+       |                   ^
+    177|       audio.startMusic();
+    178|       audio.startMusic();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > music loop (synthesized placeholder) > stopMusic() stops the looping source
+TypeError: audio.init is not a function
+ ❯ tests/unit/audio-system.test.ts:185:19
+    183|       const audio = new AudioSystem(AUDIO_CONFIG);
+    184|       const ctx = lastMockContext(audio);
+    185|       await audio.init();
+       |                   ^
+    186|       audio.startMusic();
+    187|       audio.stopMusic();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > constructor applies the config volumes to the gain chain
+TypeError: Cannot read properties of undefined (reading 'nodes')
+ ❯ tests/unit/audio-system.test.ts:200:26
+    198|       const audio = new AudioSystem(AUDIO_CONFIG);
+    199|       const ctx = lastMockContext(audio);
+    200|       const master = ctx.nodes.gains[0];
+       |                          ^
+    201|       const sfx = ctx.nodes.gains[1];
+    202|       const music = ctx.nodes.gains[2];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > setMasterVolume / setMusicVolume / setSfxVolume each update exactly their gain
+TypeError: audio.setMasterVolume is not a function
+ ❯ tests/unit/audio-system.test.ts:211:13
+    209|       const audio = new AudioSystem(AUDIO_CONFIG);
+    210|       const ctx = lastMockContext(audio);
+    211|       audio.setMasterVolume(0.5);
+       |             ^
+    212|       audio.setMusicVolume(0.25);
+    213|       audio.setSfxVolume(0.75);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > volume controls > volume setters clamp out-of-range values into [0, 1]
+TypeError: audio.setMasterVolume is not a function
+ ❯ tests/unit/audio-system.test.ts:223:13
+    221|       const audio = new AudioSystem(AUDIO_CONFIG);
+    222|       const ctx = lastMockContext(audio);
+    223|       audio.setMasterVolume(2.5);
+       |             ^
+    224|       audio.setMusicVolume(-1);
+    225|       audio.setSfxVolume(NaN);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > cleanup() closes the context and is idempotent
+TypeError: Cannot read properties of undefined (reading 'state')
+ ❯ tests/unit/audio-system.test.ts:238:18
+    236|       const ctx = lastMockContext(audio);
+    237|       audio.cleanup();
+    238|       expect(ctx.state).toBe('closed');
+       |                  ^
+    239|       // Second cleanup must not throw (Game.cleanup() runs on every s…
+    240|       expect(() => audio.cleanup()).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/17]⎯
+
+ FAIL  tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > AudioContext constructor failure -> degraded mode, no crash
+AssertionError: expected [Function] to not throw an error but 'TypeError: audio.playSfx is not a fun…' was thrown
+
+- Expected: 
+undefined
+
++ Received: 
+"TypeError: audio.playSfx is not a function"
+
+ ❯ tests/unit/audio-system.test.ts:255:47
+    253|       const audio = new AudioSystem(AUDIO_CONFIG);
+    254|       // ...and the whole lifecycle stays no-throw (load-failure path).
+    255|       expect(() => audio.playSfx('jump')).not.toThrow();
+       |                                               ^
+    256|       expect(() => audio.startMusic()).not.toThrow();
+    257|       expect(() => audio.stopMusic()).not.toThrow();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/17]⎯
+
+ Test Files  1 failed (1)
+      Tests  17 failed (17)
+   Start at  19:40:12
+   Duration  1.01s (transform 88ms, setup 46ms, collect 45ms, tests 11ms, environment 165ms, prepare 82ms)
+
