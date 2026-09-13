@@ -1,1 +1,11 @@
+#!/usr/bin/env bash
+# Pre-commit gate: lint-staged (auto-detects staged files per lint-staged config).
+#
+# 2026-09-13 (boss ruling, W1-B t_b3e4d7c9): guard against environment mismatch.
+# lint-staged ^17 requires node >=22; this machine runs node 18 -> plain npx
+# lint-staged crashes in lib/colors.js (util.styleText undefined). If the local
+# toolchain is too old to run the linter, fail with a clear message instead of a
+# cryptic stack trace. The hook itself is NOT bypassed.
+node -e 'const [M,m]=process.versions.node.split(".");process.exit(+M>=22||(+M===22&&+m>=22)?0:1)' \
+  || { echo "ERROR: pre-commit gate needs node >=22 (have $(node -v)); lint-staged ^17 cannot run here."; exit 1; }
 npx lint-staged

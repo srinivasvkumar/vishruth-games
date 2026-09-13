@@ -52,11 +52,15 @@
     ],
     "entry_list_after_removal": "empty",
     "hook_restoration": ".husky/pre-commit restored to plain form: npx lint-staged",
+    "closure_commit": "1eea7185f448f4b7e4e72792999a6ca9eed15029",
+    "hook_guard_amendment": ".husky/pre-commit additionally carries a node>=22 fail-fast guard (amended commit, W1-B closure run 2026-09-13); hook NOT bypassed",
     "artifacts_deleted": [
       ".husky/red-allowlist.txt",
       "scripts/red-gate-check.mjs"
     ],
-    "post_commit_gate": "standard full-suite + lint gate via lint-staged (no red-gate tolerance)"
+    "post_commit_gate": "standard full-suite + lint gate via lint-staged (no red-gate tolerance)",
+    "root_cause_correction": "Boss RCA (2026-09-13) attributed the WI-7 hook failure to node 18 vs lint-staged>=22. Verified refuted: the failing probe ran on node v22.22.2 (evidence file line 'Node.js v22.22.2'; machine node was upgraded since the RCA) and a fresh 10:19 probe on v22.22.2 fails identically. True root cause: geometry-dash/node_modules/bs-logger/package.json (tracked in git; 10,043 tracked files under geometry-dash/node_modules) carries a legacy 'lint-staged' key with an invalid 'linters' field that lint-staged 17 rejects during config discovery — independent of node version. See tests/evidence/d02/W1-TDD1.1-closure.txt CORRECTION section.",
+    "open_infra_defect": "geometry-dash/node_modules tracked in git (10,043 files) — breaks 'npx lint-staged' config discovery in any checkout; needs a separate untrack+gitignore task (out of W1-B scope per boss ruling)"
   },
   "completed_tasks": [
     {

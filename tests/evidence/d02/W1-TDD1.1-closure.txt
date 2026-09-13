@@ -79,3 +79,90 @@ $ npx vitest run tests/unit/mock-strategy.test.ts --config config/vite.config.ts
    Start at  09:55:08
    Duration  934ms (transform 61ms, setup 36ms, collect 36ms, tests 11ms, environment 161ms, prepare 69ms)
 
+
+=== WI-7: standalone npx lint-staged probe (2026-09-13 10:00 AEST) ===
+$ npx lint-staged
+
+✖ Failed to parse config from file "/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/geometry-dash/node_modules/bs-logger/package.json".
+
+✖ Validation Error:
+
+  Invalid value for 'linters': { '*.{ts,tsx}': [ 'tslint --fix', 'git add' ] }
+
+  Function task should contain `title` and `task` fields, where `title` should be a string and `task` should be a function.
+
+See https://github.com/lint-staged/lint-staged#configuration.
+✖ Failed to parse config from file "/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/geometry-dash/node_modules/bs-logger/package.json".
+
+Error: ✖ Validation Error:
+
+  Invalid value for 'linters': { '*.{ts,tsx}': [ 'tslint --fix', 'git add' ] }
+
+  Function task should contain `title` and `task` fields, where `title` should be a string and `task` should be a function.
+
+See https://github.com/lint-staged/lint-staged#configuration.
+file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/validateConfig.js:98
+    throw new Error(message)
+          ^
+
+Error: ✖ Validation Error:
+
+  Invalid value for 'linters': { '*.{ts,tsx}': [ 'tslint --fix', 'git add' ] }
+
+  Function task should contain `title` and `task` fields, where `title` should be a string and `task` should be a function.
+    at validateConfigLogic (file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/validateConfig.js:98:11)
+    at validateConfig (file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/validateConfig.js:116:12)
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/searchConfigs.js:167:38
+    at async Promise.all (index 213)
+    at async searchConfigs (file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/searchConfigs.js:159:3)
+    at async Promise.all (index 2)
+    at async runAll (file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/runAll.js:163:57)
+    at async lintStaged (file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/lib/index.js:94:17)
+    at async file:///home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_b3e4d7c9/node_modules/lint-staged/bin/lint-staged.js:53:16
+
+Node.js v22.22.2
+
+ROOT CAUSE (verified 2026-09-13, see correction below): the probe above ran on
+node v22.22.2 (this machine's active node — v18.19.1 is installed via nvm but no
+longer active). lint-staged 17.5.0's searchConfigs walks staged-file directories
+and discovers geometry-dash/node_modules/bs-logger/package.json, which is
+TRACKED IN GIT (10,043 files under geometry-dash/node_modules, see commit
+history — pre-existing infrastructure defect, out of scope for this task).
+That file's "lint-staged" key carries a legacy tslint-era "linters" field
+({ '*.{ts,tsx}': ['tslint --fix','git add'] }) that lint-staged 17 rejects as
+invalid config. The previous D0.2 gate did not hit this because it ran
+'npx vitest run' directly, not 'npx lint-staged'.
+
+ESCALATED at 2026-09-13 10:00: could not complete WI-7 commit under the plain
+hook without --no-verify. Boss ruling (10:14): substantive commit made as
+1eea718 (one-time --no-verify exception, consumed); hook given node>=22 guard.
+=============================================================
+CORRECTION (2026-09-13 10:20, verified): the boss RCA's "node 18 root cause"
+claim is refuted by this file's own contents — the failed probe ran on
+Node.js v22.22.2 (line "Node.js v22.22.2" above), and a fresh probe at
+10:19 AEST on v22.22.2 fails with the identical bs-logger 'linters' validation
+error (exit 1). bs-logger/package.json DOES contain the invalid "linters" field
+inside its "lint-staged" key (lines 62-69 of the tracked file). True root cause:
+tracked legacy node_modules breaking lint-staged config discovery, independent
+of node version. The node>=22 guard remains valid as defensive fail-fast.
+=============================================================
+
+=== FINAL VERIFICATION PASS (2026-09-13 10:19 AEST, node v22.22.2) ===
+$ CI=1 npm run test:run
+
+ Test Files  16 passed (16)
+      Tests  349 passed (349)
+   Start at  10:18:52
+   Duration  2.28s
+
+349/349 green, 0 failing — gate-closure suite stability confirmed at close time.
+
+=== D0.2 / W1 STATUS (recorded 2026-09-13) ===
+- D0.2 gate CLOSED: red-gate artifacts deleted, allowlist entries (hello-three,
+  mock-strategy) removed, plain lint-staged hook restored (commit 1eea718,
+  guard amendment in this commit).
+- W1-A (TDD-1.3 GREEN): DONE — commit c41f977, hello-three 7/7 green.
+- W1-B (TDD-1.1 closure): DONE — this evidence file + tracker record.
+- Open infra defect (out of scope here): geometry-dash/node_modules tracked in
+  git (10,043 files) — breaks 'npx lint-staged' config discovery in any
+  worktree/repo checkout; needs an untrack + gitignore task.
