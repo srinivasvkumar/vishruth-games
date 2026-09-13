@@ -4,10 +4,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
- * W2-E.1a — Smoke suite (Chrome) — 5 scenarios.
+ * W2-E.1a / W2-E.1b — Smoke suite — 5 scenarios, run per-browser.
  *
- * Satisfies Week-2 success criterion #1 (Chrome leg):
- *   "Game runs in Chrome — canvas renders, player moves."
+ * Satisfies Week-2 success criterion #1 (Chrome leg + Firefox leg):
+ *   "Game runs in Chrome (and Firefox at verification) — canvas renders,
+ *    player moves."
  *
  * Scenarios:
  *   1. Boot to a playable scene (menu → game)
@@ -17,12 +18,17 @@ import { fileURLToPath } from 'node:url';
  *   5. Game-over then restart returns to a clean playable state
  *
  * All scenarios are driven through the public `window.game` / DOM surface.
- * Evidence: tests/evidence/w2/w2-e1a-smoke-{1..5}-*.png + w2-e1a-smoke-console.txt
+ * Evidence: tests/evidence/w2/w2-e1a-smoke-{1..5}-*-{browser}.png +
+ * w2-e1a-smoke-console-{browser}.txt (BROWSER env: chrome | firefox).
  */
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const EVIDENCE_DIR = join(__dirname, '..', 'evidence', 'w2');
+const EVIDENCE_DIR = join(__dirname, '..', '..', 'evidence', 'w2');
 const APP_URL = 'http://localhost:5173/public/index.html';
+/* W2-E.1b: per-browser evidence suffix. Set BROWSER=firefox (or chromium)
+ * when running one project at a time so Chrome and Firefox artifacts
+ * never collide. Unset → chrome (the historical E.1a default). */
+const BROWSER = process.env.BROWSER ?? 'chrome';
 
 // ── Console capture helper ─────────────────────────────────────────────────
 
@@ -155,7 +161,7 @@ test('W2-E.1a scenario 1: boot to a playable scene', async ({ page }) => {
 
   // Screenshot
   mkdirSync(EVIDENCE_DIR, { recursive: true });
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-1-boot.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-1-boot-${BROWSER}.png`), fullPage: true });
 
   // Now enter the game scene
   await enterGameScene(page);
@@ -169,7 +175,7 @@ test('W2-E.1a scenario 1: boot to a playable scene', async ({ page }) => {
   });
   expect(hudVisible, 'Game HUD (score + health) must be visible after entering game scene').toBe(true);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-1-game.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-1-game-${BROWSER}.png`), fullPage: true });
 });
 
 // ── Scenario 2: Move with WASD ─────────────────────────────────────────────
@@ -229,7 +235,7 @@ test('W2-E.1a scenario 2: move with WASD', async ({ page }) => {
   ).toBeGreaterThan(0.1);
   expect(dz, 'Player must have moved in the negative z direction (W = forward)').toBeLessThan(0);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-2-wasd.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-2-wasd-${BROWSER}.png`), fullPage: true });
 });
 
 // ── Scenario 3: Jump ───────────────────────────────────────────────────────
@@ -265,7 +271,7 @@ test('W2-E.1a scenario 3: jump', async ({ page }) => {
     `Player must have landed back on the ground (y=${landed.y})`
   ).toBeLessThanOrEqual(0.1);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-3-jump.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-3-jump-${BROWSER}.png`), fullPage: true });
 });
 
 // ── Scenario 4: Score increments on collect ────────────────────────────────
@@ -295,7 +301,7 @@ test('W2-E.1a scenario 4: score increments on collect', async ({ page }) => {
     `Score must have incremented by 50 (start=${startScore}, after=${afterScore})`
   ).toBeGreaterThanOrEqual(startScore + 50);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-4-score.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-4-score-${BROWSER}.png`), fullPage: true });
 });
 
 // ── Scenario 5: Game-over then restart ─────────────────────────────────────
@@ -327,7 +333,7 @@ test('W2-E.1a scenario 5: game-over then restart returns to a clean playable sta
   });
   expect(gameOverVisible, 'Game-over overlay must be visible after player:death').toBe(true);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-5-gameover.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-5-gameover-${BROWSER}.png`), fullPage: true });
 
   // Restart: reload the page (same as clicking "PLAY AGAIN")
   await page.reload({ waitUntil: 'domcontentloaded' });
@@ -358,7 +364,7 @@ test('W2-E.1a scenario 5: game-over then restart returns to a clean playable sta
   });
   expect(running, 'Game must be running after restart').toBe(true);
 
-  await page.screenshot({ path: join(EVIDENCE_DIR, 'w2-e1a-smoke-5-restart.png'), fullPage: true });
+  await page.screenshot({ path: join(EVIDENCE_DIR, `w2-e1a-smoke-5-restart-${BROWSER}.png`), fullPage: true });
 });
 
 // ── Console capture for the full run ───────────────────────────────────────
@@ -378,5 +384,5 @@ test('W2-E.1a console capture: no fatal errors across a full boot→menu→game 
 
   mkdirSync(EVIDENCE_DIR, { recursive: true });
   const logLines = consoleEntries.map((e) => `[${e.type}] ${e.text}`);
-  writeFileSync(join(EVIDENCE_DIR, 'w2-e1a-smoke-console.txt'), logLines.join('\n') + '\n', 'utf-8');
+  writeFileSync(join(EVIDENCE_DIR, `w2-e1a-smoke-console-${BROWSER}.txt`), logLines.join('\n') + '\n', 'utf-8');
 });

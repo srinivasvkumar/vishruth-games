@@ -15,7 +15,10 @@ import { defineConfig, devices } from '@playwright/test';
  * (no-op on versions that don't need it).
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  /* W2-E.1b: the spec writes per-browser evidence. When the `browser` env is
+   * set (e.g. BROWSER=firefox), screenshots and console capture are suffixed
+   * with the browser name so Chrome and Firefox artifacts never collide. */
+  testDir: process.env.BROWSER ? './tests/e2e/smoke' : './tests/e2e',
   /* Evidence artifacts: screenshots/trace live under tests/evidence/w2/.
    * The HTML reporter lives in a sibling subdir so it never collides
    * with per-test artifact output. */
@@ -55,6 +58,20 @@ export default defineConfig({
             '--use-gl=angle',
             '--use-angle=swiftshader'
           ]
+        }
+      }
+    },
+    {
+      /* W2-E.1b: Firefox leg of Week-2 success criterion #1. Same
+       * headed, no-args posture as Chromium: Firefox's WebGL1/2 works
+       * out of the box with ANGLE/GPU on this box, and adding
+       * --enable-unsafe-webgl-style flags to Firefox would change
+       * what we're verifying. */
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        launchOptions: {
+          headless: false
         }
       }
     }
