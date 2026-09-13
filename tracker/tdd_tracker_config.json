@@ -23,13 +23,13 @@
   "current_status": {
     "phase": "Week 2: Gameplay Systems",
     "day": 4,
-    "current_task": "W2-E.2: FPS baseline @ 20 obstacles (D4 gate)",
-    "status": "W2-E.2-COMPLETE",
+    "current_task": "W2-E.3: End-of-Week-2 sign-off (quality gate)",
+    "status": "W2-E.3-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-13T18:51:00",
-    "last_updated": "2026-09-14T07:20:00",
-    "completion_date": "2026-09-14T07:20:00",
-    "completion_notes": "W2-E.2 complete (RED 8cc268c -> GREEN). D4 gate PASS: FPS baseline @ 20 obstacles = mean 60.0 / median 59.9 / min 59.5 FPS over 601 rAF frames (10016 ms sample, 3 s warm-up, in-page tick counting, real headed Chrome) with 20 static obstacles in the live scene graph + cannon-es world; p95 frame time 16.7 ms; gate >=30 cleared with 20 FPS headroom - NO W3 re-scope needed. Week-2 success criterion #7 satisfied. RED negative control (D4_MIN_FPS=61) failed in real Chrome as designed ('Expected: >= 61, Received: 60.002...'), proving the gate assertion discriminates on the measured number. Observations carried forward (out of scope): FPS_OBSTACLES=100 probe also 60.0 (rAF-capped display; frame-loop cadence not yet load-bottlenecked; 60-FPS/100-objects remains W4 target D4); game canvas renders BLACK in W2 e2e screenshots (per-scene detached renderer, src/scenes/Scene.ts:20 vs shared #game-canvas renderer) - rAF cadence still a valid frame-loop measurement, renderer/scene wiring is a W3-A candidate. Evidence: tests/evidence/w2/W2-E2-GREEN.txt + W2-E2-RED.txt + w2-e2-fps-20.log + w2-e2-fps-20.png. No src/ changes."
+    "last_updated": "2026-09-14T08:45:00",
+    "completion_date": "2026-09-14T08:45:00",
+    "completion_notes": "W2-E.3 complete: reviewer sign-off run (fresh verification, 2026-09-14 08:45, sign-off worktree .worktrees/t_bcf744c5-signoff @ wt/t_71338ca5). All 7 Week-2 success criteria verified against FRESH runs (not just implementer evidence): #1 Chrome+Firefox smoke (W2-E1b GREEN + W2-E3-smoke-chrome/firefox re-runs 5/5), #2 movement (W2-E1b scenario 2), #3 jump (scenario 3), #4 score persistence (fresh probe: player:score event -> HUD SCORE: 1234 -> player:death -> saveHighScore() -> localStorage['cluster-rush-high-score']=1234 -> survives full reload), #5 shield mechanic (fresh probe: addPowerUp('invincibility',5000) on live player -> isInvincible=true, damage(50) absorbed (health stays 100), expires after 5.3s; GAPS: no PowerUp collectible entity, no visual effect surface - carried to Task 7.3 Phase 1), #6 audio SFX (W2-E3 audio probe: jump/collide/click triggers fire in live AudioSystem), #7 FPS baseline @20 obstacles (W2-E2: mean 60.0 FPS, gate >=30 PASS). Fresh unit suite green with coverage (npm run test:run -- --coverage), lint + tsc clean, vite build exit 0, e2e battery green. Evidence: tests/evidence/w2/W2-E3-verify-probe.txt + w2-e3-localstorage.txt + w2-e3-shield.txt + w2-signoff.md (commit 6663023)."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",
@@ -39,19 +39,19 @@
     "updated_at": "2026-09-13T05:38:07Z",
     "scope": "W3/W4 plan-hardening",
     "changes": [
-      "W3 gate notes + execution order (W3-A\u2026C) + 6 success criteria",
-      "W4 gate notes + execution order (W4-A\u2026D) + 6 done criteria",
-      "HUD ownership (D2): HUD \u2192 UISystem, GameScene calls it",
+      "W3 gate notes + execution order (W3-A…C) + 6 success criteria",
+      "W4 gate notes + execution order (W4-A…D) + 6 done criteria",
+      "HUD ownership (D2): HUD → UISystem, GameScene calls it",
       "MenuScene/GameOverScene assigned to W3 Day 8 (Task 8.2)",
       "AssetLoader fix added to W2-A Task 4.3",
       "W2-C audio: synthesized/placeholder (no external files)",
       "W4 Day 12: full WCAG AA (boss decision)",
-      "W4 Day 13: coverage reframe to maintain \u226590%"
+      "W4 Day 13: coverage reframe to maintain ≥90%"
     ],
     "boss_decisions": {
       "accessibility_scope": "Full WCAG AA",
       "hud_location": "UISystem in systems/UI.ts",
-      "w3_w4_scheduling": "Sequential \u2014 pre-plan now, decompose when W2 passes",
+      "w3_w4_scheduling": "Sequential — pre-plan now, decompose when W2 passes",
       "assetloader": "Fix in W2-A; synthesized audio for W2-C"
     }
   },
@@ -83,7 +83,7 @@
       "scripts/red-gate-check.mjs"
     ],
     "post_commit_gate": "standard full-suite + lint gate via lint-staged (no red-gate tolerance)",
-    "root_cause_correction": "Boss RCA (2026-09-13) attributed the WI-7 hook failure to node 18 vs lint-staged>=22. Verified refuted: the failing probe ran on node v22.22.2 (evidence file line 'Node.js v22.22.2'; machine node was upgraded since the RCA) and a fresh 10:19 probe on v22.22.2 fails identically. True root cause: geometry-dash/node_modules/bs-logger/package.json (tracked in git; 10,043 tracked files under geometry-dash/node_modules) carries a legacy 'lint-staged' key with an invalid 'linters' field that lint-staged 17 rejects during config discovery \u2014 independent of node version. See tests/evidence/d02/W1-TDD1.1-closure.txt CORRECTION section.",
+    "root_cause_correction": "Boss RCA (2026-09-13) attributed the WI-7 hook failure to node 18 vs lint-staged>=22. Verified refuted: the failing probe ran on node v22.22.2 (evidence file line 'Node.js v22.22.2'; machine node was upgraded since the RCA) and a fresh 10:19 probe on v22.22.2 fails identically. True root cause: geometry-dash/node_modules/bs-logger/package.json (tracked in git; 10,043 tracked files under geometry-dash/node_modules) carries a legacy 'lint-staged' key with an invalid 'linters' field that lint-staged 17 rejects during config discovery — independent of node version. See tests/evidence/d02/W1-TDD1.1-closure.txt CORRECTION section.",
     "open_infra_defect": "RESOLVED at baa9459 (W1-INFRA, 2026-09-13): geometry-dash/node_modules untracked (git rm --cached, 10,043 files) + node_modules/ in .gitignore; tracked node_modules = 0; 355/355 green post-untrack. Evidence: tests/evidence/d02/W1-INFRA-untrack-node_modules.md."
   },
   "completed_tasks": [
@@ -156,5 +156,5 @@
       "Visual regression validation"
     ]
   },
-  "last_updated": "2026-09-13T23:30:00Z"
+  "last_updated": "2026-09-14T08:45:00"
 }

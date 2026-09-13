@@ -51,7 +51,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-10T21:22:00",
-              "notes": "Root cause of 9-file 'Failed to load url' collection failures fixed: all 7 resolve.alias entries in config/vite.config.ts pointed into config/ (its __dirname) instead of the repo root; now @ -> ../src etc. Nested clusterrush/** duplicate tree added to test.exclude (out-of-scope; verified not collected by root-anchored include: tests/evidence/d02/T1-nested-tree-check.txt). INVENTORY.md re-enumerated from disk (16 src files w/ roles, 13 test files w/ results, coverage gaps, nested-tree decision). T1 evidence run (tests/evidence/d02/T1-green.txt, 2026-09-10T20:48 AEST): 13/13 files collected, 0 collection errors, 267 tests = 173 pass / 90 fail / 4 skip (expected RED-phase failures; game.test.ts load failure = missing src/systems/{Audio,UI}.ts, pre-existing, out of scope \u2014 no src/ changes in T0.2.1). D0.2 pre-commit RED-allowlist gate per boss ruling option (b) + T1 pre-ruling (20:35 AEST): .husky/red-allowlist.txt + scripts/red-gate-check.mjs wired into .husky/pre-commit (replaces plain 'npx lint-staged' for D0.2). T1 allowlist = 2 PERMANENT (tests/unit/hello-three.test.ts \u2014 turns green at TDD-1.3; tests/unit/mock-strategy.test.ts \u2014 re-validated at TDD-1.1; both Week 1 day 1; header comments added to both files) + 8 TEMP-D0.2-T1 entries (constants, game-loop, game, obstacle, physics-system, player, retroactive-core, scene-manager \u2014 exactly the other files failing in the T1 evidence run; removal owner: T3/task 0.2.2; T3 commit must remove ALL TEMP entries; T4 asserts allowlist == exactly the 2 permanent files). Lint stage runs+reports but does not gate during D0.2 \u2014 pre-existing defect: ESLint 8.57.1 cannot load flat config/eslint.config.js via --config (flagged to orchestrator)."
+              "notes": "Root cause of 9-file 'Failed to load url' collection failures fixed: all 7 resolve.alias entries in config/vite.config.ts pointed into config/ (its __dirname) instead of the repo root; now @ -> ../src etc. Nested clusterrush/** duplicate tree added to test.exclude (out-of-scope; verified not collected by root-anchored include: tests/evidence/d02/T1-nested-tree-check.txt). INVENTORY.md re-enumerated from disk (16 src files w/ roles, 13 test files w/ results, coverage gaps, nested-tree decision). T1 evidence run (tests/evidence/d02/T1-green.txt, 2026-09-10T20:48 AEST): 13/13 files collected, 0 collection errors, 267 tests = 173 pass / 90 fail / 4 skip (expected RED-phase failures; game.test.ts load failure = missing src/systems/{Audio,UI}.ts, pre-existing, out of scope — no src/ changes in T0.2.1). D0.2 pre-commit RED-allowlist gate per boss ruling option (b) + T1 pre-ruling (20:35 AEST): .husky/red-allowlist.txt + scripts/red-gate-check.mjs wired into .husky/pre-commit (replaces plain 'npx lint-staged' for D0.2). T1 allowlist = 2 PERMANENT (tests/unit/hello-three.test.ts — turns green at TDD-1.3; tests/unit/mock-strategy.test.ts — re-validated at TDD-1.1; both Week 1 day 1; header comments added to both files) + 8 TEMP-D0.2-T1 entries (constants, game-loop, game, obstacle, physics-system, player, retroactive-core, scene-manager — exactly the other files failing in the T1 evidence run; removal owner: T3/task 0.2.2; T3 commit must remove ALL TEMP entries; T4 asserts allowlist == exactly the 2 permanent files). Lint stage runs+reports but does not gate during D0.2 — pre-existing defect: ESLint 8.57.1 cannot load flat config/eslint.config.js via --config (flagged to orchestrator)."
             },
             {
               "id": "0.2.2",
@@ -341,5 +341,30 @@
     "green": "Test passes with minimal implementation",
     "refactor": "Code cleaned, all tests still pass",
     "done": "Manual browser test confirms functionality"
+  },
+  "last_updated": "2026-09-14T08:45:00",
+  "w2_signoff": {
+    "date": "2026-09-14T08:45:00",
+    "criteria_verified": 7,
+    "fresh_runs": [
+      "unit suite + coverage (exit 0)",
+      "lint (exit 0)",
+      "tsc --noEmit (exit 0)",
+      "vite build (exit 0)",
+      "e2e battery (exit 0)",
+      "audio probe chrome+firefox (exit 0)",
+      "verify probe #4 localStorage + #5 shield lifecycle (exit 0, 2/2)"
+    ],
+    "gaps_carried_to_w3": [
+      "PowerUp collectible entity not implemented (shield = invincibility state effect only)",
+      "No visual power-up effect/HUD surface (game-powerups element absent)",
+      "Game canvas renders BLACK in e2e screenshots (per-scene detached renderer, src/scenes/Scene.ts:20) - W3-A candidate"
+    ],
+    "evidence": [
+      "tests/evidence/w2/W2-E3-verify-probe.txt",
+      "tests/evidence/w2/w2-e3-localstorage.txt",
+      "tests/evidence/w2/w2-e3-shield.txt",
+      "w2-signoff.md"
+    ]
   }
 }

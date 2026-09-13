@@ -1,0 +1,6 @@
+W2-E.3 probe #5 — shield (invincibility) lifecycle on the live player (fresh reviewer run)
+initial state: health=100 powerUps=[]
+after addPowerUp('invincibility',5000) + damage(50): health=100 (absorbed=true) isInvincible=true powerUps=[invincibility]
+HUD power-up indicator element: NOT PRESENT (no visual effect surface)
+after 5.3 s: isInvincible=false powerUps=[]
+verdict: mechanic (collect/absorb/expire) PASS; collectible entity + visual effect NOT implemented (see W2-signoff.md #5)

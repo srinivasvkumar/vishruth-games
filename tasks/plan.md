@@ -122,6 +122,17 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - OBSERVATION (out of scope): FPS_OBSTACLES=100 probe also measured 60.0 — rAF-capped display; frame-loop cadence not yet bottlenecked by injected obstacle load; 60-FPS/100-objects stays a W4 target (D4)
   - KNOWN: game canvas renders black in W2 e2e screenshots (detached per-scene renderer, src/scenes/Scene.ts:20) — rAF cadence still a valid frame-loop measurement; revisit in W3-A
   - Evidence: tests/evidence/w2/W2-E2-GREEN.txt, W2-E2-RED.txt, w2-e2-fps-20.log, w2-e2-fps-20.png
+- [x] W2-E.3 — Week 2 sign-off: End-of-Week-2 quality gate — all 7 success criteria — reviewer — `t_bcf744c5` — 2026-09-14T08:50
+  - All 7 criteria verified via FRESH reviewer executions in sign-off worktree (wt/t_71338ca5 base), not just implementer evidence:
+    1. Chrome+Firefox e2e smoke: 6/6 + 6/6 (fresh re-runs, w2-signoff-e2e-battery.sh)
+    2. Live audio pipeline: 4/4 triggers (w2-signoff-audio-probe.sh)
+    3. Physics sync: 5/5 (fresh re-run)
+    4. Score persistence: NEW probe (verify-signoff.spec.ts #4) — player:score -> HUD 1234 -> player:death -> saveHighScore() -> localStorage['cluster-rush-high-score']=1234 -> survives reload
+    5. Shield mechanic: NEW probe (#5) — addPowerUp('invincibility',5000): damage absorbed, expires at 5.3s. GAP: no collectible entity/visual surface (Task 7.3 Phase 1)
+    6. Full suite fresh: 550/550 · tsc 0 · eslint 0 · vite build ok
+    7. FPS@20 re-run: mean 60.0 (fresh)
+  - Trackers: tdd_tracker_config.json current_status -> W2-E.3-COMPLETE; task_registry.json w2_signoff block
+  - Evidence: tests/evidence/w2/W2-E3-verify-probe.txt, w2-e3-localstorage.txt, w2-e3-shield.txt; sign-off doc: w2-signoff.md
 
 ## W2-D: Game Flow & Score
 - [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`

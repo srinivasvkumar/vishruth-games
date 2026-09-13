@@ -1,0 +1,16 @@
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+
+Running 2 tests using 1 worker
+
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  1 [chromium-boot] › tests/e2e/verify-signoff.spec.ts:54:1 › W2-E.3 probe #4: score persists via LocalStorage (5.8s)
+[WebServer] Files in the public directory are served at the root path.
+[WebServer] Instead of /public/index.html, use /index.html.
+  ✓  2 [chromium-boot] › tests/e2e/verify-signoff.spec.ts:110:1 › W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live player (8.2s)
+
+  2 passed (15.2s)
+exit=0

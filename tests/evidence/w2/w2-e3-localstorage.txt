@@ -1,0 +1,6 @@
+W2-E.3 probe #4 — score persistence via LocalStorage (fresh reviewer run)
+hud after +1234 player:score: "SCORE: 1234"
+localStorage['cluster-rush-high-score'] after player:death -> saveHighScore(): 1234
+parsed high score: 1234
+localStorage value after full page reload: 1234
+verdict: PASS — value written by live app on game-over, survives reload

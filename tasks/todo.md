@@ -49,3 +49,4 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W2-E.1a — Smoke suite (Chrome): 5 scenarios, 6/6 e2e green in real headed Chrome — game-tester — `t_8ac76c86`
 - [x] W2-E.1b — Cross-browser (Firefox): 6/6 green in headed Firefox + Chrome re-pass; Week-2 criterion #1 both legs done — game-tester — `t_7844ca73`
 - [x] W2-E.2 — FPS baseline @ 20 obstacles (D4 gate): 60.0 mean FPS, gate >=30 PASS, no W3 re-scope; RED 8cc268c -> GREEN — game-tester — `t_71338ca5`
+- [x] W2-E.3 — Week 2 sign-off: 7/7 success criteria via fresh reviewer runs (smoke C+F, audio, physics-sync, FPS, score-persistence, shield, cross-browser); tracker + registry updated — reviewer — `t_bcf744c5`
