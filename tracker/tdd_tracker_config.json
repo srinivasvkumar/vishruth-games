@@ -23,13 +23,13 @@
   "current_status": {
     "phase": "Week 2: Gameplay Systems",
     "day": 4,
-    "current_task": "W2-A.1: Renderer attaches to existing canvas",
-    "status": "W2-A.1-COMPLETE",
+    "current_task": "W2-A.3: Minimal MenuScene + fix 'menu' transition",
+    "status": "W2-A.3-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-13T16:45:00",
-    "last_updated": "2026-09-13T17:05:00",
-    "completion_date": "2026-09-13T17:02:00",
-    "completion_notes": "W2-A.1 complete: RendererOptions.canvas + resizeToContainer() implemented. RED: 2 failed / 1 passed (tests/evidence/w2/W2-A1-RED.txt). GREEN: 3/3 passed (tests/evidence/w2/W2-A1-GREEN.txt). Full suite 390/390 green. Changes: src/core/Renderer.ts, tests/setup/mock-three.ts (additive), tests/unit/renderer.test.ts (3 new tests)."
+    "last_updated": "2026-09-13T18:45:00",
+    "completion_date": "2026-09-13T18:45:00",
+    "completion_notes": "W2-A.3 complete: minimal MenuScene + scene registration in initGame() + comprehensive three mock in test helper. RED: 3/3 W2-A.3 tests failed pre-change (no scene registered, window.game undefined in happy-dom without three mock). GREEN: 28/28 in scenes.test.ts; full suite 397/397; tsc clean; eslint clean on src/. Evidence: tests/evidence/w2/W2-A3-RED.txt, tests/evidence/w2/W2-A3-GREEN.txt. DECISION D2: minimal MenuScene with placeholder DOM only; full menu UI stays in W3 Task 8.2."
   },
   "plan_update": {
     "updated_at": "2026-09-13T05:38:07Z",
@@ -152,5 +152,5 @@
       "Visual regression validation"
     ]
   },
-  "last_updated": "2026-09-13T05:38:07Z"
+  "last_updated": "2026-09-13T18:45:00Z"
 }

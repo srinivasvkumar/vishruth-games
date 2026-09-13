@@ -28,6 +28,18 @@ const mockGame = {
 async function importIndex(): Promise<{ mod: Record<string, unknown>; Logger: any }> {
   vi.resetModules();
   // Per-import (non-hoisted) mocks so they don't leak to other test files.
+  // W2-A.3: index.ts now imports scene classes and registers them with the
+  // SceneManager. The mock Game must expose getSceneManager() so the
+  // registration calls don't throw.
+  await vi.doMock('@/scenes/BootScene', () => ({
+    BootScene: class { constructor(_game: any) {} },
+  }));
+  await vi.doMock('@/scenes/MenuScene', () => ({
+    MenuScene: class { constructor(_game: any) {} },
+  }));
+  await vi.doMock('@/scenes/GameScene', () => ({
+    GameScene: class { constructor(_game: any) {} },
+  }));
   await vi.doMock('@/core/Game', () => ({
     Game: class {
       readonly config: any;
@@ -45,6 +57,9 @@ async function importIndex(): Promise<{ mod: Record<string, unknown>; Logger: an
       stop(): void {}
       isGameRunning(): boolean {
         return true;
+      }
+      getSceneManager(): any {
+        return { registerScene: (_name: string, _scene: any) => {} };
       }
     },
   }));

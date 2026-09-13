@@ -94,3 +94,8 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - GREEN: 21/21 in game.test.ts; full suite 394/394; tsc clean; eslint clean on src/
   - Evidence: tests/evidence/w2/W2-A2-GREEN.txt
   - DECISION D1: minimal AssetLoader.load() manifest hook in boot path; W3 extends with scene-specific manifests
+- [x] W2-A.3 — Minimal MenuScene + fix 'menu' transition (boot path lands in valid registered active scene) — game-dev — `t_16b337f1` — 2026-09-13T18:45
+  - RED: 3/3 W2-A.3 tests failed pre-change (no scene registered, window.game undefined in happy-dom without three mock)
+  - GREEN: 28/28 in scenes.test.ts; full suite 397/397; tsc clean; eslint clean on src/
+  - Evidence: tests/evidence/w2/W2-A3-RED.txt, tests/evidence/w2/W2-A3-GREEN.txt
+  - DECISION D2: minimal MenuScene with placeholder DOM only; full menu UI stays in W3 Task 8.2

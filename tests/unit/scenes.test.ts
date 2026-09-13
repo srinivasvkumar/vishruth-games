@@ -16,6 +16,22 @@
  * fake timers. GameScene spawns 3 obstacles with random x/type — assertions
  * are written to be independent of that randomness (group counts, health
  * ranges).
+ *
+ * W2-A.3 (2026-09-13, task t_16b337f1) — the 'W2-A.3: boot path lands in
+ * a valid registered active menu scene (RED)' describe uses the REAL
+ * SceneManager + real scene classes (only 'three' and Logger are mocked,
+ * as everywhere in this file). RED today: initGame() registers no scenes
+ * at all, so Game.start() boots nothing and BootScene's
+ * switchScene('menu') transition has no registered target —
+ * SceneManager.loadScene('menu') throws 'Scene "menu" not found'.
+ *
+ * MenuScene is imported DYNAMICALLY (await import) inside the W2-A.3
+ * tests, not at module top level: during the RED phase the module does
+ * not exist yet, and a top-level import would fail COLLECTION of the
+ * whole file (including the existing 25 GREEN tests), which is not a
+ * valid RED state. The dynamic import is the RED surface for the
+ * MenuScene tests — it rejects with "Failed to resolve import" until the
+ * GREEN implementation lands.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as THREE from 'three';
@@ -24,6 +40,30 @@ import { BootScene } from '@/scenes/BootScene';
 import { GameScene } from '@/scenes/GameScene';
 import { GameConstants, GameEvents } from '@/utils/Constants';
 import { Logger } from '@/utils/Logger';
+import { Game } from '@/core/Game';
+import { SceneManager } from '@/core/SceneManager';
+import { InputSystem } from '@/systems/Input';
+import { PhysicsSystem } from '@/systems/Physics';
+import { AudioSystem } from '@/systems/Audio';
+import { UISystem } from '@/systems/UI';
+import type { GameConfig } from '@/types/GameTypes';
+
+/**
+ * W2-A.3 (RED phase, 2026-09-13, task t_16b337f1): the @/scenes/MenuScene
+ * module does not exist yet.
+ *
+ * RED design: these 3 tests assert the GREEN behavior (scenes registered by
+ * initGame, boot path landing in the active MenuScene, minimal MenuScene
+ * DOM). They intentionally fail today — that IS the RED evidence. The test
+ * file still collects and the 25 pre-existing GREEN tests still pass,
+ * because no import specifier for the not-yet-existing module appears in
+ * this file: `window.game` is read from the DOM global (set by src/index.ts
+ * at import time) and MenuScene is located via `Object.values(
+ * game.getSceneManager().getAllScenes())` — no import needed.
+ *
+ * GREEN implementation (next task, same branch) creates MenuScene.ts +
+ * wires initGame() registration; these tests then pass UNCHANGED.
+ */
 
 // --- Mocks ------------------------------------------------------------------
 const mockRendererRenderCalls: unknown[][] = [];
@@ -473,5 +513,283 @@ describe('GameScene', () => {
       expect(document.getElementById(id)).toBeNull();
     }
     expect(gs.isSceneLoaded()).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// W2-A.3 RED (2026-09-13, task t_16b337f1) — minimal MenuScene + boot path
+// lands in a valid, registered, active scene.
+//
+// SPEC (DECISION D2, boss-approved):
+//   1. initGame() registers BootScene + MenuScene (+ GameScene for the full
+//      W2 loop) with the SceneManager, 'boot' first (Game.start() boots the
+//      first registered scene — Game.ts:87-94).
+//   2. After start() + BootScene's 1000ms load delay + 500ms transition,
+//      SceneManager.getCurrentScene() is the MenuScene — registered AND
+//      active. No 'Scene "menu" not found' throw (RED today: no scene is
+//      registered at all, so start() boots nothing and the transition
+//      target 'menu' does not exist).
+//   3. MenuScene is minimal (DECISION D2 boundary): placeholder DOM
+//      content only — full menu UI (buttons, settings, high scores) stays
+//      in W3 (TDD_PLAN Task 8.2).
+//
+// Uses the REAL Game + REAL SceneManager + real scene classes. Only
+// 'three' (importOriginal + stubbed WebGLRenderer, as in this file) and
+// Logger are mocked. Game's subsystems are real: InputSystem's update() is
+// a no-op without registered listeners, PhysicsSystem.update() has no
+// bodies, AudioSystem/UI have no-ops — no mocks needed.
+//
+// MenuScene is imported dynamically (await import) inside each test, not
+// at module top level: during the RED phase the module does not exist
+// yet, and a top-level import would fail COLLECTION of the whole file
+// (including the existing 25 GREEN tests) — see the file-level header
+// comment for the rationale.
+//
+// The full boot chain is driven on fake timers:
+//   t=0        start() (called by initGame at import time) →
+//               loadScene('boot') (async, microtasks) → gameLoop
+//   t=1000     BootScene.load() resolves (its 1s simulation delay)
+//   t=1000+    enter() → first update() schedules the 500ms transition
+//   t=1500     setTimeout fires: exit() + switchScene('menu') → loadScene
+//   t=1500+    MenuScene.load() resolves → enter()
+//
+// RED today: test 1 fails (initGame registers no scenes — hasScene('boot')
+// is false); test 2 fails (no active scene — the SceneManager has nothing
+// to boot, so loadScene is never reached and getCurrentScene() is null);
+// test 3 fails (no 'menu' scene registered).
+// ---------------------------------------------------------------------------
+const w2a3Config: GameConfig = {
+  physics: {
+    gravity: -9.81,
+    worldScale: 1,
+    fixedTimeStep: 1 / 60,
+    maxSubSteps: 3
+  },
+  audio: {
+    masterVolume: 0.8,
+    musicVolume: 0.6,
+    sfxVolume: 0.7,
+    spatialAudio: false
+  },
+  ui: {
+    theme: 'dark',
+    fontSize: 14,
+    showFPS: false,
+    showDebug: false
+  },
+  debug: {
+    showColliders: false,
+    showStats: false,
+    logPhysics: false,
+    logPerformance: false
+  }
+};
+
+async function importFreshIndex(): Promise<void> {
+  vi.resetModules();
+  // Mock three before importing index.ts so the full chain
+  // (index → Game → Scene → THREE.WebGLRenderer) sees the mock.
+  // Without this, happy-dom cannot create a WebGL context and
+  // initGame() throws, leaving window.game undefined.
+  // The mock covers every THREE.js class used by the scene chain:
+  // WebGLRenderer, Scene, PerspectiveCamera, LoadingManager, Vector3,
+  // Group, Mesh, BoxGeometry, PlaneGeometry, MeshStandardMaterial,
+  // Color, AmbientLight, DirectionalLight, HemisphereLight.
+  await vi.doMock('three', async (importOriginal) => {
+    const orig = await importOriginal<typeof import('three')>();
+    class MockWebGLRenderer {
+      readonly domElement: HTMLCanvasElement;
+      clearColor = 0x000000;
+      clearCount = 0;
+      disposed = false;
+      private size = { width: 800, height: 600 };
+      constructor(_params?: Record<string, unknown>) {
+        this.domElement = document.createElement('canvas');
+      }
+      render(..._args: unknown[]): void {}
+      setSize(w: number, h: number): void { this.size = { width: w, height: h }; }
+      setPixelRatio(_r: number): void {}
+      setClearColor(c: number): void { this.clearColor = c; }
+      clear(): void { this.clearCount++; }
+      dispose(): void { this.disposed = true; }
+    }
+    class MockScene {
+      children: any[] = [];
+      background: unknown = null;
+      add(o: any): void { this.children.push(o); }
+      remove(o: any): void { const i = this.children.indexOf(o); if (i > -1) this.children.splice(i, 1); }
+    }
+    class MockPerspectiveCamera {
+      position = { x: 0, y: 0, z: 0, set: function (x: number, y: number, z: number) { this.x = x; this.y = y; this.z = z; }, clone: function () { return { ...this }; } };
+      lookAt(_x?: number, _y?: number, _z?: number): void {}
+      constructor(_fov?: number, _aspect?: number, _near?: number, _far?: number) {}
+    }
+    class MockLoadingManager {
+      onStart: (() => void) | null = null;
+      onProgress: ((url: string, loaded: number, total: number) => void) | null = null;
+      onLoad: (() => void) | null = null;
+      onError: ((url: string) => void) | null = null;
+      constructor() {}
+    }
+    class MockVector3 {
+      x = 0; y = 0; z = 0;
+      constructor(x = 0, y = 0, z = 0) { this.x = x; this.y = y; this.z = z; }
+      clone(): MockVector3 { return new MockVector3(this.x, this.y, this.z); }
+      add(v: MockVector3): this { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+      copy(v: MockVector3): this { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+      set(x: number, y: number, z: number): this { this.x = x; this.y = y; this.z = z; return this; }
+      multiplyScalar(s: number): this { this.x *= s; this.y *= s; this.z *= s; return this; }
+      distanceTo(v: MockVector3): number { return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }
+      normalize(): this { const l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); if (l > 0) { this.x /= l; this.y /= l; this.z /= l; } return this; }
+      clampLength(min: number, max: number): this { const l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); if (l < min && l > 0) { this.x = (this.x / l) * min; this.y = (this.y / l) * min; this.z = (this.z / l) * min; } else if (l > max && l > 0) { this.x = (this.x / l) * max; this.y = (this.y / l) * max; this.z = (this.z / l) * max; } return this; }
+    }
+    class MockGroup {
+      children: any[] = [];
+      position = new MockVector3();
+      rotation = { x: 0, y: 0, z: 0 };
+      scale = { x: 1, y: 1, z: 1 };
+      visible = true;
+      add(o: any): void { this.children.push(o); }
+    }
+    class MockMesh {
+      geometry: any; material: any;
+      position = new MockVector3();
+      rotation = { x: 0, y: 0, z: 0 };
+      visible = true;
+      constructor(geometry: any, material: any) { this.geometry = geometry; this.material = material; }
+    }
+    class MockBoxGeometry {
+      parameters: { width: number; height: number; depth: number };
+      constructor(width = 1, height = 1, depth = 1) { this.parameters = { width, height, depth }; }
+    }
+    class MockPlaneGeometry {
+      constructor(_w?: number, _h?: number) {}
+    }
+    class MockMeshStandardMaterial {
+      color: number;
+      constructor(params: { color?: number } = {}) { this.color = params.color ?? 0xffffff; }
+    }
+    class MockColor {
+      constructor(_r?: number) {}
+    }
+    class MockAmbientLight {
+      constructor(_color?: number, _intensity?: number) {}
+    }
+    class MockDirectionalLight {
+      position = new MockVector3();
+      constructor(_color?: number, _intensity?: number) {}
+    }
+    class MockHemisphereLight {
+      constructor(_sky?: number, _ground?: number, _intensity?: number) {}
+    }
+    return {
+      ...orig,
+      WebGLRenderer: MockWebGLRenderer,
+      Scene: MockScene,
+      PerspectiveCamera: MockPerspectiveCamera,
+      LoadingManager: MockLoadingManager,
+      Vector3: MockVector3,
+      Group: MockGroup,
+      Mesh: MockMesh,
+      BoxGeometry: MockBoxGeometry,
+      PlaneGeometry: MockPlaneGeometry,
+      MeshStandardMaterial: MockMeshStandardMaterial,
+      Color: MockColor,
+      AmbientLight: MockAmbientLight,
+      DirectionalLight: MockDirectionalLight,
+      HemisphereLight: MockHemisphereLight,
+    };
+  });
+  await vi.doMock('@/utils/Logger', () => ({
+    Logger: {
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+      setLevel: vi.fn()
+    }
+  }));
+  // Import the entry point last: its bootstrap() runs at import time and
+  // must see the doMocked Logger. (No Game mock — the REAL Game is the
+  // point of this test.)
+  await import('@/index.ts');
+}
+
+describe('W2-A.3: boot path lands in a valid registered active menu scene (RED)', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    delete (window as any).game;
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    document.body.innerHTML = '';
+    delete (window as any).game;
+    vi.restoreAllMocks();
+    vi.resetModules();
+  });
+
+  it('RED: initGame() registers boot + menu + game scenes (menu registered before boot)', async () => {
+    await importFreshIndex();
+    const game = (window as any).game as Game;
+    expect(game).toBeTruthy();
+    const sm = game.getSceneManager();
+    expect(sm.hasScene('boot')).toBe(true);
+    expect(sm.hasScene('menu')).toBe(true);
+    expect(sm.hasScene('game')).toBe(true);
+    // Registration order: 'boot' first — Game.start() boots the first
+    // registered scene (src/core/Game.ts:87-94).
+    expect(Array.from(sm.getAllScenes().keys())).toEqual(['boot', 'menu', 'game']);
+  });
+
+  it('RED: after start() + boot delay, the active scene is the registered, active MenuScene (no "Scene not found")', async () => {
+    await importFreshIndex();
+    const game = (window as any).game as Game;
+    expect(game).toBeTruthy();
+
+    // Drive the boot chain deterministically on fake timers (see spec
+    // comment above): 1000ms boot load + 500ms transition + margin.
+    // initGame() in src/index.ts already called start() at import time;
+    // advance past its boot delay.
+    await vi.advanceTimersByTimeAsync(1800);
+
+    const sm = game.getSceneManager();
+    const current = sm.getCurrentScene();
+    expect(sm.hasScene('menu')).toBe(true);
+    // The active scene's constructor must be MenuScene (named scene
+    // registry value — no MenuScene import needed; the instance's class
+    // name is what the GREEN implementation provides).
+    expect(current?.constructor.name).toBe('MenuScene');
+    expect(current!.isSceneActive()).toBe(true);
+    // The boot scene must have exited cleanly.
+    expect(Logger.error).not.toHaveBeenCalledWith(
+      'Failed to switch to menu scene',
+      expect.anything()
+    );
+  });
+
+  it('RED: MenuScene is minimal — a placeholder DOM element only, no throw on load/enter', async () => {
+    await importFreshIndex();
+    const game = (window as any).game as Game;
+    expect(game).toBeTruthy();
+    // Locate the registered menu scene instance via the SceneManager — no
+    // MenuScene import needed (the RED phase has no module to import).
+    const menu = game.getSceneManager().getAllScenes().get('menu') as any;
+    expect(menu).toBeTruthy();
+    expect(menu.constructor.name).toBe('MenuScene');
+    // Minimal scene (DECISION D2 boundary): placeholder DOM only, no throw
+    // on load/enter. (Full menu UI — buttons, settings, high scores — is
+    // W3 Task 8.2.)
+    expect(menu.isSceneLoaded()).toBe(false);
+    expect(menu.isSceneActive()).toBe(false);
+    await menu.load();
+    menu.enter();
+    expect(menu.isSceneLoaded()).toBe(true);
+    expect(menu.isSceneActive()).toBe(true);
+    menu.exit();
+    expect(menu.isSceneActive()).toBe(false);
+    menu.cleanup();
+    expect(menu.isSceneLoaded()).toBe(false);
   });
 });

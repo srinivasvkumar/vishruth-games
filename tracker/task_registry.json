@@ -188,6 +188,14 @@
               "notes": "Kanban t_f1aa3f33. RED: 4/4 W2-A.2 tests failed pre-change (no getRenderer, no boot path, no render call, no AssetLoader hook). GREEN: 21/21 in game.test.ts; full suite 394/394; tsc clean; eslint clean on src/. Changes: src/core/Game.ts (GameOptions renderer, shared Renderer on #game-canvas, AssetLoader.load('/assets/manifest/boot.json','json') in start(), boot first registered scene, sceneManager.render() in gameLoop, renderer.dispose() in cleanup, getRenderer()); tests/unit/game.test.ts (4 new W2-A.2 tests + reapplyMockShapes + vi.mock three/Scene/Renderer); tests/unit/retroactive-core.test.ts (TextureLoader + GLTFLoader mock gap fix). Evidence: tests/evidence/w2/W2-A2-GREEN.txt. DECISION D1: minimal AssetLoader.load() manifest hook in boot path; W3 extends with scene-specific manifests."
             },
             {
+              "id": "W2-A.3",
+              "description": "Minimal MenuScene + fix 'menu' transition (boot path lands in valid registered active scene)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T18:45:00",
+              "notes": "Kanban t_16b337f1. RED: 3/3 W2-A.3 tests failed pre-change (no scene registered, window.game undefined in happy-dom without three mock). GREEN: 28/28 in scenes.test.ts; full suite 397/397; tsc clean; eslint clean on src/. Changes: src/scenes/MenuScene.ts (new, minimal placeholder DOM per D2 boundary), src/index.ts (import BootScene/MenuScene/GameScene + register with SceneManager in initGame, 'boot' first), tests/unit/scenes.test.ts (3 new W2-A.3 tests with comprehensive three mock in importFreshIndex helper), tests/unit/index.test.ts (mock scene classes + getSceneManager on mock Game). Evidence: tests/evidence/w2/W2-A3-RED.txt, tests/evidence/w2/W2-A3-GREEN.txt. DECISION D2: minimal MenuScene with placeholder DOM only; full menu UI stays in W3 Task 8.2."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

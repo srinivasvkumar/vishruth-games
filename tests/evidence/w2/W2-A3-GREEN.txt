@@ -1,0 +1,14 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/scenes.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_16b337f1
+
+ ✓ tests/unit/scenes.test.ts  (28 tests) 107ms
+
+ Test Files  1 passed (1)
+      Tests  28 passed (28)
+   Start at  18:44:37
+   Duration  676ms (transform 135ms, setup 27ms, collect 109ms, tests 107ms, environment 112ms, prepare 39ms)
+

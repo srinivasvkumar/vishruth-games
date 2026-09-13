@@ -1,4 +1,7 @@
 import { Game } from '@/core/Game';
+import { BootScene } from '@/scenes/BootScene';
+import { MenuScene } from '@/scenes/MenuScene';
+import { GameScene } from '@/scenes/GameScene';
 import { GameConstants } from '@/utils/Constants';
 import { Logger } from '@/utils/Logger';
 import type { GameConfig } from '@/types/GameTypes';
@@ -52,6 +55,15 @@ function initGame(): void {
     
     // Store reference globally for debugging
     window.game = game;
+    
+    // W2-A.3: register scenes with the SceneManager so the boot path
+    // lands in a valid registered active scene. Registration order
+    // matters: Game.start() boots the first registered scene
+    // (src/core/Game.ts:87-94), so 'boot' must be first.
+    const sm = game.getSceneManager();
+    sm.registerScene('boot', new BootScene(game));
+    sm.registerScene('menu', new MenuScene(game));
+    sm.registerScene('game', new GameScene(game));
     
     // Start the game
     game.start();

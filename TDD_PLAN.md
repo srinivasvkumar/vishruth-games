@@ -298,6 +298,8 @@ To prevent context overload and compression:
 
 > **W2-A.2 progress (2026-09-13):** `Game` now owns a shared `Renderer` (created on `#game-canvas` when no renderer is injected), `start()` fires `AssetLoader.load('/assets/manifest/boot.json', 'json')` (DECISION D1 boot hook) and boots the first registered scene via `SceneManager.loadScene()`, `gameLoop()` calls `sceneManager.render()` at the end of every frame, `cleanup()` disposes the renderer. Evidence: `tests/evidence/w2/W2-A2-GREEN.txt`. Full suite 394/394, tsc clean, eslint clean on `src/`.
 
+> **W2-A.3 progress (2026-09-13, DECISION D2):** Minimal `MenuScene` added (placeholder DOM only — full menu UI stays in W3 Task 8.2). `initGame()` now registers `BootScene`, `MenuScene`, and `GameScene` with the `SceneManager` (`'boot'` first so `Game.start()` boots it). Boot path lands cleanly in the active `MenuScene` with no `'Scene not found'` throw. Evidence: `tests/evidence/w2/W2-A3-GREEN.txt`. Full suite 397/397, tsc clean, eslint clean on `src/`.
+
 ---
 
 ## WEEK 2: GAMEPLAY SYSTEMS
