@@ -1,38 +1,61 @@
 # W2-B.1 RED evidence (kanban t_f438f119, Task 6.2 — Body synchronization)
-# Captured 2026-09-13 19:35 AEST, HEAD baa2ec5 (after W2-A.4 fast-forward)
+# Captured 2026-09-13 19:45 AEST, after fast-forward to baa2ec5 (W2-A.4)
 #
-# RED state: the mesh is NOT synced today — src/systems/BodySync.ts does not
-# exist. New test file tests/unit/body-sync.test.ts (4 tests, mock-cannon +
-# real three mesh) asserts that after a physics step the mesh transform
-# equals the body transform. With no sync system the suite fails at
-# collection:
+# RED state: the visual meshes are NOT synchronized with the physics bodies
+# today. No BodySync system exists anywhere in src/ (verified: no import of
+# a sync system in src/core/Game.ts, src/systems/*, or entity files).
 #
+# Two test files assert the GREEN contract:
+#
+# 1. tests/unit/body-sync.test.ts (4 tests, mock-cannon + real three mesh):
+#    - copies body position + rotation onto the mesh after a physics step
+#    - re-syncs on EVERY sync() call, not just the first
+#    - leaves the mesh untouched for an unregistered body id
+#    - stops syncing after unregister()
+#    Plus rotation: body quaternion -> mesh quaternion.
+#
+# 2. tests/unit/game.test.ts (new "W2-B.1: frame-loop wiring" describe,
+#    3 tests, same mocking conventions as the pre-existing Game tests):
+#    - Game owns a BodySync built from its PhysicsSystem (getPhysicsSync())
+#    - gameLoop calls physicsSync.sync() EVERY frame, AFTER
+#      physicsSystem.update() and BEFORE sceneManager.update()
+#    - stop() cleans up the BodySync (no sync after stop)
+#
+# With no sync system, the suite fails at collection:
+#
+#   FAIL  tests/unit/body-sync.test.ts
 #   Error: Failed to resolve import "@/systems/BodySync" from
 #          "tests/unit/body-sync.test.ts". Does the file exist?
-#   Test Files  1 failed (1)  /  Tests  no tests
+#   FAIL  tests/unit/game.test.ts
+#   Error: Failed to resolve import "@/systems/BodySync" from
+#          "tests/unit/game.test.ts". Does the file exist?
+#   Test Files  2 failed (2)  /  Tests  no tests
 #
-# (Vite pre-bundles the test file at collection time, so the dynamic
-# import of the not-yet-existing module fails the whole suite — RED at
-# collection level rather than 4 individual test failures.)
+# (Vite pre-bundles each test file at collection time, so the import of the
+# not-yet-existing module fails the whole suite — RED at collection level
+# rather than per-test failures. Same class of RED as W2-A.1/W2-A.2,
+# recorded for the record in tests/evidence/w2/W2-A1-RED.txt.)
 #
-# Pre-change baseline (all green, 4 files, same run style):
+# Pre-change baseline (all green before this commit, same run style):
 #   ✓ tests/unit/physics-system.test.ts  (24 tests)
 #   ✓ tests/unit/obstacle.test.ts        (24 tests)
 #   ✓ tests/unit/player.test.ts          (45 tests)
 #   ✓ tests/unit/scenes.test.ts          (28 tests)
-#   Test Files  4 passed (4)  /  Tests  121 passed (121)
+#   ✓ tests/unit/game.test.ts            (21 tests, pre-W2-B.1-describe)
+#   Test Files  5 passed / 142 tests passed
 
---- raw vitest output: npm run test:run -- tests/unit/body-sync.test.ts ---
+--- raw vitest output: npm run test:run -- tests/unit/body-sync.test.ts tests/unit/game.test.ts ---
 
 > cluster-rush@0.1.0 test:run
-> vitest run --config config/vite.config.ts tests/unit/body-sync.test.ts
+> vitest run --config config/vite.config.ts tests/unit/body-sync.test.ts tests/unit/game.test.ts
 
 
  RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_f438f119
 
  ❯ tests/unit/body-sync.test.ts  (0 test)
+ ❯ tests/unit/game.test.ts  (0 test)
 
-⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
 
  FAIL  tests/unit/body-sync.test.ts [ tests/unit/body-sync.test.ts ]
 Error: Failed to resolve import "@/systems/BodySync" from "tests/unit/body-sync.test.ts". Does the file exist?
@@ -44,10 +67,27 @@ Error: Failed to resolve import "@/systems/BodySync" from "tests/unit/body-sync.
  ❯ PluginContainer.transform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
  ❯ loadAndTransform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
 
- Test Files  1 failed (1)
+ FAIL  tests/unit/game.test.ts [ tests/unit/game.test.ts ]
+Error: Failed to resolve import "@/systems/BodySync" from "tests/unit/game.test.ts". Does the file exist?
+ ❯ TransformPluginContext._formatError ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
+ ❯ TransformPluginContext.error ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
+ ❯ normalizeUrl ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
+ ❯ async file:/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
+ ❯ TransformPluginContext.transform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
+ ❯ PluginContainer.transform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
+ ❯ loadAndTransform ../../node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  2 failed (2)
       Tests  no tests
-   Start at  19:35:23
-   Duration  880ms (transform 49ms, setup 47ms, collect 0ms, tests 0ms, environment 178ms, prepare 56ms)
+   Start at  19:47:03
+   Duration  1.06s (transform 50ms, setup 80ms, collect 0ms, tests 0ms, environment 387ms, prepare 156ms)
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  121 passed (121)
+   Start at  19:47:01
+   Duration  1.54s (transform 633ms, setup 223ms, collect 796ms, tests 336ms, environment 1.17s, prepare 499ms)
 

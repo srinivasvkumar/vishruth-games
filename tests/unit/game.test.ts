@@ -5,6 +5,7 @@ import { InputSystem } from '@/systems/Input';
 import { PhysicsSystem } from '@/systems/Physics';
 import { AudioSystem } from '@/systems/Audio';
 import { UISystem } from '@/systems/UI';
+import { BodySync } from '@/systems/BodySync';
 import { Renderer } from '@/core/Renderer';
 import { AssetLoader } from '@/utils/AssetLoader';
 import type { GameConfig } from '@/types/GameTypes';
@@ -148,6 +149,21 @@ vi.mock('@/scenes/Scene', () => ({
   Scene: vi.fn().mockImplementation(mockSceneImpl)
 }));
 
+// W2-B.1: mock BodySync — Game owns an instance built from its PhysicsSystem;
+// the W2-B.1 describe below captures it via (BodySync as any).mock.instances
+// and asserts the frame loop calls sync() after the physics step.
+function bodySyncImpl(this: any, physics: any) {
+  this.physics = physics;
+  this.register = vi.fn();
+  this.sync = vi.fn();
+  this.unregister = vi.fn();
+  this.cleanup = vi.fn();
+}
+
+vi.mock('@/systems/BodySync', () => ({
+  BodySync: vi.fn().mockImplementation(bodySyncImpl)
+}));
+
 // W2-A.2: alias 'three' to the mock-three stub for this file. Without this
 // the real Scene.ts (imported by the real SceneManager) would run
 // `new THREE.WebGLRenderer()` against real three in happy-dom, which throws
@@ -188,6 +204,7 @@ function reapplyMockShapes() {
   (PhysicsSystem as any).mockImplementation(physicsImpl);
   (AudioSystem as any).mockImplementation(audioImpl);
   (UISystem as any).mockImplementation(uiImpl);
+  (BodySync as any).mockImplementation(bodySyncImpl);
   (AssetLoader.load as any).mockResolvedValue(undefined);
   (AssetLoader.preload as any).mockResolvedValue(undefined);
   (Scene as any).mockClear();
@@ -386,11 +403,7 @@ describe('Game Class - Retroactive Tests', () => {
 //   4. DECISION D1: a minimal AssetLoader.load() hook is wired into the
 //      boot path (W3 builds on it).
 //
-// RED today (pre-change) — all four fail:
-//   - no getRenderer() / no constructor renderer option → tests 1 and 4
-//     (the AssetLoader hook lives on the same boot path; asserted together).
-//   - start() never loads a scene → SceneManager.getCurrentScene() is null.
-//   - gameLoop() never calls sceneManager.render() → render spy count 0.
+// GREEN (2026-09-13, this commit) — all four pass.
 //
 // Notes:
 // 1. requestAnimationFrame is stubbed per-test to a no-op so the loop does
@@ -472,5 +485,120 @@ describe('W2-A.2: shared renderer + boot path (RED)', () => {
     game.start();
     await new Promise((r) => setTimeout(r, 0));
     expect(loadSpy).toHaveBeenCalled();
+  });
+});
+
+// ============================================================================
+// W2-B.1: frame-loop wiring (Task 6.2 "Synchronization happens every frame")
+// (kanban t_f438f119, 2026-09-13).
+//
+// Task 6.2 spec: cannon-es drives simulation, and synchronization of the
+// visual THREE meshes happens EVERY frame, AFTER the physics step.
+//
+// Design (decided at this task):
+//   - Game owns the BodySync (src/systems/BodySync.ts), constructed in the
+//     Game constructor from its PhysicsSystem — single source of truth.
+//   - Game.gameLoop calls physicsSync.sync() right after
+//     physicsSystem.update(deltaTime) and before sceneManager.update(), so
+//     meshes follow bodies within the same frame, before the scene renders.
+//   - Game.stop() cleans up the BodySync.
+//
+// RED (pre-change, evidence tests/evidence/w2/W2-B1-RED.txt): Game owned no
+// BodySync — the suite failed at collection (Failed to resolve import
+// "@/systems/BodySync"). GREEN (this commit): all 4 tests pass.
+//
+// Mock notes (same conventions as the pre-existing Game tests above):
+// - @/systems/BodySync is mocked (vi.mock factory above); this describe
+//   captures the most recently constructed instance via
+//   (BodySync as any).mock.instances and re-applies the implementation in
+//   its local beforeEach (mockReset: true wipes it per test).
+// - requestAnimationFrame is stubbed to a no-op so the loop does not
+//   recurse; a manual rAF callback drives the second frame.
+// ============================================================================
+describe('W2-B.1: frame-loop wiring — physics drives meshes every frame', () => {
+  let game: Game;
+  let mockRenderer: Record<string, any>;
+  let rafSpy: any;
+
+  function lastBodySync(): any {
+    const instances = (BodySync as any).mock.instances;
+    return instances[instances.length - 1];
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    reapplyMockShapes();
+    mockRenderer = {
+      dispose: vi.fn(),
+      domElement: document.createElement('canvas'),
+      setSize: vi.fn(),
+      setClearColor: vi.fn(),
+      clear: vi.fn(),
+      render: vi.fn(),
+      resize: vi.fn(),
+      resizeToContainer: vi.fn(),
+      getRenderer: vi.fn()
+    };
+    (Renderer as any).mockImplementation(() => mockRenderer);
+    rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 0);
+  });
+
+  afterEach(() => {
+    rafSpy.mockRestore();
+    if (game && game.isGameRunning()) {
+      game.stop();
+    }
+  });
+
+  it('Game owns a BodySync built from its PhysicsSystem', () => {
+    game = new Game(mockConfig, { renderer: mockRenderer });
+    const sync = game.getPhysicsSync();
+    expect(sync).toBeDefined();
+    expect(sync).toBeInstanceOf(BodySync);
+    expect((sync as any).physics).toBe(game.getPhysicsSystem());
+    expect(lastBodySync()).toBe(sync);
+  });
+
+  it('gameLoop calls physicsSync.sync() every frame, after the physics step', () => {
+    game = new Game(mockConfig, { renderer: mockRenderer });
+    const sync = lastBodySync();
+    const physicsUpdateSpy = vi.spyOn(game.getPhysicsSystem(), 'update');
+    const sceneUpdateSpy = vi.spyOn(game.getSceneManager(), 'update');
+
+    game.start(); // runs one synchronous gameLoop frame
+
+    expect(sync.sync).toHaveBeenCalledTimes(1);
+    // Order within the frame: physics step -> mesh sync -> scene update
+    const stepOrder = [
+      physicsUpdateSpy.mock.invocationCallOrder[0],
+      sync.sync.mock.invocationCallOrder[0],
+      sceneUpdateSpy.mock.invocationCallOrder[0]
+    ];
+    expect(stepOrder[0]).toBeLessThan(stepOrder[1]);
+    expect(stepOrder[1]).toBeLessThan(stepOrder[2]);
+
+    // Drive a second frame manually — sync must run again (every frame).
+    const frameCallback = rafSpy.mock.calls[0]?.[0];
+    if (typeof frameCallback === 'function') {
+      frameCallback(performance.now());
+    }
+    expect(sync.sync).toHaveBeenCalledTimes(2);
+  });
+
+  it('stop() cleans up the BodySync — no sync after stop', () => {
+    game = new Game(mockConfig, { renderer: mockRenderer });
+    const sync = lastBodySync();
+    game.start();
+    expect(sync.sync).toHaveBeenCalledTimes(1);
+
+    game.stop();
+
+    expect(sync.cleanup).toHaveBeenCalled();
+    const syncCountAfterStop = sync.sync.mock.calls.length;
+    const frameCallback = rafSpy.mock.calls[0]?.[0];
+    if (typeof frameCallback === 'function') {
+      frameCallback(performance.now()); // loop is stopped — no frame runs
+    }
+    expect(sync.sync.mock.calls.length).toBe(syncCountAfterStop);
   });
 });
