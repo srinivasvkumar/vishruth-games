@@ -204,6 +204,14 @@
               "notes": "Kanban t_9b7d154e. RED: #loading-message still showed 'Loading Three.js renderer...' after boot. GREEN: 1/1 e2e passed in 3.8s; full suite 397/397; build clean; lint 0 errors. Changes: playwright.config.ts (first e2e scaffold, real Chrome headed, vite webServer), tests/e2e/boot.smoke.spec.ts (asserts WebGL context, loading cleared, menu visible, no errors), BootScene.onExit() (clears static #loading-message), public/index.html (fix import.meta in non-module script), public/assets/manifest/boot.json (empty manifest for Game.start hook), package.json (pin @playwright/test 1.62.0). Evidence: tests/evidence/w2/w2-a4-boot-smoke.png (348KB), w2-a4-boot-smoke-errors.txt."
             },
             {
+              "id": "W2-B.1",
+              "description": "BodySync - body synchronization system + Game frame-loop wiring (Task 6.2)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T20:05:00",
+              "notes": "Kanban t_f438f119. RED: two suites failed at collection - Failed to resolve import @/systems/BodySync (new tests/unit/body-sync.test.ts 4 tests, mock-cannon + real three mesh: position/quaternion copy after a physics step, per-call re-sync, unregistered-id isolation, unregister stops; new W2-B.1 describe in tests/unit/game.test.ts 3 tests: Game owns BodySync from PhysicsSystem via getPhysicsSync, gameLoop calls sync() every frame after physics update and before scene update, stop() cleans up). GREEN: 7/7 W2-B.1 tests pass; full suite 404/404 (19 files); tsc clean; eslint 0 errors; build ok. Changes: src/systems/BodySync.ts (new), src/core/Game.ts (owns BodySync, physicsSync.sync() in gameLoop, cleanup on stop, getPhysicsSync()). Evidence: tests/evidence/w2/W2-B1-RED.txt. DECISION: Game owns the BodySync (single source of truth); entities keep owning their meshes; browser-level visual verification is a later W2-B sub-task."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",
@@ -241,8 +249,10 @@
             {
               "id": "TDD-5.2",
               "description": "Body synchronization",
-              "status": "pending",
-              "tdd_cycle": "green"
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T20:05:00",
+              "notes": "Kanban t_f438f119 (W2-B.1). RED: two suites failed at collection - Failed to resolve import @/systems/BodySync (new tests/unit/body-sync.test.ts 4 tests + new W2-B.1 describe in tests/unit/game.test.ts 3 tests). GREEN: 7/7 W2-B.1 tests pass; full suite 404/404 (19 files); tsc clean; eslint 0 errors; build ok. Changes: src/systems/BodySync.ts (new - register/sync/unregister/cleanup, copies body position+quaternion onto registered THREE meshes), src/core/Game.ts (owns BodySync built from PhysicsSystem; gameLoop calls physicsSync.sync() every frame after physicsSystem.update() and before sceneManager.update(); cleanup() on stop(); getPhysicsSync() getter). Evidence: tests/evidence/w2/W2-B1-RED.txt."
             },
             {
               "id": "TDD-5.3",

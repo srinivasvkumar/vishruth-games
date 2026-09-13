@@ -1,0 +1,67 @@
+# W2-B.1 GREEN evidence (kanban t_f438f119, Task 6.2 — Body synchronization)
+# Captured 2026-09-13 20:05 AEST
+#
+# GREEN: all 7 W2-B.1 tests pass:
+#   tests/unit/body-sync.test.ts        4/4 (mesh follows body position +
+#                                         quaternion; per-call re-sync;
+#                                         unregistered-id isolation;
+#                                         unregister stops syncing)
+#   tests/unit/game.test.ts W2-B.1      3/3 (Game owns BodySync; gameLoop
+#   describe "frame-loop wiring"         calls sync() every frame after the
+#                                         physics step and before the scene
+#                                         update; stop() cleans up)
+#
+# Full suite: 19 files, 404/404 tests passed.
+# tsc --noEmit: clean.  eslint (src config scripts): 0 errors.
+# vite build: ok.
+#
+# Changes in the GREEN commit:
+#   src/systems/BodySync.ts  (new) - register/sync/unregister/cleanup;
+#                                    sync() copies body.position and
+#                                    body.quaternion onto every registered
+#                                    THREE mesh.
+#   src/core/Game.ts         - Game owns the BodySync (built from its
+#                              PhysicsSystem in the constructor);
+#                              gameLoop() calls physicsSync.sync() every
+#                              frame right after physicsSystem.update() and
+#                              before sceneManager.update(); cleanup() runs
+#                              physicsSync.cleanup() on stop(); new
+#                              getPhysicsSync() getter.
+#
+# DECISION (recorded in task body + registry): Game owns the BodySync
+# (single source of truth). Entities keep owning their meshes and register
+# their mesh at construction time; synchronization is per-frame, not owned
+# by entities. Browser-level visual verification (mesh visibly following
+# the body in Chrome) is a later W2-B sub-task.
+
+--- full-suite output: npm run test:run ---
+ ✓ tests/unit/scene-manager.test.ts  (20 tests) 21ms
+ ✓ tests/unit/systems-stub.test.ts  (13 tests) 5ms
+ ✓ tests/unit/physics-system.test.ts  (24 tests) 21ms
+ ✓ tests/unit/game.test.ts  (24 tests) 39ms
+ ✓ tests/unit/input-system.test.ts  (26 tests) 25ms
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should have info method
+[INFO] Test message 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have warn method
+[WARN] Test warning 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have error method
+[ERROR] Test error 
+
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should accept message and optional data
+[INFO] Test message { key: 'value' }
+
+ ✓ tests/unit/retroactive-core.test.ts  (46 tests) 18ms
+ ✓ tests/unit/index.test.ts  (7 tests) 102ms
+ ✓ tests/unit/asset-loader.test.ts  (18 tests) 18ms
+ ✓ tests/unit/player.test.ts  (45 tests) 24ms
+ ✓ tests/unit/obstacle.test.ts  (24 tests) 8ms
+ ✓ tests/unit/body-sync.test.ts  (4 tests) 106ms
+ ✓ tests/unit/scenes.test.ts  (28 tests) 628ms
+
+ Test Files  19 passed (19)
+      Tests  404 passed (404)
+   Start at  20:05:57
+   Duration  2.05s (transform 2.39s, setup 1.07s, collect 4.11s, tests 1.07s, environment 6.18s, prepare 2.30s)
+

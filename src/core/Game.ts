@@ -3,6 +3,7 @@ import { InputSystem } from '@/systems/Input';
 import { PhysicsSystem } from '@/systems/Physics';
 import { AudioSystem } from '@/systems/Audio';
 import { UISystem } from '@/systems/UI';
+import { BodySync } from '@/systems/BodySync';
 import { Renderer } from '@/core/Renderer';
 import { AssetLoader } from '@/utils/AssetLoader';
 import { Logger } from '@/utils/Logger';
@@ -28,6 +29,7 @@ export class Game {
   private physicsSystem: PhysicsSystem; 
   private audioSystem: AudioSystem;
   private uiSystem: UISystem;
+  private physicsSync: BodySync;
   private renderer: Renderer;
   private isRunning = false;
   private lastTimestamp = 0;
@@ -36,6 +38,10 @@ export class Game {
     this.sceneManager = new SceneManager(this);
     this.inputSystem = new InputSystem();
     this.physicsSystem = new PhysicsSystem(config.physics);
+    // W2-B.1 (Task 6.2): Game owns the BodySync — the single system that
+    // keeps the visual THREE meshes in sync with the Cannon-es bodies.
+    // Built from the PhysicsSystem so it sees every registered body.
+    this.physicsSync = new BodySync(this.physicsSystem);
     this.audioSystem = new AudioSystem(config.audio);
     this.uiSystem = new UISystem(config.ui);
 
@@ -149,6 +155,10 @@ export class Game {
     // Update systems
     this.inputSystem.update();
     this.physicsSystem.update(deltaTime);
+    // W2-B.1 (Task 6.2): sync the visual meshes to the (just-stepped)
+    // physics bodies, every frame, BEFORE the scene updates — so meshes
+    // follow bodies within the same frame, before the scene renders.
+    this.physicsSync.sync();
     this.sceneManager.update(deltaTime);
     this.uiSystem.update(deltaTime);
 
@@ -167,6 +177,8 @@ export class Game {
   private cleanup(): void {
     this.sceneManager.cleanup();
     this.physicsSystem.cleanup();
+    // W2-B.1: release mesh registrations before the physics system.
+    this.physicsSync.cleanup();
     this.audioSystem.cleanup();
     this.uiSystem.cleanup();
     this.renderer.dispose();
@@ -185,6 +197,7 @@ export class Game {
   getSceneManager(): SceneManager { return this.sceneManager; }
   getInputSystem(): InputSystem { return this.inputSystem; }
   getPhysicsSystem(): PhysicsSystem { return this.physicsSystem; }
+  getPhysicsSync(): BodySync { return this.physicsSync; }
   getAudioSystem(): AudioSystem { return this.audioSystem; }
   getUISystem(): UISystem { return this.uiSystem; }
   getRenderer(): Renderer { return this.renderer; }

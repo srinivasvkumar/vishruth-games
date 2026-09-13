@@ -1,5 +1,5 @@
 /**
- * W2-B.1 — BodySync (Task 6.2: Body synchronization), RED phase
+ * W2-B.1 — BodySync (Task 6.2: Body synchronization)
  * (kanban t_f438f119, 2026-09-13).
  *
  * Design (decided at this task — orchestrator decomposition only; W2-B.1 is
@@ -17,25 +17,19 @@
  *   has stepped the world, BodySync.sync() copies body.position onto
  *   mesh.position and body.quaternion onto mesh.quaternion for every
  *   registered body. Player and Obstacle keep owning their mesh; the
- *   synchronization is per-frame. Wiring sync() into the frame loop
- *   (Game.gameLoop / GameScene) is the next W2-B task's scope — this task
- *   delivers the system + unit evidence that the mesh follows the body.
+ *   synchronization is per-frame. Wiring sync() into the frame loop lives
+ *   in Game.gameLoop (W2-B.1 GREEN commit: Game owns the BodySync, calls
+ *   physicsSync.sync() every frame right after the physics step, and
+ *   cleans it up on stop()).
  *
- * RED state (this commit): the module does not exist yet. Each test uses
- * `await import('@/systems/BodySync')` inside the test body — no top-level
- * import specifier — so this file still collects and the pre-existing
- * physics-system tests keep passing while these 4 tests fail on the missing
- * module. That is the RED evidence: after a physics step the mesh transform
- * does NOT equal the body transform because no sync system exists.
+ * RED state (tests/evidence/w2/W2-B1-RED.txt): this module did not exist;
+ * the test suites failed at collection with "Failed to resolve import
+ * @/systems/BodySync". GREEN: this file + the Game wiring make all 8
+ * W2-B.1 tests pass.
  *
- * (Observed 2026-09-13: vite pre-bundles the file at collection time, so a
- * dynamic import of a not-yet-existing module fails the WHOLE suite with
- * "Failed to resolve import" — still RED, just at collection level instead
- * of 4 test failures. Evidence: tests/evidence/w2/W2-B1-RED.txt.)
- *
- * Mesh strategy: real `three` under happy-dom (THREE.Group / Vector3 /
- * Quaternion are constructible without a WebGL context — same convention as
- * player.test.ts / obstacle.test.ts / scenes.test.ts).
+ * Mesh strategy in tests: real `three` under happy-dom (THREE.Group /
+ * Vector3 / Quaternion are constructible without a WebGL context — same
+ * convention as player.test.ts / obstacle.test.ts / scenes.test.ts).
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PhysicsSystem } from '@/systems/Physics';
