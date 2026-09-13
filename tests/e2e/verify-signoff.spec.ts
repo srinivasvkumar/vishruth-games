@@ -134,7 +134,7 @@ test('W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live pla
     const start = (window as unknown as { game?: Record<string, unknown> }).game;
     const ok = start ? walk(start, 0) : false;
     if (!ok || found === null) return { found: false, health: 0, powerUps: [] as string[] };
-    const st = found.getState();
+    const st = (found as unknown as { getState: () => { health: number; powerUps: string[]; isInvincible: boolean } }).getState();
     return { found: true, health: st.health, powerUps: st.powerUps };
   });
   expect(handle.found, 'live player instance discoverable via scene-graph walk').toBe(true);
@@ -159,7 +159,7 @@ test('W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live pla
     };
     const start = (window as unknown as { game?: Record<string, unknown> }).game;
     const ok = start ? walk(start, 0) : false;
-    if (ok && found !== null) found.addPowerUp('invincibility', 5000);
+    if (ok && found !== null) (found as unknown as { addPowerUp: (t: string, d: number) => void }).addPowerUp('invincibility', 5000);
   });
   await page.waitForTimeout(150);
 
@@ -182,8 +182,9 @@ test('W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live pla
     const start = (window as unknown as { game?: Record<string, unknown> }).game;
     const ok = start ? walk(start, 0) : false;
     if (!ok || found === null) return { health: -1, powerUps: [] as string[], isInvincible: false };
-    found.damage(50); // must be absorbed while invincible
-    const st = found.getState();
+    const p = found as unknown as { getState: () => { powerUps: string[]; isInvincible: boolean; health: number }; damage: (n: number) => void };
+    p.damage(50); // must be absorbed while invincible
+    const st = p.getState();
     return { health: st.health, powerUps: st.powerUps, isInvincible: st.isInvincible };
   });
   expect(during.powerUps.join(','), 'power-up list must contain the shield entry').toContain('invincibility');
@@ -217,7 +218,7 @@ test('W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live pla
     const start = (window as unknown as { game?: Record<string, unknown> }).game;
     const ok = start ? walk(start, 0) : false;
     if (!ok || found === null) return { powerUps: [] as string[], isInvincible: null as boolean | null };
-    const st = found.getState();
+    const st = (found as unknown as { getState: () => { powerUps: string[]; isInvincible: boolean } }).getState();
     return { powerUps: st.powerUps, isInvincible: st.isInvincible };
   });
   expect(after.isInvincible, 'invincibility must expire after the 5 s duration').toBe(false);

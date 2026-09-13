@@ -83,7 +83,7 @@ async function pauseAndResumeGame(
   const pauseResult = await page.evaluate(() => {
     const g = window as unknown as { game?: { pause?: () => void } };
     try {
-      g.game?.pause();
+      g.game?.pause?.();
       return { threw: false, msg: '' };
     } catch (e) {
       return { threw: true, msg: String(e) };
@@ -93,7 +93,7 @@ async function pauseAndResumeGame(
   const resumeResult = await page.evaluate(() => {
     const g = window as unknown as { game?: { resume?: () => void } };
     try {
-      g.game?.resume();
+      g.game?.resume?.();
       return { threw: false, msg: '' };
     } catch (e) {
       return { threw: true, msg: String(e) };
