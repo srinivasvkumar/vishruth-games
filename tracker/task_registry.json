@@ -269,6 +269,19 @@
               "tdd_cycle": "refactor"
             }
           ]
+        },
+        {
+          "day": 7,
+          "tasks": [
+            {
+              "id": "W2-D.1",
+              "description": "Score manager pure fns + LocalStorage (RED->GREEN)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-13T19:40:00",
+              "notes": "Kanban t_5bff9ff6. 41 pure-function + class + LocalStorage tests. RED: module @/systems/Score missing. GREEN: src/systems/Score.ts (computeScore, subtractScore, applyMultiplier, clampScore pure fns + ScoreManager class with injectable Storage). GameScene.ts HUD wired to ScoreManager (score display, game-over screen shows high score, saveHighScore on game over). 428/428 full suite passing. tsc 0 errors. Evidence: tests/evidence/w2/w2-d1-score-red-green.txt, w2-d1-full-suite.txt."
+            }
+          ]
         }
       ]
     }

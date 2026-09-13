@@ -87,6 +87,21 @@ export interface GameState {
 }
 
 /**
+ * Formal game lifecycle states (W2-D.2 / TDD_PLAN.md Task 7.2).
+ *
+ * The `GameStateMachine` in `src/core/State.ts` enforces these as the
+ * single source of truth for the run lifecycle, replacing the ad-hoc
+ * `isGameOver` / `isRunning` flags. See `src/core/State.ts` for the
+ * authoritative transition table.
+ */
+export type GameLifecycleState =
+  | 'menu'
+  | 'playing'
+  | 'paused'
+  | 'gameOver'
+  | 'restart';
+
+/**
  * Input state interface
  */
 export interface InputState {

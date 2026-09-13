@@ -6,6 +6,7 @@ import { Player } from '@/entities/Player';
 import { Obstacle } from '@/entities/Obstacle';
 import type { ObstacleType } from '@/entities/Obstacle';
 import type { Game } from '@/core/Game';
+import { ScoreManager } from '@/systems/Score';
 
 /**
  * Main gameplay scene
@@ -19,9 +20,11 @@ export class GameScene extends Scene {
   private scoreElement: HTMLElement | null = null;
   private healthElement: HTMLElement | null = null;
   private levelElement: HTMLElement | null = null;
+  private scoreManager: ScoreManager;
   
   constructor(game: Game) {
     super(game);
+    this.scoreManager = new ScoreManager();
     this.setupUI();
     Logger.info('Game scene created');
   }
@@ -254,7 +257,7 @@ export class GameScene extends Scene {
     
     if (obstacle.getType() === 'breakable') {
       obstacle.deactivate();
-      this.player.addScore(100);
+      this.scoreManager.addScore(100);
     }
     
     Logger.info('Collision detected', { 
@@ -326,7 +329,7 @@ export class GameScene extends Scene {
     const state = this.player.getState();
     
     if (this.scoreElement) {
-      this.scoreElement.textContent = `SCORE: ${state.score}`;
+      this.scoreElement.textContent = `SCORE: ${this.scoreManager.getScore()}`;
     }
     
     if (this.healthElement) {
@@ -354,7 +357,7 @@ export class GameScene extends Scene {
     window.addEventListener(GameEvents.PLAYER_SCORE, (e: Event) => {
       const points = (e as CustomEvent<{ points: number }>).detail?.points;
       if (this.player && typeof points === 'number') {
-        this.player.addScore(points);
+        this.scoreManager.addScore(points);
       }
     });
     
@@ -368,6 +371,10 @@ export class GameScene extends Scene {
    */
   private gameOver(): void {
     this.isGameOver = true;
+    
+    // Persist high score
+    this.scoreManager.saveHighScore();
+    const highScore = this.scoreManager.getHighScore();
     
     // Show game over screen
     const gameOverDiv = document.createElement('div');
@@ -388,28 +395,28 @@ export class GameScene extends Scene {
       z-index: 1000;
     `;
     
-    if (this.player) {
-      const state = this.player.getState();
-      gameOverDiv.innerHTML = `
-        <h1>GAME OVER</h1>
-        <p>Score: ${state.score}</p>
-        <p>Level: ${this.level}</p>
-        <button style="
-          background: #00ff00;
-          color: black;
-          border: none;
-          padding: 10px 20px;
-          font-size: 20px;
-          margin-top: 20px;
-          cursor: pointer;
-        " onclick="location.reload()">PLAY AGAIN</button>
-      `;
-    }
+    const finalScore = this.scoreManager.getScore();
+    gameOverDiv.innerHTML = `
+      <h1>GAME OVER</h1>
+      <p>Score: ${finalScore}</p>
+      <p>High Score: ${highScore}</p>
+      <p>Level: ${this.level}</p>
+      <button style="
+        background: #00ff00;
+        color: black;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        margin-top: 20px;
+        cursor: pointer;
+      " onclick="location.reload()">PLAY AGAIN</button>
+    `;
     
     document.body.appendChild(gameOverDiv);
     
     Logger.info('Game over', { 
-      score: this.player?.getState().score ?? 0,
+      score: finalScore,
+      highScore,
       level: this.level
     });
   }

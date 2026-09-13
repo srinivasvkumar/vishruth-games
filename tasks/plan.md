@@ -107,3 +107,10 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - RED: tests/e2e/physics-sync.spec.ts committed (49c21d5); two live-app RED failures in real Chrome (bare three import; cannon-es Body has no userData)
   - GREEN: 1/1 e2e passed in real headed Chrome; teleport proof (body->y=25, mesh follows within 1e-3); 30 frame-over-frame samples, 0 drift
   - Evidence: tests/evidence/w2/W2-B2-RED.txt, W2-B2-GREEN.txt, w2-b2-physics-sync.png + -2.png, w2-b2-physics-sync-trace.json, w2-b2-physics-sync.txt
+
+## W2-D: Game Flow & Score
+- [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`
+  - 41 new tests: pure functions (computeScore, subtractScore, applyMultiplier, clampScore)
+  - ScoreManager class with injectable Storage, overflow/underflow clamping
+  - GameScene HUD wired to ScoreManager (score display, game-over high score)
+  - 428/428 full suite · tsc 0 errors
