@@ -32,8 +32,24 @@
     "completion_notes": "W1 sign-off (W1-D, 7e23596): 387/387 green, coverage 93.38% (target 50%+), tsc 0, eslint 0, build ok, flake-free (20x scenes + 5x full-suite). Lanes: W1-A c41f977 (Renderer TDD-1.3 GREEN), W1-B 1eea718/77167de/7e970e6 (RED allowlist FULL closure), W1-C 76711d8 (gap-fill +719 lines), W1-S ca4e9a2 (stability), W1-INFRA baa9459 (node_modules untracked, gitignore). Known issues KI-1..KI-5 non-blocking, in tests/evidence/d02/W1-SIGNOFF-reviewer.txt. Next: Week 2 gameplay systems (70%+ target already met at 93.38%)."
   },
   "plan_update": {
-    "date": "2026-09-13",
-    "note": "TDD_PLAN.md enriched in-place after W1 retro: W2 gate notes + execution order (W2-A..E), new Task 4.3 DOM/boot wiring (gates all of W2), Task 6.2 browser-verification criterion, Task 7.3 phased power-ups (Shield first), W2 success criteria. Sidecar ENRICHED_TDD_PLAN.md removed — single source of truth is TDD_PLAN.md."
+    "updated_at": "2026-09-13T05:38:07Z",
+    "scope": "W3/W4 plan-hardening",
+    "changes": [
+      "W3 gate notes + execution order (W3-A\u2026C) + 6 success criteria",
+      "W4 gate notes + execution order (W4-A\u2026D) + 6 done criteria",
+      "HUD ownership (D2): HUD \u2192 UISystem, GameScene calls it",
+      "MenuScene/GameOverScene assigned to W3 Day 8 (Task 8.2)",
+      "AssetLoader fix added to W2-A Task 4.3",
+      "W2-C audio: synthesized/placeholder (no external files)",
+      "W4 Day 12: full WCAG AA (boss decision)",
+      "W4 Day 13: coverage reframe to maintain \u226590%"
+    ],
+    "boss_decisions": {
+      "accessibility_scope": "Full WCAG AA",
+      "hud_location": "UISystem in systems/UI.ts",
+      "w3_w4_scheduling": "Sequential \u2014 pre-plan now, decompose when W2 passes",
+      "assetloader": "Fix in W2-A; synthesized audio for W2-C"
+    }
   },
   "d02_gate_closure": {
     "task": "TDD-1.1 (W1-B)",
@@ -135,5 +151,6 @@
       "Input latency < 100ms verification",
       "Visual regression validation"
     ]
-  }
+  },
+  "last_updated": "2026-09-13T05:38:07Z"
 }

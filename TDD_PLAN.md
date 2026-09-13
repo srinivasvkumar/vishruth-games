@@ -280,16 +280,19 @@ To prevent context overload and compression:
 
 > **Status (2026-09-13): NOT DONE in W1.** Task 4.1/4.2 were marked "MOVED FROM WEEK 3" but never executed. `AssetLoader.ts` remains a stub. Carried into W2 as Task 4.3 (D1) alongside DOM integration.
 
-**Task 4.3: DOM / boot wiring (W2-A, added 2026-09-13 — GATES ALL OF WEEK 2)**
-- Context: `public/index.html` renders "Loading Three.js renderer..." forever because nothing calls the boot path — `initGame()` in `src/index.ts` is never connected to `#game-canvas`.
-- RED: Browser test asserting `#game-canvas` gets a WebGL context and `window.game` is set after page load (fails today: canvas count 1 but renderer never starts)
-- GREEN: Wire `initGame()` in `src/index.ts` to: (a) acquire `#game-canvas`, (b) create `Renderer` on it, (c) boot `BootScene` → `GameScene`, (d) start the game loop
+**Task 4.3: DOM / boot wiring + AssetLoader fix (W2-A, added 2026-09-13 — GATES ALL OF WEEK 2)**
+- Context: `public/index.html` renders "Loading Three.js renderer..." forever because nothing calls the boot path — `initGame()` in `src/index.ts` is never connected to `#game-canvas`. Additionally `src/utils/AssetLoader.ts` is broken (mangled/unterminated braces from a failed merge) and must be fixed so the boot path and all W3 asset work have a working loader.
+- RED: Browser test asserting `#game-canvas` gets a WebGL context and `window.game` is set after page load (fails today: canvas count 1 but renderer never starts); unit test asserting `AssetLoader` loads an asset without error
+- GREEN: 
+  1. Wire `initGame()` in `src/index.ts` to: (a) acquire `#game-canvas`, (b) create `Renderer` on it, (c) boot `BootScene` → `GameScene`, (d) start the game loop
+  2. **Rewrite `src/utils/AssetLoader.ts`** to a clean, tested loader (currently broken syntax). Provide a minimal fallback-geometry path so the game boots before real assets exist (W2-C uses synthesized/placeholder audio; no external audio files required yet).
 - VERIFY: Real Chrome (headed, not headless): canvas renders the scene, loading indicator clears, player mesh visible
 - Acceptance Criteria:
   - [ ] Game loads and runs in real Chrome
   - [ ] No `THREE`/CORS/console errors on load
   - [ ] Player mesh visible at spawn position
   - [ ] Loading indicator replaced by running game
+  - [ ] `AssetLoader.ts` compiles clean (`tsc` + `eslint` green) with unit tests
 
 ---
 
@@ -392,18 +395,18 @@ To prevent context overload and compression:
 
 ### Day 6.5: Audio System (MOVED FROM MISSING)
 
-**Task 6.5.1: Audio system creation**
+**Task 6.5.1: Audio system creation** *(W2-C; synthesized/placeholder audio — no external files)*
 - RED: Test audio system creation fails
-- GREEN: Implement audio loading, playing, mixing in `Audio.ts`
-- VERIFY: All sounds play correctly
+- GREEN: Implement audio loading, playing, mixing in `Audio.ts` (replace 26-line no-op stub). **W2 uses synthesized/placeholder audio** (WebAudio oscillator/NoiseNode) since `public/assets/sounds/` has 0 files — this proves the audio pipeline end-to-end without assets. Real asset-based audio comes in W3 once AssetLoader is fixed.
+- VERIFY: SFX trigger audible in real browser; volume controls respond
 - Acceptance Criteria:
   - [ ] AudioContext initialized
-  - [ ] Background music loops correctly
+  - [ ] Background music loops correctly (synthesized placeholder in W2)
   - [ ] Sound effects play on trigger
   - [ ] Volume controls work (master, music, SFX)
   - [ ] **Error Handling**: Audio load failure doesn't crash game
 
-**Task 6.5.2: Audio synchronization**
+**Task 6.5.2: Audio synchronization** *(W2-C)*
 - RED: Test audio syncs with game events
 - GREEN: Audio triggers from game logic
 - VERIFY: Jump sound plays on jump, collision sound on hit
@@ -450,27 +453,53 @@ To prevent context overload and compression:
 
 ## WEEK 3: UI, INTEGRATION & POLISH
 
+### W3 GATE NOTES (added 2026-09-13 after W1 retro; W3/W4 plan-hardening)
+
+**Pre-requisites (all must be true before W3 starts):**
+- W2 all 7 success criteria passed (see "Week 2 Success Criteria").
+- AssetLoader works (fixed in W2-A) — W3 asset work builds on it.
+
+**Critical lessons carried into W3:**
+1. **HUD ownership decision (D2 resolved):** HUD lives in `systems/UI.ts` as a clean system. `GameScene.ts` stops hand-rolling DOM score/health divs and instead calls `UISystem`. (Current state: `UI.ts` is a 32-line no-op stub; `GameScene.ts` creates `#game-score` / health divs inline.)
+2. **MenuScene / GameOverScene are still unassigned** — they live in "MISSING SYSTEMS" but have no week. **Assign both to W3 (Day 8)** as part of Task 8.2. No menu exists in `public/index.html` today (no buttons, no menu DOM).
+3. **Playwright is installed** (`@playwright/test ^1.40.0`, `test:e2e` script present) **but `tests/e2e/` is empty and there is no `playwright.config`**. Day 9 integration cannot run until W2-A boots the game in-browser. E2E scaffold is a Day 9 task, not an assumption.
+4. **Performance gate is conditional (D4):** the "60 FPS / 100+ obstacles" target on Day 10 is only committed if W2-E's 20-obstacle baseline was ≥30 FPS. If W2-E measured <30 FPS, W3 Day 10 re-scopes to "recover to 60 FPS at the W2-E obstacle count" before pushing to 100+.
+5. **AssetLoader was broken (mangled syntax) and `public/assets/{fonts,models,sounds,textures}` contain 0 audio files.** W2-A fixes the loader; W3 Day 8 adds real assets. W2-C uses **synthesized/placeholder audio** (no external files) so audio works end-to-end without assets.
+
+**W3 execution order (sprints; gates Day 9):**
+- **W3-A: UI system (Day 8, Tasks 8.1 + 8.2)** — build `UISystem` (HUD), `MenuScene.ts`, `GameOverScene.ts`; wire menu → game → game-over → restart in-browser.
+- **W3-B: Integration (Day 9)** — scaffold Playwright (`playwright.config.ts`, `tests/e2e/`), 4 critical-path E2E tests, visual-regression baseline.
+- **W3-C: Optimization & Polish (Day 10)** — performance (per D4), cross-browser (Chrome/Firefox; Safari/mobile best-effort), input latency.
+
+**W3 success criteria (all must pass before W4 starts):**
+1. HUD rendered by `UISystem` (no inline DOM in `GameScene.ts`).
+2. `MenuScene` + `GameOverScene` exist; full loop: Menu → Start → Play → GameOver → Restart works in-browser.
+3. Playwright scaffolded; 4 critical-path E2E tests pass in real Chrome.
+4. Visual-regression baseline captured.
+5. Performance target met per D4 (60 FPS @ committed obstacle count).
+6. Chrome + Firefox pass basic functionality.
+
 ### Day 8: HTML UI (DOM-based, No CORS!)
 
-**Task 8.1: DOM-based UI components**
+**Task 8.1: DOM-based UI components** *(W3-A; D2 — HUD moves here)*
 - RED: Test UI elements render and update
-- GREEN: HTML overlay system in `systems/UI.ts`
-- VERIFY: Score displays update in real browser
+- GREEN: Build `UISystem` in `systems/UI.ts` (replace 32-line no-op stub) to own the HUD (score, health, power-up indicators); `GameScene.ts` calls `UISystem` instead of creating `#game-score`/health divs inline
+- VERIFY: Score/health displays update in real browser, driven by `UISystem`
 - Acceptance Criteria:
-  - [ ] All UI elements render
-  - [ ] Score updates in real-time
+  - [ ] `UISystem` renders HUD (no inline DOM in `GameScene.ts`)
+  - [ ] Score/health update in real-time via `UISystem`
   - [ ] UI responsive to window resize
   - [ ] **Edge Case**: UI scales correctly on resize
 
-**Task 8.2: Menu navigation flow**
+**Task 8.2: Menu + GameOver scenes & navigation flow** *(W3-A; MenuScene/GameOverScene assigned here)*
 - RED: Test START button transitions scene
-- GREEN: Scene transition system with UI events
-- VERIFY: Click start → game starts
+- GREEN: Create `src/scenes/MenuScene.ts` + `src/scenes/GameOverScene.ts` (both currently in "MISSING SYSTEMS", unassigned); scene transition system with UI events; add menu DOM/buttons to `public/index.html` (none exist today)
+- VERIFY: Click start → game starts; game-over → restart works
 - Acceptance Criteria:
-  - [ ] Main menu displays correctly
-  - [ ] Start button works
-  - [ ] Settings accessible
-  - [ ] **Accessibility**: Keyboard navigation works
+  - [ ] `MenuScene.ts` + `GameOverScene.ts` implemented
+  - [ ] Main menu displays; Start button works; Settings accessible
+  - [ ] Full loop: Menu → Start → Play → GameOver → Restart in-browser
+  - [ ] **Accessibility (full WCAG AA, W4)**: keyboard navigation works
 
 ### Day 9: Integration Testing
 
@@ -512,6 +541,32 @@ To prevent context overload and compression:
 ---
 
 ## WEEK 4: REAL BROWSER TESTING & VALIDATION
+
+### W4 GATE NOTES (added 2026-09-13; W3/W4 plan-hardening)
+
+**Pre-requisites (all must be true before W4 starts):**
+- W3 all 6 success criteria passed (game fully playable: menu → play → game-over → restart, HUD in `UISystem`, Playwright E2E passing, perf target met).
+
+**Critical lessons carried into W4:**
+1. **Accessibility = FULL WCAG AA (boss decision 2026-09-13).** This is a large, open-ended lift on a canvas-based 3D game: keyboard-only navigation of all UI, visible focus indicators, ARIA labels, screen-reader announcements, WCAG AA color contrast. Day 12 is the biggest single chunk of W4 — budget accordingly and do NOT let it compress against Day 14 buffer.
+2. **Playwright is installed but `tests/e2e/` is empty and there is no `playwright.config`.** Day 11 Task 11.1 is therefore "configure + first real E2E run", not just "install". Visual-regression baselines (11.3) can only be captured once the game renders reliably in-browser (W3-B already produced a baseline; W4 refines it).
+3. **Cross-browser reality check:** Chrome + Firefox are the committed targets (per W3). Safari + mobile are best-effort — WebGL/audio behavior on Safari is a known risk; document, don't block, unless a blocker is found.
+4. **Coverage is already 93%** (W1). Day 13 Task 13.2 is "MAINTAIN ≥90% and push critical paths to 100%", not "reach 90%". Reframe acceptance criteria to match.
+5. **Day 14 is a true buffer + final validation**, not new feature work. If W3 slipped, Day 14 absorbs it; do not add scope here.
+
+**W4 execution order:**
+- **W4-A: E2E (Day 11)** — Playwright config, critical-path E2E, visual regression.
+- **W4-B: Accessibility & Edge Cases (Day 12)** — full WCAG AA + edge-case handling.
+- **W4-C: Docs & Handoff (Day 13)** — `TESTING.md`, coverage report, maintain ≥90%.
+- **W4-D: Final Validation & Buffer (Day 14)** — full regression, perf benchmark, cross-browser final pass.
+
+**W4 success criteria (project "done" gates):**
+1. Full game loop E2E passes in real Chrome + Firefox (menu → start → play → game-over → restart).
+2. Visual-regression baseline stable; regressions detected.
+3. WCAG AA met: keyboard nav, ARIA, screen-reader announcements, AA contrast on all UI.
+4. Edge cases (resize, tab blur/focus, low memory) handled without crash.
+5. `TESTING.md` complete; coverage ≥90% maintained, critical paths 100%.
+6. 60 FPS benchmark documented; no memory leak over 5 min; cross-browser pass.
 
 ### Day 11: Real Browser E2E Testing
 
@@ -963,3 +1018,4 @@ test('game starts from menu', async ({ page }) => {
 *This plan supersedes all previous versions. Strict TDD enforcement required for all development.*
 *Updated: Retroactive TDD strategy, 4-week timeline, real browser E2E testing emphasis.*
 *Updated 2026-09-13 (W1 retro): W2 gate notes + execution order (W2-A…E), Task 4.3 DOM/boot wiring (gates Week 2), Task 6.2 browser-verification criterion, Task 7.3 phased power-ups (D3), W2 success criteria.*
+*Updated 2026-09-13 (W3/W4 plan-hardening): W3 gate notes + execution order (W3-A…C) + 6 success criteria; W4 gate notes + execution order (W4-A…D) + 6 "done" criteria; HUD→UISystem (D2), MenuScene/GameOverScene→W3 Day 8, AssetLoader fix→W2-A Task 4.3, synthesized audio→W2-C, full WCAG AA→W4 Day 12, coverage reframe→maintain ≥90%.*
