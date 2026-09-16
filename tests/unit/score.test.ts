@@ -41,7 +41,9 @@ import {
   subtractScore,
   applyMultiplier,
   clampScore,
+  readStoredHighScore,
   ScoreManager,
+  HIGH_SCORE_KEY,
 } from '@/systems/Score';
 
 // ── Pure function tests ────────────────────────────────────────────────────
@@ -365,6 +367,102 @@ describe('ScoreManager LocalStorage persistence (W2-D.1)', () => {
       const manager = new ScoreManager();
       manager.reset();
       expect(manager.getHighScore()).toBe(0);
+    });
+  });
+});
+
+// ── W3-A.9: Canonical readStoredHighScore() — behavior-normalized DRY ─────
+
+describe('readStoredHighScore (W3-A.9 canonical helper)', () => {
+  /**
+   * W3-A.9: The canonical high-score read is a pure function exported from
+   * src/systems/Score.ts. It is the SUPERSET of the 3 previously
+   * divergent copies:
+   *
+   *   try/catch + clampScore + 0-floor
+   *
+   * Two deliberate bug fixes (behavior-normalized DRY):
+   *   Fix A (crash): try/catch — ScoreManager no longer throws when
+   *     storage is unavailable (privacy mode).
+   *   Fix B (cap): clampScore — menu/gameover display now caps at
+   *     MAX_SAFE_INTEGER, matching the in-game recorded score.
+   *
+   * '5.7' does NOT diverge: all 3 copies use Number.parseInt(raw, 10),
+   * so parseInt('5.7') === 5. The Math.floor in clampScore is a no-op
+   * on that input.
+   */
+
+  describe('Fix A: storage throws -> 0 (no crash)', () => {
+    it('returns 0 when storage.getItem throws (privacy mode)', () => {
+      const throwingStorage = {
+        getItem: () => {
+          throw new Error('localStorage is not available');
+        },
+      } as unknown as Storage;
+      // Should NOT throw — should return 0.
+      expect(readStoredHighScore(throwingStorage)).toBe(0);
+    });
+
+    it('ScoreManager constructor does not throw on storage-unavailable', () => {
+      const throwingStorage = {
+        getItem: () => {
+          throw new Error('localStorage is not available');
+        },
+        setItem: () => {},
+        removeItem: () => {},
+      } as unknown as Storage;
+      // Fix A: constructor calls loadHighScore() which now has try/catch.
+      const manager = new ScoreManager(throwingStorage);
+      expect(manager.getHighScore()).toBe(0);
+    });
+  });
+
+  describe('Fix B: overflow cap -> MAX_SAFE_INTEGER', () => {
+    it('clamps stored value above MAX_SAFE_INTEGER to MAX_SAFE_INTEGER', () => {
+      // 9007199254740993 > Number.MAX_SAFE_INTEGER (9007199254740991)
+      // parseInt gives a finite number; clampScore caps it.
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, '9007199254740993');
+      expect(readStoredHighScore(storage)).toBe(Number.MAX_SAFE_INTEGER);
+    });
+  });
+
+  describe('regression: parseInt no-op floor', () => {
+    it("'5.7' -> 5 (parseInt truncates; clampScore floor is no-op)", () => {
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, '5.7');
+      expect(readStoredHighScore(storage)).toBe(5);
+    });
+  });
+
+  describe('basic semantics (unchanged from all 3 prior copies)', () => {
+    it('absent -> 0', () => {
+      const storage = new InMemoryStorage();
+      expect(readStoredHighScore(storage)).toBe(0);
+    });
+
+    it("'500' -> 500", () => {
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, '500');
+      expect(readStoredHighScore(storage)).toBe(500);
+    });
+
+    it("'abc' -> 0", () => {
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, 'abc');
+      expect(readStoredHighScore(storage)).toBe(0);
+    });
+
+    it("'-5' -> 0", () => {
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, '-5');
+      expect(readStoredHighScore(storage)).toBe(0);
+    });
+
+    it("'0' -> 0", () => {
+      const storage = new InMemoryStorage();
+      storage.setItem(HIGH_SCORE_KEY, '0');
+      expect(readStoredHighScore(storage)).toBe(0);
     });
   });
 });

@@ -1,0 +1,63 @@
+W3-A.9 GREEN EVIDENCE
+======================
+Date: 2026-09-17
+Branch: wt/t_9d8237a9
+Base: main @ eb3cc82 + A7 (843a66e) + A8 (41c7cfd) merged
+
+TEST RESULTS
+============
+Command: npx vitest run --config config/vite.config.ts
+Result: 635 passed (635) — 28 test files, 0 failures
+
+New tests (9, in tests/unit/score.test.ts):
+  ✓ Fix A: storage-throws -> 0 (canonical helper)
+  ✓ Fix A: ScoreManager constructor does not throw on storage-unavailable
+  ✓ Fix B: '9007199254740993' -> MAX_SAFE_INTEGER (overflow cap)
+  ✓ Regression: '5.7' -> 5 (parseInt no-op floor)
+  ✓ Basic: absent -> 0
+  ✓ Basic: '500' -> 500
+  ✓ Basic: 'abc' -> 0
+  ✓ Basic: '-5' -> 0
+  ✓ Basic: '0' -> 0
+
+BEHAVIOR DELTAS (2 deliberate bug fixes)
+========================================
+Fix A (crash): ScoreManager.loadHighScore() now has try/catch via the
+  canonical readStoredHighScore() helper. Previously, new ScoreManager()
+  would THROW in storage-unavailable environments (privacy mode) because
+  this.storage.getItem() was bare in loadHighScore() and the constructor
+  (L79) called it unguarded. Now it returns 0.
+
+Fix B (cap): MenuScene and GameOverScene high-score displays now cap at
+  MAX_SAFE_INTEGER via clampScore in the canonical helper. Previously,
+  the 2 scene copies were UNCAPPED — a stored '99999999999999' would show
+  raw in menu/gameover but was capped in-game by ScoreManager. Now all 3
+  sites cap identically.
+
+NOTE on '5.7': All 3 prior copies used Number.parseInt(raw, 10), which
+truncates '5.7' to 5. The Math.floor in clampScore is a no-op on that
+input. No behavioral delta for this case.
+
+VERIFICATION
+============
+  ✓ tsc --noEmit: clean (1 pre-existing baseUrl deprecation warning,
+    present on main too — not introduced by this change)
+  ✓ eslint: 0 errors, 7 pre-existing warnings (Logger.ts no-console)
+  ✓ No private readStoredHighScore() left in MenuScene.ts or GameOverScene.ts
+  ✓ All 3 sites call the canonical helper:
+    - ScoreManager.loadHighScore() -> readStoredHighScore(this.storage)
+    - MenuScene.updateHighScoreDisplay() -> readStoredHighScore(window.localStorage)
+    - GameOverScene.updateHighScoreDisplay() -> readStoredHighScore(window.localStorage)
+    - GameOverScene.handleLevelStart() -> readStoredHighScore(window.localStorage)
+
+FILES CHANGED
+=============
+  src/systems/Score.ts       — added canonical readStoredHighScore(),
+                               loadHighScore() now delegates to it
+  src/scenes/MenuScene.ts    — deleted private readStoredHighScore(),
+                               import + call canonical helper
+  src/scenes/GameOverScene.ts — deleted private readStoredHighScore(),
+                                import + call canonical helper in 2 sites
+  tests/unit/score.test.ts   — 9 new TDD tests for canonical semantics
+
+VERDICT: GREEN — all tests pass, both bug fixes confirmed, no regressions.

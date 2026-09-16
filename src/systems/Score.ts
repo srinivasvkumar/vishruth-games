@@ -58,6 +58,36 @@ export function applyMultiplier(base: number, multiplier: number): number {
   return clampScore(base * multiplier);
 }
 
+/**
+ * W3-A.9: Canonical high-score read — behavior-normalized DRY.
+ *
+ * Superset of the 3 previously divergent copies:
+ *   1. ScoreManager.loadHighScore() — had clampScore, NO try/catch
+ *   2. MenuScene.readStoredHighScore() — had try/catch, NO clampScore
+ *   3. GameOverScene.readStoredHighScore() — had try/catch, NO clampScore
+ *
+ * Two deliberate bug fixes:
+ *   Fix A (crash): try/catch — returns 0 when storage is unavailable
+ *     (privacy mode), instead of throwing.
+ *   Fix B (cap): clampScore — caps at MAX_SAFE_INTEGER, so menu/gameover
+ *     display now matches the in-game recorded score (was uncapped).
+ *
+ * @param storage - Storage-like (injected for testability).
+ * @returns Parsed + clamped high score, or 0 for absent/corrupt/unavailable.
+ */
+export function readStoredHighScore(storage: Storage): number {
+  let raw: string | null;
+  try {
+    raw = storage.getItem(HIGH_SCORE_KEY);
+  } catch {
+    // LocalStorage unavailable (e.g. privacy mode) — treat as 0.
+    return 0;
+  }
+  if (raw === null) return 0;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) ? clampScore(parsed) : 0;
+}
+
 // ── ScoreManager ───────────────────────────────────────────────────────────
 
 /**
@@ -136,13 +166,13 @@ export class ScoreManager {
 
   /**
    * Read the high score from storage. Returns 0 if nothing is stored or
-   * the stored value is corrupt.
+   * the stored value is corrupt or storage is unavailable.
+   *
+   * W3-A.9: Delegates to the canonical `readStoredHighScore()` helper,
+   * which adds try/catch (Fix A) + clampScore (Fix B).
    */
   loadHighScore(): number {
-    const raw = this.storage.getItem(HIGH_SCORE_KEY);
-    if (raw === null) return 0;
-    const parsed = Number.parseInt(raw, 10);
-    return Number.isFinite(parsed) ? clampScore(parsed) : 0;
+    return readStoredHighScore(this.storage);
   }
 
   /**

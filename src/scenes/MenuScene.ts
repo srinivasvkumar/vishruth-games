@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Scene } from './Scene';
 import { Logger } from '@/utils/Logger';
-import { HIGH_SCORE_KEY } from '@/systems/Score';
+import { readStoredHighScore } from '@/systems/Score';
 import type { Game } from '@/core/Game';
 
 /**
@@ -252,9 +252,10 @@ export class MenuScene extends Scene {
   /**
    * W3A.3: read the stored high score from LocalStorage under the
    * canonical HIGH_SCORE_KEY (the same key ScoreManager persists) and
-   * reflect it in the HIGH SCORES panel. Mirrors ScoreManager
-   * loadHighScore() semantics: parse as base-10 int, floor at 0, 0 when
-   * nothing is stored or the value is corrupt.
+   * reflect it in the HIGH SCORES panel.
+   *
+   * W3-A.9: delegates to the canonical `readStoredHighScore()` helper
+   * (try/catch + clampScore + 0-floor) instead of the old private copy.
    */
   private updateHighScoreDisplay(): void {
     if (!this.highScorePanel) return;
@@ -262,24 +263,7 @@ export class MenuScene extends Scene {
       '#menu-high-score-value'
     );
     if (!valueEl) return;
-    valueEl.textContent = String(this.readStoredHighScore());
-  }
-
-  /**
-   * W3A.3: read + validate the stored high score. Returns 0 when the
-   * value is absent, non-numeric, or corrupt.
-   */
-  private readStoredHighScore(): number {
-    let raw: string | null = null;
-    try {
-      raw = window.localStorage.getItem(HIGH_SCORE_KEY);
-    } catch {
-      // LocalStorage unavailable (e.g. privacy mode) — treat as 0.
-      return 0;
-    }
-    if (raw === null) return 0;
-    const parsed = Number.parseInt(raw, 10);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+    valueEl.textContent = String(readStoredHighScore(window.localStorage));
   }
 
   /**

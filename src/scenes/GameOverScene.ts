@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Scene } from "./Scene";
 import { Logger } from "@/utils/Logger";
-import { HIGH_SCORE_KEY } from "@/systems/Score";
+import { readStoredHighScore } from "@/systems/Score";
 import { GameEvents } from "@/utils/Constants";
 import type { Game } from "@/core/Game";
 
@@ -239,30 +239,16 @@ export class GameOverScene extends Scene {
   /**
    * Read the stored high score from LocalStorage under the canonical
    * HIGH_SCORE_KEY (same key ScoreManager persists) and reflect it in
-   * the high-score display. Mirrors ScoreManager loadHighScore()
-   * semantics: parse as base-10 int, floor at 0, 0 when nothing stored
-   * or the value is corrupt.
+   * the high-score display.
+   *
+   * W3-A.9: delegates to the canonical `readStoredHighScore()` helper
+   * (try/catch + clampScore + 0-floor) instead of the old private copy.
    */
   private updateHighScoreDisplay(): void {
     if (!this.highScoreEl) return;
-    this.highScoreEl.textContent = String(this.readStoredHighScore());
-  }
-
-  /**
-   * Read + validate the stored high score. Returns 0 when the value is
-   * absent, non-numeric, or corrupt.
-   */
-  private readStoredHighScore(): number {
-    let raw: string | null = null;
-    try {
-      raw = window.localStorage.getItem(HIGH_SCORE_KEY);
-    } catch {
-      // LocalStorage unavailable (e.g. privacy mode) — treat as 0.
-      return 0;
-    }
-    if (raw === null) return 0;
-    const parsed = Number.parseInt(raw, 10);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+    this.highScoreEl.textContent = String(
+      readStoredHighScore(window.localStorage),
+    );
   }
 
   /**
@@ -383,7 +369,8 @@ export class GameOverScene extends Scene {
     }
 
     // High score: always from localStorage (source of truth).
-    const highScore = this.readStoredHighScore();
+    // W3-A.9: uses the canonical readStoredHighScore() helper.
+    const highScore = readStoredHighScore(window.localStorage);
 
     // Update the display.
     this.setFinalScore(score);
