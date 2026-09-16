@@ -1,0 +1,39 @@
+W3A.3 — RED Evidence (kanban t_d2e9e91c)
+==========================================
+Task: Full MenuScene UI (Start/Settings/HighScores buttons + keyboard nav)
+Date: 2026-09-16
+Test file: tests/unit/menu-scene-full.test.ts (NEW — RED surface)
+Source state: src/scenes/MenuScene.ts = PRE-FULL-MENU (BUG-W2-1a minimal
+  start path only: title + hint + START button + Enter/Space keydown)
+
+BASELINE (pre-test):
+  - npm run type-check (tsc --noEmit -p tsconfig.json): clean, exit 0
+  - npm run test:run (full unit suite): 557/557 passed (23 files)
+
+RED RUN: npm run test:run -- tests/unit/menu-scene-full.test.ts
+Result: Test Files 1 failed (1); Tests 6 failed | 4 passed (10)
+
+The 6 FAILING tests are the new full-menu surface (the RED surface):
+  1. renders a HIGH SCORES panel showing the stored high score
+       -> expected null to be truthy  (no #menu-high-score element exists)
+  2. HIGH SCORES panel shows 0 when no high score is stored
+       -> expected null to be truthy  (no #menu-high-score element exists)
+  3. refreshes the HIGH SCORES value when the menu is re-entered
+       -> TypeError: Cannot read properties of null (reading 'textContent')
+  4. renders a SETTINGS button that does not transition the scene
+       -> expected null to be truthy  (no #menu-settings-button element)
+  5. clicking SETTINGS shows a "coming in W3-C" toast (no crash)
+       -> TypeError: Cannot read properties of null (reading 'click')
+  6. START and SETTINGS buttons are keyboard-focusable in Tab order
+       -> TypeError: Cannot read properties of null (reading 'disabled')
+
+The 4 PASSING tests are regression guards that already hold against the
+current minimal menu (BUG-W2-1a behavior must be preserved):
+  - renders a visible START button (preserves BUG-W2-1a)  [PASS]
+  - clicking START transitions to the game scene          [PASS]
+  - pressing Enter still transitions to the game scene    [PASS]
+  - pressing Space still transitions to the game scene    [PASS]
+
+CONCLUSION: RED confirmed — the full menu UI (HIGH SCORES panel, SETTINGS
+button, toast, Tab navigation) does not yet exist; the existing start path
+(START button + Enter/Space) already works and must be kept.

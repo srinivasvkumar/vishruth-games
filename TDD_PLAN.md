@@ -505,10 +505,10 @@ To prevent context overload and compression:
 - GREEN: Create `src/scenes/MenuScene.ts` + `src/scenes/GameOverScene.ts` (both currently in "MISSING SYSTEMS", unassigned); scene transition system with UI events; add menu DOM/buttons to `public/index.html` (none exist today)
 - VERIFY: Click start → game starts; game-over → restart works
 - Acceptance Criteria:
-  - [ ] `MenuScene.ts` + `GameOverScene.ts` implemented
-  - [ ] Main menu displays; Start button works; Settings accessible
+  - [x] `MenuScene.ts` implemented (W3A.3, t_d2e9e91c) — MenuScene full UI done: title + START (click + Enter/Space, BUG-W2-1a preserved) + SETTINGS placeholder (non-functional, "coming in W3-C" toast) + HIGH SCORES panel (reads stored high score from LocalStorage/HIGH_SCORE_KEY) + keyboard focus/Tab nav. GameOverScene.ts still pending (separate W3-A card).
+  - [ ] Main menu displays; Start button works; Settings accessible (MenuScene portion done — Settings accessible as a placeholder; full settings UI deferred to W3-C)
   - [ ] Full loop: Menu → Start → Play → GameOver → Restart in-browser
-  - [ ] **Accessibility (full WCAG AA, W4)**: keyboard navigation works
+  - [ ] **Accessibility (full WCAG AA, W4)**: keyboard navigation works (basic Tab order + focus now present in MenuScene)
 
 ### Day 9: Integration Testing
 

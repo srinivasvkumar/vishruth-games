@@ -1,43 +1,53 @@
-# Progress — t_4298322b (BUG-W2-1a)
+# Progress — t_d2e9e91c (W3A.3: Full MenuScene UI)
 
 ## Completed
-- [x] Code reading: MenuScene, Scene, Game.switchScene, SceneManager,
-      BootScene pattern, index.ts registration, test conventions
-      (scenes.test.ts: mock three w/ importOriginal + stub WebGLRenderer,
-      mock Logger, lightweight Game mock).
-- [x] Baseline: 550/550 unit tests green, tsc clean.
-- [x] RED: tests/unit/menu-scene.test.ts written (7 tests).
-      6 failed + 1 passed (the "other keys no-op" regression guard
-      passes trivially with no listener — kept as a guard, not RED
-      surface).
-- [x] RED evidence: tests/evidence/w2/W2-W21a-RED.txt
-- [x] GREEN: src/scenes/MenuScene.ts — START button (#menu-start-button)
-      in setupMenuUI; window keydown (Enter/Space) attached in onEnter,
-      removed in onExit; startGame() single dispatch w/ started flag +
-      listener removal + button disable + .catch re-arm; onCleanup
-      detaches + clears DOM.
-- [x] Target file: 7/7 green.
-- [x] Full suite: 557/557 green (23 files).
+- [x] Code reading: MenuScene.ts (BUG-W2-1a minimal), Scene base, Score.ts
+      (HIGH_SCORE_KEY + ScoreManager.loadHighScore semantics),
+      tests/unit/menu-scene.test.ts (7-test regression convention).
+- [x] Baseline: 557/557 unit tests green (23 files), tsc clean.
+- [x] RED: tests/unit/menu-scene-full.test.ts written (10 tests).
+      6 failed (HIGH SCORES panel x3, SETTINGS button, SETTINGS toast,
+      Tab order) + 4 passed (START visible / click / Enter / Space
+      regression guards that already hold).
+- [x] RED evidence: tests/evidence/w3/W3A3-RED.txt
+- [x] GREEN: src/scenes/MenuScene.ts rewritten with full menu —
+      title + START (BUG-W2-1a preserved: started guard + keydown +
+      button) + SETTINGS placeholder (#menu-settings-button, toast
+      "Settings coming in W3-C", auto-dismiss 2.5s, timer cleared on
+      exit/cleanup) + HIGH SCORES panel (#menu-high-score /
+      #menu-high-score-value, reads HIGH_SCORE_KEY from localStorage,
+      refreshed on onEnter) + native Tab order (START before SETTINGS).
+- [x] Target file: 10/10 green.
+- [x] Regression (menu-scene.test.ts BUG-W2-1a): 7/7 green.
+- [x] Full suite: 567/567 green (24 files).
 - [x] tsc --noEmit: clean.
 - [x] eslint (npm run lint): 0 errors; 7 pre-existing warnings in
       src/utils/Logger.ts (out of scope).
-- [x] GREEN evidence: tests/evidence/w2/W2-W21a-GREEN.txt
-- [x] Tracker touch: TDD_PLAN.md BUG-W2-1 status -> 'decomposed + 1a
-      in flight' note added after W2-A.3 note (~line 301).
+- [x] GREEN evidence: tests/evidence/w3/W3A3-GREEN.txt
+- [x] Tracker touch: TDD_PLAN.md W3-A Task 8.2 -> 'MenuScene full UI
+      done' (MenuScene portion; GameOverScene still pending).
 
 ## Pending
-- [ ] Commit (pre-commit hook runs full suite + tracker-drift check;
-      evidence files staged => all 4 trackers must be in same commit:
-      tracker/task_registry.json, tracker/tdd_tracker_config.json,
-      tasks/plan.md, tasks/todo.md).
-- [ ] kanban_complete with summary + metadata (+ artifacts: evidence files).
+- [ ] Commit (pre-commit hook runs lint-staged: test:run + lint).
+- [ ] kanban_complete with summary + metadata (+ evidence artifacts).
 
 ## Decisions (final)
-- Listener on window (not document) — matches "keydown listener" phrasing
-  and is focus-independent.
-- started flag = in-flight + settled guard: set on dispatch, cleared only
-  on rejection. onExit always detaches listener; onEnter re-arms when
-  !started.
-- Rejection path re-arms listener + button (menu stays reachable if
-  'game' scene missing / load fails; SceneManager falls back to menu).
-- menuContainer became optional (?) type; onCleanup sets undefined.
+- START stays the FIRST button with id #menu-start-button (keeps the 7
+  existing BUG-W2-1a tests passing). SETTINGS is second.
+- HIGH SCORES read via the canonical HIGH_SCORE_KEY constant + a direct
+  window.localStorage read mirroring ScoreManager.loadHighScore()
+  (parseInt base-10, >0 else 0). NOT instantiating a ScoreManager
+  (avoids its saveHighScore/reset side effects in a menu context).
+- Refreshed on every onEnter so a record set in a prior game session is
+  shown on re-entry (matches the "menu displays the stored high score"
+  contract).
+- SETTINGS toast: non-destructive, no scene switch; auto-dismiss 2.5s
+  with a guarded timer cleared in onExit/onCleanup.
+- Double-start guard (BUG-W2-1a) also covers focused-button Enter/Space:
+  only the first dispatch reaches switchScene.
+
+## Errors log
+| # | Error | Fix |
+|---|-------|-----|
+| 1 | LSP: settingsButton declared-but-never-read | Used it in showSettingsToast (re-enable belt-and-braces). |
+| 2 | RED test artifact: HIGH SCORE "42" set after boot -> showed 0 | Rewrote test to set value BEFORE boot (matches onEnter read contract). Made test async. |
