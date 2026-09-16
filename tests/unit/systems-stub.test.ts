@@ -137,12 +137,17 @@ describe('UISystem stub (W1-C gap-fill)', () => {
     expect(() => ui.cleanup()).not.toThrow();
   });
 
-  it('exposes exactly the documented stub surface (update + cleanup)', () => {
+  it('keeps the documented Game.ts surface (constructor + update + cleanup)', () => {
     const ui = new UISystem(UI_CONFIG);
-    // The stub class declares only `update` and `cleanup` as instance
-    // methods. No Week-1 surface (showScore, renderMenu, ...) may exist yet.
+    // W3A.1 (Task 8.1): UISystem is no longer the 32-line no-op stub — it now
+    // owns the HUD (setScore/setHealth/setLevel/setPowerUpIndicator). The
+    // Game.ts call shape this test guards (constructor + update + cleanup,
+    // src/core/Game.ts:55, loop, teardown) must survive: assert those three
+    // are present, not an exact match (which would forbid the new surface).
     const protoNames = Object.getOwnPropertyNames(Object.getPrototypeOf(ui)).sort();
-    expect(protoNames).toEqual(['cleanup', 'constructor', 'update']);
+    expect(protoNames).toEqual(
+      expect.arrayContaining(['cleanup', 'constructor', 'update'])
+    );
   });
 
   it('is constructible via the src/core/Game.ts call shape', () => {

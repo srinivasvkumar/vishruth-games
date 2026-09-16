@@ -1,0 +1,46 @@
+W3A.1 RED EVIDENCE — UISystem core (Task 8.1, kanban t_16f7e67d)
+Captured: 2026-09-16 ~21:24 UTC — branch wt/t_16f7e67d (HEAD 1883c09)
+Command: npm run test:run tests/unit/ui-system.test.ts
+(= vitest run --config config/vite.config.ts tests/unit/ui-system.test.ts)
+
+SUMMARY
+  Test Files  1 failed (1)
+       Tests  14 failed | 2 passed (16)
+
+Baseline before RED: full unit suite 557/557 green, tsc --noEmit clean,
+npm run lint clean (0 errors, 7 pre-existing warnings).
+
+The 2 passing tests are the pure call-shape checks the 32-line no-op stub
+already satisfies (update(0.016) callable/no-throw, setPowerUpIndicator
+absent but the test only requires set* to exist -> actually these two are:
+"keeps the documented Game.ts surface" + "cleanup() is idempotent").
+All 14 behavioral tests fail against the stub:
+
+  FAIL  HUD creation > creates #game-score / #game-health / #game-level divs attached to body
+        -> expected null to be a DIV: stub creates no DOM at all
+  FAIL  HUD creation > HUD starts hidden (display:none) until the game sets values
+        -> document.getElementById('game-score') is null
+  FAIL  HUD creation > matches the GameScene layout (top-left/top-right/below, 24px/18px monospace)
+        -> no elements to inspect
+  FAIL  HUD creation > shows the HUD (display:block) once values are set
+        -> ui.setScore is not a function
+  FAIL  setScore/Health/Level > setScore(n) updates #game-score textContent to "SCORE: n"
+        -> TypeError: ui.setScore is not a function
+  FAIL  setScore/Health/Level > setHealth(h) updates #game-health textContent to "HEALTH: h"
+        -> TypeError: ui.setHealth is not a function
+  FAIL  setScore/Health/Level > setLevel(l) updates #game-level textContent to "LEVEL: l"
+        -> TypeError: ui.setLevel is not a function
+  FAIL  setScore/Health/Level > setters are callable any number of times (per-frame HUD refresh)
+        -> TypeError: ui.setScore is not a function
+  FAIL  public surface > exposes setScore, setHealth, setLevel, setPowerUpIndicator
+        -> method setScore missing (proto surface = ['cleanup','constructor','update'])
+  FAIL  window resize > registers a window resize handler (repositions HUD on resize)
+        -> expected 0 to be greater than or equal to 1
+  FAIL  window resize > resize event leaves the HUD divs attached and correctly positioned
+        -> TypeError: ui.setScore is not a function
+  FAIL  cleanup > cleanup() removes the HUD divs from the DOM
+        -> TypeError: ui.setScore is not a function
+  FAIL  cleanup > update() + cleanup() after cleanup stay no-throw
+        -> 'TypeError: ui.setScore is not a function' was thrown
+
+Conclusion: RED state confirmed — the stub has no HUD and no set* surface.

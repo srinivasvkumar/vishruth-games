@@ -1,0 +1,50 @@
+W3A.1 GREEN EVIDENCE — UISystem core (Task 8.1, kanban t_16f7e67d)
+Captured: 2026-09-16 ~21:32 UTC — branch wt/t_16f7e67d
+
+1) TARGET FILE (tests/unit/ui-system.test.ts)
+   Command: npm run test:run tests/unit/ui-system.test.ts
+   Test Files  1 passed (1)
+        Tests  16 passed (16)
+   All 16 behavioral tests green:
+     - HUD creation: divs #game-score/#game-health/#game-level created,
+       attached to body, hidden (display:none), GameScene-parity layout
+       (top-left 24px / top-right 24px / below-left 18px monospace white +
+       text-shadow + z-index 100), shown on first setter call.
+     - setScore/setHealth/setLevel: update textContent to "SCORE: n" /
+       "HEALTH: n" / "LEVEL: n", callable repeatedly (per-frame refresh).
+     - public surface: Game.ts call shape (constructor/update/cleanup) kept;
+       setScore/setHealth/setLevel/setPowerUpIndicator present;
+       setPowerUpIndicator safe no-op stub.
+     - resize: window resize handler registered (spy on addEventListener);
+       resize event leaves divs attached + positioned + text intact.
+     - cleanup: removes the three divs; idempotent; post-cleanup setters and
+       update() stay no-throw.
+
+2) FULL UNIT SUITE
+   Command: npm run test:run
+   Test Files  24 passed (24)
+        Tests  573 passed (573)
+   Baseline before this card: 557 passed. +16 new = 573. No regressions.
+   One pre-existing test in tests/unit/systems-stub.test.ts had to be
+   updated (see note below) because it asserted the OLD stub's exact
+   surface toEqual(['cleanup','constructor','update']), which is now
+   obsolete.
+
+3) TYPE-CHECK
+   Command: npm run type-check  (tsc --noEmit -p tsconfig.json)
+   Exit 0 — clean.
+
+4) LINT
+   Command: npm run lint
+   Exit 0 — 0 errors, 7 pre-existing warnings (none in UI.ts /
+   ui-system.test.ts / systems-stub.test.ts).
+
+NOTE — systems-stub.test.ts surgical fix (1 test, 1 assertion):
+   The test 'exposes exactly the documented stub surface (update + cleanup)'
+   asserted toEqual(['cleanup','constructor','update']). W3A.1's task body
+   REQUIRES adding setScore/setHealth/setLevel/setPowerUpIndicator to
+   UISystem, so an exact-match assertion is fundamentally incompatible with
+   the task's own requirement. Fixed to expect.arrayContaining([
+   'cleanup','constructor','update']) — still guards the Game.ts call shape
+   (the test's stated intent) while permitting the new HUD surface. This is
+   the only out-of-file-budget change; documented here + in the commit.

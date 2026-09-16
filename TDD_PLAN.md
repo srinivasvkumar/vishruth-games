@@ -494,6 +494,14 @@ To prevent context overload and compression:
 - RED: Test UI elements render and update
 - GREEN: Build `UISystem` in `systems/UI.ts` (replace 32-line no-op stub) to own the HUD (score, health, power-up indicators); `GameScene.ts` calls `UISystem` instead of creating `#game-score`/health divs inline
 - VERIFY: Score/health displays update in real browser, driven by `UISystem`
+- **Status: UISystem core done** (W3A.1, kanban t_16f7e67d, 2026-09-16).
+  `UISystem` now owns the HUD: `setScore/setHealth/setLevel` update
+  `#game-score`/`#game-health`/`#game-level` (GameScene-parity layout),
+  `setPowerUpIndicator()` stub, resize handler, `cleanup()` removes divs.
+  16 unit tests green (tests/unit/ui-system.test.ts); 573/573 suite; tsc clean.
+  Evidence: tests/evidence/w3/W3A1-RED.txt + W3A1-GREEN.txt.
+  **Pending (next W3-A card):** `GameScene.ts` still hand-rolls the HUD
+  divs — must switch to calling `UISystem` (D2) to fully close Task 8.1.
 - Acceptance Criteria:
   - [ ] `UISystem` renders HUD (no inline DOM in `GameScene.ts`)
   - [ ] Score/health update in real-time via `UISystem`
