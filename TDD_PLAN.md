@@ -300,6 +300,8 @@ To prevent context overload and compression:
 
 > **W2-A.3 progress (2026-09-13, DECISION D2):** Minimal `MenuScene` added (placeholder DOM only — full menu UI stays in W3 Task 8.2). `initGame()` now registers `BootScene`, `MenuScene`, and `GameScene` with the `SceneManager` (`'boot'` first so `Game.start()` boots it). Boot path lands cleanly in the active `MenuScene` with no `'Scene not found'` throw. Evidence: `tests/evidence/w2/W2-A3-GREEN.txt`. Full suite 397/397, tsc clean, eslint clean on `src/`.
 
+> **BUG-W2-1 status (2026-09-16): decomposed + 1a in flight.** BUG-W2-1 (MenuScene start path) decomposed into sub-cards (1a: player start path in flight; remaining sub-cards follow). **BUG-W2-1a (kanban t_4298322b, 2026-09-16):** minimal player start path added to `MenuScene` — Enter/Space keydown + START button click both dispatch `game.switchScene('game')`, with a double-start guard (listener removed + button disabled on dispatch; re-armed if the transition rejects) and listener cleanup in `onExit`/`onCleanup` so the menu can be re-entered. TDD: 7 new tests in `tests/unit/menu-scene.test.ts` (RED: 6/7 failing → GREEN: 7/7). Evidence: `tests/evidence/w2/W2-W21a-RED.txt` + `W2-W21a-GREEN.txt`. Full suite 557/557, `tsc --noEmit` clean, eslint clean on `src/` (7 pre-existing `Logger.ts` warnings only). Full menu UI (settings/high scores/styled buttons) remains W3 Task 8.2.
+
 ---
 
 ## WEEK 2: GAMEPLAY SYSTEMS

@@ -134,6 +134,14 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Trackers: tdd_tracker_config.json current_status -> W2-E.3-COMPLETE; task_registry.json w2_signoff block
   - Evidence: tests/evidence/w2/W2-E3-verify-probe.txt, w2-e3-localstorage.txt, w2-e3-shield.txt; sign-off doc: w2-signoff.md
 
+## BUG-W2-1: MenuScene start path (post-W2, 2026-09-16)
+- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a in flight — orchestrator
+- [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard, listener cleanup in onExit/onCleanup — game-dev — `t_4298322b` — 2026-09-16
+  - RED: 6/7 menu-scene tests failed pre-change (no button, no key wiring, no guard)
+  - GREEN: 7/7 in tests/unit/menu-scene.test.ts; full suite 557/557; tsc clean; eslint 0 errors (7 pre-existing Logger.ts warnings)
+  - Evidence: tests/evidence/w2/W2-W21a-RED.txt, W2-W21a-GREEN.txt
+  - Scope note: minimal start path only — full menu UI (settings/high scores/styled buttons) stays W3 Task 8.2
+
 ## W2-D: Game Flow & Score
 - [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`
   - 41 new tests: pure functions (computeScore, subtractScore, applyMultiplier, clampScore)

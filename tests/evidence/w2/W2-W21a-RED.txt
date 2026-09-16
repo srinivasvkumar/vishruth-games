@@ -1,0 +1,133 @@
+=================================================================
+RED EVIDENCE — BUG-W2-1a (kanban t_4298322b)
+Date: 2026-09-16 (W2, post end-of-week-2 sign-off)
+RED file: tests/unit/menu-scene.test.ts (NEW — RED surface)
+Impl:    src/scenes/MenuScene.ts UNCHANGED at RED capture time
+=================================================================
+
+RED assertion (failing as designed):
+  - a visible START button exists in the menu container
+  - pressing Enter fires a transition to the game scene
+  - pressing Space fires a transition to the game scene
+  - clicking the START button fires a transition to the game scene
+  - guards against double-start: repeat key presses do not re-fire
+    after a transition
+  - cleanup removes the keydown listener (menu can be re-entered)
+  (non-RED: 'other keys do not trigger a transition' passes trivially
+   today because no listener exists — it is the regression guard.)
+
+Command:
+  npm run test:run -- tests/unit/menu-scene.test.ts
+
+Result: 6 failed | 1 passed (7 tests)
+
+-----------------------------------------------------------------
+Raw vitest output:
+-----------------------------------------------------------------
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/menu-scene.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b
+
+ ❯ tests/unit/menu-scene.test.ts  (7 tests | 6 failed) 27ms
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > a visible START button exists in the menu container
+     → expected null to be truthy
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > pressing Enter fires a transition to the game scene
+     → expected "spy" to be called 1 times, but got 0 times
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > pressing Space fires a transition to the game scene
+     → expected "spy" to be called 1 times, but got 0 times
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > clicking the START button fires a transition to the game scene
+     → Cannot read properties of null (reading 'click')
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > guards against double-start: repeat key presses do not re-fire after a transition
+     → expected "spy" to be called 1 times, but got 0 times
+   ❯ tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > cleanup removes the keydown listener (menu can be re-entered)
+     → expected "spy" to be called 1 times, but got 0 times
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > a visible START button exists in the menu container
+AssertionError: expected null to be truthy
+
+- Expected: 
+null
+
++ Received: 
+false
+
+ ❯ tests/unit/menu-scene.test.ts:104:20
+    102|       '#menu-start-button, button'
+    103|     );
+    104|     expect(button).toBeTruthy();
+       |                    ^
+    105|     expect(button!.textContent?.trim().toUpperCase()).toContain('START…
+    106|     expect(button!.disabled).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > pressing Enter fires a transition to the game scene
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ tests/unit/menu-scene.test.ts:111:30
+    109|   it('pressing Enter fires a transition to the game scene', () => {
+    110|     pressKey('Enter');
+    111|     expect(game.switchScene).toHaveBeenCalledTimes(1);
+       |                              ^
+    112|     expect(game.switchScene).toHaveBeenCalledWith('game');
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > pressing Space fires a transition to the game scene
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ tests/unit/menu-scene.test.ts:117:30
+    115|   it('pressing Space fires a transition to the game scene', () => {
+    116|     pressKey(' ');
+    117|     expect(game.switchScene).toHaveBeenCalledTimes(1);
+       |                              ^
+    118|     expect(game.switchScene).toHaveBeenCalledWith('game');
+    119|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > clicking the START button fires a transition to the game scene
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ tests/unit/menu-scene.test.ts:126:13
+    124|       '#menu-start-button, button'
+    125|     );
+    126|     button!.click();
+       |             ^
+    127|     expect(game.switchScene).toHaveBeenCalledTimes(1);
+    128|     expect(game.switchScene).toHaveBeenCalledWith('game');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > guards against double-start: repeat key presses do not re-fire after a transition
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ tests/unit/menu-scene.test.ts:135:30
+    133|     pressKey('Enter');
+    134|     pressKey(' ');
+    135|     expect(game.switchScene).toHaveBeenCalledTimes(1);
+       |                              ^
+    136|     expect(game.switchScene).toHaveBeenCalledWith('game');
+    137|     // The keydown listener must be removed after the first start, so a
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/menu-scene.test.ts > BUG-W2-1a: MenuScene player start path > cleanup removes the keydown listener (menu can be re-entered)
+AssertionError: expected "spy" to be called 1 times, but got 0 times
+ ❯ tests/unit/menu-scene.test.ts:165:30
+    163|     expect(game.switchScene).not.toHaveBeenCalled();
+    164|     pressKey('Enter');
+    165|     expect(game.switchScene).toHaveBeenCalledTimes(1);
+       |                              ^
+    166|     expect(game.switchScene).toHaveBeenCalledWith('game');
+    167|     fresh.cleanup();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  19:36:16
+   Duration  1.18s (transform 191ms, setup 54ms, collect 135ms, tests 27ms, environment 201ms, prepare 291ms)
+
