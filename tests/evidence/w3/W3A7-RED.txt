@@ -1,0 +1,61 @@
+W3A.7 — TDD RED: MenuScene start-guard re-arm after a full run (BUG-W2-1a)
+============================================================================
+Date: 2026-09-17
+Commit: eb3cc82 (head of wt/t_c3a4bd20, before the W3-A.7 fix)
+Worktree: wt/t_c3a4bd20
+
+Command:
+  npx vitest run --config config/vite.config.ts tests/unit/menu-scene-full.test.ts
+
+## Result: 4 failed | 13 passed (17 total) — RED as expected
+────────────────────────────────────────────────────────────────────────────
+
+### Failing tests (all new, W3-A.7 re-arm suite)
+
+1. re-arms the START button after returning to the menu following a resolved transition
+   AssertionError: START button must be ENABLED after returning to the menu
+   (BUG-W2-1a re-arm): expected true to be false // Object.is equality
+   - Expected: false
+   + Received: true
+   (button is STILL disabled after menu -> game (resolved) -> exit -> re-enter)
+
+2. re-arms the keydown Enter path after returning to the menu
+   AssertionError: expected "spy" to be called 2 times, but got 1 times
+   (the second Enter is swallowed — the keydown handler was detached at
+   start and never re-wired on onEnter because started === true)
+
+3. a second run starts via button click after returning to the menu
+   AssertionError: expected "spy" to be called 2 times, but got 1 times
+   (button stays disabled -> the second click is a no-op at the DOM level)
+
+4. re-arms after MULTIPLE full runs (loop stability)
+   AssertionError: expected "spy" to be called 3 times, but got 1 times
+
+### Passing tests (13)
+────────────────────────────────────────────────────────────────────────────
+- All 10 pre-existing W3A.3 menu tests (unchanged behavior preserved)
+- NEW: the double-start guard still holds mid-run
+        (rapid double-Enter fires ONE transition)
+- NEW: the double-start guard still holds mid-run
+        (rapid double-click fires ONE transition)
+- NEW: still re-arms when the transition REJECTS
+        (BUG-W2-1a original contract preserved — a failed switchScene
+         leaves the menu reachable: flag clears, listener re-attaches,
+         button re-enables; a retry works without exit/re-enter)
+
+## Root cause confirmation (matches W3A6-FAIL.txt)
+────────────────────────────────────────────────────────────────────────────
+MenuScene.startGame() sets this.started=true on dispatch and only resets it
+in the .catch() when switchScene REJECTS. In the normal flow switchScene
+RESOLVES, so started stays true forever; onEnter() guards the re-arm behind
+'if (!this.started)', so returning to the menu after a run leaves the START
+button disabled and the keydown listener detached. Both the keyboard and
+mouse start paths are dead for every subsequent run.
+
+## Fix direction (applied in the GREEN phase)
+────────────────────────────────────────────────────────────────────────────
+Reset this.started=false in onExit() so the next onEnter() re-arms the
+button + keydown wiring. The double-start guard (set on dispatch, cleared
+only on rejection) is otherwise untouched: a second Enter/click mid-run
+still cannot fire a second transition, because the keydown listener is
+detached and the button is disabled at dispatch time.
