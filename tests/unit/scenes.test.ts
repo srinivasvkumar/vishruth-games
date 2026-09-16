@@ -46,7 +46,7 @@ import { InputSystem } from '@/systems/Input';
 import { PhysicsSystem } from '@/systems/Physics';
 import { AudioSystem } from '@/systems/Audio';
 import { UISystem } from '@/systems/UI';
-import type { GameConfig } from '@/types/GameTypes';
+import type { GameConfig, UIConfig } from '@/types/GameTypes';
 
 /**
  * W2-A.3 (RED phase, 2026-09-13, task t_16b337f1): the @/scenes/MenuScene
@@ -93,11 +93,21 @@ vi.mock('@/utils/Logger', () => ({
 }));
 
 // --- Helpers ------------------------------------------------------------------
+const scenesTestUiConfig: UIConfig = {
+  theme: 'dark',
+  fontSize: 14,
+  showFPS: false,
+  showDebug: false,
+};
+
 function createMockGame() {
   const inputState = { keys: {} as Record<string, boolean> };
+  const uiSystem = new UISystem(scenesTestUiConfig);
   return {
     _inputState: inputState,
+    _uiSystem: uiSystem,
     getInputSystem: vi.fn(() => ({ getInputState: () => inputState })),
+    getUISystem: vi.fn(() => uiSystem),
     switchScene: vi.fn().mockResolvedValue(undefined),
     isGameRunning: () => true,
     pause: vi.fn(),
@@ -381,9 +391,18 @@ describe('GameScene', () => {
   beforeEach(() => {
     game = createMockGame();
     document.body.innerHTML = '';
+    // W3A.2: The mock game's UISystem created HUD divs, but a previous
+    // test's gs.cleanup() may have removed them (Scene.cleanup() ->
+    // onCleanup() -> ... the HUD divs are owned by UISystem and
+    // removed by uiSystem.cleanup() in afterEach). Recreate them by
+    // re-instantiating a fresh UISystem and reassigning.
+    const freshUi = new UISystem(scenesTestUiConfig);
+    (game as any)._uiSystem = freshUi;
+    (game as any).getUISystem.mockImplementation(() => freshUi);
   });
 
   afterEach(() => {
+    (game as any)._uiSystem.cleanup();
     document.body.innerHTML = '';
   });
 
@@ -393,8 +412,12 @@ describe('GameScene', () => {
     return gs;
   }
 
-  it('constructor creates the hidden HUD elements and a camera at (0, 5, 15)', () => {
+  it('constructor creates a camera at (0, 5, 15) and does NOT create HUD divs (UISystem owns them)', () => {
     const gs = new GameScene(game);
+    // W3A.2: HUD divs are owned by UISystem (D2). GameScene no longer
+    // creates them. The mock game's UISystem created them in beforeEach.
+    // Verify they exist (created by UISystem, not GameScene) and are
+    // hidden (UISystem creates them with display:none).
     for (const id of ['game-score', 'game-health', 'game-level']) {
       const el = document.getElementById(id);
       expect(el).toBeTruthy();
@@ -504,11 +527,20 @@ describe('GameScene', () => {
     expect(player.position.z).toBe(posBefore.z);
   });
 
-  it('cleanup() removes the entities and the HUD from the scene', async () => {
+  it('cleanup() removes the entities from the scene; HUD divs are owned by UISystem', async () => {
     const gs = await loadedScene();
     gs.cleanup();
     expect(gs.getScene().children).toHaveLength(4); // ground + 3 lights remain
     expect(findGroups(gs.getScene())).toHaveLength(0);
+    // W3A.2: HUD divs are owned by UISystem (D2). gs.cleanup() no longer
+    // removes them — that's Game.cleanup()'s job (it calls
+    // uiSystem.cleanup()). The divs remain in the DOM until
+    // uiSystem.cleanup() is called.
+    for (const id of ['game-score', 'game-health', 'game-level']) {
+      expect(document.getElementById(id)).toBeTruthy();
+    }
+    // Simulating what Game.cleanup() does:
+    (game as any)._uiSystem.cleanup();
     for (const id of ['game-score', 'game-health', 'game-level']) {
       expect(document.getElementById(id)).toBeNull();
     }

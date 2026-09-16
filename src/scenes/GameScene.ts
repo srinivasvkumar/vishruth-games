@@ -17,15 +17,11 @@ export class GameScene extends Scene {
   private level = 1;
   private isGameOver = false;
   private obstacleSpawnTimer = 0;
-  private scoreElement: HTMLElement | null = null;
-  private healthElement: HTMLElement | null = null;
-  private levelElement: HTMLElement | null = null;
   private scoreManager: ScoreManager;
   
   constructor(game: Game) {
     super(game);
     this.scoreManager = new ScoreManager();
-    this.setupUI();
     Logger.info('Game scene created');
   }
   
@@ -74,10 +70,15 @@ export class GameScene extends Scene {
    * Enter game scene
    */
   protected onEnter(): void {
-    if (this.scoreElement) this.scoreElement.style.display = 'block';
-    if (this.healthElement) this.healthElement.style.display = 'block';
-    if (this.levelElement) this.levelElement.style.display = 'block';
-    
+    // W3A.2: HUD visibility is owned by UISystem (D2). Push the current
+    // state so the HUD divs become visible with the correct text.
+    if (this.player) {
+      const state = this.player.getState();
+      this.game.getUISystem().setScore(this.scoreManager.getScore());
+      this.game.getUISystem().setHealth(state.health);
+      this.game.getUISystem().setLevel(this.level);
+    }
+
     Logger.debug('Game scene entered');
   }
   
@@ -106,18 +107,25 @@ export class GameScene extends Scene {
     // Check collisions
     this.checkCollisions();
     
-    // Update UI
-    this.updateUI();
+    // W3A.2: HUD is owned by UISystem (D2). Push current state each frame
+    // so the HUD divs stay in sync with the game state.
+    if (this.player) {
+      const state = this.player.getState();
+      this.game.getUISystem().setScore(this.scoreManager.getScore());
+      this.game.getUISystem().setHealth(state.health);
+      this.game.getUISystem().setLevel(this.level);
+    }
   }
   
   /**
    * Exit game scene
    */
   protected onExit(): void {
-    if (this.scoreElement) this.scoreElement.style.display = 'none';
-    if (this.healthElement) this.healthElement.style.display = 'none';
-    if (this.levelElement) this.levelElement.style.display = 'none';
-    
+    // W3A.2: HUD is owned by UISystem (D2). The HUD divs stay in the DOM
+    // (UISystem owns them); they remain visible until the next set* call
+    // or Game.cleanup() calls uiSystem.cleanup(). No hide method exists
+    // on UISystem (W3A.1 surface) and adding one is out of scope for
+    // this task (file budget: GameScene.ts + test only).
     Logger.debug('Game scene exited');
   }
   
@@ -136,8 +144,9 @@ export class GameScene extends Scene {
     this.obstacles = [];
     this.player = null;
     
-    this.removeUI();
-    
+    // W3A.2: HUD is owned by UISystem (D2). The HUD divs are removed by
+    // Game.cleanup() calling uiSystem.cleanup(). GameScene does not
+    // remove them directly.
     Logger.debug('Game scene cleaned up');
   }
   
@@ -271,89 +280,6 @@ export class GameScene extends Scene {
       obstacleType: obstacle.getType(),
       damage: obstacle.getDamage()
     });
-  }
-  
-  /**
-   * Setup UI elements
-   */
-  private setupUI(): void {
-    // Score display
-    this.scoreElement = document.createElement('div');
-    this.scoreElement.style.cssText = `
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      color: white;
-      font-family: monospace;
-      font-size: 24px;
-      text-shadow: 2px 2px 2px black;
-      z-index: 100;
-      display: none;
-    `;
-    this.scoreElement.id = 'game-score';
-    document.body.appendChild(this.scoreElement);
-    
-    // Health display
-    this.healthElement = document.createElement('div');
-    this.healthElement.style.cssText = `
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      color: white;
-      font-family: monospace;
-      font-size: 24px;
-      text-shadow: 2px 2px 2px black;
-      z-index: 100;
-      display: none;
-    `;
-    this.healthElement.id = 'game-health';
-    document.body.appendChild(this.healthElement);
-    
-    // Level display
-    this.levelElement = document.createElement('div');
-    this.levelElement.style.cssText = `
-      position: fixed;
-      top: 50px;
-      left: 10px;
-      color: white;
-      font-family: monospace;
-      font-size: 18px;
-      text-shadow: 2px 2px 2px black;
-      z-index: 100;
-      display: none;
-    `;
-    this.levelElement.id = 'game-level';
-    document.body.appendChild(this.levelElement);
-  }
-  
-  /**
-   * Update UI elements
-   */
-  private updateUI(): void {
-    if (!this.player) return;
-    
-    const state = this.player.getState();
-    
-    if (this.scoreElement) {
-      this.scoreElement.textContent = `SCORE: ${this.scoreManager.getScore()}`;
-    }
-    
-    if (this.healthElement) {
-      this.healthElement.textContent = `HEALTH: ${state.health}`;
-    }
-    
-    if (this.levelElement) {
-      this.levelElement.textContent = `LEVEL: ${this.level}`;
-    }
-  }
-  
-  /**
-   * Remove UI elements
-   */
-  private removeUI(): void {
-    this.scoreElement?.parentNode?.removeChild(this.scoreElement);
-    this.healthElement?.parentNode?.removeChild(this.healthElement);
-    this.levelElement?.parentNode?.removeChild(this.levelElement);
   }
   
   /**
