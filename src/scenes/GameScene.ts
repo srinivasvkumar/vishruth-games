@@ -72,11 +72,17 @@ export class GameScene extends Scene {
   
   /**
    * Enter game scene
+   *
+   * W3A.5: Reset all run state on every entry so re-entering after a
+   * restart (Menu -> Game) starts a fresh run with no stale state from
+   * the prior run (player position, score, health, obstacles, level).
    */
   protected onEnter(): void {
     if (this.scoreElement) this.scoreElement.style.display = 'block';
     if (this.healthElement) this.healthElement.style.display = 'block';
     if (this.levelElement) this.levelElement.style.display = 'block';
+    
+    this.resetRunState();
     
     Logger.debug('Game scene entered');
   }
@@ -374,56 +380,78 @@ export class GameScene extends Scene {
   
   /**
    * Game over handler
+   *
+   * W3A.5: Replace the inline DOM overlay with a scene transition to the
+   * GameOverScene. The final score and high score are passed via the
+   * switchScene data payload so GameOverScene can display them.
+   *
+   * No inline DOM creation — the D2 HUD-ownership rule applies: all
+   * display logic lives in dedicated scenes / the UISystem.
    */
   private gameOver(): void {
     this.isGameOver = true;
     
-    // Persist high score
+    // Persist high score before transitioning.
     this.scoreManager.saveHighScore();
+    const score = this.scoreManager.getScore();
     const highScore = this.scoreManager.getHighScore();
     
-    // Show game over screen
-    const gameOverDiv = document.createElement('div');
-    gameOverDiv.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: monospace;
-      font-size: 24px;
-      z-index: 1000;
-    `;
-    
-    const finalScore = this.scoreManager.getScore();
-    gameOverDiv.innerHTML = `
-      <h1>GAME OVER</h1>
-      <p>Score: ${finalScore}</p>
-      <p>High Score: ${highScore}</p>
-      <p>Level: ${this.level}</p>
-      <button style="
-        background: #00ff00;
-        color: black;
-        border: none;
-        padding: 10px 20px;
-        font-size: 20px;
-        margin-top: 20px;
-        cursor: pointer;
-      " onclick="location.reload()">PLAY AGAIN</button>
-    `;
-    
-    document.body.appendChild(gameOverDiv);
-    
-    Logger.info('Game over', { 
-      score: finalScore,
+    Logger.info('Game over — transitioning to gameover scene', { 
+      score,
       highScore,
       level: this.level
+    });
+    
+    // W3A.5: transition to the GameOverScene with the score data.
+    const transition = this.game.switchScene('gameover', { score, highScore });
+    Promise.resolve(transition).catch((error: unknown) => {
+      Logger.error('Failed to transition to gameover scene', { error });
+      // Re-arm: clear the game-over flag so the update loop can continue
+      // if the transition fails (e.g. 'gameover' not registered).
+      this.isGameOver = false;
+    });
+  }
+  
+  /**
+   * Reset all run state for a fresh game run.
+   *
+   * Called from onEnter() so re-entering the GameScene (after a restart
+   * via Menu) starts with clean state: fresh player at spawn, zero score,
+   * full health, initial obstacle set, level 1, and the update loop re-enabled.
+   *
+   * This is the state-reset that replaces the old location.reload() behavior:
+   * instead of a full page reload, we reset the in-memory run state in place.
+   */
+  private resetRunState(): void {
+    // Reset flags.
+    this.isGameOver = false;
+    this.level = 1;
+    this.obstacleSpawnTimer = 0;
+    
+    // Fresh score manager (reads high score from localStorage).
+    this.scoreManager = new ScoreManager();
+    
+    // Clear existing obstacles from the scene and array.
+    for (const obstacle of this.obstacles) {
+      this.scene.remove(obstacle.getMesh());
+    }
+    this.obstacles = [];
+    
+    // Recreate the player at the spawn point (0, 1, 0) with full health.
+    if (this.player) {
+      this.scene.remove(this.player.getMesh());
+    }
+    this.player = new Player(new THREE.Vector3(0, 1, 0));
+    this.scene.add(this.player.getMesh());
+    
+    // Respawn the initial obstacle set.
+    this.spawnObstacles(3);
+    
+    Logger.debug('Game scene run state reset', {
+      player: this.player.getPosition().toArray(),
+      score: this.scoreManager.getScore(),
+      level: this.level,
+      obstacles: this.obstacles.length,
     });
   }
 }

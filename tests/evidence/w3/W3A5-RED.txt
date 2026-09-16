@@ -1,0 +1,61 @@
+W3A.5 RED Evidence
+===================
+Date: 2026-09-16
+Task: t_77ceb449
+Test File: tests/unit/game-loop-wiring.test.ts
+Commit: 19a7899 (W3A.4 baseline)
+
+RED Summary:
+- 8 failed tests (expected behavior not yet implemented)
+- 3 passed tests (trivially pass or already work)
+- Total: 11 tests
+
+Failed Tests (RED surface):
+1. firing PLAYER_DEATH triggers switchScene("gameover")
+   - GameScene.gameOver() creates inline DOM, not switchScene
+
+2. does NOT create an inline game-over DOM div on death
+   - Old inline overlay still present
+
+3. passes highScore in the switchScene data payload
+   - No switchScene call with data payload
+
+4. GameOverScene displays the score passed via switchScene data
+   - No data passed from GameScene to GameOverScene
+
+5. re-entering GameScene resets player position to spawn point
+   - State not reset on re-entry
+
+6. re-entering GameScene resets score to 0
+   - ScoreManager not reset on re-entry
+
+7. re-entering GameScene resets health to full
+   - Player health not reset on re-entry
+
+8. re-entering GameScene clears the isGameOver flag
+   - isGameOver flag not cleared on re-entry
+
+Passed Tests (already working or trivially pass):
+1. restarting from GameOverScene transitions to the menu scene
+   - GameOverScene already has correct restart behavior (W3A.4)
+
+2. re-entering GameScene clears and respawns obstacles
+   - Trivially passes (obstacles already at initial count)
+
+3. re-entering GameScene resets level to 1
+   - Trivially passes (level already at 1)
+
+Raw Output (tail):
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > firing PLAYER_DEATH triggers switchScene("gameover")
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > does NOT create an inline game-over DOM div on death
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > passes highScore in the switchScene data payload
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > GameOverScene displays the score passed via switchScene data
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > re-entering GameScene resets player position to spawn point
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > re-entering GameScene resets score to 0
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > re-entering GameScene resets health to full
+FAIL  tests/unit/game-loop-wiring.test.ts > W3A.5: Full game loop wiring > re-entering GameScene clears the isGameOver flag
+
+Test Files  1 failed (1)
+     Tests  8 failed | 3 passed (11)
+
+Full output saved to: /tmp/w3a5-red-full.txt

@@ -95,10 +95,18 @@ vi.mock('@/utils/Logger', () => ({
 // --- Helpers ------------------------------------------------------------------
 function createMockGame() {
   const inputState = { keys: {} as Record<string, boolean> };
+  const switchCalls: Array<[string, Record<string, unknown>?]> = [];
+  const switchScene = vi.fn(
+    (name: string, data?: Record<string, unknown>) => {
+      switchCalls.push([name, data]);
+      return Promise.resolve();
+    },
+  );
   return {
     _inputState: inputState,
+    _switchCalls: switchCalls,
     getInputSystem: vi.fn(() => ({ getInputState: () => inputState })),
-    switchScene: vi.fn().mockResolvedValue(undefined),
+    switchScene,
     isGameRunning: () => true,
     pause: vi.fn(),
     stop: vi.fn(),
@@ -487,15 +495,20 @@ describe('GameScene', () => {
     expect(document.getElementById('game-score')!.textContent).toBe('SCORE: 25');
   });
 
-  it('PLAYER_DEATH event shows the game-over screen and freezes updates', async () => {
+  it('PLAYER_DEATH event triggers switchScene("gameover") and freezes updates', async () => {
     const gs = await loadedScene();
     gs.enter();
     const player = findPlayerGroup(gs.getScene());
 
     window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
 
-    expect(document.querySelector('h1')?.textContent).toBe('GAME OVER');
-    expect(document.body.innerHTML).toContain('PLAY AGAIN');
+    // W3A.5: death now transitions to the GameOverScene via switchScene.
+    // No inline DOM overlay is created.
+    expect(game.switchScene).toHaveBeenCalledTimes(1);
+    expect(game.switchScene).toHaveBeenCalledWith(
+      'gameover',
+      expect.objectContaining({ score: expect.any(Number) }),
+    );
 
     const posBefore = player.position.clone();
     gs.update(0.016); // isGameOver → early return
