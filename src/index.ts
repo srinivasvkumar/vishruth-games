@@ -2,6 +2,7 @@ import { Game } from '@/core/Game';
 import { BootScene } from '@/scenes/BootScene';
 import { MenuScene } from '@/scenes/MenuScene';
 import { GameScene } from '@/scenes/GameScene';
+import { GameOverScene } from '@/scenes/GameOverScene';
 import { GameConstants } from '@/utils/Constants';
 import { Logger } from '@/utils/Logger';
 import type { GameConfig } from '@/types/GameTypes';
@@ -64,6 +65,7 @@ function initGame(): void {
     sm.registerScene('boot', new BootScene(game));
     sm.registerScene('menu', new MenuScene(game));
     sm.registerScene('game', new GameScene(game));
+    sm.registerScene('gameover', new GameOverScene(game));
     
     // Start the game
     game.start();

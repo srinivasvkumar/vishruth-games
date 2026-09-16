@@ -1,0 +1,48 @@
+W3A.3 — GREEN Evidence (kanban t_d2e9e91c)
+==========================================
+Task: Full MenuScene UI (Start/Settings/HighScores buttons + keyboard nav)
+Date: 2026-09-16
+Test file: tests/unit/menu-scene-full.test.ts (new, RED surface -> GREEN)
+Source: src/scenes/MenuScene.ts (rewritten with full menu)
+
+IMPLEMENTATION (src/scenes/MenuScene.ts):
+  - Title "CLUSTER RUSH" (kept).
+  - START button (#menu-start-button): click + Enter/Space keydown ->
+    game.switchScene('game'); BUG-W2-1a double-start guard preserved
+    (started flag + listener removal + button disable + .catch re-arm).
+  - SETTINGS button (#menu-settings-button): non-functional placeholder,
+    outline dark-terminal style; click -> showSettingsToast() renders
+    #menu-settings-toast "Settings coming in W3-C", auto-dismiss 2.5s
+    (timer cleared on exit/cleanup). No scene switch.
+  - HIGH SCORES panel (#menu-high-score + #menu-high-score-value): reads
+    the stored high score from LocalStorage under HIGH_SCORE_KEY (the same
+    key ScoreManager persists) with ScoreManager loadHighScore() semantics
+    (parseInt base-10, >0 else 0). Refreshed on every onEnter so a record
+    set in a prior session shows on re-entry.
+  - Keyboard focus / Tab: native <button> elements in document order
+    (START before SETTINGS); visible focus via button styling. The
+    started guard also prevents a focused-button Enter/Space from
+    double-dispatching switchScene.
+
+VERIFICATION:
+  1. Target file (menu-scene-full.test.ts): 10/10 PASS
+       - START button visible (BUG-W2-1a)               PASS
+       - clicking START -> switchScene('game')          PASS
+       - Enter still -> switchScene('game')             PASS
+       - Space still -> switchScene('game')             PASS
+       - HIGH SCORES panel shows stored value (42)       PASS
+       - HIGH SCORES panel shows 0 when none stored      PASS
+       - HIGH SCORES refreshes on re-enter (77)         PASS
+       - SETTINGS button renders, no scene transition    PASS
+       - SETTINGS click -> "coming in w3-c" toast        PASS
+       - START + SETTINGS focusable, Tab order           PASS
+  2. Regression (menu-scene.test.ts, BUG-W2-1a, 7 tests): 7/7 PASS
+  3. Full unit suite: 567/567 PASS (24 files)  [was 557/557 at baseline]
+  4. tsc --noEmit -p tsconfig.json: CLEAN (exit 0)
+  5. eslint (npm run lint): 0 errors; 7 pre-existing warnings in
+     src/utils/Logger.ts (out of scope)
+
+RED -> GREEN: the 6 RED tests (HIGH SCORES panel x3, SETTINGS button,
+SETTINGS toast, Tab order) now all pass; the 4 regression guards that
+already passed in RED (START visible, START click, Enter, Space) still
+pass — BUG-W2-1a behavior preserved.

@@ -55,3 +55,13 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator
 - [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard + listener cleanup — game-dev — `t_4298322b`
 - [x] BUG-W2-1b — In-browser verify 1a start path (real headed Chrome: Enter/START-click -> GameScene + WASD moves player) — RED negative control 4/4 fail @ pre-fix -> GREEN 4/4 pass headed Chromium @ 6f85f55; 0 fatal console errors — game-tester — `t_675ab2f6`
+
+# Week 3-A Lane (UI System, 2026-09-16) — MERGED
+- [x] W3-A.1 — UISystem core: real HUD (score/health/level), replace 32-line stub; no GameScene touch — game-dev — `t_16f7e67d` → 13982a3
+- [x] W3-A.2 — Migrate GameScene to UISystem (remove inline HUD DOM divs; D2 HUD ownership payoff) — game-dev — `t_501493cf` → 4bc4472
+- [x] W3-A.3 — Full MenuScene: START/SETTINGS/HIGH SCORES buttons + keyboard nav (SETTINGS = placeholder, full settings = W3-C) — game-dev — `t_d2e9e91c` → d3f5810
+- [x] W3-A.4 — GameOverScene: final score + RESTART → menu + register scene — game-dev — `t_de156e6e` → 19a7899
+- [x] W3-A.5 — Wire full loop: death → switchScene('gameover', {score, highScore}), remove inline overlay, resetRunState on re-entry — game-dev — `t_77ceb449` → 6955226
+- [x] W3-A.6 — In-browser verify full loop + HUD (headed Chrome; 4/7 pass, confirmed BUG-W2-1a re-arm blocker + D-A6-1 score=0 major) — game-tester — `t_b08d3752` → 7e59434
+- [ ] W3-A.7 — FIX: MenuScene start-guard never re-arms after a run (BUG-W2-1a blocker, re-surfaced) — game-dev — TBD
+- [ ] W3-A.8 — FIX: GameOverScene.onEnter() reads {score, highScore} data payload (D-A6-1 major) — game-dev — TBD

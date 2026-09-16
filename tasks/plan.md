@@ -154,3 +154,18 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - ScoreManager class with injectable Storage, overflow/underflow clamping
   - GameScene HUD wired to ScoreManager (score display, game-over high score)
   - 428/428 full suite · tsc 0 errors
+
+# Week 3-A Lane (UI System, 2026-09-16) — MERGED to main
+- [x] W3-A.1 — UISystem core: real HUD (score/health/level), replace 32-line stub; no GameScene touch — game-dev — `t_16f7e67d` — @ 13982a3
+- [x] W3-A.2 — Migrate GameScene to UISystem (remove inline HUD DOM divs; D2 HUD ownership payoff) — game-dev — `t_501493cf` — @ 4bc4472
+- [x] W3-A.3 — Full MenuScene: START/SETTINGS/HIGH SCORES buttons + keyboard nav (SETTINGS = placeholder, full settings = W3-C) — game-dev — `t_d2e9e91c` — @ d3f5810
+- [x] W3-A.4 — GameOverScene: final score + RESTART -> menu + register scene — game-dev — `t_de156e6e` — @ 19a7899
+- [x] W3-A.5 — Wire full loop: death -> switchScene('gameover', {score, highScore}), remove inline overlay, resetRunState on re-entry — game-dev — `t_77ceb449` — @ 6955226
+- [x] W3-A.6 — In-browser verify full loop + HUD (headed Chrome; 4/7 pass, confirmed BUG-W2-1a re-arm blocker + D-A6-1 score=0 major) — game-tester — `t_b08d3752` — @ 7e59434
+  - RED: 3/7 failed pre-fix (S4 RESTART second-run timeout, S6 console timeout, W2-1b regression button-disabled)
+  - GREEN: 4/7 (S1 boot+menu, S2 START->game+HUD, S3 death->gameover handoff, S5 high-score reload-persistence)
+  - Evidence: tests/evidence/w3/W3A6-FAIL.txt (confirms 2 defects), tests/e2e/w3a-full-loop.spec.ts
+  - DEFECTS: BUG-W2-1a re-arm (blocker, MenuScene.started never resets on onExit) + D-A6-1 (major, GameOverScene.onEnter ignores {score,highScore} payload)
+- [ ] W3-A.7 — FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker) — game-dev — TBD
+- [ ] W3-A.8 — FIX: GameOverScene.onEnter reads {score, highScore} data payload (D-A6-1 major) — game-dev — TBD
+

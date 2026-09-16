@@ -1,22 +1,24 @@
-# Progress — W3A.2 (t_501493cf)
+# Progress — t_77ceb449 (W3A.5)
 
-- [x] Read task, parent handoff, GameScene.ts, UI.ts, Scene.ts, Game.ts, tests
-- [x] Merged parent branch (wt/t_16f7e67d — already in worktree via shared git)
-- [x] Baseline test run (scenes.test.ts + ui-system.test.ts: 44/44 green)
-- [x] task_plan.md + findings.md written
-- [x] RED: wrote tests/unit/game-scene-ui.test.ts (4 tests), captured RED evidence
-  - 3 failed (GameScene creates HUD divs itself; UISystem divs stay empty)
-  - 1 passed (cleanup removes HUD — passes in both states)
-  - Evidence: tests/evidence/w3/W3A2-RED.txt
-- [x] GREEN: migrated GameScene.ts to UISystem
-  - Removed: scoreElement/healthElement/levelElement fields, setupUI(),
-    updateUI(), removeUI(), constructor setupUI() call, onEnter display:block,
-    onExit display:none, onCleanup removeUI()
-  - Added: onEnter calls getUISystem().setScore/setHealth/setLevel;
-    onUpdate calls the same three each frame
-  - Updated: scenes.test.ts mock game (added getUISystem + real UISystem),
-    2 test assertions (constructor + cleanup)
-  - All 4 new tests pass; full suite 577/577; build clean; lint clean
-  - Evidence: tests/evidence/w3/W3A2-GREEN.txt
-- [x] Tracker: TDD_PLAN.md Task 8.1 status updated + 2 acceptance criteria checked
-- [x] Commit (pending — about to commit)
+## Status: COMPLETE — ready to commit
+
+### Done
+- [x] Baseline: 579/579 tests pass, tsc clean (1 pre-existing TS5101)
+- [x] RED: tests/unit/game-loop-wiring.test.ts created (11 tests), 8 failing captured to W3A5-RED.txt
+- [x] GREEN: GameScene.gameOver() now calls switchScene('gameover', {score, highScore})
+- [x] GREEN: GameScene.onEnter() calls resetRunState() — resets player/score/health/obstacles/level/isGameOver
+- [x] Updated scenes.test.ts death test to match new behavior
+- [x] Full suite: 590/590 pass (26 test files)
+- [x] tsc: 0 new errors (1 pre-existing TS5101)
+- [x] eslint: 0 errors, 7 pre-existing warnings
+- [x] Evidence: W3A5-RED.txt + W3A5-GREEN.txt
+- [x] task_plan.md updated
+
+### Files changed
+- src/scenes/GameScene.ts (gameOver + resetRunState)
+- tests/unit/game-loop-wiring.test.ts (NEW)
+- tests/unit/scenes.test.ts (death test updated)
+- tests/evidence/w3/W3A5-RED.txt (NEW)
+- tests/evidence/w3/W3A5-GREEN.txt (NEW)
+- task_plan.md (rewritten for W3A.5)
+- progress.md (this file)

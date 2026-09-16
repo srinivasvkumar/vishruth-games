@@ -21,15 +21,15 @@
     }
   },
   "current_status": {
-    "phase": "Post-W2: BUG-W2-1 fixes",
-    "day": 4,
-    "current_task": "BUG-W2-1b: in-browser verification of 1a start path (headed Chrome: Enter/START-click -> GameScene + WASD)",
-    "status": "BUG-W2-1b-COMPLETE",
+    "phase": "W3-A: UI System (merged to main)",
+    "day": 8,
+    "current_task": "W3-A.7/W3-A.8: fix BUG-W2-1a re-arm blocker + D-A6-1 GameOverScene score=0 (pending)",
+    "status": "W3-A-6-COMPLETE-W3-A-7-8-PENDING",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-16T19:50:00",
-    "last_updated": "2026-09-16T19:58:00",
-    "completion_date": "2026-09-16T19:58:00",
-    "completion_notes": "BUG-W2-1b complete (kanban t_675ab2f6, parent t_4298322b): in-browser verification of the BUG-W2-1a start path in REAL HEADED CHROME. Spec tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios) driven only via the player start path (Enter + START click; never the debug loadScene API). RED negative control (pre-fix MenuScene @ 8f1520a): 4/4 fail as designed. GREEN: 4/4 pass headed Chromium (Playwright 1.63.0, display :1), 17.3s, 0 fatal console errors (only expected AudioContext autoplay warning). Verified @ 6f85f55 (fix commit, fast-forwarded into worktree). No src/ changes by this card. Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-{menu,enter-game,wasd-move}.png, w2-w21b-console-chrome.txt. TDD_PLAN.md BUG-W2-1 status -> '1a COMPLETE + VERIFIED IN REAL BROWSER @ 6f85f55'. Verdict: PASS."
+    "start_date": "2026-09-16T20:59:00",
+    "last_updated": "2026-09-16T23:34:00",
+    "completion_date": "2026-09-16T23:34:00",
+    "completion_notes": "W3-A.1-A6 complete and merged to main. A1: UISystem core (real HUD, replace 32-line stub) @ 13982a3. A2: GameScene migrated to UISystem (D2 HUD ownership) @ 4bc4472. A3: full MenuScene (START/SETTINGS/HIGH SCORES + keyboard nav) @ d3f5810. A4: GameOverScene (final score + RESTART -> menu + register) @ 19a7899. A5: wire full loop (death -> switchScene('gameover', {score,highScore}), remove inline overlay, resetRunState on re-entry) @ 6955226. A6: in-browser verify (4/7 pass; confirmed BUG-W2-1a re-arm blocker + D-A6-1 GameOverScene score=0 major) @ 7e59434. Merge resolved GameScene.ts onEnter (keep UISystem calls + resetRunState) + scenes.test.ts mock (union of getUISystem + switchCalls) + game-loop-wiring.test.ts mock (added getUISystem). Full suite 610/610. Two follow-up fix cards (W3-A.7 re-arm, W3-A.8 score payload) pending."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

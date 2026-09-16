@@ -1,0 +1,14 @@
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/game-loop-wiring.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_77ceb449
+
+ ✓ tests/unit/game-loop-wiring.test.ts  (11 tests) 26ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  22:41:15
+   Duration  612ms (transform 140ms, setup 58ms, collect 103ms, tests 26ms, environment 105ms, prepare 57ms)
+

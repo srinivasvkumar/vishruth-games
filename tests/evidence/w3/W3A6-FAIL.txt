@@ -1,0 +1,146 @@
+W3A.6 — In-browser verify full loop + HUD (headed Chrome / headless Chromium fallback)
+=============================================================================
+Date: 2026-09-16
+Commit: 1883c09 (head of t_b08d3752)
+Browser: Chromium (headless, BROWSER= empty — DISPLAY unset in worktree env)
+Test project: chromium-boot
+
+## Test Results Summary
+────────────────────────────────────────────────────────────────────────────
+Scenario   | Result | Notes
+───────────+────────+────────────────────────────────────────────────────────
+S1: boot lands on menu with title+START+HIGH SCORES | PASS | 2.9s
+S2: START via Enter enters game; HUD visible; D2 probe | PASS | 3.2s
+W2-1b regression: START button works after returning from a run | FAIL | 3.4s
+S3: player:death -> GameOver; final-score handoff recorded | PASS | 3.8s
+S4: RESTART returns to menu; second run starts cleanly | FAIL | 18.5s (timeout)
+S5: new high score survives a full page reload in menu panel | PASS | 5.6s
+S6: console capture across menu->game->gameover->menu->game | FAIL | 17.9s (timeout)
+────────────────────────────────────────────────────────────────────────────
+4 passed, 3 failed
+
+## Confirmed Defects
+────────────────────────────────────────────────────────────────────────────
+
+### BUG-W2-1a (re-confirmed in real browser): start-guard never re-arms
+Severity: blocker
+
+Symptom:
+After a full run (menu -> game -> death -> gameover -> restart -> menu),
+the #menu-start-button remains disabled. The user cannot start a new game.
+
+Repro:
+1. Boot to menu (button enabled, keydown wired)
+2. Press Enter -> game starts, started=true, button disabled, keydown detached
+3. Trigger death (CustomEvent 'player:death') -> GameOverScene
+4. Click #gameover-restart-button -> switchScene('menu') -> MenuScene.onEnter()
+5. onEnter() checks if (!this.started) — but started is STILL TRUE
+   (it was set in startGame() and only reset if switchScene THREW,
+   which it didn't since the game WAS registered this time)
+6. Guard skips re-arm: button stays disabled, keydown stays detached
+7. Both keyboard Enter and button click are dead -> second run impossible
+
+Root cause (MenuScene.ts):
+  startGame() line 351:  this.started = true;
+  startGame() line 364:  this.started = false;  // only on switchScene() THROWS
+  onEnter() line 71:     if (!this.started) { /* re-arm */ }
+
+When the game IS registered (normal flow), switchScene() resolves,
+started remains true forever, and onEnter() never re-arms.
+
+The guard was written for the BUG-W2-1a case where switchScene REJECTS
+because the 'game' scene is not yet registered — but in the normal
+flow (game registered before start), the guard prevents ALL re-arming.
+
+Impact:
+  - S4 fails: page.click('#menu-start-button') times out 15s
+  - S6 fails: same — second Enter after returning to menu is ignored
+  - W2-1b fails: btnEnabled === false (expected true)
+
+Evidence from Playwright page snapshot (W2-1b failure):
+  - button "START" [disabled] [ref=e81] [cursor=pointer]
+  (button present in DOM but disabled attribute set)
+
+Fix direction (for game-dev, NOT a test fix):
+Option A — reset started in onExit():
+    protected onExit(): void {
+      this.started = false;   // ADD
+      this.detachKeydownHandler();
+      ...
+    }
+
+Option B — reset started after switchScene succeeds in startGame():
+    this.game.switchScene('game').then(() => {
+      // scene is now active; the new scene's onEnter will re-arm
+      // when the user returns to the menu
+      // (started stays true until onExit resets it)
+    });
+    // AND add this.started = false to onExit()
+
+Option C — track "am I in a game" via game.getState() rather than a
+    local flag, and re-arm whenever the menu is entered and the game
+    is not running.
+
+Any fix must ensure:
+  1. onEnter() re-arms the guard when returning to the menu
+  2. The button becomes enabled again
+  3. The keydown handler is re-attached
+  4. The second run starts cleanly (score=0, level=1)
+
+### D-A6-1 (documented, asserted as known-bad): GameOverScene does not
+    read the level:start data payload
+Severity: major (score display bug)
+
+GameOverScene.setFinalScore() displays 0 even though GameScene.gameOver()
+passes {score: N, highScore: M} in the switchScene data payload.
+The data arrives at SceneManager.switchScene(sceneName, data) but
+GameOverScene.onEnter() does not read it.
+
+Confirmed in S3 test:
+  - handoff data: {score: 150, highScore: 0}
+  - display: "Final Score: 0"
+  - mismatch: true (expected known defect still present at this commit)
+
+## Passing Scenarios
+────────────────────────────────────────────────────────────────────────────
+S1: Menu renders correctly on boot. Title, START button (enabled),
+    HIGH SCORES panel all present and visible. No fatal console errors.
+
+S2: Enter key on menu -> switchScene('game') -> GameScene.onEnter() ->
+    HUD divs (#game-score, #game-health, #game-level) visible.
+    Score reads "SCORE: 0", health "HEALTH: 100", level "LEVEL: 1".
+    D2 probe: HUD divs created by GameScene.setupUI (constructor),
+    NOT by UISystem. Confirmed: GameScene ownership violation documented.
+
+S3: player:death CustomEvent -> GameScene.gameOver() ->
+    switchScene('gameover', {score, highScore}) -> GameOverScene visible.
+    Final score display shows 0 (D-A6-1 known defect).
+    Handoff data captured: {score: 150, highScore: 0}.
+
+S5: New high score (500) set in localStorage, page reloaded,
+    menu HIGH SCORES panel reads 500. localStorage persistence works.
+
+## Console Evidence
+────────────────────────────────────────────────────────────────────────────
+S1-S3: No fatal console errors (0 uncaught exceptions, 0 404s).
+S4-S6: Failures are assertion/timeouts, not console errors.
+
+## Screenshots (evidence/w3/)
+────────────────────────────────────────────────────────────────────────────
+w3a6-menu-chromium.png      — S1: menu on boot
+w3a6-game-hud-chromium.png  — S2: game HUD visible
+w3a6-gameover-chromium.png  — S3: GameOver scene
+(No screenshots for S4/S5/S6 due to failures before screenshot call)
+
+## Verdict
+────────────────────────────────────────────────────────────────────────────
+FAIL — 3 of 7 scenarios fail. Blocker: BUG-W2-1a start-guard never
+re-arms in the normal flow (game registered before start). The second
+run after returning to menu is completely broken — both keyboard and
+mouse start paths are dead. This blocks release.
+
+## Unit Test Baseline (from W3A6-RED.txt)
+────────────────────────────────────────────────────────────────────────────
+590/590 pass, tsc --noEmit clean.
+The unit tests do NOT cover the full browser loop — this in-browser
+test is the first to expose the start-guard defect.

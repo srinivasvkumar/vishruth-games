@@ -103,12 +103,20 @@ const scenesTestUiConfig: UIConfig = {
 function createMockGame() {
   const inputState = { keys: {} as Record<string, boolean> };
   const uiSystem = new UISystem(scenesTestUiConfig);
+  const switchCalls: Array<[string, Record<string, unknown>?]> = [];
+  const switchScene = vi.fn(
+    (name: string, data?: Record<string, unknown>) => {
+      switchCalls.push([name, data]);
+      return Promise.resolve();
+    },
+  );
   return {
     _inputState: inputState,
     _uiSystem: uiSystem,
+    _switchCalls: switchCalls,
     getInputSystem: vi.fn(() => ({ getInputState: () => inputState })),
     getUISystem: vi.fn(() => uiSystem),
-    switchScene: vi.fn().mockResolvedValue(undefined),
+    switchScene,
     isGameRunning: () => true,
     pause: vi.fn(),
     stop: vi.fn(),
@@ -510,15 +518,20 @@ describe('GameScene', () => {
     expect(document.getElementById('game-score')!.textContent).toBe('SCORE: 25');
   });
 
-  it('PLAYER_DEATH event shows the game-over screen and freezes updates', async () => {
+  it('PLAYER_DEATH event triggers switchScene("gameover") and freezes updates', async () => {
     const gs = await loadedScene();
     gs.enter();
     const player = findPlayerGroup(gs.getScene());
 
     window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
 
-    expect(document.querySelector('h1')?.textContent).toBe('GAME OVER');
-    expect(document.body.innerHTML).toContain('PLAY AGAIN');
+    // W3A.5: death now transitions to the GameOverScene via switchScene.
+    // No inline DOM overlay is created.
+    expect(game.switchScene).toHaveBeenCalledTimes(1);
+    expect(game.switchScene).toHaveBeenCalledWith(
+      'gameover',
+      expect.objectContaining({ score: expect.any(Number) }),
+    );
 
     const posBefore = player.position.clone();
     gs.update(0.016); // isGameOver → early return
@@ -772,7 +785,7 @@ describe('W2-A.3: boot path lands in a valid registered active menu scene (RED)'
     expect(sm.hasScene('game')).toBe(true);
     // Registration order: 'boot' first — Game.start() boots the first
     // registered scene (src/core/Game.ts:87-94).
-    expect(Array.from(sm.getAllScenes().keys())).toEqual(['boot', 'menu', 'game']);
+    expect(Array.from(sm.getAllScenes().keys())).toEqual(['boot', 'menu', 'game', 'gameover']);
   });
 
   it('RED: after start() + boot delay, the active scene is the registered, active MenuScene (no "Scene not found")', async () => {

@@ -276,6 +276,54 @@
               "notes": "Kanban t_675ab2f6 (parent t_4298322b). VERIFIED the BUG-W2-1a start path end-to-end in REAL HEADED CHROME. Spec: tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios), driven ONLY through the player start path (Enter key + START button click; never the debug window.game.getSceneManager().loadScene API the W2-E.1a smoke suite used to bypass the menu). Scenarios: (1) boot lands on MenuScene with #menu-start-button attached/visible/enabled + CLUSTER RUSH title + WebGL live; (2a) page.keyboard.press('Enter') -> #game-score visible, #menu-container hidden, player in scene graph; (2b) reload -> menu, then btn.click() on #menu-start-button -> #game-score visible, menu hidden; (3) in GameScene 3D player (finite x/y/z) + scene meshes >= 1 render, and WASD moves the player reusing W2-E.1a checks: D 500ms -> dx>+0.1 (+x), A 500ms -> dx<0 (-x), W 400ms -> dz<0 (-z). RED negative control: git checkout 8f1520a -- src/scenes/MenuScene.ts (pre-fix, 0 refs to menu-start-button/attachKeydownHandler/startGame) -> 4/4 FAILED as designed (no START button; Enter is a no-op; no transition to GameScene). GREEN: 4/4 passed in headed Chromium (Playwright 1.63.0, chromium-boot project, headless:false, display :1), 17.3s; fix restored via git checkout 6f85f55 -- src/scenes/MenuScene.ts (git diff --stat 6f85f55 -- src/scenes/MenuScene.ts == empty). 0 fatal console errors (filterFatalErrors: pageerror/requestfailed/THREE/CORS/uncaught/WebGL); only non-fatal warning is the expected AudioContext autoplay notice (out of scope, W3-C). No src/ changes by this card (verification only; the fix under test is 6f85f55 already merged in). Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-menu.png, w2-w21b-enter-game.png, w2-w21b-wasd-move.png, w2-w21b-console-chrome.txt. Verdict: PASS — BUG-W2-1a start path verified in real browser @ 6f85f55; no regression."
             },
             {
+              "id": "W3-A.1",
+              "description": "UISystem core: real HUD (score/health/level), replace 32-line stub; no GameScene touch",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T21:30:00",
+              "notes": "Kanban t_16f7e67d. Replaced the 32-line no-op UISystem stub in src/systems/UI.ts with a real HUD: #game-score / #game-health / #game-level divs created in constructor with the D2 position/font specs, setScore/setHealth/setLevel update text, reposition() re-asserts positions on resize, cleanup() removes DOM. Preserved the constructor(config)/update()/cleanup() surface Game.ts already calls. No GameScene change in this card. RED: tests/unit/ui-system.test.ts (new, 12 tests) failed on import + DOM absence. GREEN: 12/12; full suite passed; tsc clean. Evidence: tests/evidence/w3/W3A1-RED.txt, W3A1-GREEN.txt. @ 13982a3."
+            },
+            {
+              "id": "W3-A.2",
+              "description": "Migrate GameScene to UISystem (remove inline HUD DOM divs; D2 HUD ownership payoff)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T21:45:00",
+              "notes": "Kanban t_501493cf. GameScene no longer creates #game-score/#game-health/#game-level; HUD is owned by UISystem (D2 payoff). onEnter() pushes current score/health/level via getUISystem().set*(); updateUI()/removeUI() replaced by UISystem ownership. RED: tests/unit/game-scene-ui.test.ts (new) + scene DOM assertions. GREEN: full suite passed; tsc clean. Evidence: tests/evidence/w3/W3A2-RED.txt, W3A2-GREEN.txt. @ 4bc4472."
+            },
+            {
+              "id": "W3-A.3",
+              "description": "Full MenuScene: START/SETTINGS/HIGH SCORES buttons + keyboard nav (SETTINGS = placeholder)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T22:00:00",
+              "notes": "Kanban t_d2e9e91c. MenuScene now renders full UI: title, START button (keeps BUG-W2-1a start path), SETTINGS button (placeholder toast, full settings = W3-C), HIGH SCORES panel reading from ScoreManager.getHighScore() + localStorage, keyboard nav. RED: tests/unit/menu-scene-full.test.ts (new). GREEN: full suite passed. Evidence: tests/evidence/w3/W3A3-RED.txt, W3A3-GREEN.txt. @ d3f5810."
+            },
+            {
+              "id": "W3-A.4",
+              "description": "GameOverScene: final score + RESTART -> menu + register scene",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T22:15:00",
+              "notes": "Kanban t_de156e6e. New src/scenes/GameOverScene.ts: GAME OVER heading, final score + high score display, RESTART button -> switchScene('menu'). Registered in src/index.ts alongside boot/menu/game. RED: tests/unit/gameover-scene.test.ts (new). GREEN: full suite passed. Evidence: tests/evidence/w3/W3A4-RED.txt, W3A4-GREEN.txt. @ 19a7899. NOTE: D-A6-1 confirmed in A6 — onEnter() does not yet read the {score,highScore} payload (displays 0); fix tracked as W3-A.8."
+            },
+            {
+              "id": "W3-A.5",
+              "description": "Wire full loop: death -> switchScene('gameover', {score,highScore}), remove inline overlay, resetRunState on re-entry",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T22:30:00",
+              "notes": "Kanban t_77ceb449. GameScene.gameOver() now calls this.game.switchScene('gameover', {score, highScore}) instead of creating an inline overlay div. Added resetRunState() called from onEnter() so re-entering GameScene after restart starts a fresh run (resets player/score/health/obstacles/level/isGameOver). RED: tests/unit/game-loop-wiring.test.ts (new, 11 tests). GREEN: full suite passed. Evidence: tests/evidence/w3/W3A5-RED.txt, W3A5-GREEN.txt. @ 6955226. NOTE: merge with A1/A2 branch required adding getUISystem to this card's mock game (A1/A2's onEnter now calls it)."
+            },
+            {
+              "id": "W3-A.6",
+              "description": "In-browser verify full loop + HUD (headed Chrome; 4/7 pass, confirmed BUG-W2-1a re-arm blocker + D-A6-1 score=0 major)",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-16T23:34:00",
+              "notes": "Kanban t_b08d3752. Playwright E2E (tests/e2e/w3a-full-loop.spec.ts) in real Chromium. 4/7 scenarios PASS: S1 boot->menu, S2 START->game+HUD, S3 death->gameover handoff, S5 high-score reload-persistence. 3/7 FAIL: W2-1b regression (START button disabled after returning from run), S4 RESTART second-run timeout, S6 console timeout. Confirmed defects: BUG-W2-1a (blocker) — MenuScene.started flag never resets on onExit so the start-guard never re-arms after a full run, making the second run impossible; D-A6-1 (major) — GameOverScene displays 0 because onEnter() ignores the {score,highScore} data payload. Evidence: tests/evidence/w3/W3A6-FAIL.txt. @ 7e59434. Merge to main resolved: GameScene.ts onEnter (kept UISystem calls + resetRunState), scenes.test.ts mock (union of getUISystem + switchCalls), game-loop-wiring.test.ts mock (added getUISystem). Full suite 610/610 post-merge. Follow-ups: W3-A.7 (re-arm fix), W3-A.8 (score payload fix)."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

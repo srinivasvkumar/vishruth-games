@@ -1,0 +1,39 @@
+W3A.4 GREEN EVIDENCE — GameOverScene
+Date: 2026-09-16
+Commit: (pending — will update after commit)
+
+GREEN phase: tests/unit/gameover-scene.test.ts (12 tests)
+Result: 12/12 pass
+
+  ✓ renders a "GAME OVER" heading
+  ✓ displays the final score passed via setFinalScore
+  ✓ displays the high score from localStorage
+  ✓ shows 0 for high score when nothing is stored
+  ✓ renders a visible RESTART button
+  ✓ clicking RESTART transitions to the menu scene
+  ✓ pressing Enter transitions to the menu scene
+  ✓ pressing Space transitions to the menu scene
+  ✓ double-dispatch guard: second Enter after restart is a no-op
+  ✓ double-dispatch guard: second click after restart is a no-op
+  ✓ keydown listener is detached on exit
+  ✓ cleanup removes the gameover DOM from the document
+
+Full unit suite:
+  Test Files  25 passed (25)
+  Tests       579 passed (579)
+  (baseline was 567/567; +12 new GameOverScene tests)
+
+tsc --noEmit: 1 pre-existing error (TS5101 baseUrl deprecation in tsconfig.json)
+eslint: 0 errors, 7 pre-existing warnings (all in Logger.ts)
+
+Scene registration verified:
+  - sm.registerScene('gameover', new GameOverScene(game)) in src/index.ts
+  - scenes.test.ts assertion updated: ['boot', 'menu', 'game', 'gameover']
+  - index.test.ts mock updated: vi.doMock('@/scenes/GameOverScene', ...)
+
+Files changed (3 source + 2 test + tracker + evidence):
+  1. src/scenes/GameOverScene.ts    (NEW — implementation, ~230 lines)
+  2. src/index.ts                   (1-line import + 1-line registration)
+  3. tests/unit/gameover-scene.test.ts (NEW — 12 TDD tests)
+  4. tests/unit/index.test.ts       (1-line mock add for GameOverScene)
+  5. tests/unit/scenes.test.ts      (1-line assertion update: +gameover)

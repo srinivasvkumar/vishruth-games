@@ -40,6 +40,9 @@ async function importIndex(): Promise<{ mod: Record<string, unknown>; Logger: an
   await vi.doMock('@/scenes/GameScene', () => ({
     GameScene: class { constructor(_game: any) {} },
   }));
+  await vi.doMock('@/scenes/GameOverScene', () => ({
+    GameOverScene: class { constructor(_game: any) {} },
+  }));
   await vi.doMock('@/core/Game', () => ({
     Game: class {
       readonly config: any;

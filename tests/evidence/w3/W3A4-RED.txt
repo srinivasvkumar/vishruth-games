@@ -1,0 +1,17 @@
+W3A.4 RED EVIDENCE — GameOverScene
+Date: 2026-09-16
+Commit base: d3f5810 (W3A.3 MenuScene full UI)
+
+RED phase: tests/unit/gameover-scene.test.ts (12 tests)
+Result: 0 tests run, suite FAILED to load
+
+Error:
+  Failed to resolve import "@/scenes/GameOverScene" from
+  "tests/unit/gameover-scene.test.ts". Does the file exist?
+
+Test Files  1 failed (1)
+Tests       no tests
+
+This is the expected RED state: the GameOverScene module does not
+exist yet, so the test file cannot resolve its import and the suite
+fails to collect.
