@@ -1,0 +1,87 @@
+BUG-W2-1b GREEN EVIDENCE (in-browser start-path verification)
+=============================================================
+Date: 2026-09-16 19:58 AEST
+Browser: Chromium (headed, chromium-boot project, Playwright 1.63.0, display :1)
+Spec: tests/e2e/w2-w21b-start-path.spec.ts
+Source state: src/scenes/MenuScene.ts = FIXED (commit 6f85f55, BUG-W2-1a)
+Verified: git diff --stat 6f85f55 -- src/scenes/MenuScene.ts → empty (on-disk == fix commit)
+
+PURPOSE
+-------
+Verify the BUG-W2-1a player-start-path fix end-to-end in REAL HEADED CHROME:
+  (1) Load app → lands on MenuScene (title + START button visible).
+  (2a) Press Enter → assert it enters GameScene.
+  (2b) Reload + click the START button → assert it enters GameScene.
+  (3)  In GameScene: 3D player + obstacles render, WASD moves the player.
+
+RESULT: 4/4 PASSED (17.3s total)
+--------------------------------
+  ✓ 1  BUG-W2-1b 1: boot lands on MenuScene with title + START button   (3.1s)
+  ✓ 2  BUG-W2-1b 2a: Enter key from menu enters GameScene               (3.3s)
+  ✓ 3  BUG-W2-1b 2b: clicking START button from menu enters GameScene   (5.5s)
+  ✓ 4  BUG-W2-1b 3: in GameScene — 3D player + obstacles render, WASD moves the player (4.9s)
+
+PER-SCENARIO EVIDENCE
+---------------------
+Scenario 1 (MenuScene reachable with START button):
+  - #menu-container display != 'none'; textContent contains 'CLUSTER RUSH'.
+  - #menu-start-button attached + visible + enabled; textContent === 'START'.
+  - WebGL context live on #game-canvas (webgl2/webgl).
+  - No fatal console errors during boot (filterFatalErrors → 0).
+  Screenshot: tests/evidence/w2/w2-w21b-menu.png
+
+Scenario 2a (Enter → GameScene):
+  - Pre-press: menu visible=true, game HUD visible=false (clean start).
+  - page.keyboard.press('Enter') fires the BUG-W2-1a window keydown handler.
+  - Post-press: #game-score attached + visible=true; #menu-container display:none.
+  - Player position finite in scene graph (x/y/z all Number.isFinite).
+  Screenshot: tests/evidence/w2/w2-w21b-enter-game.png
+
+Scenario 2b (START button click → GameScene):
+  - Reload → back on menu (menu visible=true, HUD false).
+  - #menu-start-button visible; btn.click() fires the BUG-W2-1a click handler.
+  - Post-click: #game-score visible=true; menu hidden.
+  - Player position finite.
+  (No screenshot artifact for 2b — same GameScene state as 2a; evidence
+   captured in w2-w21b-enter-game.png from the Enter path.)
+
+Scenario 3 (GameScene: 3D render + WASD movement):
+  - Entered via Enter (player start path).
+  - Game HUD visible, menu hidden.
+  - Player position finite (3D player present in scene graph).
+  - Scene mesh count >= 1 (player + obstacles + ground meshes render).
+  - WASD movement (reuse W2-E.1a scenario 2 checks):
+      D held 500ms → dx > +0.1 (player moved +x / right) ✓
+      A held 500ms → dx < 0    (player moved -x / left) ✓
+      W held 400ms → dz < 0    (player moved -z / forward) ✓
+  - No fatal console errors across the full boot→menu→Enter→WASD cycle.
+  Screenshot: tests/evidence/w2/w2-w21b-wasd-move.png
+
+CONSOLE (w2-w21b-console-chrome.txt, 158 lines, GREEN run):
+  - Fatal errors (pageerror / requestfailed / THREE / CORS / uncaught / WebGL): 0.
+  - Non-fatal warning (expected, out of scope):
+      [warning] The AudioContext was not allowed to start. It must be resumed
+      (or created) after a user gesture on the page.
+    → Same boot-time autoplay-policy notice seen in W2-A.4 / W2-E.1a. It does
+      not block the start path or gameplay; cross-browser audio policy is W3-C.
+
+EVIDENCE ARTIFACTS
+------------------
+  tests/evidence/w2/w2-w21b-menu.png            (menu + START button visible)
+  tests/evidence/w2/w2-w21b-enter-game.png      (in GameScene: player + obstacles)
+  tests/evidence/w2/w2-w21b-wasd-move.png       (player moved after WASD)
+  tests/evidence/w2/w2-w21b-console-chrome.txt  (full console capture, GREEN run)
+  tests/evidence/w2/W2-W21b-RED.txt            (negative control, pre-fix 4/4 fail)
+  tests/evidence/w2/W2-W21b-GREEN.txt          (this file)
+
+CONCLUSION
+----------
+BUG-W2-1a player start path is VERIFIED in real headed Chrome:
+  - MenuScene is reachable at boot with a visible, enabled START button.
+  - Both player entry routes work: Enter key AND START button click each
+    transition menu → game exactly once (double-start guard holds — no
+    second dispatch observed; the HUD appears and the menu hides).
+  - In GameScene the 3D player + obstacles render and WASD moves the player
+    in all tested directions (+x, -x, -z), matching W2-E.1a behavior.
+  - No fatal console errors. No regression of BUG-W2-1a.
+Verdict: PASS.

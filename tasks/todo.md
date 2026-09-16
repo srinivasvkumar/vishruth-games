@@ -50,3 +50,8 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W2-E.1b — Cross-browser (Firefox): 6/6 green in headed Firefox + Chrome re-pass; Week-2 criterion #1 both legs done — game-tester — `t_7844ca73`
 - [x] W2-E.2 — FPS baseline @ 20 obstacles (D4 gate): 60.0 mean FPS, gate >=30 PASS, no W3 re-scope; RED 8cc268c -> GREEN — game-tester — `t_71338ca5`
 - [x] W2-E.3 — Week 2 sign-off: 7/7 success criteria via fresh reviewer runs (smoke C+F, audio, physics-sync, FPS, score-persistence, shield, cross-browser); tracker + registry updated — reviewer — `t_bcf744c5`
+
+## BUG-W2-1: MenuScene start path (2026-09-16, post-W2)
+- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator
+- [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard + listener cleanup — game-dev — `t_4298322b`
+- [x] BUG-W2-1b — In-browser verify 1a start path (real headed Chrome: Enter/START-click -> GameScene + WASD moves player) — RED negative control 4/4 fail @ pre-fix -> GREEN 4/4 pass headed Chromium @ 6f85f55; 0 fatal console errors — game-tester — `t_675ab2f6`

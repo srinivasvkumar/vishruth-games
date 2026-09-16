@@ -21,15 +21,15 @@
     }
   },
   "current_status": {
-    "phase": "Week 2: Gameplay Systems",
+    "phase": "Post-W2: BUG-W2-1 fixes",
     "day": 4,
-    "current_task": "W2-E.3: End-of-Week-2 sign-off (quality gate)",
-    "status": "W2-E.3-COMPLETE",
+    "current_task": "BUG-W2-1b: in-browser verification of 1a start path (headed Chrome: Enter/START-click -> GameScene + WASD)",
+    "status": "BUG-W2-1b-COMPLETE",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-13T18:51:00",
-    "last_updated": "2026-09-14T08:45:00",
-    "completion_date": "2026-09-14T08:45:00",
-    "completion_notes": "W2-E.3 complete: reviewer sign-off run (fresh verification, 2026-09-14 08:45, sign-off worktree .worktrees/t_bcf744c5-signoff @ wt/t_71338ca5). All 7 Week-2 success criteria verified against FRESH runs (not just implementer evidence): #1 Chrome+Firefox smoke (W2-E1b GREEN + W2-E3-smoke-chrome/firefox re-runs 5/5), #2 movement (W2-E1b scenario 2), #3 jump (scenario 3), #4 score persistence (fresh probe: player:score event -> HUD SCORE: 1234 -> player:death -> saveHighScore() -> localStorage['cluster-rush-high-score']=1234 -> survives full reload), #5 shield mechanic (fresh probe: addPowerUp('invincibility',5000) on live player -> isInvincible=true, damage(50) absorbed (health stays 100), expires after 5.3s; GAPS: no PowerUp collectible entity, no visual effect surface - carried to Task 7.3 Phase 1), #6 audio SFX (W2-E3 audio probe: jump/collide/click triggers fire in live AudioSystem), #7 FPS baseline @20 obstacles (W2-E2: mean 60.0 FPS, gate >=30 PASS). Fresh unit suite green with coverage (npm run test:run -- --coverage), lint + tsc clean, vite build exit 0, e2e battery green. Evidence: tests/evidence/w2/W2-E3-verify-probe.txt + w2-e3-localstorage.txt + w2-e3-shield.txt + w2-signoff.md (commit 6663023)."
+    "start_date": "2026-09-16T19:50:00",
+    "last_updated": "2026-09-16T19:58:00",
+    "completion_date": "2026-09-16T19:58:00",
+    "completion_notes": "BUG-W2-1b complete (kanban t_675ab2f6, parent t_4298322b): in-browser verification of the BUG-W2-1a start path in REAL HEADED CHROME. Spec tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios) driven only via the player start path (Enter + START click; never the debug loadScene API). RED negative control (pre-fix MenuScene @ 8f1520a): 4/4 fail as designed. GREEN: 4/4 pass headed Chromium (Playwright 1.63.0, display :1), 17.3s, 0 fatal console errors (only expected AudioContext autoplay warning). Verified @ 6f85f55 (fix commit, fast-forwarded into worktree). No src/ changes by this card. Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-{menu,enter-game,wasd-move}.png, w2-w21b-console-chrome.txt. TDD_PLAN.md BUG-W2-1 status -> '1a COMPLETE + VERIFIED IN REAL BROWSER @ 6f85f55'. Verdict: PASS."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

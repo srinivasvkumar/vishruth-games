@@ -1,0 +1,1142 @@
+=================================================================
+GREEN EVIDENCE — BUG-W2-1a (kanban t_4298322b)
+Date: 2026-09-16
+Implementation: src/scenes/MenuScene.ts
+Test file:      tests/unit/menu-scene.test.ts
+=================================================================
+
+GREEN assertions (all passing):
+  - a visible START button exists in the menu container
+  - pressing Enter fires a transition to the game scene
+  - pressing Space fires a transition to the game scene
+  - clicking the START button fires a transition to the game scene
+  - guards against double-start: repeat key presses do not re-fire
+    after a transition
+  - other keys do not trigger a transition
+  - cleanup removes the keydown listener (menu can be re-entered)
+
+Implementation notes (what landed in MenuScene.ts):
+  - setupMenuUI() now appends a visible, clickable START button
+    (id #menu-start-button) to the existing placeholder container.
+    Minimal styling only — styled buttons are W3 Task 8.2.
+  - onEnter() attaches a window keydown listener for Enter + Space
+    (only when not already started). onExit() removes it so keys
+    during the transition into 'game' cannot re-fire the start.
+  - startGame() is the single dispatch point for both the key and
+    button paths: sets the `started` flag, removes the keydown
+    listener immediately, disables the button, and calls
+    this.game.switchScene('game') with a .catch that re-arms the
+    start path (flag + listener + button) if the transition rejects
+    — the menu stays reachable on failure.
+  - onCleanup() detaches the listener and clears the DOM refs.
+
+RED -> GREEN: 6/7 tests failed at RED capture (see
+W2-W21a-RED.txt), all 7/7 green after implementation.
+
+-----------------------------------------------------------------
+VERIFY 1 — target test file:
+-----------------------------------------------------------------
+Command: npm run test:run -- tests/unit/menu-scene.test.ts
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts tests/unit/menu-scene.test.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b
+
+ ✓ tests/unit/menu-scene.test.ts  (7 tests) 25ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  19:40:16
+   Duration  1.10s (transform 128ms, setup 59ms, collect 108ms, tests 25ms, environment 195ms, prepare 57ms)
+
+
+-----------------------------------------------------------------
+VERIFY 2 — full unit suite (regression):
+-----------------------------------------------------------------
+Command: npm run test:run
+
+> cluster-rush@0.1.0 test:run
+> vitest run --config config/vite.config.ts
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b
+
+ ✓ tests/unit/score.test.ts  (41 tests) 16ms
+ ✓ tests/unit/hello-three.test.ts  (7 tests) 15ms
+ ✓ tests/unit/mock-strategy.test.ts  (54 tests) 33ms
+ ✓ tests/unit/scene-manager.test.ts  (20 tests) 47ms
+ ✓ tests/unit/game-loop.test.ts  (15 tests) 43ms
+ ✓ tests/unit/asset-loader.test.ts  (18 tests) 64ms
+ ✓ tests/unit/input-system.test.ts  (26 tests) 57ms
+ ✓ tests/unit/physics-system.test.ts  (24 tests) 47ms
+ ✓ tests/unit/systems-stub.test.ts  (13 tests) 23ms
+stderr | tests/unit/systems-stub.test.ts > UISystem stub (W1-C gap-fill) > is constructible via the src/core/Game.ts call shape
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+
+ ✓ tests/unit/game.test.ts  (24 tests) 87ms
+ ✓ tests/unit/retroactive-core.test.ts  (46 tests) 75ms
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should have info method
+[INFO] Test message 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have warn method
+[WARN] Test warning 
+
+stderr | tests/unit/retroactive-core.test.ts > Logger Functionality > should have error method
+[ERROR] Test error 
+
+stdout | tests/unit/retroactive-core.test.ts > Logger Functionality > should accept message and optional data
+[INFO] Test message { key: 'value' }
+
+ ✓ tests/unit/player.test.ts  (45 tests) 115ms
+ ✓ tests/unit/index.test.ts  (7 tests) 222ms
+ ✓ tests/unit/audio-system.test.ts  (25 tests) 232ms
+stderr | tests/unit/audio-system.test.ts > W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder) > cleanup + graceful load failure (no crash) > AudioContext constructor failure -> degraded mode, no crash
+[ERROR] AudioSystem: AudioContext construction failed — degraded Error: simulated WebAudio unavailable
+    at new <anonymous> (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/audio-system.test.ts:251:17)
+    at AudioSystem.createContext (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/systems/Audio.ts:157:14)
+    at new AudioSystem (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/systems/Audio.ts:124:25)
+    at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/audio-system.test.ts:255:21
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:135:14
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:60:26
+    at runTest (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:781:17)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+    at runSuite (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:909:15)
+
+stderr | tests/unit/audio-system.test.ts > W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2) > event wiring survives degraded mode (no listeners, no throw)
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+
+ ✓ tests/unit/obstacle.test.ts  (24 tests) 39ms
+ ✓ tests/unit/body-sync.test.ts  (4 tests) 84ms
+ ✓ tests/unit/menu-scene.test.ts  (7 tests) 661ms
+ ✓ tests/unit/state.test.ts  (80 tests) 377ms
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > starts in menu state
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > starts in menu state
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > start() transitions menu -> playing
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > start() transitions menu -> playing
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:351:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:351:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > start() is blocked when already playing
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > start() is blocked when already playing
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[WARN] Game start blocked: not in a startable state { state: 'playing' }
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:357:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:357:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > pause() transitions playing -> paused
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game paused 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > pause() transitions playing -> paused
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:363:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:363:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > pause() is blocked from menu (no state change)
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > pause() is blocked from menu (no state change)
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[WARN] Game pause blocked: not playing { state: 'menu' }
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > resume() transitions paused -> playing
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game paused 
+[INFO] Game resumed 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > resume() transitions paused -> playing
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:375:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:375:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > resume() from menu transitions to playing (menu->playing is valid)
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Game resumed 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > resume() from menu transitions to playing (menu->playing is valid)
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > stop() from paused returns to menu
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game paused 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > stop() from paused returns to menu
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:388:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:388:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > gameOver() transitions playing -> gameOver
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > gameOver() transitions playing -> gameOver
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:396:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:396:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > gameOver() is blocked from menu (no state change)
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > gameOver() is blocked from menu (no state change)
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > restart() transitions gameOver -> restart
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > restart() transitions gameOver -> restart
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:407:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:407:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > restart() is blocked from playing (must reach gameOver first)
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > restart() is blocked from playing (must reach gameOver first)
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:414:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:414:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > emits game:state:change on every valid Game action
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game paused 
+[INFO] Game resumed 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > emits game:state:change on every valid Game action
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:422:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:422:10
+  }
+}
+
+stdout | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > canTransition() reflects the FSM table through Game
+[INFO] SceneManager initialized 
+[INFO] Input system initialized 
+[INFO] Physics system initialized {
+  gravity: -9.81,
+  worldScale: 1,
+  fixedTimeStep: 0.016666666666666666,
+  maxSubSteps: 5
+}
+[INFO] BodySync initialized 
+[INFO] Game initialized {
+  config: {
+    physics: {
+      gravity: -9.81,
+      worldScale: 1,
+      fixedTimeStep: 0.016666666666666666,
+      maxSubSteps: 5
+    },
+    audio: {
+      masterVolume: 1,
+      musicVolume: 0.8,
+      sfxVolume: 0.9,
+      spatialAudio: false
+    },
+    ui: { theme: 'dark', fontSize: 16, showFPS: false, showDebug: false },
+    debug: {
+      showColliders: false,
+      showStats: false,
+      logPhysics: false,
+      logPerformance: false
+    }
+  }
+}
+[INFO] Starting game 
+[INFO] Game over 
+[INFO] SceneManager cleaned up 
+[INFO] Physics system cleaned up 
+[INFO] BodySync cleaned up 
+[INFO] Game resources cleaned up 
+[INFO] Game stopped 
+
+stderr | tests/unit/state.test.ts > Game state machine integration (W2-D.2) > canTransition() reflects the FSM table through Game
+[WARN] AudioSystem: WebAudio unavailable — running degraded 
+[ERROR] Failed to load asset {
+  url: '/assets/manifest/boot.json',
+  type: 'json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:441:10
+  }
+}
+[ERROR] Boot asset manifest load failed {
+  BOOT_ASSET_MANIFEST: '/assets/manifest/boot.json',
+  error: TypeError: Failed to parse URL from /assets/manifest/boot.json
+      at Object.fetch (node:internal/deps/undici/undici:11360:11)
+      at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:22)
+      at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:19) {
+    [cause]: TypeError: Invalid URL
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/url/URL.ts:26:11)
+        at new URL (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/happy-dom/src/window/WindowContextClassExtender.ts:237:3)
+        at new Request (node:internal/deps/undici/undici:5055:25)
+        at fetch2 (node:internal/deps/undici/undici:9183:25)
+        at Object.fetch (node:internal/deps/undici/undici:11358:18)
+        at fetch (node:internal/process/pre_execution:281:25)
+        at Function.loadJSON (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:139:28)
+        at Function.load (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/utils/AssetLoader.ts:49:30)
+        at Game.start (/home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/src/core/Game.ts:100:22)
+        at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/state.test.ts:441:10
+  }
+}
+
+ ✓ tests/unit/scenes.test.ts  (28 tests) 1248ms
+ ✓ tests/unit/constants.test.ts  (12 tests) 4ms
+ ✓ tests/unit/cicd-pipeline.test.ts  (16 tests) 5ms
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept message and optional data
+[INFO] Test message 
+[INFO] Test message { key: 'value' }
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Logging Behavior > should accept error objects
+[ERROR] Error message Error: Test
+    at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/logger.test.ts:39:50
+    at Proxy.assertThrows (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/core/assertions.js:2644:7)
+    at Proxy.methodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/addMethod.js:57:25)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:850:16)
+    at Proxy.overwritingMethodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/overwriteMethod.js:78:33)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:1324:19)
+    at Proxy.<anonymous> (file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/expect/dist/index.js:800:17)
+    at Proxy.methodWrapper (/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/chai/lib/chai/utils/addMethod.js:57:25)
+    at /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_4298322b/tests/unit/logger.test.ts:39:74
+    at file:///home/srinivasvkumar/vishruth/games/clusterrush/node_modules/@vitest/runner/dist/index.js:135:14
+
+stdout | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support info level logging
+[INFO] Info message 
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support warn level logging
+[WARN] Warning message 
+
+stderr | tests/unit/logger.test.ts > Logger - Retroactive Tests > Log Levels > should support error level logging
+[ERROR] Error message 
+
+ ✓ tests/unit/logger.test.ts  (18 tests) 14ms
+ ✓ tests/unit/renderer.test.ts  (3 tests) 11ms
+
+ Test Files  23 passed (23)
+      Tests  557 passed (557)
+   Start at  19:39:16
+   Duration  3.87s (transform 4.87s, setup 3.04s, collect 8.64s, tests 3.52s, environment 16.36s, prepare 7.53s)
+
