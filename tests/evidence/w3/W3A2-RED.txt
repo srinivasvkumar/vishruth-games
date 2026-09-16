@@ -1,0 +1,91 @@
+W3A.2 RED evidence — 2026-09-16T21:47:45Z
+commit: 13982a3 (feat(W3A.1): UISystem core — real HUD (score/health/level), replace 32-line stub)
+command: npx vitest run --config config/vite.config.ts tests/unit/game-scene-ui.test.ts
+
+EXPECTED: 3 of 4 tests fail (RED). The 4th test (cleanup removes HUD)
+passes in both RED and GREEN states.
+
+RED reasons:
+  1. 'GameScene constructor does NOT create HUD divs' — FAILS because
+     GameScene.setupUI() calls document.createElement for all 3 HUD ids.
+     The spy catches 3 divs with ids game-score/game-health/game-level.
+  2. 'HUD divs show correct text after load+enter+update' — FAILS because
+     GameScene writes text to its OWN divs (created in constructor), while
+     the UISystem's divs (created in beforeEach) stay empty.
+  3. 'HUD reflects new score after PLAYER_SCORE event' — FAILS for the
+     same reason: GameScene's scoreManager.addScore updates its own div.
+  4. 'HUD divs removed after cleanup' — PASSES (GameScene.removeUI() removes
+     its divs; UISystem.cleanup() removes its own; both gone after cleanup).
+
+--- vitest output ---
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_16f7e67d
+
+ ❯ tests/unit/game-scene-ui.test.ts  (4 tests | 3 failed) 36ms
+   ❯ tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > RED: GameScene constructor does NOT create #game-score / #game-health / #game-level via document.createElement
+     → expected [ <div …(2)></div>, …(2) ] to have a length of +0 but got 3
+   ❯ tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > after load() + enter() + update(), the HUD divs show correct text (UISystem-driven)
+     → expected '' to be 'SCORE: 0' // Object.is equality
+   ❯ tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > after update() with a score event, the HUD reflects the new score
+     → expected '' to be 'SCORE: 50' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > RED: GameScene constructor does NOT create #game-score / #game-health / #game-level via document.createElement
+AssertionError: expected [ <div …(2)></div>, …(2) ] to have a length of +0 but got 3
+
+- Expected
++ Received
+
+- 0
++ 3
+
+ ❯ tests/unit/game-scene-ui.test.ts:144:27
+    142|     );
+    143|
+    144|     expect(hudIdsCreated).toHaveLength(0);
+       |                           ^
+    145|
+    146|     spy.mockRestore();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > after load() + enter() + update(), the HUD divs show correct text (UISystem-driven)
+AssertionError: expected '' to be 'SCORE: 0' // Object.is equality
+
+- Expected
++ Received
+
+- SCORE: 0
+
+ ❯ tests/unit/game-scene-ui.test.ts:170:64
+    168|     // "HEALTH: 100" (Player starts at full health)
+    169|     // "LEVEL: 1" (GameScene starts at level 1)
+    170|     expect(document.getElementById('game-score')!.textContent).toBe('S…
+       |                                                                ^
+    171|     expect(document.getElementById('game-health')!.textContent).toBe('H…
+    172|     expect(document.getElementById('game-level')!.textContent).toBe('L…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/game-scene-ui.test.ts > W3A.2: GameScene HUD ownership (D2 — HUD lives in UISystem) > after update() with a score event, the HUD reflects the new score
+AssertionError: expected '' to be 'SCORE: 50' // Object.is equality
+
+- Expected
++ Received
+
+- SCORE: 50
+
+ ❯ tests/unit/game-scene-ui.test.ts:192:64
+    190|     gs.update(0.016);
+    191|
+    192|     expect(document.getElementById('game-score')!.textContent).toBe('S…
+       |                                                                ^
+    193|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  21:47:45
+   Duration  1.04s (transform 172ms, setup 56ms, collect 198ms, tests 36ms, environment 155ms, prepare 68ms)

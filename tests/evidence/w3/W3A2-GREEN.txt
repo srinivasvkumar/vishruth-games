@@ -1,0 +1,50 @@
+W3A.2 GREEN evidence — 2026-09-16T21:57:56Z
+commit: 13982a3 (parent) + W3A.2 changes (GameScene.ts + game-scene-ui.test.ts)
+
+Commands:
+  npx vitest run --config config/vite.config.ts tests/unit/game-scene-ui.test.ts
+  npx vitest run --config config/vite.config.ts
+  npm run build
+  npm run lint
+
+--- Target file: tests/unit/game-scene-ui.test.ts ---
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_16f7e67d
+
+ ✓ tests/unit/game-scene-ui.test.ts  (4 tests) 29ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  21:57:54
+   Duration  1.11s (transform 166ms, setup 57ms, collect 178ms, tests 29ms, environment 160ms, prepare 82ms)
+
+All 4 tests pass:
+  1. GameScene constructor does NOT create HUD divs via document.createElement ✓
+  2. HUD divs show correct text after load+enter+update (UISystem-driven) ✓
+  3. HUD reflects new score after PLAYER_SCORE event ✓
+  4. HUD divs removed after cleanup ✓
+
+--- Full unit suite ---
+
+ Test Files  25 passed (25)
+      Tests  577 passed (577)
+   Start at  21:57:56
+   Duration  2.41s
+
+Up from 573 (W3A.1 baseline) — 4 new tests in game-scene-ui.test.ts.
+
+--- Build (npm run build) ---
+vite v5.4.21 building for production...
+✓ 28 modules transformed.
+✓ built in 1.78s
+(0 errors)
+
+--- Lint (npm run lint) ---
+0 errors, 7 pre-existing warnings (all no-console in unrelated files)
+
+--- Notes ---
+scenes.test.ts mock game updated to include getUISystem() returning a
+real UISystem. Two test assertions updated to reflect the new HUD
+ownership (constructor test + cleanup test). These are test-only
+changes required by the migration — no production code changes beyond
+GameScene.ts.
