@@ -740,7 +740,7 @@ describe('W2-A.3: boot path lands in a valid registered active menu scene (RED)'
     expect(sm.hasScene('game')).toBe(true);
     // Registration order: 'boot' first — Game.start() boots the first
     // registered scene (src/core/Game.ts:87-94).
-    expect(Array.from(sm.getAllScenes().keys())).toEqual(['boot', 'menu', 'game']);
+    expect(Array.from(sm.getAllScenes().keys())).toEqual(['boot', 'menu', 'game', 'gameover']);
   });
 
   it('RED: after start() + boot delay, the active scene is the registered, active MenuScene (no "Scene not found")', async () => {
