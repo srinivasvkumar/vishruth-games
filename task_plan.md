@@ -36,9 +36,9 @@ src/systems/Score.ts, with 2 deliberate bug fixes:
 |---|-------|-----------|
 
 ## Phases
-- [ ] Phase 1: Merge A7+A8 into working branch
-- [ ] Phase 2: TDD RED — write failing test
-- [ ] Phase 3: TDD GREEN — implement canonical helper + wire all sites
-- [ ] Phase 4: Verify — full suite, tsc, eslint, build
-- [ ] Phase 5: Documentation — TDD_PLAN.md + evidence files
-- [ ] Phase 6: Commit + push
+- [x] Phase 1: Merge A7+A8 into working branch
+- [x] Phase 2: TDD RED — write failing test (9 tests failing)
+- [x] Phase 3: TDD GREEN — implement canonical helper + wire all sites (635/635 passing)
+- [x] Phase 4: Verify — full suite, tsc, eslint, build
+- [x] Phase 5: Documentation — TDD_PLAN.md + evidence files
+- [x] Phase 6: Commit (e909ae7)
