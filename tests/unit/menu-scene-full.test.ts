@@ -177,6 +177,122 @@ describe('W3A.3: Full MenuScene UI', () => {
     expect(toast!.textContent?.toLowerCase()).toContain('coming in w3-c');
   });
 
+  // ── W3-A.7: start-guard re-arm after a full run (BUG-W2-1a) ──────────────
+  //
+  // After a full run (menu -> game -> death -> gameover -> RESTART -> menu),
+  // the menu must be fully usable again: the START button enabled AND the
+  // keydown Enter/Space path re-wired. Root cause (W3A6-FAIL.txt): startGame()
+  // sets started=true and only resets it if switchScene REJECTS — in the
+  // normal flow it resolves, so started stays true forever and onEnter()'s
+  // 'if (!this.started)' re-arm guard never fires. The fix resets
+  // started=false in onExit() so the next onEnter() re-arms.
+
+  /**
+   * Simulate the full run lifecycle at the MenuScene level:
+   *   1. start via Enter (switchScene RESOLVES — the normal flow)
+   *   2. exit the menu (what SceneManager does when the game scene loads)
+   *   3. re-enter the menu (the RESTART path from GameOverScene)
+   * Returns the start button + how many transitions fired so far.
+   */
+  function completeOneRunViaEnter(): { start: HTMLButtonElement; transitions: number } {
+    pressKey('Enter');
+    expect(game.switchScene).toHaveBeenCalledTimes(1);
+    expect(game.switchScene).toHaveBeenCalledWith('game');
+    // switchScene resolved — the game scene is now active.
+    menu.exit();
+    // Player dies, gameover scene shows, RESTART -> back to the menu.
+    menu.enter();
+    const start = document.getElementById('menu-start-button') as HTMLButtonElement;
+    return { start, transitions: 1 };
+  }
+
+  it('re-arms the START button after returning to the menu following a resolved transition', () => {
+    const { start } = completeOneRunViaEnter();
+    expect(start).toBeTruthy();
+    expect(
+      start!.disabled,
+      'START button must be ENABLED after returning to the menu (BUG-W2-1a re-arm)'
+    ).toBe(false);
+  });
+
+  it('re-arms the keydown Enter path after returning to the menu', () => {
+    completeOneRunViaEnter();
+    // The second run must be startable via the keyboard again.
+    pressKey('Enter');
+    expect(game.switchScene).toHaveBeenCalledTimes(2);
+    expect(game.switchScene).toHaveBeenLastCalledWith('game');
+  });
+
+  it('a second run starts via button click after returning to the menu', () => {
+    const { start } = completeOneRunViaEnter();
+    start!.click();
+    expect(game.switchScene).toHaveBeenCalledTimes(2);
+    expect(game.switchScene).toHaveBeenLastCalledWith('game');
+    // A successful second dispatch re-locks the guard.
+    expect(start!.disabled).toBe(true);
+  });
+
+  it('the double-start guard still holds mid-run (rapid double-Enter fires ONE transition)', () => {
+    // Held-key auto-repeat / double-tap: two Enters back to back BEFORE the
+    // menu exits must dispatch exactly one transition.
+    pressKey('Enter');
+    pressKey('Enter');
+    expect(game.switchScene).toHaveBeenCalledTimes(1);
+  });
+
+  it('the double-start guard still holds mid-run (rapid double-click fires ONE transition)', () => {
+    const start = document.getElementById('menu-start-button') as HTMLButtonElement;
+    start!.click();
+    start!.click(); // second click: button already disabled + guard set
+    expect(game.switchScene).toHaveBeenCalledTimes(1);
+  });
+
+  it('re-arms after MULTIPLE full runs (loop stability)', () => {
+    // Run 1: start via Enter, leave the menu, come back (1 transition).
+    completeOneRunViaEnter();
+    // Run 2: return to the menu and start via the button (2 transitions).
+    menu.exit();
+    menu.enter();
+    const start = document.getElementById('menu-start-button') as HTMLButtonElement;
+    start!.click(); // transition 2
+    expect(game.switchScene).toHaveBeenCalledTimes(2);
+    // Run 3: leave and come back again, start via Enter (3 transitions).
+    menu.exit();
+    menu.enter();
+    pressKey('Enter'); // transition 3
+    expect(game.switchScene).toHaveBeenCalledTimes(3);
+    expect(game.switchScene).toHaveBeenLastCalledWith('game');
+  });
+
+  it('still re-arms when the transition REJECTS (BUG-W2-1a original contract preserved)', async () => {
+    // The original guard: a failed switchScene (scene not registered) must
+    // leave the menu reachable — started clears, listener re-attaches,
+    // button re-enables. This must still hold after the onExit() fix.
+    //
+    // NOTE: a SECOND MenuScene (with its own DOM) coexists with the
+    // describe-level menu (whose afterEach runs after this test), so every
+    // lookup is scoped to THIS scene's #menu-container.
+    const failingGame = createMockGame();
+    failingGame.switchScene = vi.fn().mockRejectedValue(new Error('Scene not found: game'));
+    const failingMenu = new MenuScene(failingGame as never);
+    await failingMenu.load();
+    failingMenu.enter();
+    const containers = document.querySelectorAll('#menu-container');
+    const container = containers[containers.length - 1]!;
+    const start = container.querySelector('#menu-start-button') as HTMLButtonElement;
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(start.disabled).toBe(true);
+    // Let the rejection handler run (microtasks only — no timer in the
+    // reject path).
+    await new Promise((r) => setTimeout(r, 0));
+    expect(start.disabled, 'button must be re-enabled after a rejected transition').toBe(false);
+    // The menu is still live here (SceneManager fell back), so a retry works
+    // WITHOUT exiting/re-entering.
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(failingGame.switchScene).toHaveBeenCalledTimes(2);
+    failingMenu.cleanup();
+  });
+
   it('START and SETTINGS buttons are keyboard-focusable in Tab order', () => {
     const start = document.getElementById('menu-start-button') as HTMLButtonElement;
     const settings = document.getElementById('menu-settings-button') as HTMLButtonElement;

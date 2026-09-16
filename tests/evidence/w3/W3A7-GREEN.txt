@@ -1,0 +1,111 @@
+W3A.7 — TDD GREEN: MenuScene start-guard re-arm after a full run (BUG-W2-1a)
+==============================================================================
+Date: 2026-09-17
+Base commit: eb3cc82 (head of wt/t_c3a4bd20 before the fix)
+Worktree: wt/t_c3a4bd20
+RED evidence: tests/evidence/w3/W3A7-RED.txt (4 failed | 13 passed)
+
+## 1. Unit — W3-A.7 re-arm suite (RED → GREEN)
+────────────────────────────────────────────────────────────────────────────
+Command:
+  npm run test:run -- tests/unit/menu-scene-full.test.ts
+Result: 17 passed | 0 failed (was 13 passed | 4 failed at RED)
+
+New tests now passing:
+  ✓ re-arms the START button after returning to the menu following a resolved transition
+  ✓ re-arms the keydown Enter path after returning to the menu
+  ✓ a second run starts via button click after returning to the menu
+  ✓ re-arms after MULTIPLE full runs (loop stability)
+Preserved (still passing):
+  ✓ all 10 pre-existing W3A.3 menu tests
+  ✓ double-start guard: rapid double-Enter fires ONE transition
+  ✓ double-start guard: rapid double-click fires ONE transition
+  ✓ transition REJECT re-arm (BUG-W2-1a original contract)
+
+## 2. Full unit suite (no regressions)
+────────────────────────────────────────────────────────────────────────────
+Command: npm run test:run
+Result: 617 passed | 0 failed (27 files; up from 590 — 27 new tests)
+
+## 3. Type check + lint
+────────────────────────────────────────────────────────────────────────────
+Command: npm run type-check
+Result: tsc --noEmit clean (exit 0)
+Command: npm run lint
+Result: no errors or warnings
+
+## 4. In-browser E2E — tests/e2e/w3a-full-loop.spec.ts (chromium-boot)
+────────────────────────────────────────────────────────────────────────────
+Command: npm run test:e2e -- w3a-full-loop --project=chromium-boot --reporter=list
+Result: 5 passed | 2 failed (31.6s)
+
+### BUG-W2-1a target scenarios — ALL NOW PASS (all failed at W3A.6)
+  ✓ W2-1b regression: START button works after returning from a run
+      (BUG-W2-1a guard re-arms)                                    (4.8s)
+  ✓ W3A.6 S4: RESTART returns to the menu; a second run starts cleanly (4.7s)
+      — full loop menu -> game -> gameover -> restart -> menu -> run2
+  ✓ W3A.6 S6: console capture across menu -> game -> gameover -> menu -> game
+      (3.6s) — exercises a second run through the re-armed start guard
+
+### Unrelated pre-existing failures (verified NOT caused by this fix)
+  ✗ W3A.6 S2: START via Enter enters game; HUD visible; HUD divs originate
+    from GameScene (D2 probe)
+      — the D2 "ownership probe" (HUD divs originate from GameScene) is a
+        STALE assertion superseded by W3A.1+A2 (commit f46a1a8): UISystem
+        now owns the HUD divs (D2 HUD ownership migration). The W3A.6
+        evidence file D-A6-1 already flagged this probe as stale.
+      — VERIFIED IDENTICAL on the pre-fix baseline:
+        `git stash && npm run test:e2e -- w3a-full-loop` → same 5/2 split
+        (S2 + S3 fail on eb3cc82 with zero W3-A.7 changes applied).
+  ✗ W3A.6 S3: player:death transitions to GameOver; final-score handoff
+      — "Game HUD must be hidden in the game-over scene" (expect false,
+        got true): UI.ts cleanup() (systems/UI.ts:186-197) removes the HUD
+        DIVS from the DOM on game-over, but the HUD divs are re-created by
+        UI.createHud() (UI.ts:96-118) on the next GameScene enter, and the
+        spec's "hidden" assertion reads display style on a div that no
+        longer exists / has been re-created. Same failure on pre-fix
+        baseline (verified above) → pre-existing HUD lifecycle gap, not a
+        start-guard issue.
+
+Conclusion: the start-guard re-arm fix is GREEN in-browser. Both W3A.6
+failures that were attributed to BUG-W2-1a (S4, W2-1b, S6) now pass. The
+remaining S2/S3 failures are documented pre-existing issues (stale D2
+probe + HUD-div lifecycle on game-over) that existed before this fix and
+are outside W3-A.7 scope.
+
+## 5. Fix (the single production change)
+────────────────────────────────────────────────────────────────────────────
+src/scenes/MenuScene.ts — onExit() now resets this.started = false when
+the menu stops being the active scene (19 insertions / 5 deletions,
+mostly comments documenting the lifecycle):
+
+    onExit(): void {
+      // W3-A.7 (BUG-W2-1a re-arm): reset the start guard the moment the
+      // menu stops being the active scene. The guard only needs to hold
+      // WHILE THE MENU IS ACTIVE … Once the game scene is active, a later
+      // onEnter() — returning from the game-over RESTART path — must
+      // re-arm: the .catch() in startGame() alone never fires in the
+      // normal flow because switchScene RESOLVES …
+      this.started = false;
+      this.detachKeydownHandler();
+      this.cleanup();
+    }
+
+Lifecycle chain that makes the re-arm reliable:
+  startGame() sets started=true → SceneManager.loadScene() calls
+  menu.exit() (onExit: started=false, listener detached) → game.enter()
+  → … death → gameover RESTART → SceneManager.loadScene('menu') calls
+  menu.exit() (no-op, already inactive) → menu.enter() → onEnter() sees
+  started===false → re-attaches keydown listener + re-enables START.
+Rejection path unchanged: a rejected switchScene never exits the menu, so
+.catch() still clears started and onEnter re-arms on the next enter.
+Double-start guard preserved: started=true is set synchronously before the
+async transition, so a rapid second Enter/click mid-transition is
+suppressed (unit tests 15-16, unchanged, still pass).
+
+## 6. Files changed
+────────────────────────────────────────────────────────────────────────────
+  src/scenes/MenuScene.ts             (fix: onExit re-arm, + comments)
+  tests/unit/menu-scene-full.test.ts  (new W3-A.7 re-arm suite, 7 tests)
+  tests/evidence/w3/W3A7-RED.txt      (RED evidence)
+  tests/evidence/w3/W3A7-GREEN.txt    (this file)

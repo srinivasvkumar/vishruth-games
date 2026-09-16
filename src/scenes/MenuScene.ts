@@ -33,8 +33,10 @@ export class MenuScene extends Scene {
   /**
    * Double-start guard (BUG-W2-1a): once a start transition has fired,
    * key presses / clicks must not fire another. Set to true the moment
-   * the transition is dispatched; cleared only if the transition
-   * rejects (scene not found, etc.) so the menu stays reachable.
+   * the transition is dispatched; cleared in onExit() when the menu
+   * stops being the active scene, and in the .catch() below if the
+   * transition rejects (scene not found, etc.) so the menu stays
+   * reachable in either case.
    */
   private started = false;
 
@@ -65,9 +67,11 @@ export class MenuScene extends Scene {
     // Refresh the high score on every entry so a record set in a prior
     // game session is reflected when the player returns to the menu.
     this.updateHighScoreDisplay();
-    // BUG-W2-1a: wire the start path while the menu is visible. If a
-    // previous transition rejected (game not registered), started is
-    // false again — re-arm.
+    // BUG-W2-1a: wire the start path while the menu is visible. The
+    // start guard is re-armed when the menu stops being active (onExit,
+    // W3-A.7), and also when a previous transition rejected (the .catch()
+    // in startGame clears it without an exit) — either way, `!started`
+    // here is exactly "menu is fresh and ready to dispatch".
     if (!this.started) {
       this.attachKeydownHandler();
       if (this.startButton) {
@@ -82,6 +86,16 @@ export class MenuScene extends Scene {
   }
 
   protected onExit(): void {
+    // W3-A.7 (BUG-W2-1a re-arm): reset the start guard the moment the menu
+    // stops being the active scene. The guard only needs to hold WHILE THE
+    // MENU IS ACTIVE (it suppresses a second dispatch from the same key
+    // repeat / double click during the transition out). Once the game
+    // scene is active, a later onEnter() — returning from the game-over
+    // RESTART path — must re-arm: the .catch() in startGame() alone never
+    // fires in the normal flow because switchScene RESOLVES, which left
+    // started===true forever and deadened both start paths on the second
+    // run. Clearing here makes the onEnter() re-arm guard fire reliably.
+    this.started = false;
     // BUG-W2-1a: detach the keydown listener the moment the menu stops
     // being the active scene, so keys pressed during the transition
     // into 'game' cannot re-fire the start path.
