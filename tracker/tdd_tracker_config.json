@@ -23,13 +23,13 @@
   "current_status": {
     "phase": "Post-W2: BUG-W2-1 fixes",
     "day": 4,
-    "current_task": "BUG-W2-1a: MenuScene player start path (Enter/Space + START button -> switchScene('game'))",
-    "status": "BUG-W2-1a-COMPLETE",
+    "current_task": "BUG-W2-1b: in-browser verification of 1a start path (headed Chrome: Enter/START-click -> GameScene + WASD)",
+    "status": "BUG-W2-1b-COMPLETE",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-16T19:10:00",
-    "last_updated": "2026-09-16T19:45:00",
-    "completion_date": "2026-09-16T19:45:00",
-    "completion_notes": "BUG-W2-1a complete (kanban t_4298322b): MenuScene minimal player start path — Enter/Space keydown + START button click dispatch game.switchScene('game'); double-start guard (started flag + keydown listener removal + button disable on dispatch; .catch re-arms on rejection); listener cleanup in onExit/onCleanup so the menu can be re-entered. TDD RED (6/7 failing, W2-W21a-RED.txt) -> GREEN (7/7, W2-W21a-GREEN.txt). Full suite 557/557 (23 files), tsc --noEmit clean, eslint 0 errors (7 pre-existing Logger.ts warnings). Full menu UI stays W3 Task 8.2. BUG-W2-1 status: decomposed + 1a in flight (remaining sub-cards follow)."
+    "start_date": "2026-09-16T19:50:00",
+    "last_updated": "2026-09-16T19:58:00",
+    "completion_date": "2026-09-16T19:58:00",
+    "completion_notes": "BUG-W2-1b complete (kanban t_675ab2f6, parent t_4298322b): in-browser verification of the BUG-W2-1a start path in REAL HEADED CHROME. Spec tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios) driven only via the player start path (Enter + START click; never the debug loadScene API). RED negative control (pre-fix MenuScene @ 8f1520a): 4/4 fail as designed. GREEN: 4/4 pass headed Chromium (Playwright 1.63.0, display :1), 17.3s, 0 fatal console errors (only expected AudioContext autoplay warning). Verified @ 6f85f55 (fix commit, fast-forwarded into worktree). No src/ changes by this card. Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-{menu,enter-game,wasd-move}.png, w2-w21b-console-chrome.txt. TDD_PLAN.md BUG-W2-1 status -> '1a COMPLETE + VERIFIED IN REAL BROWSER @ 6f85f55'. Verdict: PASS."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

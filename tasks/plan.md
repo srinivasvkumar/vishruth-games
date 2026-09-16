@@ -135,12 +135,18 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Evidence: tests/evidence/w2/W2-E3-verify-probe.txt, w2-e3-localstorage.txt, w2-e3-shield.txt; sign-off doc: w2-signoff.md
 
 ## BUG-W2-1: MenuScene start path (post-W2, 2026-09-16)
-- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a in flight — orchestrator
+- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator
 - [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard, listener cleanup in onExit/onCleanup — game-dev — `t_4298322b` — 2026-09-16
   - RED: 6/7 menu-scene tests failed pre-change (no button, no key wiring, no guard)
   - GREEN: 7/7 in tests/unit/menu-scene.test.ts; full suite 557/557; tsc clean; eslint 0 errors (7 pre-existing Logger.ts warnings)
   - Evidence: tests/evidence/w2/W2-W21a-RED.txt, W2-W21a-GREEN.txt
   - Scope note: minimal start path only — full menu UI (settings/high scores/styled buttons) stays W3 Task 8.2
+- [x] BUG-W2-1b — In-browser verification of 1a start path (real headed Chrome: Enter/START-click -> GameScene + WASD moves player) — game-tester — `t_675ab2f6` — 2026-09-16
+  - RED negative control (pre-fix MenuScene @ 8f1520a): 4/4 failed as designed (no START button; Enter no-op; no transition)
+  - GREEN: 4/4 passed in headed Chromium (Playwright 1.63.0, display :1), 17.3s; 0 fatal console errors (only expected AudioContext autoplay warning)
+  - Scenarios: (1) MenuScene + #menu-start-button visible/enabled; (2a) Enter -> GameScene; (2b) reload + START click -> GameScene; (3) 3D player + obstacles render, WASD moves (+x/-x/-z)
+  - Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-{menu,enter-game,wasd-move}.png, w2-w21b-console-chrome.txt
+  - Verified @ 6f85f55 (fix commit ff-merged into worktree); no src/ changes by this card. Verdict: PASS — no BUG-W2-1a regression.
 
 ## W2-D: Game Flow & Score
 - [x] W2-D.1 — Score manager pure fns + LocalStorage persistence (RED->GREEN) — game-dev — `t_5bff9ff6`

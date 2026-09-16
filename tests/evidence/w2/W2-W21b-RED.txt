@@ -1,0 +1,56 @@
+BUG-W2-1b RED EVIDENCE (negative control)
+==========================================
+Date: 2026-09-16 19:55 AEST
+Browser: Chromium (headed, chromium-boot project, Playwright 1.63.0, display :1)
+Spec: tests/e2e/w2-w21b-start-path.spec.ts
+Source state: src/scenes/MenuScene.ts = PRE-FIX (git checkout 8f1520a -- src/scenes/MenuScene.ts)
+             i.e. no START button, no Enter/Space keydown handler, no startGame() dispatch.
+
+PURPOSE
+-------
+Prove the W2-1b spec is a genuine discriminator: it must FAIL against the
+pre-fix MenuScene (no player start path) and PASS against the fixed one
+(BUG-W2-1a, commit 6f85f55). This is the RED half of the RED->GREEN->VERIFY
+cycle for the in-browser start-path verification.
+
+METHOD
+------
+1. Checked out pre-fix MenuScene.ts (from commit 8f1520a, the parent of 6f85f55).
+   Verified: grep -c "menu-start-button|attachKeydownHandler|startGame" == 0.
+2. Ran the full 4-scenario spec against the running dev server (vite :5173).
+3. Captured per-scenario failures.
+
+RESULT: 4/4 FAILED (as designed)
+--------------------------------
+Scenario 1: boot lands on MenuScene with title + START button
+  FAIL — #menu-start-button not found (element(s) not found).
+  Reason: pre-fix setupMenuUI() creates only <h1>CLUSTER RUSH</h1> +
+          <p>Press START to begin</p>; no <button id="menu-start-button">.
+
+Scenario 2a: Enter key from menu enters GameScene
+  FAIL — "Game HUD must be visible after Enter" → received false.
+  Reason: pre-fix MenuScene has no window keydown listener for Enter/Space,
+          so page.keyboard.press('Enter') is a no-op; scene stays 'menu',
+          #game-score never appears.
+
+Scenario 2b: clicking START button from menu enters GameScene
+  FAIL — expect(locator('#menu-start-button')).toBeVisible() →
+         "element(s) not found" (timeout 5000ms).
+  Reason: no button element exists to click.
+
+Scenario 3: in GameScene — 3D player + obstacles render, WASD moves player
+  FAIL — "Game HUD must be visible" → received false.
+  Reason: cannot enter GameScene (no start path), so the WASD/mesh checks
+          are unreachable; failure surfaces at the first game-scene assertion.
+
+CONCLUSION
+----------
+The spec discriminates: it is RED (4/4 fail) without the BUG-W2-1a start path
+and GREEN (4/4 pass) with it (see W2-W21b-GREEN.txt). No false-pass risk —
+the spec drives ONLY the player start path (Enter key + START button click),
+never the debug window.game.getSceneManager().loadScene('game') API that the
+W2-E.1a smoke suite used to bypass the menu.
+
+After this RED run the fix was restored:
+  git checkout 6f85f55 -- src/scenes/MenuScene.ts
+  git diff --stat 6f85f55 -- src/scenes/MenuScene.ts  → empty (identical to fix)
