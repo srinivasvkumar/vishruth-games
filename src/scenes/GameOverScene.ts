@@ -1,8 +1,9 @@
-import * as THREE from 'three';
-import { Scene } from './Scene';
-import { Logger } from '@/utils/Logger';
-import { HIGH_SCORE_KEY } from '@/systems/Score';
-import type { Game } from '@/core/Game';
+import * as THREE from "three";
+import { Scene } from "./Scene";
+import { Logger } from "@/utils/Logger";
+import { HIGH_SCORE_KEY } from "@/systems/Score";
+import { GameEvents } from "@/utils/Constants";
+import type { Game } from "@/core/Game";
 
 /**
  * Game over scene (W3A.4, TDD_PLAN Task 8.2 — GameOverScene portion).
@@ -30,6 +31,12 @@ export class GameOverScene extends Scene {
   private finalScoreEl: HTMLDivElement | null = null;
   private highScoreEl: HTMLDivElement | null = null;
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+  /**
+   * W3-A.8: LEVEL_START event listener — attached in onLoad() (before
+   * enter() is called by SceneManager), so it receives the live payload
+   * emitted at SceneManager.loadScene() L80 (AFTER enter()).
+   */
+  private levelStartHandler: ((event: Event) => void) | null = null;
   private finalScore = 0;
   /**
    * Double-restart guard: once a restart transition has fired, key
@@ -40,7 +47,7 @@ export class GameOverScene extends Scene {
 
   constructor(game: Game) {
     super(game);
-    Logger.info('Game over scene created');
+    Logger.info("Game over scene created");
   }
 
   protected createCamera(): THREE.Camera {
@@ -48,19 +55,19 @@ export class GameOverScene extends Scene {
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      1000,
     );
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await -- preserves the base class async contract; no asset loading
   protected async onLoad(): Promise<void> {
     this.setupUI();
-    Logger.debug('Game over scene loaded');
+    Logger.debug("Game over scene loaded");
   }
 
   protected onEnter(): void {
     if (this.container) {
-      this.container.style.display = 'block';
+      this.container.style.display = "block";
     }
     // Refresh the high score on every entry so the current record is shown.
     this.updateHighScoreDisplay();
@@ -72,7 +79,7 @@ export class GameOverScene extends Scene {
         this.restartButton.disabled = false;
       }
     }
-    Logger.debug('Game over scene entered');
+    Logger.debug("Game over scene entered");
   }
 
   protected onUpdate(_deltaTime: number): void {
@@ -81,20 +88,22 @@ export class GameOverScene extends Scene {
 
   protected onExit(): void {
     this.detachKeydownHandler();
+    this.detachLevelStartHandler();
     if (this.container) {
-      this.container.style.display = 'none';
+      this.container.style.display = "none";
     }
-    Logger.debug('Game over scene exited');
+    Logger.debug("Game over scene exited");
   }
 
   protected onCleanup(): void {
     this.detachKeydownHandler();
+    this.detachLevelStartHandler();
     this.container?.parentNode?.removeChild(this.container);
     this.container = undefined;
     this.restartButton = null;
     this.finalScoreEl = null;
     this.highScoreEl = null;
-    Logger.debug('Game over scene cleaned up');
+    Logger.debug("Game over scene cleaned up");
   }
 
   /**
@@ -116,8 +125,8 @@ export class GameOverScene extends Scene {
    * value, RESTART button.
    */
   private setupUI(): void {
-    const container = document.createElement('div');
-    container.id = 'gameover-container';
+    const container = document.createElement("div");
+    container.id = "gameover-container";
     container.style.cssText = `
       position: fixed;
       top: 0;
@@ -134,8 +143,8 @@ export class GameOverScene extends Scene {
       color: #ffffff;
     `;
 
-    const heading = document.createElement('h1');
-    heading.textContent = 'GAME OVER';
+    const heading = document.createElement("h1");
+    heading.textContent = "GAME OVER";
     heading.style.cssText = `
       color: #ff4444;
       font-size: 48px;
@@ -144,53 +153,53 @@ export class GameOverScene extends Scene {
     `;
 
     // Final score block
-    const finalScoreLabel = document.createElement('div');
-    finalScoreLabel.textContent = 'SCORE';
+    const finalScoreLabel = document.createElement("div");
+    finalScoreLabel.textContent = "SCORE";
     finalScoreLabel.style.cssText = `
       color: #00ff00;
       font-size: 14px;
       letter-spacing: 2px;
       margin-bottom: 6px;
     `;
-    const finalScoreValue = document.createElement('div');
-    finalScoreValue.id = 'gameover-final-score';
+    const finalScoreValue = document.createElement("div");
+    finalScoreValue.id = "gameover-final-score";
     finalScoreValue.textContent = String(this.finalScore);
     finalScoreValue.style.cssText = `
       color: #ffffff;
       font-size: 36px;
       margin-bottom: 16px;
     `;
-    const finalScoreBlock = document.createElement('div');
-    finalScoreBlock.style.cssText = 'text-align: center;';
+    const finalScoreBlock = document.createElement("div");
+    finalScoreBlock.style.cssText = "text-align: center;";
     finalScoreBlock.appendChild(finalScoreLabel);
     finalScoreBlock.appendChild(finalScoreValue);
 
     // High score block
-    const highScoreLabel = document.createElement('div');
-    highScoreLabel.textContent = 'HIGH SCORE';
+    const highScoreLabel = document.createElement("div");
+    highScoreLabel.textContent = "HIGH SCORE";
     highScoreLabel.style.cssText = `
       color: #00ff00;
       font-size: 14px;
       letter-spacing: 2px;
       margin-bottom: 6px;
     `;
-    const highScoreValue = document.createElement('div');
-    highScoreValue.id = 'gameover-high-score';
-    highScoreValue.textContent = '0';
+    const highScoreValue = document.createElement("div");
+    highScoreValue.id = "gameover-high-score";
+    highScoreValue.textContent = "0";
     highScoreValue.style.cssText = `
       color: #ffffff;
       font-size: 22px;
       margin-bottom: 24px;
     `;
-    const highScoreBlock = document.createElement('div');
-    highScoreBlock.style.cssText = 'text-align: center;';
+    const highScoreBlock = document.createElement("div");
+    highScoreBlock.style.cssText = "text-align: center;";
     highScoreBlock.appendChild(highScoreLabel);
     highScoreBlock.appendChild(highScoreValue);
 
     // RESTART button
-    const restartButton = document.createElement('button');
-    restartButton.id = 'gameover-restart-button';
-    restartButton.textContent = 'RESTART';
+    const restartButton = document.createElement("button");
+    restartButton.id = "gameover-restart-button";
+    restartButton.textContent = "RESTART";
     restartButton.style.cssText = `
       padding: 12px 48px;
       font-size: 24px;
@@ -201,7 +210,7 @@ export class GameOverScene extends Scene {
       border-radius: 4px;
       cursor: pointer;
     `;
-    restartButton.addEventListener('click', () => {
+    restartButton.addEventListener("click", () => {
       this.restartGame();
     });
 
@@ -218,6 +227,13 @@ export class GameOverScene extends Scene {
 
     // Prime the high score display now.
     this.updateHighScoreDisplay();
+
+    // W3-A.8: attach the LEVEL_START listener HERE (in setupUI, called from
+    // onLoad), NOT in onEnter. SceneManager.loadScene() order is:
+    //   load() -> onLoad()/setupUI() -> enter() -> onEnter() -> emit(LEVEL_START)
+    // A listener registered in onEnter() would attach AFTER the event fires,
+    // so it never receives the live payload.
+    this.attachLevelStartHandler();
   }
 
   /**
@@ -268,18 +284,16 @@ export class GameOverScene extends Scene {
     if (this.restartButton) {
       this.restartButton.disabled = true;
     }
-    Logger.info('Game over: restarting to menu');
-    this.game
-      .switchScene('menu')
-      .catch((error) => {
-        Logger.error('Failed to restart from game over', { error });
-        // Re-arm the restart path.
-        this.restarted = false;
-        this.attachKeydownHandler();
-        if (this.restartButton) {
-          this.restartButton.disabled = false;
-        }
-      });
+    Logger.info("Game over: restarting to menu");
+    this.game.switchScene("menu").catch((error) => {
+      Logger.error("Failed to restart from game over", { error });
+      // Re-arm the restart path.
+      this.restarted = false;
+      this.attachKeydownHandler();
+      if (this.restartButton) {
+        this.restartButton.disabled = false;
+      }
+    });
   }
 
   /**
@@ -289,12 +303,12 @@ export class GameOverScene extends Scene {
   private attachKeydownHandler(): void {
     if (this.keydownHandler) return;
     this.keydownHandler = (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         this.restartGame();
       }
     };
-    window.addEventListener('keydown', this.keydownHandler);
+    window.addEventListener("keydown", this.keydownHandler);
   }
 
   /**
@@ -302,8 +316,84 @@ export class GameOverScene extends Scene {
    */
   private detachKeydownHandler(): void {
     if (this.keydownHandler) {
-      window.removeEventListener('keydown', this.keydownHandler);
+      window.removeEventListener("keydown", this.keydownHandler);
       this.keydownHandler = null;
     }
+  }
+
+  /**
+   * W3-A.8: attach the window-level LEVEL_START listener.
+   * Must be called in setupUI() (from onLoad), NOT in onEnter — see the
+   * SceneManager.loadScene() ordering comment in setupUI().
+   * Idempotent — a second call while attached is a no-op.
+   */
+  private attachLevelStartHandler(): void {
+    if (this.levelStartHandler) return;
+    this.levelStartHandler = (event: Event) => {
+      this.handleLevelStart(event as CustomEvent);
+    };
+    window.addEventListener(GameEvents.LEVEL_START, this.levelStartHandler);
+  }
+
+  /**
+   * W3-A.8: detach the LEVEL_START listener. Safe to call when not
+   * attached (no-op).
+   */
+  private detachLevelStartHandler(): void {
+    if (this.levelStartHandler) {
+      window.removeEventListener(
+        GameEvents.LEVEL_START,
+        this.levelStartHandler,
+      );
+      this.levelStartHandler = null;
+    }
+  }
+
+  /**
+   * W3-A.8: handle the LEVEL_START event.
+   *
+   * SceneManager.loadScene() emits LEVEL_START with { name, data } where
+   * data carries the { score, highScore } payload from
+   * GameScene.gameOver() -> switchScene('gameover', { score, highScore }).
+   *
+   * Read logic:
+   *   - Only act when name === 'gameover' (ignore other scene transitions).
+   *   - score: data.score if present and finite, else 0.
+   *   - highScore: always from localStorage via readStoredHighScore()
+   *     (the source of truth — GameScene.gameOver() calls
+   *     saveHighScore() before the transition). The event payload's
+   *     highScore field is redundant and NOT used.
+   *
+   * No crash, no 'undefined' display.
+   */
+  private handleLevelStart(event: CustomEvent): void {
+    const detail = event.detail as
+      { name?: string; data?: Record<string, unknown> | null } | undefined;
+    if (!detail || detail.name !== "gameover") return;
+
+    const data = detail.data;
+
+    // Score: read from event payload, fall back to 0.
+    let score = 0;
+    if (data) {
+      const rawScore = data.score;
+      if (typeof rawScore === "number" && Number.isFinite(rawScore)) {
+        score = Math.max(0, Math.floor(rawScore));
+      }
+    }
+
+    // High score: always from localStorage (source of truth).
+    const highScore = this.readStoredHighScore();
+
+    // Update the display.
+    this.setFinalScore(score);
+    if (this.highScoreEl) {
+      this.highScoreEl.textContent = String(highScore);
+    }
+
+    Logger.debug("Game over: LEVEL_START payload applied", {
+      score,
+      highScore,
+    });
   }
 }

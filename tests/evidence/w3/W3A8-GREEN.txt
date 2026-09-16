@@ -1,0 +1,10 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_e0b86767
+
+ ✓ tests/unit/gameover-scene.test.ts  (21 tests) 27ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  08:19:20
+   Duration  765ms (transform 103ms, setup 43ms, collect 89ms, tests 27ms, environment 136ms, prepare 51ms)
+

@@ -1,0 +1,201 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_e0b86767
+
+ ❯ tests/unit/gameover-scene.test.ts  (21 tests | 9 failed) 60ms
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: reads score from LEVEL_START event payload
+     → expected '150' to be '4200' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: falls back to 0 + localStorage when data is null
+     → expected '150' to be '0' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: falls back to 0 when no localStorage and data is null
+     → expected '150' to be '0' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: ignores LEVEL_START for non-gameover scenes
+     → expected '150' to be '0' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: listener is attached in onLoad, not onEnter (timing test)
+     → expected '150' to be '250' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: LEVEL_START listener is unsubscribed on exit
+     → expected '150' to be '100' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: LEVEL_START listener is unsubscribed on cleanup
+     → expected '150' to be '300' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: does not display "undefined" for missing data fields
+     → expected '150' to be '0' // Object.is equality
+   ❯ tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: restart still works after LEVEL_START payload is applied
+     → expected '150' to be '500' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: reads score from LEVEL_START event payload
+AssertionError: expected '150' to be '4200' // Object.is equality
+
+- Expected
++ Received
+
+- 4200
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:223:39
+    221|     const highScoreEl = document.getElementById('gameover-high-score');
+    222|     expect(finalScoreEl).toBeTruthy();
+    223|     expect(finalScoreEl!.textContent).toBe('4200');
+       |                                       ^
+    224|     // highScore should come from localStorage (source of truth), not …
+    225|     expect(highScoreEl).toBeTruthy();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: falls back to 0 + localStorage when data is null
+AssertionError: expected '150' to be '0' // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:247:39
+    245|     const highScoreEl = document.getElementById('gameover-high-score');
+    246|     expect(finalScoreEl).toBeTruthy();
+    247|     expect(finalScoreEl!.textContent).toBe('0');
+       |                                       ^
+    248|     expect(highScoreEl).toBeTruthy();
+    249|     expect(highScoreEl!.textContent).toBe('777');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: falls back to 0 when no localStorage and data is null
+AssertionError: expected '150' to be '0' // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:268:39
+    266|     const finalScoreEl = document.getElementById('gameover-final-score…
+    267|     const highScoreEl = document.getElementById('gameover-high-score');
+    268|     expect(finalScoreEl!.textContent).toBe('0');
+       |                                       ^
+    269|     expect(highScoreEl!.textContent).toBe('0');
+    270| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: ignores LEVEL_START for non-gameover scenes
+AssertionError: expected '150' to be '0' // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:289:39
+    287|     const finalScoreEl = document.getElementById('gameover-final-score…
+    288|     // Should remain at default (0), not 9999
+    289|     expect(finalScoreEl!.textContent).toBe('0');
+       |                                       ^
+    290| 
+    291|     scene.cleanup();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8 RED: listener is attached in onLoad, not onEnter (timing test)
+AssertionError: expected '150' to be '250' // Object.is equality
+
+- Expected
++ Received
+
+- 250
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:316:39
+    314|     // If listener was attached in onLoad, this should be 250
+    315|     // If listener was only in onEnter, this would be 0 (event already…
+    316|     expect(finalScoreEl!.textContent).toBe('250');
+       |                                       ^
+    317| 
+    318|     scene.cleanup();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: LEVEL_START listener is unsubscribed on exit
+AssertionError: expected '150' to be '100' // Object.is equality
+
+- Expected
++ Received
+
+- 100
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:334:74
+    332|     });
+    333|     window.dispatchEvent(event1);
+    334|     expect(document.getElementById('gameover-final-score')!.textConten…
+       |                                                                          ^
+    335| 
+    336|     // Exit the scene
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: LEVEL_START listener is unsubscribed on cleanup
+AssertionError: expected '150' to be '300' // Object.is equality
+
+- Expected
++ Received
+
+- 300
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:362:74
+    360|     });
+    361|     window.dispatchEvent(event1);
+    362|     expect(document.getElementById('gameover-final-score')!.textConten…
+       |                                                                          ^
+    363| 
+    364|     // Cleanup removes the DOM
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: does not display "undefined" for missing data fields
+AssertionError: expected '150' to be '0' // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:390:39
+    388|     const finalScoreEl = document.getElementById('gameover-final-score…
+    389|     expect(finalScoreEl!.textContent).not.toBe('undefined');
+    390|     expect(finalScoreEl!.textContent).toBe('0');
+       |                                       ^
+    391| 
+    392|     scene.cleanup();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  tests/unit/gameover-scene.test.ts > W3A.4: GameOverScene > W3A.8: restart still works after LEVEL_START payload is applied
+AssertionError: expected '150' to be '500' // Object.is equality
+
+- Expected
++ Received
+
+- 500
++ 150
+
+ ❯ tests/unit/gameover-scene.test.ts:407:74
+    405|     });
+    406|     window.dispatchEvent(event);
+    407|     expect(document.getElementById('gameover-final-score')!.textConten…
+       |                                                                          ^
+    408| 
+    409|     // Click RESTART
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 12 passed (21)
+   Start at  07:57:50
+   Duration  1.20s (transform 127ms, setup 43ms, collect 130ms, tests 60ms, environment 150ms, prepare 78ms)
+
