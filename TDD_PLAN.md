@@ -721,6 +721,26 @@ To prevent context overload and compression:
 6. Game states formalized (menu → playing → paused → gameOver → restart)
 7. FPS baseline recorded with 20 obstacles (D4 gate)
 
+### Identified Bugs (Post-W2 Verification, added 2026-09-14)
+
+> Findings from manual in-browser verification of `main` @ `8f1520a` (after W2
+> sign-off). W2's smoke test passed on **logic** (boot→menu→game, WASD, jump,
+> score, game-over, restart all green in Chrome + Firefox), but manual QA
+> against the live app surfaced issues the automated tests did not exercise.
+> These are tracked here and decomposed into small kanban chunks.
+
+**BUG-W2-1 — Menu has no start path: game cannot be entered by the player** *(Priority: High, blocks real playability)*
+- **Symptom:** App boots to the placeholder `MenuScene` ("CLUSTER RUSH — Press START to begin") and stops there. No key press or click transitions into the `GameScene`; the 3D gameplay loop never becomes reachable in the live app.
+- **Root cause:** `src/scenes/MenuScene.ts` is an intentional W2-A.3 placeholder (see its header, lines 7–10) — it renders a title + hint but registers **no input handler and no `switchScene('game')` call**. The full menu UI (buttons/settings/high scores) was explicitly deferred to W3 Task 8.2. The W2-E smoke spec drove the transition programmatically, so the *player-facing* start path was never exercised.
+- **Verification evidence (2026-09-14, live browser @ `main`):** renderer attached to `#game-canvas` (721×600), WebGL context live, 3 scenes registered (boot/menu/game), `fsm.state=playing`, `currentScene=MenuScene`; `gameScene.player=null`, `threeChildren=0` until entered. Pressing Enter/Space produced no transition.
+- **Scope decision:** Minimal "press Enter / click → start game" wiring is a small, high-value chunk that makes the game immediately playable and de-risks W3 (the 3D pipeline behind the menu already works). Full menu UI polish (settings, high scores, styled buttons) remains W3 Task 8.2.
+- **Status:** OPEN → decomposed into kanban (see orchestrator task set, 2026-09-14).
+
+**BUG-W2-2 — (Watch item, not a defect) Firefox autoplay audio warning** *(Priority: Low)*
+- **Symptom:** Firefox logs 2× non-fatal "AudioContext prevented from starting automatically" at boot (stricter autoplay gesture policy). No functional audio loss in the W2 placeholder path.
+- **Note:** Documented during W2-E.1b; already routed to W3-C (cross-browser audio policy). Listed here for completeness; no separate fix needed until W3-C.
+- **Status:** OPEN → W3-C.
+
 ### Critical Paths (100% coverage required):
 1. Game initialization and cleanup
 2. Input system → player movement
