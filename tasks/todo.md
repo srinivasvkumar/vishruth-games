@@ -63,5 +63,16 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] W3-A.4 — GameOverScene: final score + RESTART → menu + register scene — game-dev — `t_de156e6e` → 19a7899
 - [x] W3-A.5 — Wire full loop: death → switchScene('gameover', {score, highScore}), remove inline overlay, resetRunState on re-entry — game-dev — `t_77ceb449` → 6955226
 - [x] W3-A.6 — In-browser verify full loop + HUD (headed Chrome; 4/7 pass, confirmed BUG-W2-1a re-arm blocker + D-A6-1 score=0 major) — game-tester — `t_b08d3752` → 7e59434
-- [ ] W3-A.7 — FIX: MenuScene start-guard never re-arms after a run (BUG-W2-1a blocker, re-surfaced) — game-dev — TBD
-- [ ] W3-A.8 — FIX: GameOverScene.onEnter() reads {score, highScore} data payload (D-A6-1 major) — game-dev — TBD
+- [x] W3-A.7 — FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker) — game-dev — `t_c3a4bd20` → 843a66e
+- [x] W3-A.8 — FIX: GameOverScene reads {score, highScore} from LEVEL_START event payload (D-A6-1 major) — game-dev — `t_e0b86767` → 41c7cfd
+- [x] W3-A.9 — DRY high-score read: canonical readStoredHighScore() in Score.ts + 2 bug fixes (try/catch crash + overflow cap) — game-dev — `t_9d8237a9` → e909ae7
+- [x] **W3-A.1-A9 all merged to main + pushed to origin (eb3cc82..35a1033). 635/635 tests, tsc clean, eslint 0 errors.**
+
+# Week 3-B Lane (Integration / Day 9, 2026-09-17) — IN PROGRESS
+- [ ] W3-B.1 — Playwright scaffold harden: playwright.config.ts (chromium-boot + firefox projects), webServer, reuse W2 smoke base — game-dev
+- [ ] W3-B.2 — Critical-path E2E #1: boot → menu → START → game (menu→start→play flow) — game-dev
+- [ ] W3-B.3 — Critical-path E2E #2: player movement + obstacle avoidance (WASD, collision) — game-dev
+- [ ] W3-B.4 — Critical-path E2E #3: score collection + HUD display (UISystem) — game-dev
+- [ ] W3-B.5 — Critical-path E2E #4: game-over → restart → 2nd run full loop — game-dev
+- [ ] W3-B.6 — Visual-regression baseline (Playwright screenshot baselines, per scene) — game-tester
+- [ ] W3-B.7 — In-browser verify: 4 critical paths pass in real Chrome (+ Firefox) — game-tester

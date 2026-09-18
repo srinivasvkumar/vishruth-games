@@ -21,15 +21,15 @@
     }
   },
   "current_status": {
-    "phase": "W3-A: UI System (merged to main)",
-    "day": 8,
-    "current_task": "W3-A.7/W3-A.8: fix BUG-W2-1a re-arm blocker + D-A6-1 GameOverScene score=0 (pending)",
-    "status": "W3-A-6-COMPLETE-W3-A-7-8-PENDING",
+    "phase": "W3-B: Integration / Day 9 (starting)",
+    "day": 9,
+    "current_task": "W3-B.1-W3-B.7: Playwright scaffold + 4 critical-path E2E + visual-regression baseline + in-browser verify",
+    "status": "W3-A-COMPLETE-W3-B-STARTING",
     "tdd_cycle": "complete",
     "start_date": "2026-09-16T20:59:00",
-    "last_updated": "2026-09-16T23:34:00",
-    "completion_date": "2026-09-16T23:34:00",
-    "completion_notes": "W3-A.1-A6 complete and merged to main. A1: UISystem core (real HUD, replace 32-line stub) @ 13982a3. A2: GameScene migrated to UISystem (D2 HUD ownership) @ 4bc4472. A3: full MenuScene (START/SETTINGS/HIGH SCORES + keyboard nav) @ d3f5810. A4: GameOverScene (final score + RESTART -> menu + register) @ 19a7899. A5: wire full loop (death -> switchScene('gameover', {score,highScore}), remove inline overlay, resetRunState on re-entry) @ 6955226. A6: in-browser verify (4/7 pass; confirmed BUG-W2-1a re-arm blocker + D-A6-1 GameOverScene score=0 major) @ 7e59434. Merge resolved GameScene.ts onEnter (keep UISystem calls + resetRunState) + scenes.test.ts mock (union of getUISystem + switchCalls) + game-loop-wiring.test.ts mock (added getUISystem). Full suite 610/610. Two follow-up fix cards (W3-A.7 re-arm, W3-A.8 score payload) pending."
+    "last_updated": "2026-09-17T13:40:00",
+    "completion_date": null,
+    "completion_notes": "W3-A COMPLETE and merged+pushed to main/origin (eb3cc82..35a1033). A1-A6 merged in prior step; A7 (t_c3a4bd20 @843a66e, MenuScene start-guard re-arm, BUG-W2-1a fixed), A8 (t_e0b86767 @41c7cfd, GameOverScene LEVEL_START payload, D-A6-1 fixed), A9 (t_9d8237a9 @e909ae7, DRY high-score read + 2 bug fixes: try/catch crash + overflow cap). 635/635 unit tests on main, tsc clean, eslint 0 errors. Full loop verified in real Chrome (menu->start->play->gameover->restart, 2nd run). Next: W3-B Integration (Playwright critical-path E2E + visual regression + Chrome/Firefox)."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

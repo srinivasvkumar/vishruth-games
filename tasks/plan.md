@@ -166,6 +166,19 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - GREEN: 4/7 (S1 boot+menu, S2 START->game+HUD, S3 death->gameover handoff, S5 high-score reload-persistence)
   - Evidence: tests/evidence/w3/W3A6-FAIL.txt (confirms 2 defects), tests/e2e/w3a-full-loop.spec.ts
   - DEFECTS: BUG-W2-1a re-arm (blocker, MenuScene.started never resets on onExit) + D-A6-1 (major, GameOverScene.onEnter ignores {score,highScore} payload)
-- [ ] W3-A.7 — FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker) — game-dev — TBD
-- [ ] W3-A.8 — FIX: GameOverScene.onEnter reads {score, highScore} data payload (D-A6-1 major) — game-dev — TBD
+- [x] W3-A.7 — FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker) — game-dev — `t_c3a4bd20` — @ 843a66e — 2026-09-17
+  - RED: 4 new tests failing pre-change (no onExit re-arm) → GREEN: 17/17 in menu-scene-full.test.ts; full suite 617/617; tsc clean; eslint 0
+  - In-browser: tests/e2e/w3a-full-loop.spec.ts (chromium-boot) — S4/S6/2nd-run all PASS (BUG-W2-1a blocker cleared). S2/S3 pre-existing (verified via git stash baseline), out of scope.
+  - Evidence: tests/evidence/w3/W3A7-RED.txt + W3A7-GREEN.txt
+- [x] W3-A.8 — FIX: GameOverScene reads {score, highScore} from LEVEL_START event payload (D-A6-1 major) — game-dev — `t_e0b86767` — @ 41c7cfd — 2026-09-17
+  - Root cause: Scene.onEnter() takes NO data param; SceneManager.loadScene() calls enter() with no arg; payload only emitted on LEVEL_START. Option 3 (event-based), stays ≤2 files.
+  - RED: 9 new tests failing pre-change → GREEN: 21/21; full suite 619/619; tsc clean. Pins: (1) subscribe in onLoad/setupUI NOT onEnter (timing load-bearing); (2) fallback uses readStoredHighScore(), not phantom this.scoreManager.
+  - Evidence: tests/evidence/w3/W3A8-RED.txt + W3A8-GREEN.txt
+- [x] W3-A.9 — DRY high-score read: canonical readStoredHighScore() in Score.ts + 2 bug fixes (try/catch crash + overflow cap) — game-dev — `t_9d8237a9` — @ e909ae7 — 2026-09-17
+  - The 3 copies DIVERGED in 2 ways (verified on main): (1) overflow cap (scenes uncapped vs clampScore), (2) missing try/catch in ScoreManager (latent crash on storage-unavailable). '5.7' does NOT diverge (parseInt is a no-op floor).
+  - Canonical helper = superset: try/catch + clampScore + 0-floor. All 3 sites delegate; 2 private scene methods deleted.
+  - Fix A: try/catch (ScoreManager no longer throws on storage-unavailable). Fix B: cap (menu/gameover now cap at MAX_SAFE_INTEGER like the in-game score).
+  - RED: 9 new TDD tests locking canonical semantics {storage-throws→0, '9007199254740993'→MAX_SAFE_INTEGER, '5.7'→5 (regression), absent→0, '500'→500, 'abc'→0, '-5'→0, '0'→0}. Full suite green; tsc clean.
+  - Evidence: tests/evidence/w3/W3A9-RED.txt + W3A9-GREEN.txt
+- **W3-A MERGED to main + pushed to origin (eb3cc82..35a1033). 635/635 tests, tsc clean, eslint 0 errors.**
 
