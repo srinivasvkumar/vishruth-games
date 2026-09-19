@@ -488,6 +488,15 @@ To prevent context overload and compression:
     choreography. `Player.setHealth(n)` added (clamps to [0, PLAYER_HEALTH], calls die() at 0).
     `GameScene.onUpdate()` health-0 safety-net check added. tsc clean; 642/642 full suite.
     Evidence: `tests/evidence/w3/W3B0-RED.txt` + `W3B0-GREEN.txt`.
+  - **W3-B.0-fix** (t_8cfc53be, 2026-09-19): `Player.die()` dispatches `PLAYER_DEATH` when lives hit 0 —
+    the W3-B.7 gate CP4 S1 blocker. Root cause: `die()` else branch (lives <= 0) was a stub that
+    never dispatched `GameEvents.PLAYER_DEATH`, so `__setPlayerHealth(0)` never reached
+    GameOverScene. Fix: one line in `src/entities/Player.ts` `die()` else branch —
+    `window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH))` (no new import; `GameEvents`
+    already imported at Player.ts:2). 3 new unit tests in `tests/unit/player.test.ts`
+    (PLAYER_DEATH dispatch when lives reach 0 / via setHealth(0) / NOT dispatched when lives remain).
+    tsc clean; 645/645 full suite. Unblocks W3-B.7 gate CP4 S1.
+    Evidence: `tests/evidence/w3/W3B0FIX-RED.txt` + `W3B0FIX-GREEN.txt`.
 - **W3-C: Optimization & Polish (Day 10)** — performance (per D4), cross-browser (Chrome/Firefox; Safari/mobile best-effort), input latency.
 
 **W3 success criteria (all must pass before W4 starts):**

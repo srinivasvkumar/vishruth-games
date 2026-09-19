@@ -1,0 +1,34 @@
+W3-B.0-fix — RED EVIDENCE
+=========================
+Task:    t_8cfc53be (game-dev)
+Branch:  wt/t_8cfc53be (base main @ 4dc68ac)
+Date:    2026-09-19 (UTC)
+Command: npm test -- --run tests/unit/player.test.ts
+State:   RED — fix NOT yet applied to src/entities/Player.ts
+
+Result: 2 new dispatch tests FAIL, 46 pre-existing tests PASS (48 total).
+Root cause confirmed: Player.die() else branch (lives <= 0) never dispatches
+GameEvents.PLAYER_DEATH on window, so no listener fires when lives hit 0.
+
+Failing tests (both: expected "spy" to be called 1 times, but got 0 times):
+  1. Death and Game Over > PLAYER_DEATH dispatch (W3-B.0-fix)
+       > should dispatch PLAYER_DEATH when lives reach 0
+       (player.damage(100) x3 -> lives 3->2->1->0; listener never called)
+  2. Death and Game Over > PLAYER_DEATH dispatch (W3-B.0-fix)
+       > should dispatch PLAYER_DEATH via setHealth(0) when lives are exhausted
+       (damage x2 + respawn + setHealth(0) -> lives 0; listener never called)
+
+Passing control test (confirms the listener wiring itself works):
+  - should NOT dispatch PLAYER_DEATH when lives remain
+    (damage(100) once -> lives 3->2; listener NOT called — correct)
+
+Vitest output (trimmed):
+  FAIL  ... > should dispatch PLAYER_DEATH when lives reach 0
+    AssertionError: expected "spy" to be called 1 times, but got 0 times
+    ❯ tests/unit/player.test.ts:399:26
+  FAIL  ... > should dispatch PLAYER_DEATH via setHealth(0) when lives are exhausted
+    AssertionError: expected "spy" to be called 1 times, but got 0 times
+    ❯ tests/unit/player.test.ts:417:26
+
+  Test Files  1 failed (1)
+       Tests  2 failed | 46 passed (48)

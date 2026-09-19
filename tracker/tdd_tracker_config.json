@@ -23,13 +23,13 @@
   "current_status": {
     "phase": "W3-B: Integration / Day 9 (in progress)",
     "day": 9,
-    "current_task": "W3-B.0 complete (debug accessors); W3-B.1 complete (Playwright config); W3-B.2-W3-B.7 pending",
-    "status": "W3-B-0-AND-1-COMPLETE",
+    "current_task": "W3-B.0 complete (debug accessors); W3-B.0-fix complete (PLAYER_DEATH dispatch); W3-B.1 complete (Playwright config); W3-B.2-W3-B.7 pending",
+    "status": "W3-B-0-0FIX-AND-1-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-16T20:59:00",
-    "last_updated": "2026-09-19T11:08:00",
+    "last_updated": "2026-09-19T21:25:00",
     "completion_date": null,
-    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors (__debugPlayerPos, __setPlayerHealth, __debugScore) installed by GameScene.onEnter(). Player.setHealth(n) added. GameScene.onUpdate() health-0 safety-net check. 642/642 full suite, tsc clean. W3-B.1 complete (t_9927d746 @987704c): Playwright config extended for W3-B critical-path specs. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt."
+    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors. W3-B.1 complete (t_9927d746 @987704c): Playwright config. W3-B.0-fix complete (t_8cfc53be): Player.die() dispatches PLAYER_DEATH when lives hit 0 (1-line fix in src/entities/Player.ts, 3 new unit tests, 645/645 suite, tsc clean) — unblocks W3-B.7 gate CP4 S1. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt + W3B0FIX-RED/GREEN.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

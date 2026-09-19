@@ -187,6 +187,12 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - GameScene.onUpdate() health-0 safety-net check added
   - 7 unit tests (1 RED + 6 GREEN); 642/642 full suite; tsc clean
   - Evidence: tests/evidence/w3/W3B0-RED.txt + W3B0-GREEN.txt
+- [x] W3-B.0-fix — Player.die() dispatches PLAYER_DEATH when lives hit 0 (unblocks W3-B.7 gate CP4 S1) — game-dev — `t_8cfc53be` — 2026-09-19
+  - Root cause: die() else branch (lives<=0) was a stub; never dispatched GameEvents.PLAYER_DEATH, so __setPlayerHealth(0) never reached GameOverScene
+  - Fix: 1 line in src/entities/Player.ts die() else branch — window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH)) (no new import)
+  - 3 new unit tests in tests/unit/player.test.ts (PLAYER_DEATH dispatch at lives=0 / via setHealth(0) / NOT dispatched when lives remain)
+  - 645/645 full suite; tsc clean; eslint 0 new errors
+  - Evidence: tests/evidence/w3/W3B0FIX-RED.txt + W3B0FIX-GREEN.txt
 - [x] W3-B.1 — Playwright config harden for W3-B critical-path specs — game-dev — `t_9927d746` — @ 987704c — 2026-09-19
   - outputDir + HTML reporter moved to tests/evidence/w3/; screenshot: 'on' enabled
   - 635/635 unit; playwright --list 46/46; tsc clean

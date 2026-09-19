@@ -149,7 +149,9 @@ export class Player {
       // Respawn logic would go here
     } else {
       Logger.error('Player game over');
-      // Game over logic would go here
+      // W3-B.0-fix: dispatch PLAYER_DEATH so GameScene's listener
+      // (GameScene.ts:335) fires gameOver() and transitions to GameOverScene.
+      window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
     }
   }
   

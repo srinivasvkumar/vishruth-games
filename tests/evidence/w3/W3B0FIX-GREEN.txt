@@ -1,0 +1,38 @@
+W3-B.0-fix — GREEN EVIDENCE
+==========================
+Task:    t_8cfc53be (game-dev)
+Branch:  wt/t_8cfc53be (base main @ 4dc68ac)
+Date:    2026-09-19 (UTC)
+State:   GREEN — fix APPLIED to src/entities/Player.ts die() else branch
+
+Production fix (1 file: src/entities/Player.ts, die() else branch):
+  window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
+  (no new import — GameEvents already imported at Player.ts:2)
+
+Test (1 file: tests/unit/player.test.ts):
+  - Added 3 tests under 'Death and Game Over > PLAYER_DEATH dispatch (W3-B.0-fix)':
+      1. should NOT dispatch PLAYER_DEATH when lives remain (control)
+      2. should dispatch PLAYER_DEATH when lives reach 0 (damage x3)
+      3. should dispatch PLAYER_DEATH via setHealth(0) when lives are exhausted
+  - Added PLAYER_DEATH: 'player:death' to the vi.mock GameEvents object.
+  - Added import { GameEvents } from '@/utils/Constants'.
+
+VERIFY results:
+  Player test:   48 passed (48)   [was 45 pre-existing + 3 new]
+  Full unit:     645 passed (645) [29 test files, exit 0]
+                 [was 642 before this card — 3 new dispatch tests]
+  tsc:           clean (npm run type-check -> tsc --noEmit -p tsconfig.json, exit 0)
+  eslint:        0 NEW errors. Pre-existing on main (unchanged by this card):
+                 - GameScene.ts:100/104/107 @typescript-eslint/no-explicit-any
+                 - Logger.ts no-console warnings
+                 - src/entities/Player.ts + tests/unit/player.test.ts: clean
+
+RED -> GREEN transition:
+  RED:  2 dispatch tests FAIL ("spy" called 0 times), 46 pass
+        (see W3B0FIX-RED.txt)
+  GREEN: all 48 player tests pass; full suite 645/645; tsc clean
+        (see W3B0FIX-GREEN.txt)
+
+Unblocks: W3-B.7 gate CP4 S1 (__setPlayerHealth(0) -> die() lives=0 ->
+          PLAYER_DEATH dispatched -> GameScene.ts:335 listener -> gameOver()
+          -> switchScene('gameover')). Restart cycle S2/S3 already green.
