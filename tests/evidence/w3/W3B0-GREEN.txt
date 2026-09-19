@@ -1,0 +1,10 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ✓ tests/unit/debug-accessors.test.ts  (7 tests) 15ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  11:07:28
+   Duration  559ms (transform 116ms, setup 31ms, collect 98ms, tests 15ms, environment 107ms, prepare 136ms)
+

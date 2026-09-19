@@ -174,6 +174,28 @@ export class Player {
     Logger.info('Player respawned at', this.mesh.position);
   }
   
+  /**
+   * Set player health to an exact value (W3-B.0 debug accessor).
+   *
+   * Clamps to [0, PLAYER_HEALTH]. A value of 0 or below triggers death
+   * immediately (same path as `damage()` reaching 0). This is used by
+   * `window.__setPlayerHealth(n)` in GameScene for deterministic E2E
+   * testing of the game-over / restart path (B5 CP4) without relying
+   * on collision timing.
+   */
+  setHealth(health: number): void {
+    if (!this.isAlive) return;
+    
+    const clamped = Math.max(0, Math.min(GameConstants.PLAYER_HEALTH, Math.floor(health)));
+    this.state.health = clamped;
+    
+    if (clamped <= 0) {
+      this.die();
+    }
+    
+    Logger.info('Player health set (debug)', { health: clamped });
+  }
+  
   // Public getters
   getMesh(): Group { return this.mesh; }
   getPosition(): Vector3 { return this.mesh.position.clone(); }

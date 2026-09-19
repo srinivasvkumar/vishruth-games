@@ -72,6 +72,10 @@ export class GameScene extends Scene {
    * W3A.5: Reset all run state on every entry so re-entering after a
    * restart (Menu -> Game) starts a fresh run with no stale state from
    * the prior run (player position, score, health, obstacles, level).
+   *
+   * W3-B.0: Install deterministic debug accessors on window so Playwright
+   * E2E specs (B3 CP2, B4 CP3, B5 CP4) can read and drive game state
+   * without timing-dependent collision choreography.
    */
   protected onEnter(): void {
     // W3A.5: Reset all run state on every entry so re-entering after a
@@ -88,6 +92,22 @@ export class GameScene extends Scene {
       this.game.getUISystem().setLevel(this.level);
     }
 
+    // W3-B.0: Install deterministic debug accessors on window.
+    // These are read by Playwright E2E specs to verify game state
+    // without relying on collision timing or DOM scraping.
+    // Installed on every enter() so they always reference the
+    // current run's player and scoreManager (fresh after reset).
+    (window as any).__debugPlayerPos = () => {
+      const pos = this.player?.getPosition();
+      return pos ? { x: pos.x, z: pos.z } : { x: 0, z: 0 };
+    };
+    (window as any).__setPlayerHealth = (n: number) => {
+      this.player?.setHealth(n);
+    };
+    (window as any).__debugScore = () => {
+      return this.scoreManager.getScore();
+    };
+
     Logger.debug('Game scene entered');
   }
   
@@ -96,6 +116,16 @@ export class GameScene extends Scene {
    */
   protected onUpdate(deltaTime: number): void {
     if (this.isGameOver || !this.player?.isPlayerAlive()) return;
+    
+    // W3-B.0: Deterministic death check. If __setPlayerHealth(0) was called,
+    // the player's health is 0 and the update loop must trigger game-over
+    // on the next frame — no collision required. This makes the B5 CP4
+    // restart test deterministic: set health to 0, call update(), and the
+    // scene transitions to gameover without timing-dependent collision.
+    if (this.player.getState().health <= 0) {
+      this.gameOver();
+      return;
+    }
     
     // Update player
     const inputState = this.game.getInputSystem().getInputState();
@@ -340,6 +370,9 @@ export class GameScene extends Scene {
       this.isGameOver = false;
     });
   }
+  
+  // W3-B.0: getter for test access (debug accessor support)
+  getPlayer() { return this.player; }
   
   /**
    * Reset all run state for a fresh game run.

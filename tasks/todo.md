@@ -69,7 +69,8 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
 - [x] **W3-A.1-A9 all merged to main + pushed to origin (eb3cc82..35a1033). 635/635 tests, tsc clean, eslint 0 errors.**
 
 # Week 3-B Lane (Integration / Day 9, 2026-09-17) — IN PROGRESS
-- [ ] W3-B.1 — Playwright scaffold harden: playwright.config.ts (chromium-boot + firefox projects), webServer, reuse W2 smoke base — game-dev
+- [x] W3-B.0 — Debug accessors __debugPlayerPos + __setPlayerHealth + __debugScore — game-dev — `t_a3c5bda0`
+- [x] W3-B.1 — Playwright scaffold harden: playwright.config.ts (chromium-boot + firefox projects), webServer, reuse W2 smoke base — game-dev — `t_9927d746` → 987704c
 - [ ] W3-B.2 — Critical-path E2E #1: boot → menu → START → game (menu→start→play flow) — game-dev
 - [ ] W3-B.3 — Critical-path E2E #2: player movement + obstacle avoidance (WASD, collision) — game-dev
 - [ ] W3-B.4 — Critical-path E2E #3: score collection + HUD display (UISystem) — game-dev

@@ -21,15 +21,15 @@
     }
   },
   "current_status": {
-    "phase": "W3-B: Integration / Day 9 (starting)",
+    "phase": "W3-B: Integration / Day 9 (in progress)",
     "day": 9,
-    "current_task": "W3-B.1-W3-B.7: Playwright scaffold + 4 critical-path E2E + visual-regression baseline + in-browser verify",
-    "status": "W3-A-COMPLETE-W3-B-STARTING",
+    "current_task": "W3-B.0 complete (debug accessors); W3-B.1 complete (Playwright config); W3-B.2-W3-B.7 pending",
+    "status": "W3-B-0-AND-1-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-16T20:59:00",
-    "last_updated": "2026-09-17T13:40:00",
+    "last_updated": "2026-09-19T11:08:00",
     "completion_date": null,
-    "completion_notes": "W3-A COMPLETE and merged+pushed to main/origin (eb3cc82..35a1033). A1-A6 merged in prior step; A7 (t_c3a4bd20 @843a66e, MenuScene start-guard re-arm, BUG-W2-1a fixed), A8 (t_e0b86767 @41c7cfd, GameOverScene LEVEL_START payload, D-A6-1 fixed), A9 (t_9d8237a9 @e909ae7, DRY high-score read + 2 bug fixes: try/catch crash + overflow cap). 635/635 unit tests on main, tsc clean, eslint 0 errors. Full loop verified in real Chrome (menu->start->play->gameover->restart, 2nd run). Next: W3-B Integration (Playwright critical-path E2E + visual regression + Chrome/Firefox)."
+    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors (__debugPlayerPos, __setPlayerHealth, __debugScore) installed by GameScene.onEnter(). Player.setHealth(n) added. GameScene.onUpdate() health-0 safety-net check. 642/642 full suite, tsc clean. W3-B.1 complete (t_9927d746 @987704c): Playwright config extended for W3-B critical-path specs. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

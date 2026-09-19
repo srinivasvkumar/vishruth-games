@@ -1,0 +1,103 @@
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ❯ tests/unit/debug-accessors.test.ts  (7 tests | 6 failed) 18ms
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: after enter(), all three accessors are functions on window
+     → expected 'undefined' to be 'function' // Object.is equality
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugPlayerPos() returns { x, z } as numbers
+     → window.__debugPlayerPos is not a function
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __setPlayerHealth(0) causes next update() to trigger game-over transition
+     → window.__setPlayerHealth is not a function
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __setPlayerHealth(n) clamps to valid range [0, 100]
+     → window.__setPlayerHealth is not a function
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugScore() returns the current ScoreManager score (initially 0)
+     → window.__debugScore is not a function
+   ❯ tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugScore() reflects score after a PLAYER_SCORE event
+     → window.__debugScore is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: after enter(), all three accessors are functions on window
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+- Expected
++ Received
+
+- function
++ undefined
+
+ ❯ tests/unit/debug-accessors.test.ts:129:53
+    127|   it('GREEN: after enter(), all three accessors are functions on windo…
+    128|     await loadedAndEnteredScene(game);
+    129|     expect(typeof (window as any).__debugPlayerPos).toBe('function');
+       |                                                     ^
+    130|     expect(typeof (window as any).__setPlayerHealth).toBe('function');
+    131|     expect(typeof (window as any).__debugScore).toBe('function');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugPlayerPos() returns { x, z } as numbers
+TypeError: window.__debugPlayerPos is not a function
+ ❯ tests/unit/debug-accessors.test.ts:136:33
+    134|   it('GREEN: __debugPlayerPos() returns { x, z } as numbers', async ()…
+    135|     await loadedAndEnteredScene(game);
+    136|     const pos = (window as any).__debugPlayerPos();
+       |                                 ^
+    137|     expect(pos).toHaveProperty('x');
+    138|     expect(pos).toHaveProperty('z');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __setPlayerHealth(0) causes next update() to trigger game-over transition
+TypeError: window.__setPlayerHealth is not a function
+ ❯ tests/unit/debug-accessors.test.ts:149:21
+    147|     const gs = await loadedAndEnteredScene(game);
+    148|     // Set health to 0 deterministically — no collision timing needed
+    149|     (window as any).__setPlayerHealth(0);
+       |                     ^
+    150|     // The next update() detects health <= 0 and triggers gameOver()
+    151|     gs.update(0.016);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __setPlayerHealth(n) clamps to valid range [0, 100]
+TypeError: window.__setPlayerHealth is not a function
+ ❯ tests/unit/debug-accessors.test.ts:162:21
+    160|     const gs = await loadedAndEnteredScene(game);
+    161|     // Set to an in-range value
+    162|     (window as any).__setPlayerHealth(50);
+       |                     ^
+    163|     gs.update(0.016);
+    164|     // Verify by checking the HUD health display reflects 50
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugScore() returns the current ScoreManager score (initially 0)
+TypeError: window.__debugScore is not a function
+ ❯ tests/unit/debug-accessors.test.ts:181:35
+    179|   it('GREEN: __debugScore() returns the current ScoreManager score (in…
+    180|     await loadedAndEnteredScene(game);
+    181|     const score = (window as any).__debugScore();
+       |                                   ^
+    182|     expect(typeof score).toBe('number');
+    183|     expect(score).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/debug-accessors.test.ts > W3-B.0: Debug accessors (window.__debugPlayerPos / __setPlayerHealth / __debugScore) > GREEN: __debugScore() reflects score after a PLAYER_SCORE event
+TypeError: window.__debugScore is not a function
+ ❯ tests/unit/debug-accessors.test.ts:193:35
+    191|     );
+    192|     // The score is updated in the event listener, not in update()
+    193|     const score = (window as any).__debugScore();
+       |                                   ^
+    194|     expect(score).toBe(42);
+    195|     void gs;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  11:03:11
+   Duration  538ms (transform 74ms, setup 34ms, collect 72ms, tests 18ms, environment 106ms, prepare 32ms)
+
