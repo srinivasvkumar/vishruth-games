@@ -181,6 +181,16 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - RED: 9 new TDD tests locking canonical semantics {storage-throws→0, '9007199254740993'→MAX_SAFE_INTEGER, '5.7'→5 (regression), absent→0, '500'→500, 'abc'→0, '-5'→0, '0'→0}. Full suite green; tsc clean.
   - Evidence: tests/evidence/w3/W3A9-RED.txt + W3A9-GREEN.txt
 - **W3-A MERGED to main + pushed to origin (eb3cc82..35a1033). 635/635 tests, tsc clean, eslint 0 errors.**
+- [x] W3-B.0 — Debug accessors __debugPlayerPos + __setPlayerHealth + __debugScore — game-dev — `t_a3c5bda0` — 2026-09-19
+  - Three deterministic window accessors installed by GameScene.onEnter() for B3 CP2, B4 CP3, B5 CP4 E2E specs
+  - Player.setHealth(n) added (clamps to [0, PLAYER_HEALTH], calls die() at 0)
+  - GameScene.onUpdate() health-0 safety-net check added
+  - 7 unit tests (1 RED + 6 GREEN); 642/642 full suite; tsc clean
+  - Evidence: tests/evidence/w3/W3B0-RED.txt + W3B0-GREEN.txt
+- [x] W3-B.1 — Playwright config harden for W3-B critical-path specs — game-dev — `t_9927d746` — @ 987704c — 2026-09-19
+  - outputDir + HTML reporter moved to tests/evidence/w3/; screenshot: 'on' enabled
+  - 635/635 unit; playwright --list 46/46; tsc clean
+  - Evidence: tests/evidence/w3/W3B1-RED.txt + W3B1-GREEN.txt
 
 # Week 3-B Lane (Integration / Day 9, 2026-09-19)
 - [x] W3-B.1 — Playwright scaffold harden: playwright.config.ts (chromium-boot + firefox projects), webServer, reuse W2 smoke base — game-dev — `t_9927d746` → 6e4c45a

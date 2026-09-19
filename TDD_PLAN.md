@@ -482,11 +482,12 @@ To prevent context overload and compression:
     outputDir + HTML reporter moved to `tests/evidence/w3/`, `screenshot: 'on'` enabled for
     visual-regression baselines. tsc clean; `playwright test --list` discovers all existing specs.
     Evidence: `tests/evidence/w3/W3B1-RED.txt` + `W3B1-GREEN.txt`.
-  - **W3-B.1b** (t_9819ee0b, 2026-09-19): w3b Playwright project + `tests/e2e/w3b/` dir added.
-    Dedicated `w3b` project (testDir: `./tests/e2e/w3b`) so W3-B specs are always discoverable,
-    independent of the BROWSER smoke-swap. Same headed + WebGL posture as `chromium-boot`.
-    tsc clean; `playwright test --list` confirms w3b project registered (0 tests until B2-B6 add specs).
-    Evidence: `tests/evidence/w3/W3B1B-RED.txt` + `W3B1B-GREEN.txt`.
+  - **W3-B.0** (t_a3c5bda0, 2026-09-19): Debug accessors `__debugPlayerPos` + `__setPlayerHealth` + `__debugScore` —
+    three deterministic window accessors installed by `GameScene.onEnter()` so Playwright E2E specs
+    (B3 CP2, B4 CP3, B5 CP4) can read and drive game state without timing-dependent collision
+    choreography. `Player.setHealth(n)` added (clamps to [0, PLAYER_HEALTH], calls die() at 0).
+    `GameScene.onUpdate()` health-0 safety-net check added. tsc clean; 642/642 full suite.
+    Evidence: `tests/evidence/w3/W3B0-RED.txt` + `W3B0-GREEN.txt`.
 - **W3-C: Optimization & Polish (Day 10)** — performance (per D4), cross-browser (Chrome/Firefox; Safari/mobile best-effort), input latency.
 
 **W3 success criteria (all must pass before W4 starts):**

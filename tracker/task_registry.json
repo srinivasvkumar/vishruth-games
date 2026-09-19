@@ -356,20 +356,20 @@
               "notes": "Fast-forward merge eb3cc82..35a1033 to origin/main. 635/635 unit tests on main, tsc clean, eslint 0 errors. Full loop verified in real Chrome (menu->start->play->gameover->restart, 2nd run). W3-A COMPLETE."
             },
             {
+              "id": "W3-B.0",
+              "description": "Debug accessors __debugPlayerPos + __setPlayerHealth + __debugScore (W3-B.0)",
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-19T11:08:00",
+              "notes": "Three deterministic window accessors installed by GameScene.onEnter(). Player.setHealth(n) added. GameScene.onUpdate() health-0 safety-net check. 642/642 full suite, tsc clean. Evidence: W3B0-RED.txt + W3B0-GREEN.txt."
+            },
+            {
               "id": "W3-B.1",
               "description": "Playwright scaffold harden: chromium-boot + firefox projects, webServer, reuse W2 smoke base",
               "status": "complete",
-              "tdd_cycle": "complete",
-              "completion_date": "2026-09-19T11:00:00",
-              "notes": "W3-B.1 merged to main @ 6e4c45a. outputDir + HTML reporter moved to w3/, screenshot: 'on' enabled. tsc clean; playwright --list discovers 46 tests."
-            },
-            {
-              "id": "W3-B.1b",
-              "description": "w3b Playwright project + tests/e2e/w3b/ dir",
-              "status": "complete",
-              "tdd_cycle": "complete",
-              "completion_date": "2026-09-19T11:25:00",
-              "notes": "W3-B.1b (t_9819ee0b): dedicated w3b project (testDir: tests/e2e/w3b/) added to playwright.config.ts. Same headed + WebGL posture as chromium-boot. tsc clean; playwright --list confirms w3b registered. Evidence: W3B1B-RED.txt + W3B1B-GREEN.txt."
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-19T10:21:00",
+              "notes": "Playwright config extended for W3-B critical-path specs. outputDir + HTML reporter moved to tests/evidence/w3/. 635/635 unit, playwright --list 46/46."
             },
             {
               "id": "W3-B.2",
