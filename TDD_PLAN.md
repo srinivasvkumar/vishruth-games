@@ -478,6 +478,10 @@ To prevent context overload and compression:
 **W3 execution order (sprints; gates Day 9):**
 - **W3-A: UI system (Day 8, Tasks 8.1 + 8.2)** — build `UISystem` (HUD), `MenuScene.ts`, `GameOverScene.ts`; wire menu → game → game-over → restart in-browser.
 - **W3-B: Integration (Day 9)** — scaffold Playwright (`playwright.config.ts`, `tests/e2e/`), 4 critical-path E2E tests, visual-regression baseline.
+  - **W3-B.1** (t_9927d746, 2026-09-19): Playwright config extended for W3-B critical-path specs —
+    outputDir + HTML reporter moved to `tests/evidence/w3/`, `screenshot: 'on'` enabled for
+    visual-regression baselines. tsc clean; `playwright test --list` discovers all existing specs.
+    Evidence: `tests/evidence/w3/W3B1-RED.txt` + `W3B1-GREEN.txt`.
 - **W3-C: Optimization & Polish (Day 10)** — performance (per D4), cross-browser (Chrome/Firefox; Safari/mobile best-effort), input latency.
 
 **W3 success criteria (all must pass before W4 starts):**

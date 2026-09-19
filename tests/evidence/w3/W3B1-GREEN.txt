@@ -1,0 +1,64 @@
+# W3-B.1 TDD GREEN Evidence
+# Date: 2026-09-19
+# Task: t_9927d746 (W3-B.1 — Playwright config harden for W3-B critical-path specs)
+# Branch: wt/t_9927d746 @ main 5370860
+
+## Config changes applied to playwright.config.ts
+
+### 1. outputDir
+BEFORE: outputDir: './tests/evidence/w2/playwright-artifacts'
+AFTER:  outputDir: './tests/evidence/w3/playwright-artifacts'
+[OK] W3-B evidence now lives under w3/
+
+### 2. HTML reporter outputFolder
+BEFORE: ['html', { open: 'never', outputFolder: 'tests/evidence/w2/playwright-report-html' }]
+AFTER:  ['html', { open: 'never', outputFolder: 'tests/evidence/w3/playwright-report-html' }]
+[OK] W3-B HTML report now lives under w3/
+
+### 3. use.screenshot
+BEFORE: (absent — no screenshot configuration)
+AFTER:  screenshot: 'on'
+[OK] Screenshots enabled for visual-regression baselines (W3-B success criterion #4)
+
+### 4. testDir
+UNCHANGED: testDir: process.env.BROWSER ? './tests/e2e/smoke' : './tests/e2e'
+[OK] W3-B spec files (w3b-cp1..cp4 + w3b-visual-baseline) will be added to tests/e2e/
+     by subsequent W3-B cards. No config change needed for discovery.
+
+### 5. Docstring updated
+[OK] Header now references W3-B.1 hardening.
+
+## tsc verification
+$ node_modules/.bin/tsc -p tsconfig.node.json --noEmit
+(exit code 0 — clean)
+
+## playwright test --list verification
+$ node_modules/.bin/playwright test --list
+Total: 46 tests in 8 files
+[OK] All existing specs (W2 + W3-A) still discovered across both projects:
+  - chromium-boot: 23 tests
+  - firefox: 23 tests
+[OK] No regressions in spec discovery.
+[NOTE] W3-B spec files (w3b-cp1..cp4 + w3b-visual-baseline) will be added
+       by W3-B.2–W3-B.5. They will be auto-discovered by the same testDir.
+
+## Existing specs in tests/e2e/ (before W3-B.2+ adds the new files)
+  audio.spec.ts            (W2-C.2)
+  boot.smoke.spec.ts       (W2-A.4)
+  fps.spec.ts              (W2-E.2)
+  physics-sync.spec.ts     (W2-B.2)
+  smoke/smoke.spec.ts      (W2-E.1a)
+  verify-signoff.spec.ts   (W2-E.3)
+  w2-w21b-start-path.spec.ts (W2-W2.1b)
+  w3a-full-loop.spec.ts    (W3-A.6)
+
+## W3-B specs expected (to be added by W3-B.2–W3-B.5)
+  w3b-cp1-start.spec.ts        (critical path 1: start)
+  w3b-cp2-movement.spec.ts     (critical path 2: movement)
+  w3b-cp3-score.spec.ts        (critical path 3: score)
+  w3b-cp4-restart.spec.ts      (critical path 4: restart)
+  w3b-visual-baseline.spec.ts  (visual-regression baseline)
+
+## Conclusion
+Config is hardened for W3-B. tsc clean. Playwright discovers all existing specs.
+Ready for W3-B.2+ to add the critical-path spec files.

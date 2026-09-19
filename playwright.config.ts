@@ -1,35 +1,37 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright configuration — W2-A.4 (FIRST e2e scaffold in this project).
+ * Playwright configuration — W2-A.4 (FIRST e2e scaffold), hardened in W3-B.1.
  *
- * One smoke spec lives in tests/e2e/. The dev server is launched by the
- * `devServer` project via Playwright's built-in webServer hook — vite is
- * started with the repo's config/vite.config.ts and the smoke test drives
- * a real (headed) Chromium against it.
+ * specs live in tests/e2e/. The dev server is launched via Playwright's
+ * built-in webServer hook — vite is started with the repo's
+ * config/vite.config.ts and specs drive a real (headed) Chromium against it.
  *
  * WebGL: the boot smoke asserts a LIVE WebGL context on #game-canvas, so
  * the browser must render with GPU acceleration enabled. Headless Chrome
  * falls back to SwiftShader/ANGLE; --enable-unsafe-webgl keeps real
  * WebGL available in recent Chrome versions where the flag is required
  * (no-op on versions that don't need it).
+ *
+ * W3-B.1 (Integration lane, Day 9): evidence dir moved from w2/ → w3/,
+ * screenshot mode 'on' enabled for visual-regression baselines.
  */
 export default defineConfig({
   /* W2-E.1b: the spec writes per-browser evidence. When the `browser` env is
    * set (e.g. BROWSER=firefox), screenshots and console capture are suffixed
    * with the browser name so Chrome and Firefox artifacts never collide. */
   testDir: process.env.BROWSER ? './tests/e2e/smoke' : './tests/e2e',
-  /* Evidence artifacts: screenshots/trace live under tests/evidence/w2/.
-   * The HTML reporter lives in a sibling subdir so it never collides
-   * with per-test artifact output. */
-  outputDir: './tests/evidence/w2/playwright-artifacts',
+  /* W3-B.1: evidence artifacts moved to w3/ — W3-B E2E + visual-regression
+   * baselines live here. The HTML reporter lives in a sibling subdir so it
+   * never collides with per-test artifact output. */
+  outputDir: './tests/evidence/w3/playwright-artifacts',
   fullyParallel: false,
   workers: 1,
   retries: 0,
   timeout: 60_000,
   reporter: [
     ['list'],
-    ['html', { open: 'never', outputFolder: 'tests/evidence/w2/playwright-report-html' }]
+    ['html', { open: 'never', outputFolder: 'tests/evidence/w3/playwright-report-html' }]
   ],
   use: {
     /* The boot smoke is verified in real (headed) Chrome — Task 4.3
@@ -39,6 +41,10 @@ export default defineConfig({
     viewport: { width: 1280, height: 800 },
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
+    /* W3-B.1: screenshots enabled for visual-regression baselines.
+     * Full-page screenshots are captured on failure by default; mode 'on'
+     * captures at every test end so baselines can be diffed across runs. */
+    screenshot: 'on',
     /* Console capture happens in the spec; this just keeps tracing
      * off (we want a light smoke, not a trace dump). */
     trace: 'off'

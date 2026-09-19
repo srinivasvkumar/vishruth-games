@@ -1,0 +1,36 @@
+# W3-B.1 TDD RED Evidence
+# Date: 2026-09-19
+# Task: t_9927d746 (W3-B.1 — Playwright config harden for W3-B critical-path specs)
+
+## Current playwright.config.ts state (before W3-B changes)
+
+### outputDir
+outputDir: './tests/evidence/w2/playwright-artifacts'
+^ Points to w2/ — W3-B evidence should live under w3/
+
+### HTML reporter outputFolder
+['html', { open: 'never', outputFolder: 'tests/evidence/w2/playwright-report-html' }]
+^ Points to w2/ — W3-B HTML report should live under w3/
+
+### use.screenshot
+NOT PRESENT — no screenshot configuration in use block
+^ Needed for visual-regression baselines (W3-B success criterion #4)
+
+### testDir
+testDir: process.env.BROWSER ? './tests/e2e/smoke' : './tests/e2e'
+^ OK — W3-B specs will be added as new files in tests/e2e/ (w3b-cp1..cp4 + w3b-visual-baseline)
+
+## RED Assertion (what should FAIL before the fix)
+[FAIL] outputDir should be './tests/evidence/w3/playwright-artifacts' (currently w2/)
+[FAIL] HTML reporter outputFolder should be 'tests/evidence/w3/playwright-report-html' (currently w2/)
+[FAIL] use.screenshot should be { mode: 'on' } (currently absent)
+
+## W3-B spec files expected (to be added by W3-B.2–W3-B.5)
+- tests/e2e/w3b-cp1-start.spec.ts
+- tests/e2e/w3b-cp2-movement.spec.ts
+- tests/e2e/w3b-cp3-score.spec.ts
+- tests/e2e/w3b-cp4-restart.spec.ts
+- tests/e2e/w3b-visual-baseline.spec.ts
+
+## Conclusion
+Config is not yet hardened for W3-B. Proceed to GREEN phase.

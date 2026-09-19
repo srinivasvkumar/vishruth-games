@@ -1,44 +1,35 @@
-# W3-A.9: DRY high-score read (3x readStoredHighScore -> 1 canonical)
+# W3-B.1 — Playwright config harden for W3-B critical-path specs
 
-## Task Summary
-Consolidate 3 copies of high-score read logic into 1 canonical pure helper in
-src/systems/Score.ts, with 2 deliberate bug fixes:
-- Fix A (crash): add try/catch so ScoreManager no longer throws on storage-unavailable
-- Fix B (cap): clamp via clampScore so menu/gameover display caps at MAX_SAFE_SCORE
+Task ID: t_9927d746
+Branch: wt/t_9927d746
+Worktree: .worktrees/t_9927d746
+Base: main @ 5370860
 
-## Parent Commits (both branched from main @ eb3cc82)
-- A7 (t_c3a4bd20): 843a66e — fixes MenuScene.onExit() start-guard re-arm
-- A8 (t_e0b86767): 41c7cfd — fixes GameOverScene to read LEVEL_START payload
+## Objective
+Extend playwright.config.ts to support W3-B's 4 critical-path E2E tests + visual-regression baseline.
 
-## Merge Plan
-1. Merge A8 (41c7cfd) into wt/t_9d8237a9
-2. Merge A7 (843a66e) into wt/t_9d8237a9
-3. Verify merge is clean (check for conflicts)
-4. TDD RED: add test for canonical readStoredHighScore() semantics
-5. Implement canonical helper in Score.ts
-6. Wire all 3 sites to use it; delete private scene methods
-7. TDD GREEN: all tests pass
-8. Full suite + tsc + eslint
-9. Update TDD_PLAN.md tracker
-10. Write evidence files
-11. Commit + push
+## Changes to playwright.config.ts
+1. outputDir: ./tests/evidence/w2/playwright-artifacts → ./tests/evidence/w3/playwright-artifacts
+2. HTML reporter outputFolder: tests/evidence/w2/playwright-report-html → tests/evidence/w3/playwright-report-html
+3. Add to use: screenshot: { mode: 'on' } (for visual-regression baselines)
+4. Update docstring to reference W3-B scope
+5. testDir stays ./tests/e2e (W3-B specs will be added as new files w3b-cp1..cp4 + w3b-visual-baseline)
 
-## Key Files (A7+A8 merged state)
-- src/systems/Score.ts — add canonical readStoredHighScore() helper
-- src/scenes/MenuScene.ts — delete private readStoredHighScore(), call helper
-- src/scenes/GameOverScene.ts — delete private readStoredHighScore(), call helper
-- tests/unit/score.test.ts — add RED test for canonical semantics
-- tests/evidence/w3/W3A9-RED.txt, W3A9-GREEN.txt
-- TDD_PLAN.md — update tracker
-
-## Errors
-| # | Error | Resolution |
-|---|-------|-----------|
+## TDD Evidence
+- RED: W3B1-RED.txt — capture current config state (w2/ paths, no screenshot mode)
+- GREEN: W3B1-GREEN.txt — verify new config (w3/ paths, screenshot mode 'on', playwright --list discovers specs)
 
 ## Phases
-- [x] Phase 1: Merge A7+A8 into working branch
-- [x] Phase 2: TDD RED — write failing test (9 tests failing)
-- [x] Phase 3: TDD GREEN — implement canonical helper + wire all sites (635/635 passing)
-- [x] Phase 4: Verify — full suite, tsc, eslint, build
-- [x] Phase 5: Documentation — TDD_PLAN.md + evidence files
-- [x] Phase 6: Commit (e909ae7)
+- [ ] Phase 1: RED — capture current config state as evidence
+- [ ] Phase 2: GREEN — update playwright.config.ts
+- [ ] Phase 3: VERIFY — npx playwright test --list confirms spec discovery; tsc clean
+
+## Files
+- playwright.config.ts (primary edit)
+- TDD_PLAN.md (tracker touch — W3-B line)
+- tests/evidence/w3/W3B1-RED.txt
+- tests/evidence/w3/W3B1-GREEN.txt
+
+## Errors
+| # | Error | Fix |
+|---|-------|-----|
