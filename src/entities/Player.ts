@@ -144,14 +144,17 @@ export class Player {
     this.isAlive = false;
     this.state.lives--;
     
+    // W3-B.0-fix (v2): dispatch PLAYER_DEATH on EVERY death, not just the last.
+    // The previous fix only dispatched in the else-branch (lives<=0), which is
+    // unreachable on the first death (lives 3→2 takes the respawn branch).
+    // GameScene's listener fires gameOver() — it checks lives internally.
+    window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
+    
     if (this.state.lives > 0) {
       Logger.warn('Player died, respawn available', { lives: this.state.lives });
       // Respawn logic would go here
     } else {
       Logger.error('Player game over');
-      // W3-B.0-fix: dispatch PLAYER_DEATH so GameScene's listener
-      // (GameScene.ts:335) fires gameOver() and transitions to GameOverScene.
-      window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH));
     }
   }
   

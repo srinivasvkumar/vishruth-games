@@ -372,49 +372,47 @@ describe('Player Class - Retroactive Tests', () => {
       expect(player.isPlayerAlive()).toBe(true);
     });
 
-    // W3-B.0-fix: when lives hit 0, die() must dispatch PLAYER_DEATH so
-    // GameScene's listener (GameScene.ts:335) transitions to GameOverScene.
-    // This is the CP4 S1 death trigger — __setPlayerHealth(0) -> die() with
-    // lives exhausted -> PLAYER_DEATH -> gameOver().
-    describe('PLAYER_DEATH dispatch (W3-B.0-fix)', () => {
-      it('should NOT dispatch PLAYER_DEATH when lives remain', () => {
+    // W3-B.0-fix (v2): die() dispatches PLAYER_DEATH on EVERY death, not just
+    // the last. The first fix (v1) only dispatched in the else-branch (lives<=0),
+    // which is unreachable on the first death (lives 3→2 takes the respawn
+    // branch). GameScene's listener fires gameOver() — the isGameOver flag and
+    // update-loop health check prevent double-transition.
+    describe('PLAYER_DEATH dispatch (W3-B.0-fix v2)', () => {
+      it('should dispatch PLAYER_DEATH on first death (lives remain)', () => {
         const listener = vi.fn();
         window.addEventListener(GameEvents.PLAYER_DEATH, listener);
 
         player.damage(100); // Lose 1 of 3 lives -> 2 remain
-        expect(listener).not.toHaveBeenCalled();
-
-        window.removeEventListener(GameEvents.PLAYER_DEATH, listener);
-      });
-
-      it('should dispatch PLAYER_DEATH when lives reach 0', () => {
-        const listener = vi.fn();
-        window.addEventListener(GameEvents.PLAYER_DEATH, listener);
-
-        player.damage(100); // 3 -> 2 lives
-        player.damage(100); // 2 -> 1 lives
-        player.damage(100); // 1 -> 0 lives (game over)
-
-        expect(player.isPlayerAlive()).toBe(false);
-        expect(player.getState().lives).toBe(0);
         expect(listener).toHaveBeenCalledTimes(1);
 
         window.removeEventListener(GameEvents.PLAYER_DEATH, listener);
       });
 
-      it('should dispatch PLAYER_DEATH via setHealth(0) when lives are exhausted', () => {
-        // Exhaust the first two lives so the third death hits 0.
-        player.damage(100); // 3 -> 2
-        player.damage(100); // 2 -> 1
-        player.respawn(); // restore health for the next kill
-
+      it('should dispatch PLAYER_DEATH on every death (3 total for 3 lives)', () => {
         const listener = vi.fn();
         window.addEventListener(GameEvents.PLAYER_DEATH, listener);
 
-        player.setHealth(0); // 1 -> 0 lives (game over)
+        player.damage(100); // 3 -> 2 lives
+        player.respawn();
+        player.damage(100); // 2 -> 1 lives
+        player.respawn();
+        player.damage(100); // 1 -> 0 lives (game over)
 
         expect(player.isPlayerAlive()).toBe(false);
         expect(player.getState().lives).toBe(0);
+        expect(listener).toHaveBeenCalledTimes(3);
+
+        window.removeEventListener(GameEvents.PLAYER_DEATH, listener);
+      });
+
+      it('should dispatch PLAYER_DEATH via setHealth(0) on first death', () => {
+        const listener = vi.fn();
+        window.addEventListener(GameEvents.PLAYER_DEATH, listener);
+
+        player.setHealth(0); // First death: 3 -> 2 lives
+
+        expect(player.isPlayerAlive()).toBe(false);
+        expect(player.getState().lives).toBe(2);
         expect(listener).toHaveBeenCalledTimes(1);
 
         window.removeEventListener(GameEvents.PLAYER_DEATH, listener);
