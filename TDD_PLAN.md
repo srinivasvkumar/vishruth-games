@@ -482,6 +482,11 @@ To prevent context overload and compression:
     outputDir + HTML reporter moved to `tests/evidence/w3/`, `screenshot: 'on'` enabled for
     visual-regression baselines. tsc clean; `playwright test --list` discovers all existing specs.
     Evidence: `tests/evidence/w3/W3B1-RED.txt` + `W3B1-GREEN.txt`.
+  - **W3-B.1b** (t_9819ee0b, 2026-09-19): w3b Playwright project + `tests/e2e/w3b/` dir added.
+    Dedicated `w3b` project (testDir: `./tests/e2e/w3b`) so W3-B specs are always discoverable,
+    independent of the BROWSER smoke-swap. Same headed + WebGL posture as `chromium-boot`.
+    tsc clean; `playwright test --list` confirms w3b project registered (0 tests until B2-B6 add specs).
+    Evidence: `tests/evidence/w3/W3B1B-RED.txt` + `W3B1B-GREEN.txt`.
 - **W3-C: Optimization & Polish (Day 10)** — performance (per D4), cross-browser (Chrome/Firefox; Safari/mobile best-effort), input latency.
 
 **W3 success criteria (all must pass before W4 starts):**

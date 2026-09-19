@@ -15,6 +15,9 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * W3-B.1 (Integration lane, Day 9): evidence dir moved from w2/ → w3/,
  * screenshot mode 'on' enabled for visual-regression baselines.
+ * W3-B.1b: dedicated `w3b` project added (testDir: tests/e2e/w3b/) so
+ * W3-B critical-path E2E specs are always discoverable, independent of
+ * the BROWSER smoke-swap.
  */
 export default defineConfig({
   /* W2-E.1b: the spec writes per-browser evidence. When the `browser` env is
@@ -78,6 +81,25 @@ export default defineConfig({
         ...devices['Desktop Firefox'],
         launchOptions: {
           headless: false
+        }
+      }
+    },
+    {
+      /* W3-B.1b: dedicated W3-B project for critical-path E2E specs.
+       * testDir points to tests/e2e/w3b/ so W3-B specs are always
+       * discoverable, independent of the BROWSER smoke-swap.
+       * Same headed + WebGL posture as chromium-boot. */
+      name: 'w3b',
+      testDir: './tests/e2e/w3b',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          headless: false,
+          args: [
+            '--enable-unsafe-webgl',
+            '--use-gl=angle',
+            '--use-angle=swiftshader'
+          ]
         }
       }
     }

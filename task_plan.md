@@ -1,34 +1,32 @@
-# W3-B.1 — Playwright config harden for W3-B critical-path specs
+# W3-B.1b — Add w3b Playwright project + tests/e2e/w3b/ dir
 
-Task ID: t_9927d746
-Branch: wt/t_9927d746
-Worktree: .worktrees/t_9927d746
-Base: main @ 5370860
+Task ID: t_9819ee0b
+Branch: wt/t_9819ee0b (to create)
+Base: main @ 6e4c45a
 
 ## Objective
-Extend playwright.config.ts to support W3-B's 4 critical-path E2E tests + visual-regression baseline.
+Add a `w3b` Playwright project to `playwright.config.ts` and create `tests/e2e/w3b/` dir
+so B2-B6 can write W3-B E2E specs. TDD: RED → GREEN → VERIFY.
 
-## Changes to playwright.config.ts
-1. outputDir: ./tests/evidence/w2/playwright-artifacts → ./tests/evidence/w3/playwright-artifacts
-2. HTML reporter outputFolder: tests/evidence/w2/playwright-report-html → tests/evidence/w3/playwright-report-html
-3. Add to use: screenshot: { mode: 'on' } (for visual-regression baselines)
-4. Update docstring to reference W3-B scope
-5. testDir stays ./tests/e2e (W3-B specs will be added as new files w3b-cp1..cp4 + w3b-visual-baseline)
-
-## TDD Evidence
-- RED: W3B1-RED.txt — capture current config state (w2/ paths, no screenshot mode)
-- GREEN: W3B1-GREEN.txt — verify new config (w3/ paths, screenshot mode 'on', playwright --list discovers specs)
+## Design decision
+- Dedicated `w3b` project (not extending `chromium-boot`)
+- `testDir: './tests/e2e/w3b'` on the project so w3b specs are always discoverable
+- Use `devices['Desktop Chrome']` with same launch args as `chromium-boot` (headed, WebGL flags)
+- Keeps W3-B specs independent of the BROWSER smoke-swap
 
 ## Phases
-- [ ] Phase 1: RED — capture current config state as evidence
-- [ ] Phase 2: GREEN — update playwright.config.ts
-- [ ] Phase 3: VERIFY — npx playwright test --list confirms spec discovery; tsc clean
+- [ ] Phase 1: RED — capture `npx playwright test --list` showing no w3b project
+- [ ] Phase 2: GREEN — add w3b project to config + create tests/e2e/w3b/.gitkeep
+- [ ] Phase 3: VERIFY — npx playwright test --list discovers w3b project; tsc clean
+- [ ] Phase 4: Tracker — update TDD_PLAN.md W3-B section
+- [ ] Phase 5: Commit
 
 ## Files
-- playwright.config.ts (primary edit)
-- TDD_PLAN.md (tracker touch — W3-B line)
-- tests/evidence/w3/W3B1-RED.txt
-- tests/evidence/w3/W3B1-GREEN.txt
+- playwright.config.ts (add w3b project)
+- tests/e2e/w3b/.gitkeep (new)
+- TDD_PLAN.md (tracker touch)
+- tests/evidence/w3/W3B1B-RED.txt
+- tests/evidence/w3/W3B1B-GREEN.txt
 
 ## Errors
 | # | Error | Fix |

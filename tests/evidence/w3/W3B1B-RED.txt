@@ -1,0 +1,63 @@
+=== W3B1B RED: playwright test --list ===
+Date: Sat Sep 19 11:21:04 AM AEST 2026
+Branch: wt/t_9819ee0b (base: main @ 6e4c45a)
+
+Listing tests:
+  [chromium-boot] › audio.spec.ts:109:1 › W2-C.2 audio: AudioContext running, AudioSystem available, pause/resume without errors
+  [chromium-boot] › boot.smoke.spec.ts:146:1 › W2-A.4 boot smoke: game boots in real Chrome, renders, no errors
+  [chromium-boot] › fps.spec.ts:219:1 › W2-E.2: FPS baseline @ 20 obstacles (D4 gate)
+  [chromium-boot] › physics-sync.spec.ts:244:1 › W2-B.2 physics sync: running frame loop moves the visual with the body (real Chrome)
+  [chromium-boot] › smoke/smoke.spec.ts:130:1 › W2-E.1a scenario 1: boot to a playable scene
+  [chromium-boot] › smoke/smoke.spec.ts:183:1 › W2-E.1a scenario 2: move with WASD
+  [chromium-boot] › smoke/smoke.spec.ts:243:1 › W2-E.1a scenario 3: jump
+  [chromium-boot] › smoke/smoke.spec.ts:279:1 › W2-E.1a scenario 4: score increments on collect
+  [chromium-boot] › smoke/smoke.spec.ts:309:1 › W2-E.1a scenario 5: game-over then restart returns to a clean playable state
+  [chromium-boot] › smoke/smoke.spec.ts:375:1 › W2-E.1a console capture: no fatal errors across a full boot→menu→game cycle
+  [chromium-boot] › verify-signoff.spec.ts:54:1 › W2-E.3 probe #4: score persists via LocalStorage
+  [chromium-boot] › verify-signoff.spec.ts:110:1 › W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live player
+  [chromium-boot] › w2-w21b-start-path.spec.ts:134:1 › BUG-W2-1b 1: boot lands on MenuScene with title + START button
+  [chromium-boot] › w2-w21b-start-path.spec.ts:173:1 › BUG-W2-1b 2a: Enter key from menu enters GameScene
+  [chromium-boot] › w2-w21b-start-path.spec.ts:200:1 › BUG-W2-1b 2b: clicking START button from menu enters GameScene
+  [chromium-boot] › w2-w21b-start-path.spec.ts:230:1 › BUG-W2-1b 3: in GameScene — 3D player + obstacles render, WASD moves the player
+  [chromium-boot] › w3a-full-loop.spec.ts:170:1 › W3A.6 S1: boot lands on the menu with title + START + HIGH SCORES
+  [chromium-boot] › w3a-full-loop.spec.ts:205:1 › W3A.6 S2: START via Enter enters game; HUD visible; HUD divs originate from GameScene (D2 probe)
+  [chromium-boot] › w3a-full-loop.spec.ts:269:1 › W2-1b regression: START button works after returning from a run (BUG-W2-1a guard re-arms)
+  [chromium-boot] › w3a-full-loop.spec.ts:316:1 › W3A.6 S3: player:death transitions to the GameOver scene; final-score handoff recorded
+  [chromium-boot] › w3a-full-loop.spec.ts:386:1 › W3A.6 S4: RESTART returns to the menu; a second run starts cleanly
+  [chromium-boot] › w3a-full-loop.spec.ts:435:1 › W3A.6 S5: a new high score survives a full page reload in the menu panel
+  [chromium-boot] › w3a-full-loop.spec.ts:477:1 › W3A.6 S6: console capture across menu -> game -> gameover -> menu -> game
+  [firefox] › audio.spec.ts:109:1 › W2-C.2 audio: AudioContext running, AudioSystem available, pause/resume without errors
+  [firefox] › boot.smoke.spec.ts:146:1 › W2-A.4 boot smoke: game boots in real Chrome, renders, no errors
+  [firefox] › fps.spec.ts:219:1 › W2-E.2: FPS baseline @ 20 obstacles (D4 gate)
+  [firefox] › physics-sync.spec.ts:244:1 › W2-B.2 physics sync: running frame loop moves the visual with the body (real Chrome)
+  [firefox] › smoke/smoke.spec.ts:130:1 › W2-E.1a scenario 1: boot to a playable scene
+  [firefox] › smoke/smoke.spec.ts:183:1 › W2-E.1a scenario 2: move with WASD
+  [firefox] › smoke/smoke.spec.ts:243:1 › W2-E.1a scenario 3: jump
+  [firefox] › smoke/smoke.spec.ts:279:1 › W2-E.1a scenario 4: score increments on collect
+  [firefox] › smoke/smoke.spec.ts:309:1 › W2-E.1a scenario 5: game-over then restart returns to a clean playable state
+  [firefox] › smoke/smoke.spec.ts:375:1 › W2-E.1a console capture: no fatal errors across a full boot→menu→game cycle
+  [firefox] › verify-signoff.spec.ts:54:1 › W2-E.3 probe #4: score persists via LocalStorage
+  [firefox] › verify-signoff.spec.ts:110:1 › W2-E.3 probe #5: shield (invincibility power-up) lifecycle on the live player
+  [firefox] › w2-w21b-start-path.spec.ts:134:1 › BUG-W2-1b 1: boot lands on MenuScene with title + START button
+  [firefox] › w2-w21b-start-path.spec.ts:173:1 › BUG-W2-1b 2a: Enter key from menu enters GameScene
+  [firefox] › w2-w21b-start-path.spec.ts:200:1 › BUG-W2-1b 2b: clicking START button from menu enters GameScene
+  [firefox] › w2-w21b-start-path.spec.ts:230:1 › BUG-W2-1b 3: in GameScene — 3D player + obstacles render, WASD moves the player
+  [firefox] › w3a-full-loop.spec.ts:170:1 › W3A.6 S1: boot lands on the menu with title + START + HIGH SCORES
+  [firefox] › w3a-full-loop.spec.ts:205:1 › W3A.6 S2: START via Enter enters game; HUD visible; HUD divs originate from GameScene (D2 probe)
+  [firefox] › w3a-full-loop.spec.ts:269:1 › W2-1b regression: START button works after returning from a run (BUG-W2-1a guard re-arms)
+  [firefox] › w3a-full-loop.spec.ts:316:1 › W3A.6 S3: player:death transitions to the GameOver scene; final-score handoff recorded
+  [firefox] › w3a-full-loop.spec.ts:386:1 › W3A.6 S4: RESTART returns to the menu; a second run starts cleanly
+  [firefox] › w3a-full-loop.spec.ts:435:1 › W3A.6 S5: a new high score survives a full page reload in the menu panel
+  [firefox] › w3a-full-loop.spec.ts:477:1 › W3A.6 S6: console capture across menu -> game -> gameover -> menu -> game
+Total: 46 tests in 8 files
+
+=== W3B1B RED: checking for w3b project ===
+NO w3b project found in test list (no [w3b] lines above)
+
+=== W3B1B RED: tests/e2e/w3b dir check ===
+tests/e2e/w3b/ does not exist
+
+=== CONCLUSION ===
+RED CONFIRMED: No w3b project exists in playwright.config.ts.
+Total tests: 46 in 8 files (chromium-boot + firefox only).
+tests/e2e/w3b/ dir does not exist.

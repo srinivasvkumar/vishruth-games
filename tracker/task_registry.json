@@ -358,8 +358,18 @@
             {
               "id": "W3-B.1",
               "description": "Playwright scaffold harden: chromium-boot + firefox projects, webServer, reuse W2 smoke base",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-19T11:00:00",
+              "notes": "W3-B.1 merged to main @ 6e4c45a. outputDir + HTML reporter moved to w3/, screenshot: 'on' enabled. tsc clean; playwright --list discovers 46 tests."
+            },
+            {
+              "id": "W3-B.1b",
+              "description": "w3b Playwright project + tests/e2e/w3b/ dir",
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-19T11:25:00",
+              "notes": "W3-B.1b (t_9819ee0b): dedicated w3b project (testDir: tests/e2e/w3b/) added to playwright.config.ts. Same headed + WebGL posture as chromium-boot. tsc clean; playwright --list confirms w3b registered. Evidence: W3B1B-RED.txt + W3B1B-GREEN.txt."
             },
             {
               "id": "W3-B.2",

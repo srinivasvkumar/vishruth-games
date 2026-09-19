@@ -182,3 +182,9 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Evidence: tests/evidence/w3/W3A9-RED.txt + W3A9-GREEN.txt
 - **W3-A MERGED to main + pushed to origin (eb3cc82..35a1033). 635/635 tests, tsc clean, eslint 0 errors.**
 
+# Week 3-B Lane (Integration / Day 9, 2026-09-19)
+- [x] W3-B.1 — Playwright scaffold harden: playwright.config.ts (chromium-boot + firefox projects), webServer, reuse W2 smoke base — game-dev — `t_9927d746` → 6e4c45a
+- [x] W3-B.1b — w3b Playwright project + tests/e2e/w3b/ dir — game-dev — `t_9819ee0b` — 2026-09-19
+  - Changes: playwright.config.ts (w3b project added, testDir: tests/e2e/w3b/), tests/e2e/w3b/.gitkeep
+  - Evidence: tests/evidence/w3/W3B1B-RED.txt + W3B1B-GREEN.txt
+
