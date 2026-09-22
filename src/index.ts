@@ -85,9 +85,14 @@ function initGame(): void {
  * Set up window event listeners
  */
 function setupWindowEvents(game: Game): void {
-  // Handle resize
+  // Handle resize: keep the shared WebGL viewport in sync with the
+  // #game-container CSS box so the canvas fills the screen (incl. mobile
+  // rotation) instead of staying locked to its initial clientWidth/Height.
   window.addEventListener('resize', () => {
-    Logger.debug('Window resized');
+    const container = document.getElementById('game-container');
+    if (container) {
+      game.getRenderer().resizeToContainer(container);
+    }
   });
   
   // Handle visibility change
@@ -149,6 +154,9 @@ function showErrorScreen(error: Error): void {
  * Bootstrap the application
  */
 function bootstrap(): void {
+  // Mark boot started so the legacy banner in index.html can report a real
+  // failure instead of a stale "Initializing Three.js..." if the app never mounts.
+  (window as unknown as { __clusterRushBooted?: boolean }).__clusterRushBooted = true;
   // Set logging level based on URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const debugMode = urlParams.get('debug') === 'true';

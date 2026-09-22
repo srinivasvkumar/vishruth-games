@@ -55,7 +55,21 @@ vi.mock('@/utils/Logger', () => ({
 
 // --- Helpers ------------------------------------------------------------------
 function createMockGame() {
+  // W2-A.2: scenes now share Game's renderer (Scene.ts constructor calls
+  // game.getRenderer().getRenderer()). Provide a mock with the same shape.
+  const mockRendererInner = {
+    render: vi.fn(),
+    setSize: vi.fn(),
+    clear: vi.fn(),
+    dispose: vi.fn(),
+  };
+  const mockRendererWrapper = {
+    getRenderer: () => mockRendererInner,
+    resizeToContainer: vi.fn(),
+  };
+  
   return {
+    getRenderer: vi.fn(() => mockRendererWrapper),
     switchScene: vi.fn().mockResolvedValue(undefined),
     isGameRunning: () => true,
     pause: vi.fn(),

@@ -17,7 +17,14 @@ export abstract class Scene {
     this.game = game;
     this.scene = new THREE.Scene();
     this.camera = camera ?? this.createCamera();
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    // W2-A.2: shared renderer — the WebGL context is owned by Game (see
+    // Game.ts constructor). Each scene used to build its own
+    // THREE.WebGLRenderer on a detached canvas, which (a) created one
+    // WebGL context per scene (4 = browser limit reached) and (b) meant
+    // nothing was ever drawn to the visible #game-canvas (D-A6: game
+    // canvas renders black). Scenes now share Game's renderer and draw
+    // into the shared context.
+    this.renderer = game.getRenderer().getRenderer();
     
     Logger.debug('Scene created', { name: this.constructor.name });
   }

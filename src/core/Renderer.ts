@@ -44,7 +44,7 @@ export class Renderer {
       canvas
     } = options;
 
-    this.renderer = new THREE.WebGLRenderer({ antialias, canvas });
+    this.renderer = new THREE.WebGLRenderer({ antialias, canvas, preserveDrawingBuffer: true });
     this.renderer.setSize(width, height);
     this.renderer.setClearColor(clearColor);
     this.renderer.clear();

@@ -53,7 +53,8 @@
 
         #game-container {
             width: 100%;
-            height: 600px;
+            height: calc(100vh - 140px);
+            min-height: 420px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -289,38 +290,23 @@
     </div>
 
     <script type="module" src="/src/index.ts"></script>
+    <script>
+        // The ES module above clears the legacy banner once the app mounts.
+        // If it fails to load, show the real error instead of a stale banner.
+        setTimeout(() => {
+            if (!window.__clusterRushBooted) {
+                const lm = document.getElementById('loading-message');
+                if (lm) lm.textContent = 'Failed to load game module — check console / ?debug=true';
+            }
+        }, 8000);
+    </script>
     
     <script>
         // Development mode check — use window location as a proxy for dev mode
         // since import.meta is only available in module scripts.
         if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
             console.log('🚀 Cluster Rush - Development Mode');
-            console.log('📋 Spec-driven development enabled');
-            console.log('🧪 TDD workflow enforced');
-            
-            // Add development helpers
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'F2') {
-                    console.log('[DEV] Toggle wireframe mode');
-                    // Wireframe toggle will be implemented in Phase 2
-                }
-                if (e.key === 'F3' && e.ctrlKey) {
-                    console.log('[DEV] Performance stats');
-                    // Performance monitoring will be implemented
-                }
-            });
-        }
-
-        // Loading indicator
-        const loadingMsg = document.getElementById('loading-message');
-        const updateLoading = (message) => {
-            if (loadingMsg) {
-                loadingMsg.textContent = message;
-            }
-        };
-
-        // Initial loading sequence
-        updateLoading('Initializing Three.js...');
+            // Cluster Rush boots via /src/index.ts (ES module) — no legacy init path.
         
         // Error handling
         window.addEventListener('error', (e) => {

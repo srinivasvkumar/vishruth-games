@@ -110,12 +110,28 @@ function createMockGame() {
       return Promise.resolve();
     },
   );
+  // W2-A.2: scenes now share Game's renderer (Scene.ts constructor calls
+  // game.getRenderer().getRenderer()). The inner mock records render calls
+  // and exposes a canvas domElement so base-Scene assertions keep working.
+  const mockRendererInner = {
+    domElement: document.createElement('canvas'),
+    render: (...args: unknown[]) => mockRendererRenderCalls.push(args),
+    setSize: vi.fn(),
+    clear: vi.fn(),
+    dispose: vi.fn(),
+  };
+  const mockRendererWrapper = {
+    getRenderer: () => mockRendererInner,
+    resizeToContainer: vi.fn(),
+  };
   return {
     _inputState: inputState,
     _uiSystem: uiSystem,
     _switchCalls: switchCalls,
+    _mockRenderer: mockRendererInner,
     getInputSystem: vi.fn(() => ({ getInputState: () => inputState })),
     getUISystem: vi.fn(() => uiSystem),
+    getRenderer: vi.fn(() => mockRendererWrapper),
     switchScene,
     isGameRunning: () => true,
     pause: vi.fn(),
