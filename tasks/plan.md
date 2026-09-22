@@ -203,4 +203,14 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
 - [x] W3-B.1b — w3b Playwright project + tests/e2e/w3b/ dir — game-dev — `t_9819ee0b` — 2026-09-19
   - Changes: playwright.config.ts (w3b project added, testDir: tests/e2e/w3b/), tests/e2e/w3b/.gitkeep
   - Evidence: tests/evidence/w3/W3B1B-RED.txt + W3B1B-GREEN.txt
+- [x] W3-B.2 — Critical-path E2E #1: boot → menu → START → game (menu→start→play flow) — game-dev — 2026-09-21
+  - Playwright CP1 start: menu visible, START enabled, boot → menu → play verified
+  - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp1-start-*/ (3 tests)
+- [x] W3-B.3 — Critical-path E2E #2: player movement + obstacle avoidance (WASD, collision) — game-dev — 2026-09-21
+  - Playwright CP2 movement: readable player, collision → health decreases, delta threshold per axis
+  - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp2-movement-*/ (4 tests)
+- [x] W3-B.4 — Critical-path E2E #3: score collection + HUD display (UISystem) — game-dev — 2026-09-21
+  - Playwright CP3 score: +100 in state and HUD, driven with known value, in sync with game state
+  - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp3-score-*/ (3 tests) + playwright HTML report (tests/evidence/w3/playwright-report-html/)
+  - 645/645 unit tests passing
 

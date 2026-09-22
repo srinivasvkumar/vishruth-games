@@ -478,6 +478,7 @@ To prevent context overload and compression:
 **W3 execution order (sprints; gates Day 9):**
 - **W3-A: UI system (Day 8, Tasks 8.1 + 8.2)** — build `UISystem` (HUD), `MenuScene.ts`, `GameOverScene.ts`; wire menu → game → game-over → restart in-browser.
 - **W3-B: Integration (Day 9)** — scaffold Playwright (`playwright.config.ts`, `tests/e2e/`), 4 critical-path E2E tests, visual-regression baseline.
+  - **W3-B.7** (t_68d7f867, 2026-09-20): W3-B gate verified: 4 critical paths + visual-regression pass in real Chrome (W3-B.7). Evidence: tests/evidence/w3/W3B7-VERIFIED.txt + w3b-gate-screenshots/.
   - **W3-B.1** (t_9927d746, 2026-09-19): Playwright config extended for W3-B critical-path specs —
     outputDir + HTML reporter moved to `tests/evidence/w3/`, `screenshot: 'on'` enabled for
     visual-regression baselines. tsc clean; `playwright test --list` discovers all existing specs.
@@ -502,8 +503,8 @@ To prevent context overload and compression:
 **W3 success criteria (all must pass before W4 starts):**
 1. HUD rendered by `UISystem` (no inline DOM in `GameScene.ts`).
 2. `MenuScene` + `GameOverScene` exist; full loop: Menu → Start → Play → GameOver → Restart works in-browser.
-3. Playwright scaffolded; 4 critical-path E2E tests pass in real Chrome.
-4. Visual-regression baseline captured.
+3. [x] Playwright scaffolded; 4 critical-path E2E tests pass in real Chrome. (W3-B.7 verified 2026-09-20, run 4)
+4. [x] Visual-regression baseline captured. (W3-B.6; stable across W3-B.7 re-runs, 2026-09-20)
 5. Performance target met per D4 (60 FPS @ committed obstacle count).
 6. Chrome + Firefox pass basic functionality.
 

@@ -23,8 +23,8 @@
   "current_status": {
     "phase": "W3-B: Integration / Day 9 (in progress)",
     "day": 9,
-    "current_task": "W3-B.0 complete (debug accessors); W3-B.0-fix complete (PLAYER_DEATH dispatch); W3-B.1 complete (Playwright config); W3-B.2-W3-B.7 pending",
-    "status": "W3-B-0-0FIX-AND-1-COMPLETE",
+    "current_task": "W3-B.0 complete (debug accessors); W3-B.0-fix complete (PLAYER_DEATH dispatch); W3-B.1 complete (Playwright config); W3-B.2 complete (CP1 start evidence); W3-B.3 complete (CP2 movement evidence); W3-B.4 complete (CP3 score evidence); W3-B.5-W3-B.7 pending",
+    "status": "W3-B-0-0FIX-1-2-3-4-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-16T20:59:00",
     "last_updated": "2026-09-19T21:25:00",

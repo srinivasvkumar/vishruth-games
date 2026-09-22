@@ -51,7 +51,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-10T21:22:00",
-              "notes": "Root cause of 9-file 'Failed to load url' collection failures fixed: all 7 resolve.alias entries in config/vite.config.ts pointed into config/ (its __dirname) instead of the repo root; now @ -> ../src etc. Nested clusterrush/** duplicate tree added to test.exclude (out-of-scope; verified not collected by root-anchored include: tests/evidence/d02/T1-nested-tree-check.txt). INVENTORY.md re-enumerated from disk (16 src files w/ roles, 13 test files w/ results, coverage gaps, nested-tree decision). T1 evidence run (tests/evidence/d02/T1-green.txt, 2026-09-10T20:48 AEST): 13/13 files collected, 0 collection errors, 267 tests = 173 pass / 90 fail / 4 skip (expected RED-phase failures; game.test.ts load failure = missing src/systems/{Audio,UI}.ts, pre-existing, out of scope — no src/ changes in T0.2.1). D0.2 pre-commit RED-allowlist gate per boss ruling option (b) + T1 pre-ruling (20:35 AEST): .husky/red-allowlist.txt + scripts/red-gate-check.mjs wired into .husky/pre-commit (replaces plain 'npx lint-staged' for D0.2). T1 allowlist = 2 PERMANENT (tests/unit/hello-three.test.ts — turns green at TDD-1.3; tests/unit/mock-strategy.test.ts — re-validated at TDD-1.1; both Week 1 day 1; header comments added to both files) + 8 TEMP-D0.2-T1 entries (constants, game-loop, game, obstacle, physics-system, player, retroactive-core, scene-manager — exactly the other files failing in the T1 evidence run; removal owner: T3/task 0.2.2; T3 commit must remove ALL TEMP entries; T4 asserts allowlist == exactly the 2 permanent files). Lint stage runs+reports but does not gate during D0.2 — pre-existing defect: ESLint 8.57.1 cannot load flat config/eslint.config.js via --config (flagged to orchestrator)."
+              "notes": "Root cause of 9-file 'Failed to load url' collection failures fixed: all 7 resolve.alias entries in config/vite.config.ts pointed into config/ (its __dirname) instead of the repo root; now @ -> ../src etc. Nested clusterrush/** duplicate tree added to test.exclude (out-of-scope; verified not collected by root-anchored include: tests/evidence/d02/T1-nested-tree-check.txt). INVENTORY.md re-enumerated from disk (16 src files w/ roles, 13 test files w/ results, coverage gaps, nested-tree decision). T1 evidence run (tests/evidence/d02/T1-green.txt, 2026-09-10T20:48 AEST): 13/13 files collected, 0 collection errors, 267 tests = 173 pass / 90 fail / 4 skip (expected RED-phase failures; game.test.ts load failure = missing src/systems/{Audio,UI}.ts, pre-existing, out of scope \u2014 no src/ changes in T0.2.1). D0.2 pre-commit RED-allowlist gate per boss ruling option (b) + T1 pre-ruling (20:35 AEST): .husky/red-allowlist.txt + scripts/red-gate-check.mjs wired into .husky/pre-commit (replaces plain 'npx lint-staged' for D0.2). T1 allowlist = 2 PERMANENT (tests/unit/hello-three.test.ts \u2014 turns green at TDD-1.3; tests/unit/mock-strategy.test.ts \u2014 re-validated at TDD-1.1; both Week 1 day 1; header comments added to both files) + 8 TEMP-D0.2-T1 entries (constants, game-loop, game, obstacle, physics-system, player, retroactive-core, scene-manager \u2014 exactly the other files failing in the T1 evidence run; removal owner: T3/task 0.2.2; T3 commit must remove ALL TEMP entries; T4 asserts allowlist == exactly the 2 permanent files). Lint stage runs+reports but does not gate during D0.2 \u2014 pre-existing defect: ESLint 8.57.1 cannot load flat config/eslint.config.js via --config (flagged to orchestrator)."
             },
             {
               "id": "0.2.2",
@@ -177,7 +177,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-13T17:02:00",
-              "notes": "Kanban t_2deaadf6. RED evidence: tests/evidence/w2/W2-A1-RED.txt (2 failed, 1 passed — canvas not honored, resizeToContainer not a function). GREEN evidence: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed). Full suite 390/390 green. Changes: src/core/Renderer.ts (RendererOptions.canvas, new THREE.WebGLRenderer({antialias, canvas}), resizeToContainer()), tests/setup/mock-three.ts (additive: WebGLRenderer accepts canvas param), tests/unit/renderer.test.ts (3 new tests)."
+              "notes": "Kanban t_2deaadf6. RED evidence: tests/evidence/w2/W2-A1-RED.txt (2 failed, 1 passed \u2014 canvas not honored, resizeToContainer not a function). GREEN evidence: tests/evidence/w2/W2-A1-GREEN.txt (3/3 passed). Full suite 390/390 green. Changes: src/core/Renderer.ts (RendererOptions.canvas, new THREE.WebGLRenderer({antialias, canvas}), resizeToContainer()), tests/setup/mock-three.ts (additive: WebGLRenderer accepts canvas param), tests/unit/renderer.test.ts (3 new tests)."
             },
             {
               "id": "W2-A.2",
@@ -225,7 +225,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-13T20:00:00",
-              "notes": "Kanban t_ccce7f37. RED: 13/13 W2-C.1 tests failed pre-change (AudioSystem was a 26-line no-op stub). GREEN: 25/25 in audio-system.test.ts; full suite 414/414; tsc clean; eslint clean on src/. Changes: src/systems/Audio.ts (full rewrite — WebAudio synthesized placeholder: 4 SFX frequencies, 2s music buffer, 3 gain nodes, degraded mode), tests/setup/mock-audio.ts (full mock AudioContext), tests/unit/audio-system.test.ts (17 W2-C.1 tests). Evidence: tests/evidence/w2/W2-C1-RED.txt, W2-C1-GREEN-full.txt."
+              "notes": "Kanban t_ccce7f37. RED: 13/13 W2-C.1 tests failed pre-change (AudioSystem was a 26-line no-op stub). GREEN: 25/25 in audio-system.test.ts; full suite 414/414; tsc clean; eslint clean on src/. Changes: src/systems/Audio.ts (full rewrite \u2014 WebAudio synthesized placeholder: 4 SFX frequencies, 2s music buffer, 3 gain nodes, degraded mode), tests/setup/mock-audio.ts (full mock AudioContext), tests/unit/audio-system.test.ts (17 W2-C.1 tests). Evidence: tests/evidence/w2/W2-C1-RED.txt, W2-C1-GREEN-full.txt."
             },
             {
               "id": "W2-C.2",
@@ -233,7 +233,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-13T20:50:00",
-              "notes": "Kanban t_f22844e8. RED: 8/8 W2-C.2 tests failed pre-change (bindToGameEvents not a function). GREEN: 422/422 unit tests; 2/2 e2e tests; tsc clean; eslint 0 errors; build clean. Changes: src/systems/Audio.ts (bindToGameEvents() — 6 window-event listeners: player:jump/collide/powerup → playSfx, game:pause/stop → stopMusic, game:resume → startMusic), src/core/Game.ts (start() calls bindToGameEvents() + init().then(startMusic)), src/entities/Player.ts (emit player:jump on jump), src/scenes/GameScene.ts (emit player:collide in handleCollision), tests/unit/audio-system.test.ts (8 new W2-C.2 tests), tests/e2e/audio.spec.ts (new Playwright: AudioContext running, AudioSystem available, pause/resume without errors), tests/unit/game.test.ts (audioImpl mock: bindToGameEvents, init, startMusic), tests/unit/player.test.ts (Constants mock: add GameEvents). Evidence: tests/evidence/w2/w2-c2-audio.log."
+              "notes": "Kanban t_f22844e8. RED: 8/8 W2-C.2 tests failed pre-change (bindToGameEvents not a function). GREEN: 422/422 unit tests; 2/2 e2e tests; tsc clean; eslint 0 errors; build clean. Changes: src/systems/Audio.ts (bindToGameEvents() \u2014 6 window-event listeners: player:jump/collide/powerup \u2192 playSfx, game:pause/stop \u2192 stopMusic, game:resume \u2192 startMusic), src/core/Game.ts (start() calls bindToGameEvents() + init().then(startMusic)), src/entities/Player.ts (emit player:jump on jump), src/scenes/GameScene.ts (emit player:collide in handleCollision), tests/unit/audio-system.test.ts (8 new W2-C.2 tests), tests/e2e/audio.spec.ts (new Playwright: AudioContext running, AudioSystem available, pause/resume without errors), tests/unit/game.test.ts (audioImpl mock: bindToGameEvents, init, startMusic), tests/unit/player.test.ts (Constants mock: add GameEvents). Evidence: tests/evidence/w2/w2-c2-audio.log."
             },
             {
               "id": "W2-E.1a",
@@ -241,7 +241,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-13T23:10:00",
-              "notes": "Kanban t_8ac76c86. RED: tests/e2e/smoke.spec.ts committed (4010dd8); jump scenario initially RED (y=0 after keyboard.press(' ') — keydown+keyup too fast for InputSystem to register in a frame; spec fix: keyboard.down + 150ms hold + keyboard.up). GREEN: 6/6 tests passed in real headed Chrome (chromium-boot project). Scenario 1: boot → menu → game scene, WebGL live, window.game running, HUD visible, 0 fatal console errors. Scenario 2: WASD movement — D→+x, A→-x, W→-z (all >0.1 unit delta via scene-graph position read). Scenario 3: jump — space keydown/hold → player y > 0.5, lands back to y ≤ 0.1. Scenario 4: score increment — player:score event (+50) → HUD score ≥ start+50. Scenario 5: game-over (player:death event → GAME OVER overlay) → page reload → re-enter game → player at spawn (|x|<1, |z|<1), score=0, running=true. 6th test: full boot→menu→game console capture, 0 fatal errors. No src/ changes (game already implements all 5 behaviors). Evidence: tests/evidence/w2/W2-E1a-GREEN.txt, w2-e1a-smoke-1-boot.png, w2-e1a-smoke-1-game.png, w2-e1a-smoke-2-wasd.png, w2-e1a-smoke-3-jump.png, w2-e1a-smoke-4-score.png, w2-e1a-smoke-5-gameover.png, w2-e1a-smoke-5-restart.png, w2-e1a-smoke-console.txt. TDD: RED (4010dd8) → GREEN. Week-2 success criterion #1 Chrome leg satisfied."
+              "notes": "Kanban t_8ac76c86. RED: tests/e2e/smoke.spec.ts committed (4010dd8); jump scenario initially RED (y=0 after keyboard.press(' ') \u2014 keydown+keyup too fast for InputSystem to register in a frame; spec fix: keyboard.down + 150ms hold + keyboard.up). GREEN: 6/6 tests passed in real headed Chrome (chromium-boot project). Scenario 1: boot \u2192 menu \u2192 game scene, WebGL live, window.game running, HUD visible, 0 fatal console errors. Scenario 2: WASD movement \u2014 D\u2192+x, A\u2192-x, W\u2192-z (all >0.1 unit delta via scene-graph position read). Scenario 3: jump \u2014 space keydown/hold \u2192 player y > 0.5, lands back to y \u2264 0.1. Scenario 4: score increment \u2014 player:score event (+50) \u2192 HUD score \u2265 start+50. Scenario 5: game-over (player:death event \u2192 GAME OVER overlay) \u2192 page reload \u2192 re-enter game \u2192 player at spawn (|x|<1, |z|<1), score=0, running=true. 6th test: full boot\u2192menu\u2192game console capture, 0 fatal errors. No src/ changes (game already implements all 5 behaviors). Evidence: tests/evidence/w2/W2-E1a-GREEN.txt, w2-e1a-smoke-1-boot.png, w2-e1a-smoke-1-game.png, w2-e1a-smoke-2-wasd.png, w2-e1a-smoke-3-jump.png, w2-e1a-smoke-4-score.png, w2-e1a-smoke-5-gameover.png, w2-e1a-smoke-5-restart.png, w2-e1a-smoke-console.txt. TDD: RED (4010dd8) \u2192 GREEN. Week-2 success criterion #1 Chrome leg satisfied."
             },
             {
               "id": "W2-E.1b",
@@ -249,7 +249,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-13T23:30:00",
-              "notes": "Kanban t_7844ca73. RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; all screenshots/console capture suffixed with BROWSER env: chrome|firefox; testDir selects ./tests/e2e/smoke when BROWSER set). GREEN: 6/6 tests pass in headed Firefox (project 'firefox', Desktop Firefox, headless:false, no launch args) AND 6/6 re-pass in headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional diff: all 5 behavioral scenarios + console-clean assert identically in both browsers; no scenario Chrome-only by design. Diff observations: (1) Firefox-only 2x 'AudioContext prevented from starting automatically' warnings from src/systems/Audio.ts:62/77 — stricter Firefox autoplay gesture policy at boot; informational, non-fatal, out of scope (audio=W2-C.2, cross-browser audio policy=W3-C). (2) Firefox ~1.1x slower per scenario (suite 33.6s vs 28.5s), no timeouts. (3) Spec mechanics identical: keyboard holds, CustomEvent dispatch (player:score/player:death), scene-graph reads, reload-restart all behave the same. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt + 7 firefox screenshots + w2-e1a-smoke-console-firefox.txt + 7 chrome screenshots + w2-e1a-smoke-console-chrome.txt. TDD: RED (59f1e05) → GREEN. Week-2 success criterion #1: BOTH legs satisfied (Chrome W2-E.1a + Firefox W2-E.1b). No src/ changes."
+              "notes": "Kanban t_7844ca73. RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; all screenshots/console capture suffixed with BROWSER env: chrome|firefox; testDir selects ./tests/e2e/smoke when BROWSER set). GREEN: 6/6 tests pass in headed Firefox (project 'firefox', Desktop Firefox, headless:false, no launch args) AND 6/6 re-pass in headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional diff: all 5 behavioral scenarios + console-clean assert identically in both browsers; no scenario Chrome-only by design. Diff observations: (1) Firefox-only 2x 'AudioContext prevented from starting automatically' warnings from src/systems/Audio.ts:62/77 \u2014 stricter Firefox autoplay gesture policy at boot; informational, non-fatal, out of scope (audio=W2-C.2, cross-browser audio policy=W3-C). (2) Firefox ~1.1x slower per scenario (suite 33.6s vs 28.5s), no timeouts. (3) Spec mechanics identical: keyboard holds, CustomEvent dispatch (player:score/player:death), scene-graph reads, reload-restart all behave the same. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt + 7 firefox screenshots + w2-e1a-smoke-console-firefox.txt + 7 chrome screenshots + w2-e1a-smoke-console-chrome.txt. TDD: RED (59f1e05) \u2192 GREEN. Week-2 success criterion #1: BOTH legs satisfied (Chrome W2-E.1a + Firefox W2-E.1b). No src/ changes."
             },
             {
               "id": "W2-E.2",
@@ -265,7 +265,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-16T19:45:00",
-              "notes": "Kanban t_4298322b. BUG-W2-1 decomposed by orchestrator; 1a is the player start path sub-card. RED: 6/7 tests in tests/unit/menu-scene.test.ts failed pre-change (no START button in #menu-container, no window keydown wiring for Enter/Space, no double-start guard, no listener cleanup) — 'other keys do not trigger a transition' passed trivially (regression guard, not RED surface). GREEN: 7/7; full suite 557/557 (23 files); tsc --noEmit clean; eslint 0 errors (7 pre-existing no-console warnings in src/utils/Logger.ts, out of scope). Changes: src/scenes/MenuScene.ts (START button id #menu-start-button appended in setupMenuUI; window keydown listener for Enter/Space attached in onEnter, removed in onExit; startGame() single dispatch point — started flag + listener removal + button disable on dispatch, .catch re-arms all three if switchScene('game') rejects so the menu stays reachable; onCleanup detaches listener + clears DOM refs; menuContainer type !->?), tests/unit/menu-scene.test.ts (new, 7 tests: button exists/visible/enabled, Enter -> switchScene('game'), Space -> switchScene('game'), button click -> switchScene('game'), double-start guard (repeat Enter+Space+click after start = still 1 call), other keys no-op, cleanup + re-entry re-wires). Evidence: tests/evidence/w2/W2-W21a-RED.txt, W2-W21a-GREEN.txt. Scope: minimal start path only — full menu UI (settings/high scores/styled buttons) stays W3 Task 8.2."
+              "notes": "Kanban t_4298322b. BUG-W2-1 decomposed by orchestrator; 1a is the player start path sub-card. RED: 6/7 tests in tests/unit/menu-scene.test.ts failed pre-change (no START button in #menu-container, no window keydown wiring for Enter/Space, no double-start guard, no listener cleanup) \u2014 'other keys do not trigger a transition' passed trivially (regression guard, not RED surface). GREEN: 7/7; full suite 557/557 (23 files); tsc --noEmit clean; eslint 0 errors (7 pre-existing no-console warnings in src/utils/Logger.ts, out of scope). Changes: src/scenes/MenuScene.ts (START button id #menu-start-button appended in setupMenuUI; window keydown listener for Enter/Space attached in onEnter, removed in onExit; startGame() single dispatch point \u2014 started flag + listener removal + button disable on dispatch, .catch re-arms all three if switchScene('game') rejects so the menu stays reachable; onCleanup detaches listener + clears DOM refs; menuContainer type !->?), tests/unit/menu-scene.test.ts (new, 7 tests: button exists/visible/enabled, Enter -> switchScene('game'), Space -> switchScene('game'), button click -> switchScene('game'), double-start guard (repeat Enter+Space+click after start = still 1 call), other keys no-op, cleanup + re-entry re-wires). Evidence: tests/evidence/w2/W2-W21a-RED.txt, W2-W21a-GREEN.txt. Scope: minimal start path only \u2014 full menu UI (settings/high scores/styled buttons) stays W3 Task 8.2."
             },
             {
               "id": "BUG-W2-1b",
@@ -273,7 +273,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-16T19:58:00",
-              "notes": "Kanban t_675ab2f6 (parent t_4298322b). VERIFIED the BUG-W2-1a start path end-to-end in REAL HEADED CHROME. Spec: tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios), driven ONLY through the player start path (Enter key + START button click; never the debug window.game.getSceneManager().loadScene API the W2-E.1a smoke suite used to bypass the menu). Scenarios: (1) boot lands on MenuScene with #menu-start-button attached/visible/enabled + CLUSTER RUSH title + WebGL live; (2a) page.keyboard.press('Enter') -> #game-score visible, #menu-container hidden, player in scene graph; (2b) reload -> menu, then btn.click() on #menu-start-button -> #game-score visible, menu hidden; (3) in GameScene 3D player (finite x/y/z) + scene meshes >= 1 render, and WASD moves the player reusing W2-E.1a checks: D 500ms -> dx>+0.1 (+x), A 500ms -> dx<0 (-x), W 400ms -> dz<0 (-z). RED negative control: git checkout 8f1520a -- src/scenes/MenuScene.ts (pre-fix, 0 refs to menu-start-button/attachKeydownHandler/startGame) -> 4/4 FAILED as designed (no START button; Enter is a no-op; no transition to GameScene). GREEN: 4/4 passed in headed Chromium (Playwright 1.63.0, chromium-boot project, headless:false, display :1), 17.3s; fix restored via git checkout 6f85f55 -- src/scenes/MenuScene.ts (git diff --stat 6f85f55 -- src/scenes/MenuScene.ts == empty). 0 fatal console errors (filterFatalErrors: pageerror/requestfailed/THREE/CORS/uncaught/WebGL); only non-fatal warning is the expected AudioContext autoplay notice (out of scope, W3-C). No src/ changes by this card (verification only; the fix under test is 6f85f55 already merged in). Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-menu.png, w2-w21b-enter-game.png, w2-w21b-wasd-move.png, w2-w21b-console-chrome.txt. Verdict: PASS — BUG-W2-1a start path verified in real browser @ 6f85f55; no regression."
+              "notes": "Kanban t_675ab2f6 (parent t_4298322b). VERIFIED the BUG-W2-1a start path end-to-end in REAL HEADED CHROME. Spec: tests/e2e/w2-w21b-start-path.spec.ts (4 scenarios), driven ONLY through the player start path (Enter key + START button click; never the debug window.game.getSceneManager().loadScene API the W2-E.1a smoke suite used to bypass the menu). Scenarios: (1) boot lands on MenuScene with #menu-start-button attached/visible/enabled + CLUSTER RUSH title + WebGL live; (2a) page.keyboard.press('Enter') -> #game-score visible, #menu-container hidden, player in scene graph; (2b) reload -> menu, then btn.click() on #menu-start-button -> #game-score visible, menu hidden; (3) in GameScene 3D player (finite x/y/z) + scene meshes >= 1 render, and WASD moves the player reusing W2-E.1a checks: D 500ms -> dx>+0.1 (+x), A 500ms -> dx<0 (-x), W 400ms -> dz<0 (-z). RED negative control: git checkout 8f1520a -- src/scenes/MenuScene.ts (pre-fix, 0 refs to menu-start-button/attachKeydownHandler/startGame) -> 4/4 FAILED as designed (no START button; Enter is a no-op; no transition to GameScene). GREEN: 4/4 passed in headed Chromium (Playwright 1.63.0, chromium-boot project, headless:false, display :1), 17.3s; fix restored via git checkout 6f85f55 -- src/scenes/MenuScene.ts (git diff --stat 6f85f55 -- src/scenes/MenuScene.ts == empty). 0 fatal console errors (filterFatalErrors: pageerror/requestfailed/THREE/CORS/uncaught/WebGL); only non-fatal warning is the expected AudioContext autoplay notice (out of scope, W3-C). No src/ changes by this card (verification only; the fix under test is 6f85f55 already merged in). Evidence: tests/evidence/w2/W2-W21b-RED.txt, W2-W21b-GREEN.txt, w2-w21b-menu.png, w2-w21b-enter-game.png, w2-w21b-wasd-move.png, w2-w21b-console-chrome.txt. Verdict: PASS \u2014 BUG-W2-1a start path verified in real browser @ 6f85f55; no regression."
             },
             {
               "id": "W3-A.1",
@@ -305,7 +305,7 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-16T22:15:00",
-              "notes": "Kanban t_de156e6e. New src/scenes/GameOverScene.ts: GAME OVER heading, final score + high score display, RESTART button -> switchScene('menu'). Registered in src/index.ts alongside boot/menu/game. RED: tests/unit/gameover-scene.test.ts (new). GREEN: full suite passed. Evidence: tests/evidence/w3/W3A4-RED.txt, W3A4-GREEN.txt. @ 19a7899. NOTE: D-A6-1 confirmed in A6 — onEnter() does not yet read the {score,highScore} payload (displays 0); fix tracked as W3-A.8."
+              "notes": "Kanban t_de156e6e. New src/scenes/GameOverScene.ts: GAME OVER heading, final score + high score display, RESTART button -> switchScene('menu'). Registered in src/index.ts alongside boot/menu/game. RED: tests/unit/gameover-scene.test.ts (new). GREEN: full suite passed. Evidence: tests/evidence/w3/W3A4-RED.txt, W3A4-GREEN.txt. @ 19a7899. NOTE: D-A6-1 confirmed in A6 \u2014 onEnter() does not yet read the {score,highScore} payload (displays 0); fix tracked as W3-A.8."
             },
             {
               "id": "W3-A.5",
@@ -321,11 +321,11 @@
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-16T23:34:00",
-              "notes": "Kanban t_b08d3752. Playwright E2E (tests/e2e/w3a-full-loop.spec.ts) in real Chromium. 4/7 scenarios PASS: S1 boot->menu, S2 START->game+HUD, S3 death->gameover handoff, S5 high-score reload-persistence. 3/7 FAIL: W2-1b regression (START button disabled after returning from run), S4 RESTART second-run timeout, S6 console timeout. Confirmed defects: BUG-W2-1a (blocker) — MenuScene.started flag never resets on onExit so the start-guard never re-arms after a full run, making the second run impossible; D-A6-1 (major) — GameOverScene displays 0 because onEnter() ignores the {score,highScore} data payload. Evidence: tests/evidence/w3/W3A6-FAIL.txt. @ 7e59434. Merge to main resolved: GameScene.ts onEnter (kept UISystem calls + resetRunState), scenes.test.ts mock (union of getUISystem + switchCalls), game-loop-wiring.test.ts mock (added getUISystem). Full suite 610/610 post-merge. Follow-ups: W3-A.7 (re-arm fix), W3-A.8 (score payload fix)."
+              "notes": "Kanban t_b08d3752. Playwright E2E (tests/e2e/w3a-full-loop.spec.ts) in real Chromium. 4/7 scenarios PASS: S1 boot->menu, S2 START->game+HUD, S3 death->gameover handoff, S5 high-score reload-persistence. 3/7 FAIL: W2-1b regression (START button disabled after returning from run), S4 RESTART second-run timeout, S6 console timeout. Confirmed defects: BUG-W2-1a (blocker) \u2014 MenuScene.started flag never resets on onExit so the start-guard never re-arms after a full run, making the second run impossible; D-A6-1 (major) \u2014 GameOverScene displays 0 because onEnter() ignores the {score,highScore} data payload. Evidence: tests/evidence/w3/W3A6-FAIL.txt. @ 7e59434. Merge to main resolved: GameScene.ts onEnter (kept UISystem calls + resetRunState), scenes.test.ts mock (union of getUISystem + switchCalls), game-loop-wiring.test.ts mock (added getUISystem). Full suite 610/610 post-merge. Follow-ups: W3-A.7 (re-arm fix), W3-A.8 (score payload fix)."
             },
             {
               "id": "W3-A.7",
-              "description": "FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker — start button/Enter stayed dead after a full run)",
+              "description": "FIX: MenuScene start-guard re-arm on onExit (BUG-W2-1a blocker \u2014 start button/Enter stayed dead after a full run)",
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-17T12:55:00",
@@ -333,7 +333,7 @@
             },
             {
               "id": "W3-A.8",
-              "description": "FIX: GameOverScene reads {score, highScore} from LEVEL_START event payload (D-A6-1 major — was always showing 0)",
+              "description": "FIX: GameOverScene reads {score, highScore} from LEVEL_START event payload (D-A6-1 major \u2014 was always showing 0)",
               "status": "completed",
               "tdd_cycle": "complete",
               "completion_date": "2026-09-17T12:55:00",
@@ -369,7 +369,7 @@
               "status": "complete",
               "tdd_cycle": "green",
               "completion_date": "2026-09-19T21:25:00",
-              "notes": "die() else branch (lives<=0) was a stub that never dispatched GameEvents.PLAYER_DEATH, so __setPlayerHealth(0) never reached GameOverScene. Fix: 1 line in src/entities/Player.ts die() else branch — window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH)). 3 new unit tests in tests/unit/player.test.ts. 645/645 full suite, tsc clean, eslint 0 new errors. Evidence: W3B0FIX-RED.txt + W3B0FIX-GREEN.txt."
+              "notes": "die() else branch (lives<=0) was a stub that never dispatched GameEvents.PLAYER_DEATH, so __setPlayerHealth(0) never reached GameOverScene. Fix: 1 line in src/entities/Player.ts die() else branch \u2014 window.dispatchEvent(new CustomEvent(GameEvents.PLAYER_DEATH)). 3 new unit tests in tests/unit/player.test.ts. 645/645 full suite, tsc clean, eslint 0 new errors. Evidence: W3B0FIX-RED.txt + W3B0FIX-GREEN.txt."
             },
             {
               "id": "W3-B.1",
@@ -382,20 +382,26 @@
             {
               "id": "W3-B.2",
               "description": "Critical-path E2E #1: boot -> menu -> START -> game (menu->start->play flow)",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-21T12:00:00",
+              "notes": "Playwright CP1 start: menu visible, START enabled, boot -> menu -> play. tests/evidence/w3/playwright-artifacts/w3b-cp1-* 645/645 unit tests."
             },
             {
               "id": "W3-B.3",
               "description": "Critical-path E2E #2: player movement + obstacle avoidance (WASD, collision)",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-21T12:00:00",
+              "notes": "Playwright CP2 movement: readable player, collision -> health decreases, delta threshold per axis. tests/evidence/w3/playwright-artifacts/w3b-cp2-* 645/645 unit tests."
             },
             {
               "id": "W3-B.4",
               "description": "Critical-path E2E #3: score collection + HUD display (UISystem)",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-21T12:00:00",
+              "notes": "Playwright CP3 score: +100 in state and HUD, driven with known value, in sync with game state. tests/evidence/w3/playwright-artifacts/w3b-cp3-* 645/645 unit tests."
             },
             {
               "id": "W3-B.5",
