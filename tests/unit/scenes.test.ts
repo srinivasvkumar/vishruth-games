@@ -147,7 +147,7 @@ function findGroups(scene: THREE.Scene): THREE.Group[] {
 
 function findPlayerGroup(scene: THREE.Scene): THREE.Group {
   const found = findGroups(scene).find(
-    (g) => (g.children[0] as any).geometry.parameters.height === 2
+    (g) => (g.children[0] as any).geometry.parameters.height === 7
   );
   if (!found) throw new Error('player group not found in scene');
   return found;

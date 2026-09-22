@@ -131,6 +131,17 @@ export class GameScene extends Scene {
     const inputState = this.game.getInputSystem().getInputState();
     this.player.update(deltaTime, inputState.keys);
     
+    // Camera follows the player (smooth lerp)
+    const playerPos = this.player.getPosition();
+    const camTarget = new THREE.Vector3(
+      playerPos.x * 0.5,
+      8 + playerPos.y * 0.5,
+      playerPos.z + 12
+    );
+    const lerpFactor = 1 - Math.pow(0.001, deltaTime);
+    this.camera.position.lerp(camTarget, lerpFactor);
+    this.camera.lookAt(playerPos.x * 0.5, 2, playerPos.z - 10);
+    
     // Update obstacles
     for (const obstacle of this.obstacles) {
       obstacle.update(deltaTime);
@@ -278,13 +289,13 @@ export class GameScene extends Scene {
     if (!this.player) return;
     
     const playerPosition = this.player.getPosition();
-    const playerRadius = 0.5;
+    const playerRadius = 3.5;
     
     for (const obstacle of this.obstacles) {
       if (!obstacle.isObstacleActive()) continue;
       
       const obstaclePosition = obstacle.getMesh().position;
-      const obstacleRadius = 0.7;
+      const obstacleRadius = 3.0;
       
       const distance = playerPosition.distanceTo(obstaclePosition);
       

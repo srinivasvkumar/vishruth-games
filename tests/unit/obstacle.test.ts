@@ -69,14 +69,14 @@ describe('Obstacle Class - Retroactive Tests', () => {
       expect(obstacle.isObstacleActive()).toBe(true);
     });
 
-    it('should build a unit-size box mesh by default', () => {
+    it('should build a truck-size box mesh by default', () => {
       const mesh = obstacle.getMesh();
       expect(mesh.children).toHaveLength(1);
       const child = mesh.children[0];
       expect(child).toBeInstanceOf(Mesh);
-      expect(child.geometry.parameters.width).toBe(1);
-      expect(child.geometry.parameters.height).toBe(1);
-      expect(child.geometry.parameters.depth).toBe(1);
+      expect(child.geometry.parameters.width).toBe(4);
+      expect(child.geometry.parameters.height).toBe(5);
+      expect(child.geometry.parameters.depth).toBe(6);
     });
   });
 

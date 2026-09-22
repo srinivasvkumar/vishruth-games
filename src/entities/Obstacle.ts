@@ -21,7 +21,7 @@ export class Obstacle {
   constructor(
     position: Vector3,
     type: ObstacleType = 'block',
-    size: Vector3 = new Vector3(1, 1, 1)
+    size: Vector3 = new Vector3(4, 5, 6)
   ) {
     this.type = type;
     this.originalPosition = position.clone();

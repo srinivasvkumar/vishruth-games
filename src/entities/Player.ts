@@ -27,10 +27,11 @@ export class Player {
     this.mesh = new Group();
     this.mesh.position.copy(position);
     
-    // Main body
-    const geometry = new BoxGeometry(1, 2, 1);
+    // Main body (truck-sized: ~4 units wide, ~7 tall, ~8 long)
+    const geometry = new BoxGeometry(4, 7, 8);
     const material = new MeshStandardMaterial({ color: 0x00ff00 });
     const body = new Mesh(geometry, material);
+    body.position.y = 0; // group origin at truck center
     this.mesh.add(body);
     
     Logger.info('Player created at', position);
