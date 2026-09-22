@@ -307,12 +307,11 @@
         if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
             console.log('🚀 Cluster Rush - Development Mode');
             // Cluster Rush boots via /src/index.ts (ES module) — no legacy init path.
-        
-        // Error handling
-        window.addEventListener('error', (e) => {
-            updateLoading(`Error: ${e.message}`);
-            console.error('Game initialization error:', e);
-        });
+            // window error handler removed 2026-09-22: updateLoading() no longer
+            // exists after the banner cleanup, and the handler threw a
+            // SyntaxError on every page error. Boot failures are surfaced by
+            // the sentinel above instead.
+        }
     </script>
 </body>
 </html>

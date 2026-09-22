@@ -125,6 +125,24 @@ export class UISystem {
     }
   }
 
+  /** Hide a div; no-op if it was cleaned up. */
+  private hide(el: HTMLDivElement | null): void {
+    if (el && !this.cleanedUp) {
+      el.style.display = 'none';
+    }
+  }
+
+  /**
+   * Hide all HUD divs. Called by GameScene.onExit() so the HUD is not
+   * visible on the game-over / menu scenes (S3 E2E: "Game HUD must be
+   * hidden in the game-over scene").
+   */
+  hideHud(): void {
+    this.hide(this.scoreEl);
+    this.hide(this.healthEl);
+    this.hide(this.levelEl);
+  }
+
   /** Update #game-score to `SCORE: n` and make it visible. */
   setScore(n: number): void {
     if (this.cleanedUp) return;

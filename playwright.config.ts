@@ -91,6 +91,10 @@ export default defineConfig({
        * Same headed + WebGL posture as chromium-boot. */
       name: 'w3b',
       testDir: './tests/e2e/w3b',
+      // 2026-09-22: full critical-path suite (CP1-CP4) takes longer than
+      // the default 30s; give each test 60s so death/restart cycles under
+      // SwiftShader rendering have headroom.
+      timeout: 60_000,
       use: {
         ...devices['Desktop Chrome'],
         launchOptions: {

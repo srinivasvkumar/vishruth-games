@@ -213,4 +213,14 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Playwright CP3 score: +100 in state and HUD, driven with known value, in sync with game state
   - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp3-score-*/ (3 tests) + playwright HTML report (tests/evidence/w3/playwright-report-html/)
   - 645/645 unit tests passing
+- [x] W3-B.5 — Real-world browser round: full critical-path E2E (CP1-CP4) + HUD ownership fix — game-dev — 2026-09-22
+  - Three defects found + fixed by live headed-Chromium diagnostics:
+    (1) HUD ownership inversion: D2 probe asserted GameScene creates HUD divs, but W3-A.1 moved creation to UISystem by design. Spec now asserts UISystem owns, GameScene must NOT.
+    (2) D-A6-1 re-asserted as still-present: W3-A.8 (41c7cfd) fixed GameOverScene to read LEVEL_START data payload. Spec now asserts the match (regression guard).
+    (3) HUD not hidden on scene exit: added UISystem.hideHud() + GameScene.onExit() calls it.
+  - Restored 4 W3-B CP specs (cp1-start, cp2-movement, cp3-score, cp4-restart) + w3b evidence from wt/t_9819ee0b into main.
+  - W3B project timeout 30s → 60s.
+  - Results: w3a-full-loop 7/7; w3b CP1-CP4 13/14 (1 skipped flaky by design); boot+fps+w2-w21b 12/12; tsc clean; 645/645 unit.
+  - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp{1,2,3,4}-* + w3a-full-loop-*
+  - Tracked follow-up: CP3 S2 flake — setScore(999) → #game-score reads "SCORE: 0" (UISystem.setScore writes to stale scoreEl during scene transition race; passes in full-suite run).
 

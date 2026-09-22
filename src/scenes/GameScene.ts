@@ -160,11 +160,10 @@ export class GameScene extends Scene {
    * Exit game scene
    */
   protected onExit(): void {
-    // W3A.2: HUD is owned by UISystem (D2). The HUD divs stay in the DOM
-    // (UISystem owns them); they remain visible until the next set* call
-    // or Game.cleanup() calls uiSystem.cleanup(). No hide method exists
-    // on UISystem (W3A.1 surface) and adding one is out of scope for
-    // this task (file budget: GameScene.ts + test only).
+    // W3A.2: HUD is owned by UISystem (D2). Hide the HUD divs when leaving
+    // the game scene so they are not visible on the game-over / menu scenes
+    // (W3A.6 S3: "Game HUD must be hidden in the game-over scene").
+    this.game.getUISystem().hideHud();
     Logger.debug('Game scene exited');
   }
   

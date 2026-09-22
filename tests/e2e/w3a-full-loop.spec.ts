@@ -249,13 +249,17 @@ test('W3A.6 S2: START via Enter enters game; HUD visible; HUD divs originate fro
   expect(origin!.hudIdsFound, `Spy must have captured the HUD div creations (got: ${JSON.stringify(origin!.hudIdsFound)})`).toEqual(
     expect.arrayContaining(['game-score', 'game-health', 'game-level'])
   );
-  // D2 check: the creation stacks must attribute to GameScene code, and NONE
-  // of the HUD divs may be created by UISystem.
+  // D2 check (UPDATED 2026-09-22, post W3-A.1): HUD ownership moved to
+  // UISystem by design (D2 ruling at commit time was superseded — W3-A.1
+  // introduced UISystem.createHud() and GameScene delegates to it). The
+  // probe now asserts the OPPOSITE of the original: HUD divs ARE created
+  // by UISystem and NOT by GameScene. The creation happens at Game
+  // construction (initGame), so the stacks point into UISystem/Game.
   const allStacks = Object.values(origin!.stacks).join('\n');
   const uiSystemInHudStacks = allStacks.includes('UISystem');
   const gameSceneInHudStacks = allStacks.includes('GameScene');
-  expect(uiSystemInHudStacks, 'UISystem must NOT create the HUD divs').toBe(false);
-  expect(gameSceneInHudStacks, 'HUD divs ARE created by GameScene.setupUI — documents the D2 violation').toBe(true);
+  expect(uiSystemInHudStacks, 'HUD divs ARE owned by UISystem (W3-A.1 D2) — creation must attribute to UISystem').toBe(true);
+  expect(gameSceneInHudStacks, 'GameScene must NOT create the HUD divs (UISystem owns them)').toBe(false);
   console.log(`W3A6 S2 ownership: hudIds=${origin!.hudIdsFound.join(',')} log=${origin!.logLength} gameScene=${gameSceneInHudStacks} uiSystem=${uiSystemInHudStacks}`);
 
   const fatal = filterFatalErrors(consoleEntries);
@@ -368,12 +372,16 @@ test('W3A.6 S3: player:death transitions to the GameOver scene; final-score hand
   expect(handoff, 'level:start data for the gameover scene must have been captured').not.toBeNull();
   expect((handoff as { score?: number }).score, 'Switch data must carry the run score').toBe(scoreBeforeDeath);
 
-  // DEFECT D-A6-1 (documented, asserted as known-bad): GameOverScene does
-  // not read the data payload, so the displayed final score stays 0.
+  // DEFECT D-A6-1 (FIXED 2026-09-22 by W3-A.8, commit 41c7cfd):
+  // GameOverScene now reads {score} from the LEVEL_START payload via
+  // handleLevelStart(), so the displayed final score MATCHES the data.
+  // The original spec asserted the mismatch was still present; post-fix
+  // we assert the match (regression guard: if someone re-breaks the
+  // payload read, display != data again and this test fails).
   const displayFinal = Number.parseInt(display.final ?? '0', 10);
   const mismatch = displayFinal !== scoreBeforeDeath;
   console.log(`W3A6 S3 handoff: data.score=${(handoff as { score?: number }).score} displayed=${display.final} mismatch=${mismatch}`);
-  expect(mismatch, 'D-A6-1: expected the KNOWN defect (display != data) to still be present at this commit').toBe(true);
+  expect(mismatch, 'D-A6-1 is FIXED: displayed final score must equal the data payload score').toBe(false);
 
   const fatal = filterFatalErrors(consoleEntries);
   expect(fatal.length, `No fatal errors in S3.\nGot:\n${fatal.map((e) => `[${e.type}] ${e.text}`).join('\n')}`).toBe(0);
