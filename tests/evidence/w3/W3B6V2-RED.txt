@@ -1,0 +1,69 @@
+W3-B.6-v2 — RED (pre-capture state)
+Kanban t_bc5c735e | Branch wt/t_bc5c735e @ a47d623 (main tip)
+Date: 2026-09-22 22:55 AEST (UTC+10)
+
+────────────────────────────────────────────────────────────────────────────
+RED STATE VERIFIED — no baselines exist to compare against
+────────────────────────────────────────────────────────────────────────────
+
+1. Baseline absence (pre-capture):
+   - tests/e2e/w3b/w3b-visual-baseline.spec.ts-snapshots/ : ABSENT
+     (Playwright's per-spec snapshot dir does not exist — nothing to diff.)
+   - tests/e2e/w3b/snapshots/ : ABSENT (the card's suggested path; Playwright
+     actually uses <spec-file>-snapshots/ next to the spec — see note below.)
+   - No w3b-visual-baseline.spec.ts exists on ANY branch (verified via
+     git ls-tree across all refs): the original B.6 pass (t_fb628103,
+     claimed commit 25d369a) was NEVER merged into main — commit object
+     does not exist in this clone. So "stale pre-a47d623 baselines" cannot
+     be diffed; the RED condition is pure baseline absence.
+
+2. RED run (first execution of the new spec, pre-fix capture):
+   Command: ./node_modules/.bin/playwright test --project=w3b w3b-visual-baseline.spec.ts
+   Result: 3 failed (expected RED), 0 passed
+   - S1 MenuScene   : FAIL "A snapshot doesn't exist at .../w3b6v2-menu-scene-w3b-linux.png, writing actual."
+   - S2 GameScene   : FAIL "A snapshot doesn't exist at .../w3b6v2-game-scene-w3b-linux.png, writing actual."
+   - S3 GameOverScene: FAIL "A snapshot doesn't exist at .../w3b6v2-gameover-scene-w3b-linux.png, writing actual."
+   This is Playwright's documented first-run behavior: missing snapshot →
+   test fails, actual PNG written as the new "expected" baseline.
+   All three scenes REACHED their capture states successfully during this
+   run (menu visible; HUD visible + __debugPlayerPos installed;
+   #gameover-restart-button visible) — i.e. the drives work; only the
+   comparison failed, exactly as TDD RED requires.
+
+3. Spec defects found and fixed DURING RED (evidence of real execution,
+   not speculation):
+   a) API name: `expect(page).toMatchScreenshot()` does not exist in
+      Playwright 1.62 (standalone tsc: TS2339; also not in
+      node_modules/playwright/types/test.d.ts). Correct matcher:
+      `expect(page).toHaveScreenshot(name, { maxDiffPixels: 0 })`.
+   b) Determinism: first S2 capture was a live mid-animation frame of an
+      animated WebGL world (unseeded Math.random spawns + per-frame
+      obstacle advancement + camera lerp). Added world-freeze lever:
+      monkeypatch window.requestAnimationFrame to feed a frozen timestamp
+      for 3 frames → zero-delta updates, static final frame captured,
+      real clock restored after screenshot. Remaining GameScene variance
+      = spawn layout only (documented in GREEN).
+
+4. Snapshot path note (vs card text):
+   Card suggested tests/e2e/w3b/snapshots/. Playwright's toHaveScreenshot
+   uses the per-spec dir tests/e2e/w3b/w3b-visual-baseline.spec.ts-snapshots/
+   with per-OS suffix (-w3b-linux.png). That IS "the project-specific path
+   Playwright uses" (per card's parenthetical). Additionally, every
+   baseline is mirrored into tests/evidence/w3/ (w3b6v2-{menu,game,gameover}-scene.png)
+   so the evidence trail is explicit and reviewable.
+
+5. Environment:
+   - Worktree .worktrees/t_bc5c735e @ wt/t_bc5c735e, HEAD = a47d623
+   - node_modules: symlink to main repo's node_modules (Playwright 1.62.0)
+   - Dev server: NONE running on 5173/5176 pre-run; Playwright webServer
+     hook launched `npm run dev -- --no-open` → vite on localhost:5173
+     (config/vite.config.ts port: 5173 — matches playwright.config.ts
+     webServer.url; no config fix needed).
+   - Headed Chrome, DISPLAY=:1, --enable-unsafe-webgl + swiftshader args
+     per w3b project config.
+
+────────────────────────────────────────────────────────────────────────────
+EXPECTED NEXT STEP (GREEN): second consecutive run of the same spec must
+have all 3 toHaveScreenshot assertions PASS against the baselines the
+RED run just wrote (per-scene stability verdict recorded in GREEN txt).
+────────────────────────────────────────────────────────────────────────────

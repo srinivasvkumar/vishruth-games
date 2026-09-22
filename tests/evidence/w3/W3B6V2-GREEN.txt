@@ -1,0 +1,97 @@
+W3-B.6-v2 — GREEN (baseline capture + stability verification)
+Kanban t_bc5c735e | Branch wt/t_bc5c735e @ a47d623 (main tip, post truck/camera fix)
+Date: 2026-09-22 23:00 AEST (UTC+10)
+
+────────────────────────────────────────────────────────────────────────────
+VERDICT: PASS-WITH-WARNINGS — baselines captured & committed; Menu + GameOver
+pixel-stable across 2 runs; GameScene stable in camera/HUD/road with a
+documented spawn-layout flake (non-blocking per card rules).
+────────────────────────────────────────────────────────────────────────────
+
+ENVIRONMENT
+- Worktree: .worktrees/t_bc5c735e @ wt/t_bc5c735e, HEAD = a47d623
+  ("fix: scale trucks to visible size + camera follows player")
+- Playwright 1.62.0, project=w3b, headed Chrome (DISPLAY=:1),
+  --enable-unsafe-webgl + swiftshader args per project config.
+- Dev server: Playwright webServer hook launched `npm run dev -- --no-open`
+  → vite on localhost:5173 (config/vite.config.ts port 5173 matches
+  playwright.config.ts webServer.url — NO config fix needed; no server was
+  on 5176 at test time).
+- Baseline API: expect(page).toHaveScreenshot(name, { maxDiffPixels: 0 })
+  (NOT toMatchScreenshot / toMatchSnapshot — see RED txt, defect 3a).
+- GameScene capture lever: world-freeze (rAF monkeypatch → frozen timestamp
+  for 3 frames, zero-delta updates, real clock restored post-screenshot).
+
+CAPTURE RUN (run 1 of 2, 2026-09-22 22:57):
+  3 "failed — snapshot doesn't exist, writing actual" = baselines WRITTEN.
+  All 3 scenes reached capture state (menu visible / HUD + __debugPlayerPos /
+  #gameover-restart-button visible) — drives verified working.
+
+STABILITY RUN (run 2 of 2, 2026-09-22 22:57, 2nd consecutive execution):
+  2 passed, 1 failed (17.1s total)
+
+  S1 MenuScene     : PASS  (toHaveScreenshot exact match, 0 diff pixels,
+                          maxDiffPixels=0 — pixel-stable, static DOM)
+  S2 GameScene     : FAIL  (documented spawn-layout flake — see below)
+  S3 GameOverScene : PASS  (toHaveScreenshot exact match, 0 diff pixels,
+                          pixel-stable, static DOM)
+
+PER-SCENE STABILITY VERDICT
+  | Scene        | Run 2 vs baseline | Verdict |
+  |--------------|-------------------|---------|
+  | MenuScene    | PASS, 0 px diff   | STABLE  |
+  | GameScene    | FAIL, 1902 px diff| FLAKY (spawn layout) — NON-BLOCKING per card |
+  | GameOverScene| PASS, 0 px diff   | STABLE  |
+
+GAME SCENE FLAKE — ROOT-CAUSE + DIFF ANALYSIS (evidence, not speculation):
+  Playwright stability log: retries 298→78→1204→535→1787→1902 diff pixels,
+  5000ms timeout exceeded. Diff image
+  (tests/evidence/w3/playwright-artifacts/w3b-visual-baseline-W3-B-6-762f2-GL-world-frozen-at-capture--w3b/w3b6v2-game-scene-diff.png)
+  shows red highlights EXCLUSIVELY on the truck silhouettes: road, ground,
+  sky, camera angle, HUD text (SCORE: 0 / LEVEL: 1 / HEALTH: 100) all
+  pixel-identical between runs. Cause: initial obstacles spawn via
+  unseeded Math.random() (GameScene.spawnObstacles(3) in onLoad) → different
+  truck positions per boot. The world-freeze removed frame-timing variance
+  (camera lerp / mid-animation frames are frozen); spawn LAYOUT remains
+  inherently non-deterministic. No production change in scope (seeded spawn
+  would be a W3-C task).
+  Card rule applied: "Do NOT block on GameScene flake if MenuScene +
+  GameOverScene are stable" → satisfied.
+
+A47d623 VISUAL CONFIRMATION (why fresh baselines were required):
+  GameScene mirror shows the player truck as a large, clearly visible green
+  box occupying a significant portion of the lower-center viewport (pre-fix
+  it was ~1% of road width), plus two visible obstacle boxes ahead and the
+  camera framing the player from behind — the new scale + camera behavior
+  is present in the baselines. Menu + GameOver are static DOM (unaffected by
+  a47d623, but re-baselined for a complete post-fix set).
+
+KNOWN-ISSUE WATCH (CP3 S2 flake — UISystem.setScore stale element during
+scene transition): NOT observed during either B.6-v2 run. GameOver transition
+(#gameover-restart-button) appeared cleanly on the first attempt in both
+runs; no setScore stale-element error in captured console. No note required
+beyond this line.
+
+ARTIFACTS
+  Baselines (Playwright-managed, committed):
+    tests/e2e/w3b/w3b-visual-baseline.spec.ts-snapshots/w3b6v2-menu-scene-w3b-linux.png
+    tests/e2e/w3b/w3b-visual-baseline.spec.ts-snapshots/w3b6v2-game-scene-w3b-linux.png
+    tests/e2e/w3b/w3b-visual-baseline.spec.ts-snapshots/w3b6v2-gameover-scene-w3b-linux.png
+  Evidence mirrors (committed):
+    tests/evidence/w3/w3b6v2-menu-scene.png              (run-2 stable frame)
+    tests/evidence/w3/w3b6v2-menu-scene-stable-run2.png  (run-2, proves S1 stable)
+    tests/evidence/w3/w3b6v2-game-scene.png              (run-2 frame)
+    tests/evidence/w3/w3b6v2-game-scene-run2.png         (run-2 copy)
+    tests/evidence/w3/w3b6v2-gameover-scene.png         (run-2 stable frame)
+    tests/evidence/w3/w3b6v2-gameover-scene-stable-run2.png
+  Diff (S2 flake evidence, in outputDir):
+    tests/evidence/w3/playwright-artifacts/.../w3b6v2-game-scene-diff.png
+  Spec: tests/e2e/w3b/w3b-visual-baseline.spec.ts
+  RED evidence: tests/evidence/w3/W3B6V2-RED.txt
+
+W3-B.7-v2 HANDOFF
+  These three baselines are what B.7 (in-browser verify) will diff against.
+  Expectation: Menu + GameOver match pixel-exact; GameScene will show
+  spawn-layout variance on any fresh boot (the documented flake) — B.7
+  should treat GameScene as "camera framing + truck scale correct" rather
+  than pixel-exact, unless deterministic spawn is delivered in W3-C.
