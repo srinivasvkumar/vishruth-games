@@ -1,0 +1,22 @@
+W3-C.1a — RED phase: no FPS spec exists for 100+ obstacles
+Task: t_899ab91d (W3-C.1a — Performance benchmark: FPS @ 100+ obstacles, D4 gate)
+Timestamp: 2026-09-23 13:13 AEST (UTC+10)
+Repo: /home/srinivasvkumar/vishruth/games/clusterrush @ main 7b73e1c (clean)
+
+Command:
+  npm run test:e2e -- tests/e2e/w3c-fps-100.spec.ts --project=chromium-boot
+
+Output (verbatim, tail):
+  [WebServer] npm notice run cluster-rush@0.1.0 dev
+  [WebServer] npm notice run vite --config config/vite.config.ts --no-open
+  [WebServer] Files in the public directory are served at the root path.
+  [WebServer] Instead of /public/index.html, use /index.html.
+  Error: No tests found.
+  Make sure that arguments are regular expressions matching test files.
+  You may need to escape symbols like "$" or "*" and quote the arguments.
+
+Finding: tests/e2e/w3c-fps-100.spec.ts does not exist — there is NO FPS spec
+for 100+ obstacles. The only FPS spec is tests/e2e/fps.spec.ts (W2-E.2, 20
+obstacle baseline: 60.0 FPS @ 20, tests/evidence/w2/w2-e2-fps-20.log).
+
+RED = confirmed: 100+ obstacle FPS capability does not exist yet.

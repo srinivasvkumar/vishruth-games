@@ -1,0 +1,16 @@
+W3-C.4 — Settings panel (e2e, real Chromium + localStorage)
+timestamp: 2026-09-23T06:33:53.039Z
+url: http://localhost:5173/public/index.html
+browser: real Chromium (Playwright chromium-boot project, headed)
+
+assertions passed:
+  - panel closed on menu entry
+  - SETTINGS click opens panel with VOLUME/SPEED/DIFFICULTY/CONTROLS + CLOSE
+  - volume=50, speed=2.0, difficulty=hard persisted to localStorage["cluster-rush-settings"]
+  - game.getSpeedMultiplier() === 2 after choosing 2.0x
+  - Escape closes panel and returns focus to START
+  - re-open restores volume=50, speed=2 (aria-pressed), difficulty=hard (aria-pressed)
+  - CLOSE button closes the panel
+  - seeded {volume:10,speed:2,difficulty:hard} survives a full page reload
+
+screenshots: settings-panel-open.png, settings-panel-persist.png

@@ -1,0 +1,30 @@
+W3-C.1b — RED phase (before): NOT REQUIRED
+Task: t_513f0efe (W3-C.1b — Performance optimization: achieve 60 FPS @ 100+ obstacles [ONLY if C.1a < 60 FPS])
+Timestamp: 2026-09-23 13:29 AEST (UTC+10)
+Repo: /home/srinivasvkumar/vishruth/games/clusterrush
+
+GATING CONDITION (from task body):
+  "W3-C.1a measured FPS @ 100+ obstacles. If FPS < 60, this card optimizes.
+   If C.1a measured >= 60 FPS, this card is NOT REQUIRED — skip it and
+   document in the evidence."
+
+C.1a MEASUREMENT (source: tests/evidence/w3/W3C1A-GREEN.txt, task t_899ab91d):
+  browser:          real Chrome (Playwright chromium-boot project, headed, SwiftShader GL)
+  obstacles:        120 (120 THREE meshes + 120 GameScene obstacles + 120 cannon-es bodies)
+  frames sampled:   901
+  mean FPS:         60.0
+  median FPS:       59.9
+  min FPS:          59.5
+  p95 frame time:   16.8 ms
+  D4 gate (>= 60 FPS @ committed count): MET
+
+FINDING:
+  C.1a measured 60.0 mean FPS @ 120 obstacles (>= 60). The gating condition
+  "C.1a measured < 60 FPS" is NOT met. Per the task body, this card is NOT
+  REQUIRED. No performance optimization work is performed.
+
+RED PHASE STATUS: NOT APPLICABLE (no FPS < 60 to observe; gate not triggered)
+No source code changes made. No spec modifications. No optimization techniques
+applied.
+
+Evidence: tests/evidence/w3/W3C1A-GREEN.txt (C.1a GREEN with FPS numbers)

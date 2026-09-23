@@ -42,6 +42,13 @@ export class Game {
   private renderer: Renderer;
   private fsm: GameStateMachine;
   private lastTimestamp = 0;
+  /**
+   * W3-C.4: game-speed multiplier applied to the frame delta time in the
+   * game loop (settings: 0.5x / 1x / 1.5x / 2x). 1.0 = normal speed.
+   * Set from the menu settings panel via setSpeedMultiplier(); GameScene
+   * also applies the user's speed to its own update path on entry.
+   */
+  private speedMultiplier = 1.0;
   
   constructor(config: GameConfig, options: GameOptions = {}) {
     this.sceneManager = new SceneManager(this);
@@ -231,16 +238,21 @@ export class Game {
     
     const deltaTime = (timestamp - this.lastTimestamp) / 1000;
     this.lastTimestamp = timestamp;
-    
+
+    // W3-C.4: apply the settings speed multiplier to the frame delta time so
+    // the whole simulation (physics + scene + UI) runs at the user's chosen
+    // speed (0.5x / 1x / 1.5x / 2x).
+    const scaledDelta = deltaTime * this.speedMultiplier;
+
     // Update systems
     this.inputSystem.update();
-    this.physicsSystem.update(deltaTime);
+    this.physicsSystem.update(scaledDelta);
     // W2-B.1 (Task 6.2): sync the visual meshes to the (just-stepped)
     // physics bodies, every frame, BEFORE the scene updates — so meshes
     // follow bodies within the same frame, before the scene renders.
     this.physicsSync.sync();
-    this.sceneManager.update(deltaTime);
-    this.uiSystem.update(deltaTime);
+    this.sceneManager.update(scaledDelta);
+    this.uiSystem.update(scaledDelta);
 
     // W2-A.2: render the current scene at the end of every frame, after
     // all systems have updated. The shared renderer draws the active
@@ -282,4 +294,21 @@ export class Game {
   getUISystem(): UISystem { return this.uiSystem; }
   getRenderer(): Renderer { return this.renderer; }
   isGameRunning(): boolean { return this.fsm.getState() === 'playing'; }
+
+  /**
+   * W3-C.4: get the current game-speed multiplier (settings: 0.5/1/1.5/2).
+   */
+  getSpeedMultiplier(): number {
+    return this.speedMultiplier;
+  }
+
+  /**
+   * W3-C.4: set the game-speed multiplier (settings panel). Clamped to
+   * 0.1–10 so a bad value can't freeze or explode the simulation.
+   */
+  setSpeedMultiplier(multiplier: number): void {
+    if (typeof multiplier === 'number' && Number.isFinite(multiplier)) {
+      this.speedMultiplier = Math.min(10, Math.max(0.1, multiplier));
+    }
+  }
 }

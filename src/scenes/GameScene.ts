@@ -7,6 +7,28 @@ import { Obstacle } from '@/entities/Obstacle';
 import type { ObstacleType } from '@/entities/Obstacle';
 import type { Game } from '@/core/Game';
 import { ScoreManager } from '@/systems/Score';
+import { SettingsManager, type Difficulty } from '@/systems/Settings';
+
+/**
+ * W3-C.4: difficulty -> obstacle spawn parameters.
+ *
+ * The user's difficulty (persisted in LocalStorage under the settings key)
+ * scales how often obstacles spawn and how fast they move. `spawnRateMultiplier`
+ * divides the base OBSTACLE_SPAWN_RATE (lower = more frequent spawns),
+ * `obstacleSpeedMultiplier` multiplies the per-frame obstacle movement.
+ *
+ *   easy   — spawn slower, obstacles slower (spawnRateMultiplier > 1, speed < 1)
+ *   normal — baseline (both 1.0)
+ *   hard   — spawn faster, obstacles faster (spawnRateMultiplier < 1, speed > 1)
+ */
+const DIFFICULTY_PARAMS: Record<Difficulty, {
+  spawnRateMultiplier: number;
+  obstacleSpeedMultiplier: number;
+}> = {
+  easy: { spawnRateMultiplier: 1.5, obstacleSpeedMultiplier: 0.8 },
+  normal: { spawnRateMultiplier: 1.0, obstacleSpeedMultiplier: 1.0 },
+  hard: { spawnRateMultiplier: 0.6, obstacleSpeedMultiplier: 1.4 },
+};
 
 /**
  * Main gameplay scene
@@ -25,6 +47,15 @@ export class GameScene extends Scene {
    * (set() in place) removes that per-frame allocation.
    */
   private readonly camTarget = new THREE.Vector3();
+  /**
+   * W3-C.4: difficulty-driven spawn parameters, resolved from the persisted
+   * settings on every onEnter(). Read by the spawn timer (onUpdate) and the
+   * per-frame obstacle movement so 'hard' spawns faster + obstacles move
+   * faster, 'easy' the opposite. Defaults to 'normal' until first enter.
+   */
+  private difficulty: Difficulty = 'normal';
+  private spawnRateMultiplier = 1.0;
+  private obstacleSpeedMultiplier = 1.0;
   
   constructor(game: Game) {
     super(game);
@@ -89,6 +120,10 @@ export class GameScene extends Scene {
     // restart (Menu -> Game) starts a fresh run with no stale state from
     // the prior run (player position, score, health, obstacles, level).
     this.resetRunState();
+
+    // W3-C.4: resolve the persisted difficulty into spawn parameters so the
+    // run respects the user's chosen difficulty.
+    this.applyDifficultySettings();
 
     // W3A.2: HUD visibility is owned by UISystem (D2). Push the current
     // state so the HUD divs become visible with the correct text.
@@ -165,13 +200,19 @@ export class GameScene extends Scene {
     this.camera.lookAt(playerPos.x * 0.5, 2, playerPos.z - 10);
     
     // Update obstacles
+    // W3-C.4: scale per-frame obstacle movement by the difficulty's
+    // obstacleSpeedMultiplier (hard moves faster, easy slower).
     for (const obstacle of this.obstacles) {
-      obstacle.update(deltaTime);
+      obstacle.update(deltaTime * this.obstacleSpeedMultiplier);
     }
     
     // Spawn new obstacles
+    // W3-C.4: divide the base spawn rate by the difficulty's
+    // spawnRateMultiplier (hard => smaller interval => more frequent spawns).
     this.obstacleSpawnTimer += deltaTime;
-    if (this.obstacleSpawnTimer >= GameConstants.OBSTACLE_SPAWN_RATE / this.level) {
+    const spawnInterval =
+      GameConstants.OBSTACLE_SPAWN_RATE / this.level / this.spawnRateMultiplier;
+    if (this.obstacleSpawnTimer >= spawnInterval) {
       this.spawnObstacle();
       this.obstacleSpawnTimer = 0;
     }
@@ -405,6 +446,44 @@ export class GameScene extends Scene {
   
   // W3-B.0: getter for test access (debug accessor support)
   getPlayer() { return this.player; }
+
+  /**
+   * W3-C.4: resolve the persisted difficulty into this run's spawn
+   * parameters. Reads the settings from LocalStorage (never throws —
+   * corrupt/missing storage degrades to 'normal') and stores the matching
+   * multipliers.
+   *
+   * Exposed for unit-test inspection: `getDifficultyParams()` returns the
+   * current { spawnRateMultiplier, obstacleSpeedMultiplier }.
+   */
+  private applyDifficultySettings(): void {
+    const settings = new SettingsManager().load();
+    this.difficulty = settings.difficulty;
+    const params = DIFFICULTY_PARAMS[this.difficulty];
+    this.spawnRateMultiplier = params.spawnRateMultiplier;
+    this.obstacleSpeedMultiplier = params.obstacleSpeedMultiplier;
+    Logger.debug('Game scene difficulty applied', {
+      difficulty: this.difficulty,
+      spawnRateMultiplier: this.spawnRateMultiplier,
+      obstacleSpeedMultiplier: this.obstacleSpeedMultiplier,
+    });
+  }
+
+  /** W3-C.4: read access to the resolved difficulty (test/E2E support). */
+  getDifficulty(): Difficulty {
+    return this.difficulty;
+  }
+
+  /** W3-C.4: read access to the resolved spawn params (test support). */
+  getDifficultyParams(): {
+    spawnRateMultiplier: number;
+    obstacleSpeedMultiplier: number;
+  } {
+    return {
+      spawnRateMultiplier: this.spawnRateMultiplier,
+      obstacleSpeedMultiplier: this.obstacleSpeedMultiplier,
+    };
+  }
   
   /**
    * Reset all run state for a fresh game run.

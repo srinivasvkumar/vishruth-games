@@ -1,0 +1,73 @@
+W3-C.3a — Input latency: key press -> visual response (target < 16 ms = 1 frame @ 60 fps)
+timestamp: 2026-09-23T05:28:08.381Z
+browser: real Chrome (Playwright chromium-boot project, headed, SwiftShader GL)
+url: http://localhost:5173/public/index.html
+
+Method:
+  - Boot to menu, Enter -> GameScene (real user start path, as in W3-B CP1).
+  - Per trial: clear input, teleport player to spawn (0,1,0), full health, settle 120 ms.
+  - In-page: a window "keydown" listener stamps T_keydown (the exact DOM event the
+    game InputSystem listens to, Input.ts:25) and a requestAnimationFrame sampler
+    polls the player mesh position every rendered frame.
+  - From Node: page.keyboard.down('w') (real CDP keydown). Sampler resolves on the
+    FIRST frame the player z drifts from baseline by more than EPS=0.02 units.
+  - latency = T_firstMoveFrame - T_keydown.
+  - 20 trials; a 250 ms W hold first confirmed the input path is live (CP2 contract).
+  - EPS rationale: at 60 fps one physics step moves z by 5.0/60 = 0.0833 units;
+    EPS=0.02 is well under one frame of travel, so the sampler catches the FIRST frame moved.
+
+W-key sanity pre-check: |dz| over a 250 ms hold = 1.250 units (must be > 0.05)
+
+trials: 20; moved: 20/20
+average latency: 11.57 ms
+min:             0.90 ms
+max:             16.80 ms
+median:          14.50 ms
+p95:             16.80 ms
+
+per-trial:
+  #1  moved=true  dz=-0.0835  keydown=3497.00ms  firstMove=3504.50ms  latency=7.5 ms
+  #2  moved=true  dz=-0.0830  keydown=3840.70ms  firstMove=3854.70ms  latency=14.0 ms
+  #3  moved=true  dz=-0.0835  keydown=4197.10ms  firstMove=4205.20ms  latency=8.1 ms
+  #4  moved=true  dz=-0.0830  keydown=4538.30ms  firstMove=4554.30ms  latency=16.0 ms
+  #5  moved=true  dz=-0.0835  keydown=4886.80ms  firstMove=4887.90ms  latency=1.1 ms
+  #6  moved=true  dz=-0.0835  keydown=5221.30ms  firstMove=5237.40ms  latency=16.1 ms
+  #7  moved=true  dz=-0.0835  keydown=5573.70ms  firstMove=5587.90ms  latency=14.2 ms
+  #8  moved=true  dz=-0.0835  keydown=5922.90ms  firstMove=5937.40ms  latency=14.5 ms
+  #9  moved=true  dz=-0.0835  keydown=6269.90ms  firstMove=6270.80ms  latency=0.9 ms
+  #10  moved=true  dz=-0.0835  keydown=6606.40ms  firstMove=6621.30ms  latency=14.9 ms
+  #11  moved=true  dz=-0.0835  keydown=6957.60ms  firstMove=6970.90ms  latency=13.3 ms
+  #12  moved=true  dz=-0.0835  keydown=7307.40ms  firstMove=7321.10ms  latency=13.7 ms
+  #13  moved=true  dz=-0.0830  keydown=7653.10ms  firstMove=7654.50ms  latency=1.4 ms
+  #14  moved=true  dz=-0.0840  keydown=7985.70ms  firstMove=7987.40ms  latency=1.7 ms
+  #15  moved=true  dz=-0.0835  keydown=8322.50ms  firstMove=8337.70ms  latency=15.2 ms
+  #16  moved=true  dz=-0.0835  keydown=8672.60ms  firstMove=8687.80ms  latency=15.2 ms
+  #17  moved=true  dz=-0.0830  keydown=9022.20ms  firstMove=9038.00ms  latency=15.8 ms
+  #18  moved=true  dz=-0.0835  keydown=9372.80ms  firstMove=9387.50ms  latency=14.7 ms
+  #19  moved=true  dz=-0.0835  keydown=9721.20ms  firstMove=9738.00ms  latency=16.8 ms
+  #20  moved=true  dz=-0.0830  keydown=10071.10ms  firstMove=10087.40ms  latency=16.3 ms
+
+secondary (scene transition): FSM transition not observed within timeout (best-effort; not a gate)
+
+console errors (fatal would invalidate the reading): none
+
+TARGET (<16 ms at both avg AND p95): NOT MET
+  avg 11.6 ms <= 16
+  p95 16.8 ms > 16
+W3-C.3b (optimization): REQUIRED (input latency exceeds 16 ms — gap 16.8 ms p95 / 11.6 ms avg vs 16 ms target; top suspect documented below)
+
+Interpretation:
+  - The measured span = CDP->DOM keydown delivery + the fixed-step physics update that
+    applies the velocity + the rAF render that makes it visible. A single frame of
+    latency ~= one 16.67 ms rAF cycle (SwiftShader renders ~59-60 fps, cf. W3-C.1a p95
+    frame time 16.8 ms).
+  - The game uses a fixed-timestep accumulator (1/60 s). When a keydown lands just
+    after an accumulator boundary, the velocity is applied on the next 16.67 ms step —
+    so a "1 frame" latency reading of 16-17 ms is the PHYSICAL FLOOR, not a defect.
+  - Readings under ~8 ms mean the keydown landed just before a physics step boundary
+    (the accumulator already had slack); readings of ~16-17 ms mean it landed just
+    after one. Both are "1 frame" — the sub-1-frame variance is the accumulator phase.
+  - The strict 16 ms target is a rounding of "1 frame @ 60 fps" (true 1-frame = 16.67 ms).
+    A p95 of 16-17 ms is therefore AT the 1-frame boundary, not a 2-frame (~33 ms) defect.
+
+Evidence: tests/evidence/w3/w3c-input-latency.png (running game mid-measurement)

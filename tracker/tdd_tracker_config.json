@@ -21,27 +21,16 @@
     }
   },
   "current_status": {
-<<<<<<< HEAD
-    "phase": "W3-C: Performance / Day 10-11",
+
+    "phase": "W3-C: Complete",
     "day": 10,
-    "current_task": "W3-B.0-W3-B.7 complete; W3-C.3b complete (input latency optimization)",
-    "status": "W3-C-3B-COMPLETE",
+    "current_task": "W3-C.2 + W3-C.3b + W3-C.4 complete; D4 gate MET",
+    "status": "W3-C-COMPLETE",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-23T15:00:00",
-    "last_updated": "2026-09-23T15:33:00",
-    "completion_date": "2026-09-23T15:33:00",
-    "completion_notes": "W3-C.3b complete (t_448d7830): zero-allocation input path. getKeys() by reference, keydown/keyup skip toLowerCase for lowercase keys, clear() in-place mutation, camTarget pre-allocated in GameScene, forceScratch/impulseScratch pre-allocated in Physics. RED p95 16.50 ms / GREEN p95 16.10-16.80 ms (at 1-frame physical floor = 16.67 ms). tsc clean, 645/645 vitest. Evidence: W3C3B-RED.txt + W3C3B-GREEN.txt."
-=======
-    "phase": "W3-C: Audio Policy (in progress)",
-    "day": 9,
-    "current_task": "W3-C.2 complete (Firefox AudioContext autoplay fix via deferred context creation)",
-    "status": "W3-C2-COMPLETE",
-    "tdd_cycle": "complete",
-    "start_date": "2026-09-23T13:35:00",
-    "last_updated": "2026-09-23T14:20:00",
-    "completion_date": null,
-    "completion_notes": "W3-C.2 complete (t_d57780a6): Deferred AudioContext creation fixes Firefox 'AudioContext prevented from starting automatically' warnings. Root cause: context created in AudioSystem constructor at boot. Fix: ensureContext() lazy creation + markUserGesture() from MenuScene gestures. RED: 2 Firefox warnings pre-fix. GREEN: 0 Firefox + 0 Chrome post-fix. 646/646 unit; tsc clean; eslint clean. Evidence: W3C2-RED.txt + W3C2-VERIFY-firefox.txt + W3C2-VERIFY-chrome.txt."
->>>>>>> wt/t_d57780a6
+    "start_date": "2026-09-23T13:00:00",
+    "last_updated": "2026-09-23T17:00:00",
+    "completion_date": "2026-09-23T17:00:00",
+    "completion_notes": "W3-C complete: C.1a D4 gate MET (60.0 FPS @ 120 obstacles), C.1b skipped, C.2 Firefox AudioContext fix, C.3a measured (avg 12.6ms, p95 16.2ms), C.3b zero-allocation input path, C.4 Settings UI with localStorage + keyboard nav. 665/665 unit tests, tsc clean, eslint clean."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

@@ -1,0 +1,38 @@
+W3-C.1a — FPS @ 100+ obstacles (D4 gate)
+timestamp: 2026-09-23T03:29:24.747Z
+browser: real Chrome (Playwright chromium-boot project, headed, SwiftShader GL)
+url: http://localhost:5173/public/index.html
+obstacles: 120 (120 THREE.Group + BoxGeometry + MeshStandardMaterial meshes in the live scene + 120 stand-in obstacles in GameScene.obstacles driving per-frame update()+checkCollisions() + 120 static mass=0 box bodies in the live cannon-es world)
+obstacle placement: 6x20 grid, x -10..10, z -30..-108 (behind the player's spawn at z=0 — no collision damage, run never ends)
+warmup: 3000 ms; sample window: 15000 ms; method: requestAnimationFrame tick counting in-page
+
+frames sampled: 901
+mean FPS:      60.0
+median FPS:    59.9
+min FPS (worst single frame): 59.5
+p95 frame time: 16.8 ms
+sample duration: 15016 ms
+
+renderer.info (post-injection, pre-sample):
+  draw calls:  5
+  triangles:   50
+  geometries:  5
+  textures:    0
+  programs:    -1
+  scene children: 128 (groups: 124)
+
+renderer.info (post-sample):
+  draw calls:  137
+  triangles:   1634
+  scene groups: 136
+  game state:  playing
+  running:     true
+
+D4 GATE (>=60 FPS @ committed obstacle count): MET
+mean FPS 60.0 >= 60
+W3-C.1b (optimization): NOT REQUIRED (D4 gate met at 100+ obstacles)
+
+W2-E baseline for comparison: 60.0 FPS @ 20 obstacles (tests/evidence/w2/w2-e2-fps-20.log)
+Gap vs baseline: 60.0 @ 120 obstacles vs 60.0 @ 20 obstacles
+
+Evidence: tests/evidence/w3/w3c-fps-100.png (screenshot with 120 obstacles)

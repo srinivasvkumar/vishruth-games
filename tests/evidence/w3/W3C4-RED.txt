@@ -1,0 +1,16 @@
+W3-C.4 — Settings panel (RED phase evidence)
+captured: 2026-09-23 15:54 (AEST), pre-implementation
+Note: both new test files fail to collect because src/systems/Settings.ts
+does not exist yet (SettingsManager unresolved) — the expected RED signal
+before Phase 2 implementation.
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush/.worktrees/t_421f4c7f
+
+ ❯ tests/unit/settings-state.test.ts  (0 test)
+ ❯ tests/unit/settings-panel.test.ts  (0 test)
+
+ Test Files  2 failed (2)
+      Tests  no tests
+   Start at  15:54:55
+   Duration  470ms (transform 34ms, setup 25ms, collect 0ms, tests 0ms, environment 205ms, prepare 140ms)
+

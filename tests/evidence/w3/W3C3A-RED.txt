@@ -1,0 +1,39 @@
+W3-C.3a — RED phase: no input-latency spec exists
+Task: t_ee6106c3 (W3-C.3a — Input latency measurement: key press -> visual response, target < 16ms = 1 frame @ 60fps)
+Timestamp: 2026-09-23 14:35 AEST (UTC+10)
+Repo: /home/srinivasvkumar/vishruth/games/clusterrush @ main 7b73e1c
+
+Commands (local playwright binary, no npx):
+  1) ls -la tests/e2e/w3c-input-latency.spec.ts
+  2) ./node_modules/.bin/playwright test tests/e2e/w3c-input-latency.spec.ts --project=chromium-boot --list
+  3) ./node_modules/.bin/playwright test tests/e2e/w3c-input-latency.spec.ts --project=chromium-boot
+
+Output (verbatim):
+  1) DOES NOT EXIST
+     (tests/e2e/w3c-input-latency.spec.ts not found)
+  2) Error: No tests found.
+     Make sure that arguments are regular expressions matching test files.
+     Listing tests:
+     Total: 0 tests in 0 files
+  3) [WebServer] npm notice run cluster-rush@0.1.0 dev
+     [WebServer] npm notice run vite --config config/vite.config.ts --no-open
+     [WebServer] Files in the public directory are served at the root path.
+     [WebServer] Instead of /public/index.html, use /index.html.
+     Error: No tests found.
+     Make sure that arguments are regular expressions matching test files.
+
+Finding: tests/e2e/w3c-input-latency.spec.ts does not exist — there is NO input-latency
+measurement spec. No existing spec measures key-press -> visual-response latency.
+The closest prior work:
+  - W3-B.3 CP2 (tests/e2e/w3b/w3b-cp2-movement.spec.ts) PROVES WASD moves the player via a
+    position-DELTA threshold (>= 2.0 units over a 700 ms hold) — it does NOT measure latency.
+  - W3-C.1a (tests/e2e/w3c-fps-100.spec.ts) measures FRAME RATE (FPS @ 120 obstacles), not
+    input-to-frame latency.
+
+The deterministic accessor window.__debugPlayerPos() -> { x, z } already exists (W3-B.0,
+installed by GameScene.onEnter()), and the player mesh is reachable via
+window.game.getSceneManager().getCurrentScene().getScene().getChildren() — so a NEW
+debug accessor in GameScene.ts is NOT required for this task (keeps the change to the
+single new spec file).
+
+RED = confirmed: input-latency measurement capability does not exist yet.
