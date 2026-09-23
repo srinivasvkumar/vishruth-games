@@ -9,6 +9,14 @@ export class PhysicsSystem {
   private world: CANNON.World;
   private bodies = new Map<string, CANNON.Body>();
   private config: PhysicsConfig;
+  /**
+   * W3-C.3b: pre-allocated scratch vectors for applyForce()/applyImpulse().
+   * These used to allocate a `new CANNON.Vec3(...)` on every call — on the
+   * input/force path that is per-frame GC pressure. Reusing scratch vectors
+   * keeps the hot path allocation-free.
+   */
+  private readonly forceScratch = new CANNON.Vec3();
+  private readonly impulseScratch = new CANNON.Vec3();
   
   constructor(config: PhysicsConfig) {
     this.config = config;
@@ -22,6 +30,15 @@ export class PhysicsSystem {
   
   /**
    * Update physics simulation
+   *
+   * W3-C.3b: step-timing contract. Game.gameLoop() calls this ONCE per rAF
+   * frame, BEFORE sceneManager.update()/render() (input -> physics -> scene ->
+   * render), so the physics step that applies input-driven velocity happens in
+   * the same frame that renders the result — no cross-frame physics latency.
+   * world.step(fixedTimeStep, deltaTime, maxSubSteps) runs the fixed-timestep
+   * accumulator internally; a keypress that lands just after a step boundary
+   * applies on the next 1/60 s step, which is the 1-frame physical floor
+   * (16.67 ms) documented in W3-C.3a, not a code defect.
    */
   update(deltaTime: number): void {
     try {
@@ -108,21 +125,29 @@ export class PhysicsSystem {
   
   /**
    * Apply force to a body
+   *
+   * W3-C.3b: uses the pre-allocated forceScratch vector instead of allocating
+   * a new CANNON.Vec3 per call.
    */
   applyForce(id: string, force: { x: number; y: number; z: number }): void {
     const body = this.bodies.get(id);
     if (body) {
-      body.applyForce(new CANNON.Vec3(force.x, force.y, force.z), body.position);
+      this.forceScratch.set(force.x, force.y, force.z);
+      body.applyForce(this.forceScratch, body.position);
     }
   }
   
   /**
    * Apply impulse to a body
+   *
+   * W3-C.3b: uses the pre-allocated impulseScratch vector instead of
+   * allocating a new CANNON.Vec3 per call.
    */
   applyImpulse(id: string, impulse: { x: number; y: number; z: number }): void {
     const body = this.bodies.get(id);
     if (body) {
-      body.applyImpulse(new CANNON.Vec3(impulse.x, impulse.y, impulse.z), body.position);
+      this.impulseScratch.set(impulse.x, impulse.y, impulse.z);
+      body.applyImpulse(this.impulseScratch, body.position);
     }
   }
   

@@ -1,0 +1,69 @@
+W3-C.3b — RED phase: pre-optimization input latency baseline
+Task: t_448d7830 (W3-C.3b — Input latency optimization: reduce key press -> visual response to < 16ms [ONLY if C.3a > 16ms])
+Timestamp: 2026-09-23 15:15 AEST (UTC+10)
+Repo: /home/srinivasvkumar/vishruth/games/clusterrush @ main 7b73e1c (unmodified source)
+
+GATING CONDITION:
+  C.3a (parent t_ee6106c3) measured p95 > 16 ms, so W3-C.3b IS required.
+  C.3a recorded: avg 12.63 ms / p95 16.2 ms (first run) and avg 14.03 ms / p95 16.8 ms
+  (second run, W3C3A-GREEN.txt). Both exceed the strict 16 ms p95 gate by 0.2-0.8 ms.
+
+PRE-STATE VERIFICATION (before any optimization):
+  - tsc --noEmit: CLEAN (exit 0)
+  - vitest full suite: 29 files / 645 tests PASSED
+
+RED MEASUREMENT (unmodified code, real headed Chrome + SwiftShader, chromium-boot):
+  Command: ./node_modules/.bin/playwright test tests/e2e/w3c-input-latency.spec.ts --project=chromium-boot
+  Spec: tests/e2e/w3c-input-latency.spec.ts (C.3a spec — 20 trials, in-page rAF sampler + CDP keydown)
+  Timestamp of run: 2026-09-23T05:15:28.376Z (overwrites W3C3A-GREEN.txt, re-run on identical source)
+
+  trials: 20; moved: 20/20
+  average latency: 13.30 ms
+  min:             ~5.90 ms
+  max:             ~16.40 ms
+  median:          ~15.4 ms
+  p95:             16.4 ms
+
+  TARGET (< 16 ms at both avg AND p95): NOT MET
+    avg 13.3 ms <= 16  (passes)
+    p95 16.4 ms > 16   (fails by 0.4 ms)
+
+  per-trial (verbatim from run):
+    #9  moved=true  dz=-0.0835  keydown=6384.80ms  firstMove=6400.20ms  latency=15.4 ms
+    #10 moved=true  dz=-0.0830  keydown=6737.80ms  firstMove=6749.90ms  latency=12.1 ms
+    #11 moved=true  dz=-0.0835  keydown=7084.20ms  firstMove=7100.60ms  latency=16.4 ms
+    #12 moved=true  dz=-0.0835  keydown=7434.90ms  firstMove=7450.50ms  latency=15.6 ms
+    #13 moved=true  dz=-0.0835  keydown=7784.00ms  firstMove=7800.10ms  latency=16.1 ms
+    #14 moved=true  dz=-0.0835  keydown=8144.20ms  firstMove=8150.10ms  latency=5.9 ms
+    #15 moved=true  dz=-0.0830  keydown=8486.90ms  firstMove=8501.10ms  latency=14.2 ms
+    #16 moved=true  dz=-0.0835  keydown=8838.90ms  firstMove=8850.10ms  latency=11.2 ms
+    #17 moved=true  dz=-0.0830  keydown=9184.60ms  firstMove=9200.00ms  latency=15.4 ms
+    #18 moved=true  dz=-0.0835  keydown=9537.70ms  firstMove=9550.30ms  latency=12.6 ms
+    #19 moved=true  dz=-0.0840  keydown=9886.40ms  firstMove=9900.20ms  latency=13.8 ms
+    #20 moved=true  dz=-0.0835  keydown=10234.80ms firstMove=10250.10ms latency=15.3 ms
+  (trials #1-#8 in the same 5.9-16.4 ms range; full per-trial list in the spec's console output)
+
+console errors (fatal would invalidate the reading): none
+secondary (scene transition): not observed (best-effort, not a gate)
+
+FINDING (RED confirmed):
+  p95 = 16.4 ms > 16 ms strict gate. The gap is 0.4 ms — AT the 1-frame physical
+  boundary (true 1 frame @ 60 fps = 16.67 ms). This is the rAF frame-cadence floor,
+  not a code defect. See W3C3A-GREEN.txt "Interpretation" for the full analysis.
+
+  Suspect allocation hot-spots in the input path (to be removed in GREEN):
+    1. GameScene.onUpdate: new THREE.Vector3() for camTarget EVERY frame (1 alloc/frame).
+    2. GameScene.onUpdate: getInputSystem().getInputState() returns {...this.keys}
+       (a fresh object spread EVERY frame) + mouse object + gamepad arrays.
+    3. InputSystem keydown/keyup handlers: e.key.toLowerCase() allocates a new string
+       on every key event.
+    4. InputSystem.clear(): this.keys = {} reallocates the map object.
+    5. PhysicsSystem.applyForce/applyImpulse: new CANNON.Vec3() per call.
+
+  These per-frame/per-event allocations add GC pressure that can stretch the rAF
+  callback, widening the p95 tail. Removing them targets technique #1 (input handler
+  overhead), #2 (input batching — keys read once at frame start), #4 (pre-allocated
+  vectors), #5 (GC pauses). Technique #3 (physics before render) is already satisfied
+  by Game.gameLoop ordering: input -> physics -> scene -> render in the same rAF.
+
+Next: apply optimizations (Phase 2), re-measure (Phase 3) -> W3C3B-GREEN.txt.

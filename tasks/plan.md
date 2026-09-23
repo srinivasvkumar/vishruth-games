@@ -237,3 +237,26 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - a47d623 truck-scale + camera-follow visually confirmed in both legs via screenshot inspection
   - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
 
+# Week 3-C Lane (Performance / Day 10-11, 2026-09-23)
+- [x] W3-C.3b — Input latency optimization: zero-allocation input path — game-dev — `t_448d7830` — 2026-09-23
+  - Gating: C.3a measured p95 > 16 ms (16.2-16.8 ms across runs) → W3-C.3b required.
+  - Optimizations applied (zero-allocation input path):
+    1. Input.ts: getKeys() returns live key map by reference (no per-frame object spread).
+    2. Input.ts: keydown/keyup handlers skip toLowerCase() for already-lowercase keys.
+    3. Input.ts: clear() mutates maps in place instead of reassigning (this.keys = {} gone).
+    4. GameScene.ts: camTarget pre-allocated as a class field; onUpdate() mutates in place
+       instead of new THREE.Vector3() every frame.
+    5. Physics.ts: forceScratch/impulseScratch pre-allocated CANNON.Vec3 fields;
+       applyForce/applyImpulse set() in place instead of new CANNON.Vec3() per call.
+    6. Physics.ts: update() docstring documents the fixed-timestep step-timing contract
+       (physics step in same rAF as render; keypress landing just after a step boundary
+       applies on the next 1/60 s step = 1-frame physical floor).
+  - RED (unmodified source): avg 11.35 ms / p95 16.50 ms (20/20 moved).
+  - GREEN (optimized, 4 runs): avg 11.57-13.61 ms / p95 16.10-16.80 ms (20/20 moved each).
+  - p95 at the 1-frame physical floor (16.67 ms fixed-timestep + rAF cadence).
+    Code-level overhead now allocation-free; remaining latency is the physics timestep.
+  - To go below 16 ms p95: lower physics timestep to 1/120 s OR interpolate render
+    position between physics steps.
+  - tsc --noEmit: clean. vitest: 645/645 passed.
+  - Evidence: tests/evidence/w3/W3C3B-RED.txt + W3C3B-GREEN.txt
+

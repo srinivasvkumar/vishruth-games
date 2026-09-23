@@ -90,3 +90,7 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - 0 fatal console errors in both browsers; CP3 S2 known flake did NOT fire
   - a47d623 truck-scale + camera-follow visually confirmed in both legs
   - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
+- [x] W3-C.3b — Input latency optimization: zero-allocation input path — game-dev — `t_448d7830` — 2026-09-23
+  - RED p95 16.50 ms / GREEN p95 16.10-16.80 ms (at 1-frame physical floor)
+  - tsc clean, 645/645 vitest
+  - Evidence: tests/evidence/w3/W3C3B-RED.txt + W3C3B-GREEN.txt

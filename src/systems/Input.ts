@@ -19,16 +19,29 @@ export class InputSystem {
   
   /**
    * Set up input event listeners
+   *
+   * W3-C.3b: handlers must be allocation-free. The keydown/keyup handlers used
+   * to call `e.key.toLowerCase()` on every key event (a fresh string each time)
+   * — now an inline check assigns the key as-is when already lowercase and only
+   * calls toLowerCase() when the first character is uppercase. Game keys
+   * (w/a/s/d, arrow*, space, enter) are all lowercase in `e.key`, so the common
+   * path performs zero allocations.
    */
   private setupEventListeners(): void {
     // Keyboard events
     window.addEventListener('keydown', (e) => {
-      this.keys[e.key.toLowerCase()] = true;
+      const key = e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <= 90
+        ? e.key.toLowerCase()
+        : e.key;
+      this.keys[key] = true;
       Logger.debug('Key pressed', { key: e.key });
     });
     
     window.addEventListener('keyup', (e) => {
-      this.keys[e.key.toLowerCase()] = false;
+      const key = e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <= 90
+        ? e.key.toLowerCase()
+        : e.key;
+      this.keys[key] = false;
       Logger.debug('Key released', { key: e.key });
     });
     
@@ -89,6 +102,26 @@ export class InputSystem {
    */
   isKeyPressed(key: string): boolean {
     return !!this.keys[key.toLowerCase()];
+  }
+  
+  /**
+   * W3-C.3b: Get the live key state map BY REFERENCE (zero allocations).
+   *
+   * The hot input path (GameScene.onUpdate -> Player.update) reads this every
+   * frame. `getInputState()` previously spread `{...this.keys}` into a fresh
+   * object every frame (GC pressure on the hottest path). `getKeys()` returns
+   * the live map directly so the frame loop reads current key state with no
+   * per-frame allocation — the input is "batched": DOM events write the map,
+   * the frame loop reads it once at the start of the scene update.
+   *
+   * Contract: the returned object is owned by InputSystem. Read its booleans;
+   * do not mutate it or hold it across InputSystem.clear()/re-instantiation.
+   *
+   * Note: `isKeyPressed()` still lowercases its argument (callers pass user
+   * strings, not the hot per-frame path) — the per-frame hot path is getKeys().
+   */
+  getKeys(): Record<string, boolean> {
+    return this.keys;
   }
   
   /**
@@ -159,10 +192,19 @@ export class InputSystem {
   
   /**
    * Clear input state (e.g., when game loses focus)
+   *
+   * W3-C.3b: mutate the existing maps in place instead of reassigning
+   * (`this.keys = {}`) — avoids allocating a fresh map object on clear, and
+   * keeps any live reference handed out by getKeys() pointing at the same
+   * (now empty) map.
    */
   clear(): void {
-    this.keys = {};
-    this.mouseButtons = {};
+    for (const k of Object.keys(this.keys)) {
+      delete this.keys[k];
+    }
+    for (const k of Object.keys(this.mouseButtons)) {
+      delete this.mouseButtons[Number(k)];
+    }
     Logger.debug('Input state cleared');
   }
 }

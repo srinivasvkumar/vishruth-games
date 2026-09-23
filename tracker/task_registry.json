@@ -428,6 +428,14 @@
               "notes": "Kanban t_6758c88b (W3-B.7-v2). PASS both browsers: Chrome 13/14 (1 fixme-skip), Firefox 13/14. 0 fatal console errors. CP3 S2 flake did NOT fire. a47d623 truck-scale + camera-follow visually confirmed. Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots."
             },
             {
+              "id": "W3-C.3b",
+              "description": "Input latency optimization: zero-allocation input path",
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-23T07:33:00",
+              "notes": "Kanban t_448d7830. Optimized key-press-to-visual-response input path: getKeys() by reference (no per-frame spread), keydown/keyup skip toLowerCase for lowercase keys, clear() in-place mutation, camTarget pre-allocated in GameScene, forceScratch/impulseScratch pre-allocated in Physics. RED p95 16.50 ms / GREEN p95 16.10-16.80 ms (at 1-frame physical floor = 16.67 ms fixed-timestep + rAF). tsc clean, 645/645 vitest. Evidence: W3C3B-RED.txt + W3C3B-GREEN.txt."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

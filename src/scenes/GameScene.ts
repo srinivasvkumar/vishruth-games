@@ -18,6 +18,13 @@ export class GameScene extends Scene {
   private isGameOver = false;
   private obstacleSpawnTimer = 0;
   private scoreManager: ScoreManager;
+  /**
+   * W3-C.3b: pre-allocated camera-follow target. onUpdate() used to build a
+   * `new THREE.Vector3(...)` every frame for the camera lerp — one heap
+   * allocation per rendered frame on the hottest path. Reusing this vector
+   * (set() in place) removes that per-frame allocation.
+   */
+  private readonly camTarget = new THREE.Vector3();
   
   constructor(game: Game) {
     super(game);
@@ -128,18 +135,33 @@ export class GameScene extends Scene {
     }
     
     // Update player
-    const inputState = this.game.getInputSystem().getInputState();
-    this.player.update(deltaTime, inputState.keys);
+    // W3-C.3b: read the live key state BY REFERENCE via getKeys() (zero
+    // allocations) instead of getInputState() which spread {...this.keys} into
+    // a fresh object every frame. Falls back to getInputState().keys when the
+    // input source has no getKeys() (unit-test mocks). Input is batched: DOM
+    // keydown/keyup events write the map; the frame loop reads it once here,
+    // at the start of the scene update, before physics/render.
+    const inputSystem = this.game.getInputSystem() as {
+      getKeys?: () => Record<string, boolean>;
+      getInputState?: () => { keys: Record<string, boolean> };
+    };
+    const keyState: Record<string, boolean> =
+      typeof inputSystem.getKeys === 'function'
+        ? inputSystem.getKeys()
+        : inputSystem.getInputState?.().keys ?? {};
+    this.player.update(deltaTime, keyState);
     
     // Camera follows the player (smooth lerp)
+    // W3-C.3b: mutate the pre-allocated camTarget in place instead of
+    // allocating a new THREE.Vector3 every frame.
     const playerPos = this.player.getPosition();
-    const camTarget = new THREE.Vector3(
+    this.camTarget.set(
       playerPos.x * 0.5,
       8 + playerPos.y * 0.5,
       playerPos.z + 12
     );
     const lerpFactor = 1 - Math.pow(0.001, deltaTime);
-    this.camera.position.lerp(camTarget, lerpFactor);
+    this.camera.position.lerp(this.camTarget, lerpFactor);
     this.camera.lookAt(playerPos.x * 0.5, 2, playerPos.z - 10);
     
     // Update obstacles

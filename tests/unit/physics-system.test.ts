@@ -79,7 +79,11 @@ function bodyImpl(this: any, options: any = {}) {
 }
 
 function vec3Impl(this: any, x = 0, y = 0, z = 0) {
-  return { x, y, z };
+  // W3-C.3b: PhysicsSystem now keeps pre-allocated scratch Vec3s
+  // (forceScratch/impulseScratch) and calls .set() on them before passing
+  // to body.applyForce/applyImpulse — the mock must support set() so the
+  // pre-allocated vector path is exercised identically in tests.
+  return { x, y, z, set: function (nx: number, ny: number, nz: number) { this.x = nx; this.y = ny; this.z = nz; return this; } };
 }
 
 vi.mock('@/utils/Logger', () => ({
@@ -249,13 +253,21 @@ describe('PhysicsSystem Class - Retroactive Tests', () => {
     it('should apply force to a registered body', () => {
       const body = physicsSystem.createBox('box', { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
       physicsSystem.applyForce('box', { x: 0, y: 10, z: 0 });
-      expect(body.applyForce).toHaveBeenCalledWith({ x: 0, y: 10, z: 0 }, body.position);
+      // W3-C.3b: force is applied via a pre-allocated scratch Vec3 (mutable,
+      // has .set()), so assert on the numeric components, not object identity.
+      const forceArg = body.applyForce.mock.calls[0][0];
+      expect({ x: forceArg.x, y: forceArg.y, z: forceArg.z }).toEqual({ x: 0, y: 10, z: 0 });
+      expect(body.applyForce.mock.calls[0][1]).toBe(body.position);
     });
 
     it('should apply impulse to a registered body', () => {
       const body = physicsSystem.createSphere('ball', { x: 0, y: 0, z: 0 }, 0.5, 1);
       physicsSystem.applyImpulse('ball', { x: 1, y: 2, z: 3 });
-      expect(body.applyImpulse).toHaveBeenCalledWith({ x: 1, y: 2, z: 3 }, body.position);
+      // W3-C.3b: impulse is applied via a pre-allocated scratch Vec3 —
+      // assert on the numeric components, not object identity.
+      const impulseArg = body.applyImpulse.mock.calls[0][0];
+      expect({ x: impulseArg.x, y: impulseArg.y, z: impulseArg.z }).toEqual({ x: 1, y: 2, z: 3 });
+      expect(body.applyImpulse.mock.calls[0][1]).toBe(body.position);
     });
 
     it('should ignore force for an unknown id', () => {
