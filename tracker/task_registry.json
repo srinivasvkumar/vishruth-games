@@ -348,6 +348,14 @@
               "notes": "Kanban t_9d8237a9, commit e909ae7. The 3 copies diverged in 2 ways (verified on main): (1) overflow cap (scenes uncapped vs clampScore), (2) missing try/catch in ScoreManager (latent crash on storage-unavailable). '5.7' does NOT diverge (parseInt no-op floor). Canonical helper = superset: try/catch + clampScore + 0-floor; all 3 sites delegate, 2 private scene methods deleted. Fix A: try/catch (no crash on storage-unavailable). Fix B: cap (menu/gameover now cap at MAX_SAFE_INTEGER). RED: 9 new TDD tests locking canonical semantics {storage-throws->0, '9007199254740993'->MAX_SAFE_INTEGER, '5.7'->5 (regression), absent->0, '500'->500, 'abc'->0, '-5'->0, '0'->0}. Full suite green; tsc clean. Evidence: tests/evidence/w3/W3A9-RED.txt + W3A9-GREEN.txt."
             },
             {
+              "id": "W3-C.2",
+              "description": "Cross-browser audio policy: root-cause + fix Firefox AudioContext autoplay warnings",
+              "status": "completed",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-23T14:20:00",
+              "notes": "Kanban t_d57780a6. Root cause: AudioContext created in AudioSystem constructor (Game.start() -> new AudioSystem()), firing at boot before any user gesture. Firefox logs 'AudioContext was prevented from starting automatically'. Fix: deferred context creation - constructor no longer creates context; ensureContext() creates it lazily; markUserGesture() called from MenuScene on START click / SETTINGS click / Enter+Space keydown; Game.start() no longer calls audioSystem.init()+startMusic() at boot. Changes: src/systems/Audio.ts (ensureContext + markUserGesture, context=null default), src/scenes/MenuScene.ts (handleAudioGesture on all gesture points), src/core/Game.ts (removed boot-time audio init). Tests: tests/unit/audio-system.test.ts (26/26, updated for deferred context), tests/e2e/smoke/w3c2-verify.spec.ts (new: click START, assert 0 warnings). RED: 2 Firefox warnings pre-fix. GREEN: 0 Firefox + 0 Chrome warnings post-fix. 646/646 unit suite. tsc clean, eslint clean. Evidence: tests/evidence/w2/W3C2-RED.txt, W3C2-VERIFY-firefox.txt, W3C2-VERIFY-chrome.txt."
+            },
+            {
               "id": "W3-A-MERGE",
               "description": "W3-A.1-A9 merged to main + pushed to origin",
               "status": "completed",

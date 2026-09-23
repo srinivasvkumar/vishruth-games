@@ -121,13 +121,14 @@ export class Game {
     // whole session, not just after a scene switch.
     this.audioSystem.bindToGameEvents();
 
-    // W2-C.2: start the placeholder music loop on boot. The AudioContext may
-    // be 'suspended' until a user gesture (browser autoplay policy); init()
-    // resumes it, and startMusic() is a no-op if the context never becomes
-    // available (degraded mode). Fire-and-forget — never blocks the loop.
-    void this.audioSystem.init().then(() => {
-      this.audioSystem.startMusic();
-    });
+    // W3-C.2: defer AudioContext creation to a user gesture.
+    // The context is created lazily by AudioSystem.ensureContext() when
+    // markUserGesture() is called (MenuScene on first click/keypress) or
+    // when the first SFX/music event fires (which only happens during
+    // active gameplay, always post-gesture). Starting music at boot
+    // without a gesture triggers the Firefox autoplay warning, so we
+    // skip the init()+startMusic() here. Music will start on the
+    // GAME_START event (bound via bindToGameEvents above).
 
     this.gameLoop(this.lastTimestamp);
     

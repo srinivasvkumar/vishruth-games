@@ -1,13 +1,21 @@
-# Findings — t_9819ee0b (W3-B.1b)
+# W3-C.2 Findings
 
-## Current state (verified against main @ 6e4c45a)
-- `playwright.config.ts` has 2 projects: `chromium-boot` and `firefox`
-- `testDir` is `./tests/e2e` (or `./tests/e2e/smoke` when BROWSER is set)
-- `tests/e2e/w3b/` does NOT exist
-- No `w3b` project in the config
+## Root Cause Analysis (from code inspection, main @ 7b73e1c)
 
-## Design decision
-- Add a dedicated `w3b` project (not extend `chromium-boot`)
-- `testDir: './tests/e2e/w3b'` on the project so w3b specs are always discoverable
-- Use `devices['Desktop Chrome']` with same launch args as `chromium-boot` (headed, WebGL flags)
-- This keeps W3-B specs independent of the BROWSER smoke-swap
+### Audio.ts constructor (line 124)
+`this.context = this.createContext()` — creates `new AudioContext()` immediately
+at construction. Called from Game.ts:54. No user gesture yet.
+
+### Game.ts start() (line 128)
+`void this.audioSystem.init().then(() => { this.audioSystem.startMusic(); });`
+`init()` calls `this.context.resume()` — second AudioContext op without gesture.
+
+### Firefox evidence (tests/evidence/w2/w2-e1a-smoke-console-firefox.txt L19-20)
+2x "[JavaScript Warning: An AudioContext was prevented from starting
+automatically. It must be created or resumed after a user gesture on the page."
+{file: "http://localhost:5173/src/systems/Audio.ts" line: 62 / line: 77}
+
+### Unit test impact
+- audio-system.test.ts L64: "constructs an AudioContext... on construction" — will FAIL
+- audio-system.test.ts L199: "constructor applies config volumes" — will FAIL
+- MockAudioContext needs userGesture awareness
