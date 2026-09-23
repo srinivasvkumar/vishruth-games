@@ -22,14 +22,14 @@
   },
   "current_status": {
     "phase": "W3-C: Performance / Day 10-11",
-    "day": 10,
-    "current_task": "W3-B.0-W3-B.7 complete; W3-C.3b complete (input latency optimization)",
-    "status": "W3-C-3B-COMPLETE",
+    "day": 11,
+    "current_task": "W3-C.4 complete (full settings panel in menu); W3-C.3b input-latency optimization complete",
+    "status": "W3-C-4-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-23T15:00:00",
-    "last_updated": "2026-09-23T15:33:00",
-    "completion_date": "2026-09-23T15:33:00",
-    "completion_notes": "W3-C.3b complete (t_448d7830): zero-allocation input path. getKeys() by reference, keydown/keyup skip toLowerCase for lowercase keys, clear() in-place mutation, camTarget pre-allocated in GameScene, forceScratch/impulseScratch pre-allocated in Physics. RED p95 16.50 ms / GREEN p95 16.10-16.80 ms (at 1-frame physical floor = 16.67 ms). tsc clean, 645/645 vitest. Evidence: W3C3B-RED.txt + W3C3B-GREEN.txt."
+    "last_updated": "2026-09-23T16:35:00",
+    "completion_date": "2026-09-23T16:35:00",
+    "completion_notes": "W3-C.4 complete (t_421f4c7f): full settings panel in menu with localStorage persistence + live wiring. SettingsManager (src/systems/Settings.ts, key 'cluster-rush-settings', defaults {volume:80,speed:1.0,difficulty:normal}), MenuScene panel (VOLUME slider / SPEED 0.5-2 / DIFFICULTY / read-only CONTROLS / CLOSE, Esc closes + focus->START, Tab order Volume->Speed->Difficulty->Controls->Close), Game speedMultiplier scales loop deltaTime, GameScene applyDifficultySettings() scales spawn interval + obstacle speed. RED: settings-state + settings-panel (0 tests, Settings.ts missing). GREEN: 665/665 unit, tsc build clean, lint clean on new code; e2e settings-panel.spec.ts PASSED real Chromium. Evidence: W3C4-RED.txt + W3C4-GREEN.txt + settings-panel-open.png + settings-panel-persist.png."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

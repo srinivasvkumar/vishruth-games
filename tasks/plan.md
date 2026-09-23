@@ -260,3 +260,25 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - tsc --noEmit: clean. vitest: 645/645 passed.
   - Evidence: tests/evidence/w3/W3C3B-RED.txt + W3C3B-GREEN.txt
 
+- [x] W3-C.4 — Full settings panel in menu (volume/speed/difficulty/controls) + localStorage persistence + live wiring — game-dev — `t_421f4c7f` — 2026-09-23
+  - SettingsManager (src/systems/Settings.ts): storage key 'cluster-rush-settings',
+    defaults {volume:80, speed:1.0, difficulty:'normal'}, validates speed in
+    [0.5,1.0,1.5,2.0] and difficulty in easy|normal|hard; sanitizeSettings guards
+    against corrupt/partial localStorage.
+  - MenuScene: SETTINGS button opens a full panel — VOLUME slider, SPEED
+    (0.5/1/1.5/2), DIFFICULTY (easy/normal/hard), read-only CONTROLS, CLOSE.
+    onEnter loads + applies settings (Audio.setMasterVolume +
+    Game.setSpeedMultiplier); Esc closes + returns focus to START; Tab order
+    Volume->Speed->Difficulty->Controls->Close; panel built eagerly (display:none
+    until opened) so it's queryable on entry.
+  - Game: speedMultiplier scales the game-loop deltaTime; get/set exposed.
+  - GameScene: applyDifficultySettings() on onEnter scales spawn interval
+    (OBSTACLE_SPAWN_RATE * mult) and obstacle speed by difficulty
+    (easy 0.8x / normal 1.0x / hard 1.5x).
+  - RED: settings-state (7 tests, 0 collected — Settings.ts missing) +
+    settings-panel (14 tests, 0 collected). GREEN: 665/665 unit, tsc build clean,
+    lint clean on new code; e2e settings-panel.spec.ts PASSED on real Chromium
+    (persist + getSpeedMultiplier()===2 + Esc/reopen/reload persistence).
+  - Evidence: tests/evidence/w3/W3C4-RED.txt + W3C4-GREEN.txt +
+    settings-panel-open.png + settings-panel-persist.png
+

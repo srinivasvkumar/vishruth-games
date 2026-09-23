@@ -94,3 +94,9 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - RED p95 16.50 ms / GREEN p95 16.10-16.80 ms (at 1-frame physical floor)
   - tsc clean, 645/645 vitest
   - Evidence: tests/evidence/w3/W3C3B-RED.txt + W3C3B-GREEN.txt
+- [x] W3-C.4 — Full settings panel in menu (volume/speed/difficulty/controls) + localStorage persistence + live wiring — game-dev — `t_421f4c7f` — 2026-09-23
+  - SettingsManager (src/systems/Settings.ts, key 'cluster-rush-settings', defaults {volume:80,speed:1.0,difficulty:normal}, validates speed [0.5,1,1.5,2] + difficulty easy/normal/hard)
+  - MenuScene panel: VOLUME slider / SPEED 0.5-2 / DIFFICULTY / read-only CONTROLS / CLOSE; onEnter applies audio setMasterVolume + game setSpeedMultiplier; Esc closes + focus->START; Tab order Volume->Speed->Difficulty->Controls->Close
+  - Game speedMultiplier scales loop deltaTime; GameScene applyDifficultySettings() scales spawn interval + obstacle speed
+  - tsc build clean, 665/665 vitest, lint clean on new code; e2e settings-panel.spec.ts PASSED real Chromium (persist + getSpeedMultiplier()===2 + Esc/reopen/reload)
+  - Evidence: tests/evidence/w3/W3C4-RED.txt + W3C4-GREEN.txt + settings-panel-open.png + settings-panel-persist.png

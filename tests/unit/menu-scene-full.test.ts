@@ -76,6 +76,21 @@ function createMockGame() {
     isGameRunning: () => true,
     pause: vi.fn(),
     stop: vi.fn(),
+    // W3-C.4: the menu now applies persisted settings to the live audio +
+    // game-loop speed on onEnter(). Provide the surface points so the mock
+    // doesn't throw on the new wiring.
+    getAudioSystem: () => ({
+      setMasterVolume: vi.fn(),
+      setMusicVolume: vi.fn(),
+      setSfxVolume: vi.fn(),
+      isAvailable: () => true,
+      init: () => Promise.resolve(),
+      startMusic: vi.fn(),
+      stopMusic: vi.fn(),
+      cleanup: vi.fn(),
+    }),
+    setSpeedMultiplier: vi.fn(),
+    getSpeedMultiplier: () => 1.0,
   };
 }
 
@@ -174,21 +189,16 @@ describe('W3A.3: Full MenuScene UI', () => {
     expect(panel!.textContent).toContain('77');
   });
 
-  it('renders a SETTINGS button that does not transition the scene', () => {
+  it('clicking SETTINGS opens the settings panel (no scene transition)', () => {
     const settings = document.getElementById('menu-settings-button') as HTMLButtonElement;
-    expect(settings).toBeTruthy();
-    expect(settings!.textContent?.trim().toUpperCase()).toContain('SETTINGS');
     settings!.click();
-    // Non-functional placeholder: must NOT switch scenes.
+    // W3-C.4: the SETTINGS button now opens the full settings panel instead of
+    // showing the old "coming in W3-C" placeholder toast. It must NOT switch
+    // scenes (no game transition from the settings button).
+    const panel = document.getElementById('settings-panel') as HTMLElement;
+    expect(panel).toBeTruthy();
+    expect(panel!.style.display).not.toBe('none');
     expect(game.switchScene).not.toHaveBeenCalled();
-  });
-
-  it('clicking SETTINGS shows a "coming in W3-C" toast (no crash)', () => {
-    const settings = document.getElementById('menu-settings-button') as HTMLButtonElement;
-    settings!.click();
-    const toast = document.getElementById('menu-settings-toast') as HTMLElement;
-    expect(toast).toBeTruthy();
-    expect(toast!.textContent?.toLowerCase()).toContain('coming in w3-c');
   });
 
   // ── W3-A.7: start-guard re-arm after a full run (BUG-W2-1a) ──────────────

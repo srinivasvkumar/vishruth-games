@@ -74,6 +74,21 @@ function createMockGame() {
     isGameRunning: () => true,
     pause: vi.fn(),
     stop: vi.fn(),
+    // W3-C.4: the menu applies persisted settings to the live audio +
+    // game-loop speed on onEnter(). Provide the surface points so the mock
+    // doesn't throw on the new wiring.
+    getAudioSystem: () => ({
+      setMasterVolume: vi.fn(),
+      setMusicVolume: vi.fn(),
+      setSfxVolume: vi.fn(),
+      isAvailable: () => true,
+      init: () => Promise.resolve(),
+      startMusic: vi.fn(),
+      stopMusic: vi.fn(),
+      cleanup: vi.fn(),
+    }),
+    setSpeedMultiplier: vi.fn(),
+    getSpeedMultiplier: () => 1.0,
   };
 }
 
