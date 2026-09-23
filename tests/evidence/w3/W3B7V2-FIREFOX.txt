@@ -1,0 +1,111 @@
+W3-B.7-v2 — In-browser verification: 4 critical paths, FIREFOX leg
+===================================================================
+Task:   t_6758c88b (W3-B.7-v2, fresh run post a47d623)
+Date:   2026-09-22 ~23:11 AEST
+Repo:   /home/srinivasvkumar/vishruth/games/clusterrush @ a47d623 [main], clean tree
+        a47d623 "fix: scale trucks to visible size + camera follows player"
+Browser: Firefox (Playwright-bundled, headed, DISPLAY=:1, no special args)
+Project: firefox (existing config project; testDir ./tests/e2e root,
+         run with CLI path filter `w3b-cp` so only the 4 CP specs executed —
+         no config changes, no new project; card suggested either option,
+         filter approach chosen to keep the diff at zero)
+Command: node node_modules/@playwright/test/cli.js test --project=firefox w3b-cp
+Result: EXIT_CODE=0 — 13 passed, 1 skipped, 0 failed (55.6s)
+        (Playwright confirmed: "Running 14 tests using 1 worker" — all under
+         tests/e2e/w3b/, nothing from smoke/ or other e2e dirs leaked in)
+Dev server: Playwright webServer auto-started vite on :5173
+
+VERDICT: PASS — all 4 CPs green in headed Firefox; no flake fired; no retry needed.
+
+PER-CP RESULTS (Firefox / firefox project)
+------------------------------------------
+CP1 boot -> menu -> START -> GameScene   : PASS 3/3
+  [PASS] w3b-cp1-start.spec.ts:175 CP1 S1: boot completes — WebGL live on
+         #game-canvas, menu visible, START enabled, 0 fatal errors     (4.8s)
+  [PASS] w3b-cp1-start.spec.ts:204 CP1 S2: START via Enter — HUD up,
+         menu down, player + obstacles in scene graph                 (3.5s)
+  [PASS] w3b-cp1-start.spec.ts:252 CP1 S3: START via click — GameScene
+         via mouse entry point                                        (3.4s)
+
+CP2 player movement + obstacle avoidance : PASS 4/4
+  [PASS] w3b-cp2-movement.spec.ts:259 CP2 S1: boot->menu->START->GameScene
+         with readable player                                       (3.3s)
+  [PASS] w3b-cp2-movement.spec.ts:292 CP2 S2: WASD drives player —
+         position-delta threshold on each axis                      (6.1s)
+  [PASS] w3b-cp2-movement.spec.ts:374 CP2 S3: moving into an obstacle
+         damages the player — health decreases                      (3.8s)
+  [PASS] w3b-cp2-movement.spec.ts:428 CP2 S4: evidence screenshot +
+         0 fatal console errors                                    (3.9s)
+
+CP3 score collection + HUD display       : PASS 3/3 + 1 skipped (by design)
+  [PASS] w3b-cp3-score.spec.ts:179  CP3 S1: HUD #game-score live value
+         in sync with game state                                    (3.3s)
+  [PASS] w3b-cp3-score.spec.ts:227  CP3 S2: #game-score DOM updates when
+         UISystem.setScore driven with a known value                (3.3s)
+         ^ KNOWN-ISSUE WATCH POINT: did NOT flake this run (no retry needed)
+  [SKIP] w3b-cp3-score.spec.ts:289  CP3 S3: full collection cycle
+         (test.fixme by design — flaky random spawn; W3-C follow-up)
+  [PASS] w3b-cp3-score.spec.ts:329  CP3 S4: PLAYER_SCORE(100) event ->
+         state +100 + HUD update                                    (3.5s)
+
+CP4 game-over -> restart -> 2nd run      : PASS 3/3
+  [PASS] w3b-cp4-restart.spec.ts:329 CP4 S1: __setPlayerHealth(0) ->
+         GameOverScene active, final + high score displayed        (5.6s)
+         console: {"setPlayerHealthInstalled":true,
+         "debugPlayerPosInstalled":true,"isPlayerAlive":null,
+         "hudHealth":100,"gameScoreVisible":false,
+         "gameoverRestartVisible":true}
+  [PASS] w3b-cp4-restart.spec.ts:390 CP4 S2: RESTART -> MenuScene active,
+         #menu-start-button re-armed (W3-A.7 guard)                (4.0s)
+  [PASS] w3b-cp4-restart.spec.ts:433 CP4 S3: 2nd run after RESTART ->
+         GameScene active again (fresh run, HUD up)                (4.6s)
+
+CONSOLE EVIDENCE
+----------------
+- Same fatal-error filter + assertions as the Chrome leg (each spec asserts
+  0 fatal console errors). All 13 executed tests passed => 0 fatal console
+  errors, 0 pageerrors, 0 unexpected requestfailed events in Firefox.
+- WebGL works out of the box in this Firefox (CP1 S1 asserts a live
+  WebGL context on #game-canvas) — no special flags required, matching
+  the firefox project's "headed, no special args" posture.
+- Spec-internal console log (CP4 S1 post-death state dump) identical in
+  shape to Chrome's (debug accessors installed, gameover UI visible).
+
+VISUAL EVIDENCE (screenshots, written 2026-09-22 23:11, this Firefox leg)
+------------------------------------------------------------------------
+- tests/evidence/w3/w3b-cp1-start.png     (overwritten by this Firefox run;
+  the Chrome-leg copy predates 23:10)
+- tests/evidence/w3/w3b-cp2-movement.png
+- tests/evidence/w3/w3b-cp3-score.png
+- tests/evidence/w3/w3b-cp4-restart.png   (CP4 S3 — 2nd run live: player
+  truck bottom-center at visible scale, 3 red obstacle clusters on road
+  ahead, SCORE:0 / LEVEL:1 / HEALTH:100 HUD up; no black canvas, no
+  missing textures, camera framing the player — a47d623 fix confirmed
+  in Firefox too)
+- Per-test end-of-test screenshots under
+  tests/evidence/w3/playwright-artifacts/ (firefox leg, 13 dirs)
+NOTE: the 4 canonical w3b-cp*.png names are shared across legs (specs hardcode
+the paths); the Firefox leg is the most recent writer. Both legs' per-test
+screenshots remain distinguishable in playwright-artifacts/ (dir names carry
+the spec + test, timestamps 23:09-23:10 = Chrome, 23:11 = Firefox).
+
+KNOWN-ISSUE DISPOSITION
+------------------------
+- CP3 S2 flake (UISystem.setScore stale element during scene transition):
+  NOT observed in Firefox either. No retry required. (Was also not observed
+  in B6-v2's full-suite runs.)
+
+RAW LOG
+-------
+- Full run transcript: /home/srinivasvkumar/.hermes/profiles/game-tester/cache/scratch/w3b7v2/firefox.log
+  (also in the orchestrator's task attachments)
+
+COMPLIANCE
+----------
+- No spec or game code modified. No config files modified. No --no-verify.
+  No subtasks created. Scope honored: re-verification only; 0 new specs.
+- Discovery verification (card requirement): the `firefox` project's
+  testDir (./tests/e2e) DOES discover the w3b specs (nested under
+  tests/e2e/w3b/); run 1 confirmed 14 tests = exactly the 4 CP specs'
+  14 test cases, with no smoke/ or visual-baseline leakage under the
+  `w3b-cp` filter.

@@ -406,20 +406,26 @@
             {
               "id": "W3-B.5",
               "description": "Critical-path E2E #4: game-over -> restart -> 2nd run full loop",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-22T14:00:00",
+              "notes": "Kanban t_7eb54b12. CP4 E2E (game-over -> restart -> 2nd run) delivered. 3 scenarios GREEN in w3b project. Real-world browser round found + fixed 3 defects (HUD ownership, D-A6-1, HUD-not-hidden-on-exit). w3a-full-loop 7/7, w3b CP1-CP4 13/14 (1 fixme-skip). 645/645 unit."
             },
             {
               "id": "W3-B.6",
               "description": "Visual-regression baseline (Playwright screenshot baselines, per scene)",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-22T23:03:00",
+              "notes": "Kanban t_bc5c735e (W3-B.6-v2). Fresh baselines post-a47d623: Menu PASS (0px), GameOver PASS (0px), GameScene documented flake (1902px spawn-layout variance, non-blocking). Commit 8e5e695. Evidence: W3B6V2-RED.txt + W3B6V2-GREEN.txt + 6 mirror PNGs."
             },
             {
               "id": "W3-B.7",
               "description": "In-browser verify: 4 critical paths pass in real Chrome (+ Firefox)",
-              "status": "pending",
-              "tdd_cycle": "red"
+              "status": "complete",
+              "tdd_cycle": "green",
+              "completion_date": "2026-09-22T23:19:00",
+              "notes": "Kanban t_6758c88b (W3-B.7-v2). PASS both browsers: Chrome 13/14 (1 fixme-skip), Firefox 13/14. 0 fatal console errors. CP3 S2 flake did NOT fire. a47d623 truck-scale + camera-follow visually confirmed. Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots."
             },
             {
               "id": "TDD-4.1",

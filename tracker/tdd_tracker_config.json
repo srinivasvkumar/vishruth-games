@@ -29,29 +29,29 @@
     "start_date": "2026-09-16T20:59:00",
     "last_updated": "2026-09-19T21:25:00",
     "completion_date": null,
-    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors. W3-B.1 complete (t_9927d746 @987704c): Playwright config. W3-B.0-fix complete (t_8cfc53be): Player.die() dispatches PLAYER_DEATH when lives hit 0 (1-line fix in src/entities/Player.ts, 3 new unit tests, 645/645 suite, tsc clean) — unblocks W3-B.7 gate CP4 S1. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt + W3B0FIX-RED/GREEN.txt."
+    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors. W3-B.1 complete (t_9927d746 @987704c): Playwright config. W3-B.0-fix complete (t_8cfc53be): Player.die() dispatches PLAYER_DEATH when lives hit 0 (1-line fix in src/entities/Player.ts, 3 new unit tests, 645/645 suite, tsc clean) \u2014 unblocks W3-B.7 gate CP4 S1. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt + W3B0FIX-RED/GREEN.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",
-    "notes": "W2-E.1b complete: Firefox leg of Week-2 success criterion #1 (both legs now satisfied). RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; per-browser evidence via BROWSER env: screenshots + console capture suffixed chrome|firefox). GREEN: 6/6 smoke tests pass in real headed Firefox (project 'firefox', Desktop Firefox, headless:false) AND 6/6 re-pass in real headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional Chrome-vs-Firefox diff: all 5 behavioral scenarios (boot→menu→game, WASD movement, jump, score increment, game-over+restart) + console-clean assert identically in both browsers; no scenario Chrome-only by design. Documented diff observation: Firefox-only 2x non-fatal 'AudioContext prevented from starting automatically' boot warnings (src/systems/Audio.ts:62/77 — stricter Firefox autoplay gesture policy; out of scope, W3-C territory). Timing: Firefox suite 33.6s vs Chrome 28.5s, no timeouts. No src/ changes. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff), w2-e1a-smoke-{1..5}-*-{firefox,chrome}.png (14 screenshots), w2-e1a-smoke-console-{firefox,chrome}.txt."
+    "notes": "W2-E.1b complete: Firefox leg of Week-2 success criterion #1 (both legs now satisfied). RED: 59f1e05 (firefox project added to playwright.config.ts; smoke.spec.ts moved to tests/e2e/smoke/; per-browser evidence via BROWSER env: screenshots + console capture suffixed chrome|firefox). GREEN: 6/6 smoke tests pass in real headed Firefox (project 'firefox', Desktop Firefox, headless:false) AND 6/6 re-pass in real headed Chrome (chromium-boot) with fresh per-browser artifacts. No functional Chrome-vs-Firefox diff: all 5 behavioral scenarios (boot\u2192menu\u2192game, WASD movement, jump, score increment, game-over+restart) + console-clean assert identically in both browsers; no scenario Chrome-only by design. Documented diff observation: Firefox-only 2x non-fatal 'AudioContext prevented from starting automatically' boot warnings (src/systems/Audio.ts:62/77 \u2014 stricter Firefox autoplay gesture policy; out of scope, W3-C territory). Timing: Firefox suite 33.6s vs Chrome 28.5s, no timeouts. No src/ changes. Evidence: tests/evidence/w2/W2-E1b-GREEN.txt (result table + diff), w2-e1a-smoke-{1..5}-*-{firefox,chrome}.png (14 screenshots), w2-e1a-smoke-console-{firefox,chrome}.txt."
   },
   "plan_update": {
     "updated_at": "2026-09-13T05:38:07Z",
     "scope": "W3/W4 plan-hardening",
     "changes": [
-      "W3 gate notes + execution order (W3-A…C) + 6 success criteria",
-      "W4 gate notes + execution order (W4-A…D) + 6 done criteria",
-      "HUD ownership (D2): HUD → UISystem, GameScene calls it",
+      "W3 gate notes + execution order (W3-A\u2026C) + 6 success criteria",
+      "W4 gate notes + execution order (W4-A\u2026D) + 6 done criteria",
+      "HUD ownership (D2): HUD \u2192 UISystem, GameScene calls it",
       "MenuScene/GameOverScene assigned to W3 Day 8 (Task 8.2)",
       "AssetLoader fix added to W2-A Task 4.3",
       "W2-C audio: synthesized/placeholder (no external files)",
       "W4 Day 12: full WCAG AA (boss decision)",
-      "W4 Day 13: coverage reframe to maintain ≥90%"
+      "W4 Day 13: coverage reframe to maintain \u226590%"
     ],
     "boss_decisions": {
       "accessibility_scope": "Full WCAG AA",
       "hud_location": "UISystem in systems/UI.ts",
-      "w3_w4_scheduling": "Sequential — pre-plan now, decompose when W2 passes",
+      "w3_w4_scheduling": "Sequential \u2014 pre-plan now, decompose when W2 passes",
       "assetloader": "Fix in W2-A; synthesized audio for W2-C"
     }
   },
@@ -83,7 +83,7 @@
       "scripts/red-gate-check.mjs"
     ],
     "post_commit_gate": "standard full-suite + lint gate via lint-staged (no red-gate tolerance)",
-    "root_cause_correction": "Boss RCA (2026-09-13) attributed the WI-7 hook failure to node 18 vs lint-staged>=22. Verified refuted: the failing probe ran on node v22.22.2 (evidence file line 'Node.js v22.22.2'; machine node was upgraded since the RCA) and a fresh 10:19 probe on v22.22.2 fails identically. True root cause: geometry-dash/node_modules/bs-logger/package.json (tracked in git; 10,043 tracked files under geometry-dash/node_modules) carries a legacy 'lint-staged' key with an invalid 'linters' field that lint-staged 17 rejects during config discovery — independent of node version. See tests/evidence/d02/W1-TDD1.1-closure.txt CORRECTION section.",
+    "root_cause_correction": "Boss RCA (2026-09-13) attributed the WI-7 hook failure to node 18 vs lint-staged>=22. Verified refuted: the failing probe ran on node v22.22.2 (evidence file line 'Node.js v22.22.2'; machine node was upgraded since the RCA) and a fresh 10:19 probe on v22.22.2 fails identically. True root cause: geometry-dash/node_modules/bs-logger/package.json (tracked in git; 10,043 tracked files under geometry-dash/node_modules) carries a legacy 'lint-staged' key with an invalid 'linters' field that lint-staged 17 rejects during config discovery \u2014 independent of node version. See tests/evidence/d02/W1-TDD1.1-closure.txt CORRECTION section.",
     "open_infra_defect": "RESOLVED at baa9459 (W1-INFRA, 2026-09-13): geometry-dash/node_modules untracked (git rm --cached, 10,043 files) + node_modules/ in .gitignore; tracked node_modules = 0; 355/355 green post-untrack. Evidence: tests/evidence/d02/W1-INFRA-untrack-node_modules.md."
   },
   "completed_tasks": [

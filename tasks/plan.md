@@ -223,4 +223,17 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Results: w3a-full-loop 7/7; w3b CP1-CP4 13/14 (1 skipped flaky by design); boot+fps+w2-w21b 12/12; tsc clean; 645/645 unit.
   - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp{1,2,3,4}-* + w3a-full-loop-*
   - Tracked follow-up: CP3 S2 flake — setScore(999) → #game-score reads "SCORE: 0" (UISystem.setScore writes to stale scoreEl during scene transition race; passes in full-suite run).
+- [x] W3-B.6-v2 — Visual-regression baselines: capture + stability-verify per scene (post a47d623) — game-tester — `t_bc5c735e` → 8e5e695 — 2026-09-22
+  - Fresh baselines reflecting truck-scale + camera-follow fix
+  - Menu PASS (0px diff) + GameOver PASS (0px diff) — pixel-stable
+  - GameScene documented flake (1902px, truck-silhouette/spawn-layout variance only — camera/HUD/road pixel-identical) — non-blocking per card rules
+  - Full w3b suite: 15 passed / 1 skipped (CP3 S3 fixme) / 1 failed (documented S2 flake only)
+  - Evidence: W3B6V2-RED.txt + W3B6V2-GREEN.txt + 6 mirror PNGs
+- [x] W3-B.7-v2 — In-browser verify: 4 critical paths in Chrome + Firefox (fresh run, post a47d623) — game-tester — `t_6758c88b` — 2026-09-22
+  - Chrome (project=w3b, headed, swiftshader): 13 passed / 1 skipped (fixme) / 0 failed, 50.8s
+  - Firefox (project=firefox, headed, no args): 13 passed / 1 skipped / 0 failed, 55.6s
+  - 0 fatal console errors in both browsers; 0 pageerrors; 0 unexpected requestfailed
+  - CP3 S2 known flake (UISystem.setScore stale element): NOT observed in either browser
+  - a47d623 truck-scale + camera-follow visually confirmed in both legs via screenshot inspection
+  - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
 

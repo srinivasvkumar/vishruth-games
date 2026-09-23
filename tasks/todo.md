@@ -79,5 +79,14 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Results: w3a-full-loop 7/7; w3b CP1-CP4 13/14 (1 skipped flaky by design); boot+fps+w2-w21b 12/12; tsc clean; 645/645 unit
   - Evidence: tests/evidence/w3/playwright-artifacts/w3b-cp{1,2,3,4}-* + w3a-full-loop-*
   - Tracked follow-up: CP3 S2 flake (UISystem.setScore writes to stale scoreEl during scene transition race)
-- [ ] W3-B.6 — Visual-regression baseline (Playwright screenshot baselines, per scene) — game-tester
-- [ ] W3-B.7 — In-browser verify: 4 critical paths pass in real Chrome (+ Firefox) — game-tester
+- [x] W3-B.6-v2 — Visual-regression baselines: capture + stability-verify per scene (post a47d623) — game-tester — `t_bc5c735e` → 8e5e695
+  - Menu PASS (0px diff) + GameOver PASS (0px diff) — pixel-stable
+  - GameScene documented flake (1902px, truck-silhouette/spawn-layout variance only — camera/HUD/road pixel-identical) — non-blocking
+  - Full w3b suite: 15 passed / 1 skipped (CP3 S3 fixme) / 1 failed (documented S2 flake only)
+  - Evidence: W3B6V2-RED.txt + W3B6V2-GREEN.txt + 6 mirror PNGs
+- [x] W3-B.7-v2 — In-browser verify: 4 critical paths in Chrome + Firefox (fresh run, post a47d623) — game-tester — `t_6758c88b`
+  - Chrome (project=w3b): 13 passed / 1 skipped (fixme) / 0 failed, 50.8s
+  - Firefox (project=firefox): 13 passed / 1 skipped / 0 failed, 55.6s
+  - 0 fatal console errors in both browsers; CP3 S2 known flake did NOT fire
+  - a47d623 truck-scale + camera-follow visually confirmed in both legs
+  - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
