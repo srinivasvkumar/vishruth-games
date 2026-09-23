@@ -21,15 +21,15 @@
     }
   },
   "current_status": {
-    "phase": "W3-B: Integration / Day 9 (in progress)",
+    "phase": "W3-C: Audio Policy (in progress)",
     "day": 9,
-    "current_task": "W3-B.0 complete (debug accessors); W3-B.0-fix complete (PLAYER_DEATH dispatch); W3-B.1 complete (Playwright config); W3-B.2 complete (CP1 start evidence); W3-B.3 complete (CP2 movement evidence); W3-B.4 complete (CP3 score evidence); W3-B.5-W3-B.7 pending",
-    "status": "W3-B-0-0FIX-1-2-3-4-COMPLETE",
+    "current_task": "W3-C.2 complete (Firefox AudioContext autoplay fix via deferred context creation)",
+    "status": "W3-C2-COMPLETE",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-16T20:59:00",
-    "last_updated": "2026-09-19T21:25:00",
+    "start_date": "2026-09-23T13:35:00",
+    "last_updated": "2026-09-23T14:20:00",
     "completion_date": null,
-    "completion_notes": "W3-B.0 complete (t_a3c5bda0): three deterministic window accessors. W3-B.1 complete (t_9927d746 @987704c): Playwright config. W3-B.0-fix complete (t_8cfc53be): Player.die() dispatches PLAYER_DEATH when lives hit 0 (1-line fix in src/entities/Player.ts, 3 new unit tests, 645/645 suite, tsc clean) \u2014 unblocks W3-B.7 gate CP4 S1. Evidence: W3B0-RED/GREEN.txt + W3B1-RED/GREEN.txt + W3B0FIX-RED/GREEN.txt."
+    "completion_notes": "W3-C.2 complete (t_d57780a6): Deferred AudioContext creation fixes Firefox 'AudioContext prevented from starting automatically' warnings. Root cause: context created in AudioSystem constructor at boot. Fix: ensureContext() lazy creation + markUserGesture() from MenuScene gestures. RED: 2 Firefox warnings pre-fix. GREEN: 0 Firefox + 0 Chrome post-fix. 646/646 unit; tsc clean; eslint clean. Evidence: W3C2-RED.txt + W3C2-VERIFY-firefox.txt + W3C2-VERIFY-chrome.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

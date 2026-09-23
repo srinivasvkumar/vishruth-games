@@ -90,3 +90,10 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - 0 fatal console errors in both browsers; CP3 S2 known flake did NOT fire
   - a47d623 truck-scale + camera-follow visually confirmed in both legs
   - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
+
+# Week 3-C Lane (Audio Policy, 2026-09-23)
+- [x] W3-C.2 — Cross-browser audio policy: fix Firefox AudioContext autoplay warnings — game-dev — `t_d57780a6`
+  - Deferred AudioContext creation (ensureContext + markUserGesture)
+  - RED: 2 Firefox warnings pre-fix; GREEN: 0 Firefox + 0 Chrome post-fix
+  - 646/646 unit; tsc clean; eslint clean
+  - Evidence: W3C2-RED.txt + W3C2-VERIFY-firefox.txt + W3C2-VERIFY-chrome.txt

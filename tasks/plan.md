@@ -237,3 +237,11 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - a47d623 truck-scale + camera-follow visually confirmed in both legs via screenshot inspection
   - Evidence: W3B7V2-CHROME.txt + W3B7V2-FIREFOX.txt + 4 CP screenshots + 26 per-test screenshots
 
+# Week 3-C Lane (Audio Policy, 2026-09-23)
+- [x] W3-C.2 — Cross-browser audio policy: root-cause + fix Firefox AudioContext autoplay warnings — game-dev — `t_d57780a6` — 2026-09-23
+  - Root cause: AudioContext created in AudioSystem constructor (boot, before user gesture)
+  - Fix: deferred context creation (ensureContext + markUserGesture on MenuScene gestures)
+  - RED: 2 Firefox warnings pre-fix; GREEN: 0 Firefox + 0 Chrome warnings post-fix
+  - 646/646 unit suite; tsc clean; eslint clean
+  - Evidence: W3C2-RED.txt + W3C2-VERIFY-firefox.txt + W3C2-VERIFY-chrome.txt
+

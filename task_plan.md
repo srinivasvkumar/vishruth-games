@@ -1,32 +1,71 @@
-# W3-B.1b — Add w3b Playwright project + tests/e2e/w3b/ dir
+# W3-C.2 — Cross-browser audio policy: root-cause + fix Firefox AudioContext autoplay warnings
 
-Task ID: t_9819ee0b
-Branch: wt/t_9819ee0b (to create)
-Base: main @ 6e4c45a
+## Root Cause (confirmed by code inspection)
 
-## Objective
-Add a `w3b` Playwright project to `playwright.config.ts` and create `tests/e2e/w3b/` dir
-so B2-B6 can write W3-B E2E specs. TDD: RED → GREEN → VERIFY.
+**2× warnings, 2 sources:**
 
-## Design decision
-- Dedicated `w3b` project (not extending `chromium-boot`)
-- `testDir: './tests/e2e/w3b'` on the project so w3b specs are always discoverable
-- Use `devices['Desktop Chrome']` with same launch args as `chromium-boot` (headed, WebGL flags)
-- Keeps W3-B specs independent of the BROWSER smoke-swap
+1. `src/systems/Audio.ts` constructor (line 124): `new AudioContext()` is called
+   immediately when `Game` constructs `AudioSystem` (Game.ts:54). Firefox logs
+   "An AudioContext was prevented from starting automatically" because no user
+   gesture has occurred yet at construction time.
 
-## Phases
-- [ ] Phase 1: RED — capture `npx playwright test --list` showing no w3b project
-- [ ] Phase 2: GREEN — add w3b project to config + create tests/e2e/w3b/.gitkeep
-- [ ] Phase 3: VERIFY — npx playwright test --list discovers w3b project; tsc clean
-- [ ] Phase 4: Tracker — update TDD_PLAN.md W3-B section
-- [ ] Phase 5: Commit
+2. `src/core/Game.ts` start() (line 128): `void this.audioSystem.init().then(() => startMusic())`
+   calls `context.resume()` at boot with no user gesture. Firefox logs a second
+   warning for the `resume()` attempt.
 
-## Files
-- playwright.config.ts (add w3b project)
-- tests/e2e/w3b/.gitkeep (new)
-- TDD_PLAN.md (tracker touch)
-- tests/evidence/w3/W3B1B-RED.txt
-- tests/evidence/w3/W3B1B-GREEN.txt
+Chrome is more permissive — it allows `new AudioContext()` + `resume()` without
+a gesture (context stays suspended but no warning is logged).
+
+## Fix Design
+
+**Audio.ts:**
+- `createContext()` → deferred: only creates the AudioContext when `ensureContext()`
+  is called (lazy init on first `init()`, `playSfx()`, or `startMusic()`).
+- `init()` → if context doesn't exist yet, create it + resume. If it exists
+  and is suspended, resume. Idempotent.
+- `playSfx()` / `startMusic()` → call `ensureContext()` first (creates if null).
+- `bindToGameEvents()` → still works: listeners call playSfx/startMusic which
+  ensure the context exists.
+- `isAvailable()` → context !== null (unchanged semantics: false if never created
+  or in degraded mode).
+- `cleanup()` → unchanged (closes context if it exists).
+
+**MenuScene.ts:**
+- Add a `userGestureHandled` flag.
+- On first click (START button, SETTINGS button) or first keydown (Enter/Space),
+  set `userGestureHandled = true` and call `this.game.getAudioSystem().init()`.
+- This is the "user gesture" that unlocks the AudioContext in Firefox.
+- The call is fire-and-forget (void) — never blocks the start path.
+
+**Game.ts (out of scope — task allows ≤2 files, Audio.ts + MenuScene.ts only):**
+- The `void this.audioSystem.init().then(() => startMusic())` in Game.start()
+  will now call init() which defers context creation. Since the context is
+  created lazily on first init() call, and init() is now called from MenuScene
+  on first user gesture, the Game.start() call to init() will create the
+  context at boot (before gesture) — same warning.
+
+## REVISED DESIGN (to stay within 2 files)
+
+Since Game.ts calls `audioSystem.init()` at start() and we can't modify Game.ts:
+- `init()` must NOT create the context if no user gesture has occurred.
+- Add a `userGestureReceived` flag to AudioSystem.
+- `init()` only creates + resumes the context when `userGestureReceived` is true.
+- `markUserGesture()` method: sets `userGestureReceived = true`, then calls `init()`.
+- MenuScene calls `game.getAudioSystem().markUserGesture()` on first click/keypress.
+- `playSfx()` / `startMusic()` still call `ensureContext()` (lazy create for
+  SFX triggers that fire after gesture — these are fine because they happen
+  during gameplay, which is post-gesture).
+- Game.start() calls `init()` which is a no-op until `markUserGesture()` is called.
+
+## TDD Phases
+
+1. RED: Capture current Firefox console (2× warnings) → W3C2-RED.txt
+2. GREEN: Implement fix → run Firefox console → 0 warnings → W3C2-GREEN.txt
+3. VERIFY: Run unit tests + lint + typecheck → all pass
+
+## Files Changed (≤2)
+- src/systems/Audio.ts
+- src/scenes/MenuScene.ts
 
 ## Errors
 | # | Error | Fix |

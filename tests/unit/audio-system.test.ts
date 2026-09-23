@@ -59,18 +59,37 @@ function lastMockContext(system: AudioSystem): MockAudioContext {
   ).context;
 }
 
+/**
+ * W3-C.2: helper for tests that need the context to exist.
+ * Calls markUserGesture() (which creates + resumes the context via
+ * ensureContext -> init) and returns the mock context.
+ */
+function ensureMockContext(system: AudioSystem): MockAudioContext {
+  system.markUserGesture();
+  return lastMockContext(system);
+}
+
 describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
   describe('context init', () => {
-    it('constructs an AudioContext from the platform class on construction', () => {
+    it('W3-C.2: constructor does NOT create the AudioContext (deferred)', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
+      expect(lastMockContext(audio)).toBeNull();
+      expect(audio.isAvailable()).toBe(false);
+    });
+
+    it('W3-C.2: markUserGesture() creates + resumes the AudioContext', () => {
+      const audio = new AudioSystem(AUDIO_CONFIG);
+      audio.markUserGesture();
       const ctx = lastMockContext(audio);
       expect(ctx).toBeInstanceOf(MockCtx);
-      expect(ctx.state).toBe('suspended');
+      expect(ctx.state).toBe('running');
     });
 
     it('init() resumes a suspended context (browser autoplay policy)', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      expect(lastMockContext(audio).state).toBe('suspended');
+      // W3-C.2: context is created lazily by init() via ensureContext().
+      // It starts 'suspended'; init() then resumes it.
+      expect(lastMockContext(audio)).toBeNull();
       await audio.init();
       expect(lastMockContext(audio).state).toBe('running');
     });
@@ -89,7 +108,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
   describe('synthesized SFX trigger', () => {
     it('playSfx("jump") starts a new oscillator through the sfx gain', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.playSfx('jump');
       const sfxGain = ctx.nodes.gains[1]; // creation order: master, sfx, music
       const osc = ctx.nodes.oscillators[0];
@@ -105,7 +124,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('each playSfx call creates its own oscillator (no node reuse)', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.playSfx('jump');
       audio.playSfx('collide');
       audio.playSfx('powerup');
@@ -114,7 +133,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('SFX oscillators are scheduled to stop (envelopes, not run-away nodes)', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.playSfx('jump');
       const osc = ctx.nodes.oscillators[0];
       expect(osc.stopped).toBe(true);
@@ -123,7 +142,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('different SFX ids use distinct frequencies (audible variety)', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.playSfx('jump');
       audio.playSfx('collide');
       const jump = ctx.nodes.oscillators[0];
@@ -135,7 +154,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('unknown SFX ids still play a valid placeholder tone (no throw)', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       expect(() => audio.playSfx('not-a-real-sfx')).not.toThrow();
       expect(ctx.nodes.oscillators.length).toBe(1);
       expect(ctx.nodes.oscillators[0].started).toBe(true);
@@ -145,8 +164,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
   describe('music loop (synthesized placeholder)', () => {
     it('startMusic() runs a looping buffer source through the music gain', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
-      await audio.init();
+      const ctx = ensureMockContext(audio);
       audio.startMusic();
       const src = ctx.nodes.bufferSources[0];
       const musicGain = ctx.nodes.gains[2]; // creation order: master, sfx, music
@@ -161,8 +179,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('the music buffer is synthesized, not loaded from a file', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
-      await audio.init();
+      const ctx = ensureMockContext(audio);
       audio.startMusic();
       // createBuffer was used (0 files on disk in W2).
       expect(ctx.nodes.buffers.length).toBe(1);
@@ -174,8 +191,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('startMusic() is idempotent (no duplicate sources on repeat)', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
-      await audio.init();
+      const ctx = ensureMockContext(audio);
       audio.startMusic();
       audio.startMusic();
       expect(ctx.nodes.bufferSources.length).toBe(1);
@@ -183,8 +199,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('stopMusic() stops the looping source', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
-      await audio.init();
+      const ctx = ensureMockContext(audio);
       audio.startMusic();
       audio.stopMusic();
       const src = ctx.nodes.bufferSources[0];
@@ -196,9 +211,9 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
   });
 
   describe('volume controls', () => {
-    it('constructor applies the config volumes to the gain chain', () => {
+    it('W3-C.2: config volumes are applied when the context is created', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       const master = ctx.nodes.gains[0];
       const sfx = ctx.nodes.gains[1];
       const music = ctx.nodes.gains[2];
@@ -209,7 +224,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('setMasterVolume / setMusicVolume / setSfxVolume each update exactly their gain', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.setMasterVolume(0.5);
       audio.setMusicVolume(0.25);
       audio.setSfxVolume(0.75);
@@ -221,7 +236,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
 
     it('volume setters clamp out-of-range values into [0, 1]', () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.setMasterVolume(2.5);
       audio.setMusicVolume(-1);
       audio.setSfxVolume(NaN);
@@ -235,7 +250,7 @@ describe('W2-C.1 AudioSystem (Task 6.5.1, synthesized placeholder)', () => {
   describe('cleanup + graceful load failure (no crash)', () => {
     it('cleanup() closes the context and is idempotent', async () => {
       const audio = new AudioSystem(AUDIO_CONFIG);
-      const ctx = lastMockContext(audio);
+      const ctx = ensureMockContext(audio);
       audio.cleanup();
       expect(ctx.state).toBe('closed');
       // Second cleanup must not throw (Game.cleanup() runs on every stop).
@@ -301,14 +316,21 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
   const RESUME_EVENT = 'game:resume';
   const STOP_EVENT = 'game:stop';
 
-  it('bindToGameEvents() is a no-op until the system is available', () => {
+  it('W3-C.2: bindToGameEvents() works without a prior context (lazy creation)', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
     expect(() => audio.bindToGameEvents()).not.toThrow();
+    // Context was NOT created at construction time.
+    expect(lastMockContext(audio)).toBeNull();
+    // But dispatching an event still works — ensureContext() creates it.
+    window.dispatchEvent(new CustomEvent(JUMP_EVENT));
+    const ctx = lastMockContext(audio);
+    expect(ctx).not.toBeNull();
+    expect(ctx.nodes.oscillators.length).toBe(1);
   });
 
   it('player:jump fires the jump SFX (oscillator through the sfx gain)', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
+    const ctx = ensureMockContext(audio);
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(JUMP_EVENT));
     const osc = ctx.nodes.oscillators[0];
@@ -321,7 +343,7 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
 
   it('player:collide fires the collide SFX with a distinct frequency', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
+    const ctx = ensureMockContext(audio);
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(JUMP_EVENT));
     window.dispatchEvent(new CustomEvent(COLLIDE_EVENT));
@@ -336,7 +358,7 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
 
   it('player:powerup fires the powerup SFX', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
+    const ctx = ensureMockContext(audio);
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(POWERUP_EVENT));
     const osc = ctx.nodes.oscillators[0];
@@ -347,8 +369,7 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
 
   it('game:pause stops the music; game:resume restarts it', async () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
-    await audio.init();
+    const ctx = ensureMockContext(audio);
     audio.startMusic();
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(PAUSE_EVENT));
@@ -362,8 +383,7 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
 
   it('game:stop stops the music', async () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
-    await audio.init();
+    const ctx = ensureMockContext(audio);
     audio.startMusic();
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(STOP_EVENT));
@@ -372,7 +392,7 @@ describe('W2-C.2 AudioSystem.bindToGameEvents (Task 6.5.2)', () => {
 
   it('bindToGameEvents() is idempotent (no duplicate listeners)', () => {
     const audio = new AudioSystem(AUDIO_CONFIG);
-    const ctx = lastMockContext(audio);
+    const ctx = ensureMockContext(audio);
     audio.bindToGameEvents();
     audio.bindToGameEvents();
     window.dispatchEvent(new CustomEvent(JUMP_EVENT));

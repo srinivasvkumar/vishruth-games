@@ -28,6 +28,8 @@ export class MenuScene extends Scene {
   private settingsButton: HTMLButtonElement | null = null;
   private highScorePanel: HTMLElement | null = null;
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+  /** W3-C.2: true once a user gesture has been dispatched to AudioSystem. */
+  private audioGestureHandled = false;
   /** Toast auto-dismiss timer (cleared on exit/cleanup). */
   private settingsToastTimer: number | null = null;
   /**
@@ -178,6 +180,7 @@ export class MenuScene extends Scene {
       cursor: pointer;
     `;
     startButton.addEventListener('click', () => {
+      this.handleAudioGesture();
       this.startGame();
     });
 
@@ -198,6 +201,7 @@ export class MenuScene extends Scene {
       cursor: pointer;
     `;
     settingsButton.addEventListener('click', () => {
+      this.handleAudioGesture();
       this.showSettingsToast();
     });
 
@@ -327,6 +331,23 @@ export class MenuScene extends Scene {
   }
 
   /**
+   * W3-C.2: dispatch the user gesture to the AudioSystem on the first
+   * interaction (click or keydown). This creates + resumes the
+   * AudioContext within the user-gesture call stack, satisfying the
+   * browser autoplay policy. Idempotent — subsequent calls are no-ops.
+   * Fire-and-forget — never blocks the start path.
+   */
+  private handleAudioGesture(): void {
+    if (this.audioGestureHandled) return;
+    this.audioGestureHandled = true;
+    try {
+      this.game.getAudioSystem().markUserGesture();
+    } catch (err) {
+      Logger.warn('MenuScene: audio gesture dispatch failed', err);
+    }
+  }
+
+  /**
    * BUG-W2-1a: fire the start transition once.
    *
    * Guard order:
@@ -376,6 +397,7 @@ export class MenuScene extends Scene {
     this.keydownHandler = (event: KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
+        this.handleAudioGesture();
         this.startGame();
       }
     };
