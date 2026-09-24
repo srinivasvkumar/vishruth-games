@@ -553,3 +553,16 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Evidence: tests/evidence/w3/W3C4-RED.txt + W3C4-GREEN.txt +
     settings-panel-open.png + settings-panel-persist.png
 
+- [x] W4-A.3 — Visual-regression refinement: re-capture baselines, verify stability, flake policy — game-tester — `t_d0336dbf` — 2026-09-24
+  - New spec tests/e2e/w4a-visual-regression.spec.ts (3 scenes x 2 browsers = 6 baselines).
+  - Two determinism levers on top of W3-B.6-v2 world-freeze:
+    (1) seeded Math.random via addInitScript (mulberry32, seed 0x9e3779b9),
+    (2) pre-screenshot renderer.clear() to strip first-frame-clear variance.
+  - 6 baselines captured: menu/game/gameover x chromium-boot/firefox.
+  - Stability verified: run 2 passes against run-1 baselines (GREEN leg).
+  - Flake policy: SwiftShader non-determinism documented (54-58% PNG byte
+    variance on frozen GameScene under --use-angle=swiftshader);
+    maxDiffPixels: 3000 for S2 GameScene, 0 for S1/S3 DOM scenes.
+  - Evidence: tests/evidence/w4/w4a3-test-report.md + 6 mirror PNGs +
+    task-plan/w4a3-findings.md
+

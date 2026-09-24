@@ -205,3 +205,12 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Game speedMultiplier scales loop deltaTime; GameScene applyDifficultySettings() scales spawn interval + obstacle speed
   - tsc build clean, 665/665 vitest, lint clean on new code; e2e settings-panel.spec.ts PASSED real Chromium (persist + getSpeedMultiplier()===2 + Esc/reopen/reload)
   - Evidence: tests/evidence/w3/W3C4-RED.txt + W3C4-GREEN.txt + settings-panel-open.png + settings-panel-persist.png
+
+# Week 4-A Lane (2026-09-24) — IN PROGRESS
+- [x] W4-A.3 — Visual-regression refinement: re-capture baselines, verify stability, flake policy — game-tester — `t_d0336dbf` — 2026-09-24
+  - New spec tests/e2e/w4a-visual-regression.spec.ts (3 scenes x 2 browsers = 6 baselines)
+  - Two determinism levers: seeded Math.random (mulberry32 seed 0x9e3779b9) + pre-screenshot renderer.clear()
+  - 6 baselines captured: menu/game/gameover x chromium-boot/firefox
+  - Stability verified: run 2 passes against run-1 baselines (GREEN leg)
+  - Flake policy: maxDiffPixels 3000 for S2 GameScene (SwiftShader non-determinism), 0 for S1/S3 DOM scenes
+  - Evidence: tests/evidence/w4/w4a3-test-report.md + 6 mirror PNGs + task-plan/w4a3-findings.md

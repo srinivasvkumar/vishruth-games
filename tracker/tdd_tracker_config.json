@@ -22,15 +22,15 @@
   },
   "current_status": {
 
-    "phase": "W3-C: Complete",
-    "day": 10,
-    "current_task": "W3-C.2 + W3-C.3b + W3-C.4 complete; D4 gate MET",
-    "status": "W3-C-COMPLETE",
+    "phase": "W4-A: In Progress",
+    "day": 12,
+    "current_task": "W4-A.3 visual-regression refinement complete; W4-A.1/W4-A.2 pending",
+    "status": "W4-A-3-COMPLETE",
     "tdd_cycle": "complete",
-    "start_date": "2026-09-23T13:00:00",
-    "last_updated": "2026-09-23T17:00:00",
-    "completion_date": "2026-09-23T17:00:00",
-    "completion_notes": "W3-C complete: C.1a D4 gate MET (60.0 FPS @ 120 obstacles), C.1b skipped, C.2 Firefox AudioContext fix, C.3a measured (avg 12.6ms, p95 16.2ms), C.3b zero-allocation input path, C.4 Settings UI with localStorage + keyboard nav. 665/665 unit tests, tsc clean, eslint clean."
+    "start_date": "2026-09-24T20:00:00",
+    "last_updated": "2026-09-24T21:55:00",
+    "completion_date": "2026-09-24T21:55:00",
+    "completion_notes": "W4-A.3 complete: new spec tests/e2e/w4a-visual-regression.spec.ts (3 scenes x 2 browsers = 6 baselines). Two determinism levers: seeded Math.random (mulberry32 seed 0x9e3779b9) + pre-screenshot renderer.clear(). Stability verified (run 2 passes against run-1 baselines). Flake policy established: maxDiffPixels 3000 for S2 GameScene (SwiftShader non-determinism), 0 for S1/S3 DOM scenes. Evidence: w4a3-test-report.md + 6 mirror PNGs + findings.md."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",
@@ -157,5 +157,5 @@
       "Visual regression validation"
     ]
   },
-  "last_updated": "2026-09-14T08:45:00"
+  "last_updated": "2026-09-24T21:55:00"
 }
