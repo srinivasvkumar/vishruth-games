@@ -578,3 +578,13 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
     Full suite: 683/683. Lint + typecheck clean.
   - Evidence: tests/evidence/w4/W4B1-RED.txt + W4B1-GREEN.txt
 
+- [x] W4-B.3 — ARIA labels for all buttons (Menu + GameOver + Settings) — game-dev — `t_64341d74` — 2026-09-24
+  - MenuScene: START ("Start game"), SETTINGS ("Open settings"),
+    HIGH SCORES panel ("View high scores", role=region).
+  - GameOverScene: RESTART ("Restart game"), final score ("Final score").
+  - Settings: volume slider ("Volume"), speed buttons ("Set speed to Xx"),
+    difficulty buttons ("Set difficulty to X"), CLOSE ("Close settings").
+  - TDD RED: 9 failed (all aria-labels missing). GREEN: 9/9.
+    Regression: 45/45 scene suites. Full suite: 692/692. Lint + typecheck clean.
+  - Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt
+

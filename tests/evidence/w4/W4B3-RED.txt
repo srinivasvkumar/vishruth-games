@@ -1,0 +1,30 @@
+     → expected null to be 'Start game' // Object.is equality
+     → expected null to be 'Open settings' // Object.is equality
+     → expected null to be 'View high scores' // Object.is equality
+     → expected null to be 'Volume' // Object.is equality
+     → expected null to be 'Set speed to 0.5x' // Object.is equality
+     → expected null to be 'Set difficulty to EASY' // Object.is equality
+     → expected null to be 'Close settings' // Object.is equality
+     → expected null to be 'Restart game' // Object.is equality
+     → expected null to be 'Final score' // Object.is equality
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > START button has aria-label "Start game"
+AssertionError: expected null to be 'Start game' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > SETTINGS button has aria-label "Open settings"
+AssertionError: expected null to be 'Open settings' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > HIGH SCORES panel has aria-label "View high scores"
+AssertionError: expected null to be 'View high scores' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > Settings volume slider has aria-label "Volume"
+AssertionError: expected null to be 'Volume' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > Settings speed buttons have aria-labels
+AssertionError: expected null to be 'Set speed to 0.5x' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > Settings difficulty buttons have aria-labels
+AssertionError: expected null to be 'Set difficulty to EASY' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: MenuScene ARIA labels > Settings CLOSE button has aria-label "Close settings"
+AssertionError: expected null to be 'Close settings' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: GameOverScene ARIA labels > RESTART button has aria-label "Restart game"
+AssertionError: expected null to be 'Restart game' // Object.is equality
+ FAIL  tests/unit/aria-labels.test.ts > W4-B.3: GameOverScene ARIA labels > Final score value has aria-label "Final score"
+AssertionError: expected null to be 'Final score' // Object.is equality
+ Test Files  1 failed (1)
+      Tests  9 failed (9)

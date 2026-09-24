@@ -188,6 +188,7 @@ export class MenuScene extends Scene {
     const startButton = document.createElement('button');
     startButton.id = 'menu-start-button';
     startButton.textContent = 'START';
+    startButton.setAttribute('aria-label', 'Start game');
     // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
     startButton.setAttribute('tabindex', '1');
     startButton.setAttribute('data-focus-outline', 'true');
@@ -214,6 +215,7 @@ export class MenuScene extends Scene {
     const settingsButton = document.createElement('button');
     settingsButton.id = 'menu-settings-button';
     settingsButton.textContent = 'SETTINGS';
+    settingsButton.setAttribute('aria-label', 'Open settings');
     // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
     settingsButton.setAttribute('tabindex', '2');
     settingsButton.setAttribute('data-focus-outline', 'true');
@@ -239,6 +241,8 @@ export class MenuScene extends Scene {
     // HIGH SCORES panel (W3A.3): bordered box with label + value.
     const highScorePanel = document.createElement('div');
     highScorePanel.id = 'menu-high-score';
+    highScorePanel.setAttribute('aria-label', 'View high scores');
+    highScorePanel.setAttribute('role', 'region');
     highScorePanel.style.cssText = `
       margin-top: 24px;
       padding: 12px 24px;
@@ -550,6 +554,7 @@ export class MenuScene extends Scene {
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.id = 'settings-volume-slider';
+    slider.setAttribute('aria-label', 'Volume');
     slider.min = '0';
     slider.max = '100';
     slider.step = '1';
@@ -599,6 +604,7 @@ export class MenuScene extends Scene {
       const btn = document.createElement('button');
       btn.id = `settings-speed-${value}`;
       btn.textContent = label;
+      btn.setAttribute('aria-label', `Set speed to ${label}`);
       btn.style.cssText = `
         padding: 8px 16px;
         font-family: monospace;
@@ -635,6 +641,7 @@ export class MenuScene extends Scene {
       const btn = document.createElement('button');
       btn.id = `settings-difficulty-${value}`;
       btn.textContent = label;
+      btn.setAttribute('aria-label', `Set difficulty to ${label}`);
       btn.style.cssText = `
         padding: 8px 16px;
         font-family: monospace;
@@ -679,6 +686,7 @@ export class MenuScene extends Scene {
     const closeBtn = document.createElement('button');
     closeBtn.id = 'settings-close-button';
     closeBtn.textContent = 'CLOSE';
+    closeBtn.setAttribute('aria-label', 'Close settings');
     // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
     closeBtn.setAttribute('tabindex', '4');
     closeBtn.setAttribute('data-focus-outline', 'true');

@@ -163,6 +163,7 @@ export class GameOverScene extends Scene {
     `;
     const finalScoreValue = document.createElement("div");
     finalScoreValue.id = "gameover-final-score";
+    finalScoreValue.setAttribute("aria-label", "Final score");
     finalScoreValue.textContent = String(this.finalScore);
     finalScoreValue.style.cssText = `
       color: #ffffff;
@@ -200,6 +201,7 @@ export class GameOverScene extends Scene {
     const restartButton = document.createElement("button");
     restartButton.id = "gameover-restart-button";
     restartButton.textContent = "RESTART";
+    restartButton.setAttribute("aria-label", "Restart game");
     restartButton.style.cssText = `
       padding: 12px 48px;
       font-size: 24px;

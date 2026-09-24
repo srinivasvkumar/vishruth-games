@@ -468,6 +468,14 @@
               "notes": "Kanban t_e95e3455. WCAG AA keyboard nav for MenuScene: explicit tabindex (START=1, SETTINGS=2, CLOSE=4; HIGH SCORES not a Tab stop; title/hint not focusable) + visible :focus outline (3px solid #00ff00, offset 2px) on all three menu buttons. Enter/Space activates focused button (existing behavior preserved); Esc closes settings panel + returns focus to START (existing behavior preserved). TDD RED: 6 failed (no tabindex, no :focus style) / 11 passed (behavioral already correct). GREEN: 17/17 pass. Regression: menu-scene-full 16/16 + settings-panel 14/14 + menu-scene 7/7 = 37/37. Full suite: 683/683. Lint + typecheck clean. Evidence: tests/evidence/w4/W4B1-RED.txt + W4B1-GREEN.txt."
             },
             {
+              "id": "W4-B.3",
+              "description": "ARIA labels for all buttons (Menu + GameOver + Settings)",
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-24T23:35:00",
+              "notes": "Kanban t_64341d74. ARIA labels added to all interactive/meaningful elements: MenuScene START (\"Start game\"), SETTINGS (\"Open settings\"), HIGH SCORES panel (\"View high scores\", role=region); GameOverScene RESTART (\"Restart game\"), final score value (\"Final score\"); Settings panel volume slider (\"Volume\"), speed buttons (\"Set speed to Xx\"), difficulty buttons (\"Set difficulty to X\"), CLOSE (\"Close settings\"). TDD RED: 9 failed (all aria-labels missing). GREEN: 9/9 pass. Regression: menu-scene 7/7 + menu-scene-keyboard 17/17 + gameover-scene 21/21 = 45/45. Full suite: 692/692. Lint + typecheck clean. Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",
