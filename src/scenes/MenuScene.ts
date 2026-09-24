@@ -188,6 +188,9 @@ export class MenuScene extends Scene {
     const startButton = document.createElement('button');
     startButton.id = 'menu-start-button';
     startButton.textContent = 'START';
+    // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
+    startButton.setAttribute('tabindex', '1');
+    startButton.setAttribute('data-focus-outline', 'true');
     startButton.style.cssText = `
       margin-top: 20px;
       padding: 12px 48px;
@@ -198,6 +201,8 @@ export class MenuScene extends Scene {
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      outline: 3px solid #00ff00;
+      outline-offset: 2px;
     `;
     startButton.addEventListener('click', () => {
       this.handleAudioGesture();
@@ -209,6 +214,9 @@ export class MenuScene extends Scene {
     const settingsButton = document.createElement('button');
     settingsButton.id = 'menu-settings-button';
     settingsButton.textContent = 'SETTINGS';
+    // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
+    settingsButton.setAttribute('tabindex', '2');
+    settingsButton.setAttribute('data-focus-outline', 'true');
     settingsButton.style.cssText = `
       margin-top: 12px;
       padding: 12px 48px;
@@ -219,6 +227,8 @@ export class MenuScene extends Scene {
       border: 2px solid #00ff00;
       border-radius: 4px;
       cursor: pointer;
+      outline: 3px solid #00ff00;
+      outline-offset: 2px;
     `;
     settingsButton.addEventListener('click', () => {
       this.handleAudioGesture();
@@ -669,6 +679,9 @@ export class MenuScene extends Scene {
     const closeBtn = document.createElement('button');
     closeBtn.id = 'settings-close-button';
     closeBtn.textContent = 'CLOSE';
+    // W4-B.1: explicit tabindex for deterministic Tab order + visible :focus style.
+    closeBtn.setAttribute('tabindex', '4');
+    closeBtn.setAttribute('data-focus-outline', 'true');
     closeBtn.style.cssText = `
       margin-top: 32px;
       padding: 10px 40px;
@@ -679,6 +692,8 @@ export class MenuScene extends Scene {
       border: 2px solid #00ff00;
       border-radius: 4px;
       cursor: pointer;
+      outline: 3px solid #00ff00;
+      outline-offset: 2px;
     `;
     closeBtn.addEventListener('click', () => {
       this.closeSettingsPanel();

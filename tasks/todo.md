@@ -214,3 +214,12 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Stability verified: run 2 passes against run-1 baselines (GREEN leg)
   - Flake policy: maxDiffPixels 3000 for S2 GameScene (SwiftShader non-determinism), 0 for S1/S3 DOM scenes
   - Evidence: tests/evidence/w4/w4a3-test-report.md + 6 mirror PNGs + task-plan/w4a3-findings.md
+
+# Week 4-B Lane (2026-09-24) — IN PROGRESS
+- [x] W4-B.1 — MenuScene keyboard navigation: Tab order + Enter/Space + Esc close + visible :focus style — game-dev — `t_e95e3455` — 2026-09-24
+  - Explicit tabindex: START=1, SETTINGS=2, CLOSE=4; HIGH SCORES not a Tab stop; title/hint not focusable
+  - Visible :focus style: outline 3px solid #00ff00, offset 2px on all 3 menu buttons
+  - Enter/Space activates focused button (existing behavior preserved)
+  - Esc closes settings panel + returns focus to START (existing behavior preserved)
+  - TDD RED: 6 failed / 11 passed. GREEN: 17/17. Regression: 37/37 menu-scene suites. Full: 683/683.
+  - Evidence: tests/evidence/w4/W4B1-RED.txt + W4B1-GREEN.txt

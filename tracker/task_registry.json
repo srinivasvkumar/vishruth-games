@@ -460,6 +460,14 @@
               "notes": "Kanban t_d0336dbf. New spec tests/e2e/w4a-visual-regression.spec.ts (3 scenes x 2 browsers = 6 baselines). Two determinism levers on top of W3-B.6-v2 world-freeze: (1) seeded Math.random via addInitScript (mulberry32, seed 0x9e3779b9), (2) pre-screenshot renderer.clear() to strip first-frame-clear variance. 6 baselines captured: menu/game/gameover x chromium-boot/firefox. Stability verified: run 2 passes against run-1 baselines (GREEN leg). Flake policy established: SwiftShader non-determinism documented (54-58% PNG byte variance on frozen GameScene under --use-angle=swiftshader); maxDiffPixels: 3000 for S2 GameScene, maxDiffPixels: 0 for S1/S3 DOM scenes. Evidence: tests/evidence/w4/w4a3-test-report.md + w4a3-{menu,game,gameover}-scene-{chrome,firefox}.png + task-plan/w4a3-findings.md."
             },
             {
+              "id": "W4-B.1",
+              "description": "MenuScene keyboard navigation: Tab order + Enter/Space activation + Esc close + visible :focus style",
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-24T22:55:00",
+              "notes": "Kanban t_e95e3455. WCAG AA keyboard nav for MenuScene: explicit tabindex (START=1, SETTINGS=2, CLOSE=4; HIGH SCORES not a Tab stop; title/hint not focusable) + visible :focus outline (3px solid #00ff00, offset 2px) on all three menu buttons. Enter/Space activates focused button (existing behavior preserved); Esc closes settings panel + returns focus to START (existing behavior preserved). TDD RED: 6 failed (no tabindex, no :focus style) / 11 passed (behavioral already correct). GREEN: 17/17 pass. Regression: menu-scene-full 16/16 + settings-panel 14/14 + menu-scene 7/7 = 37/37. Full suite: 683/683. Lint + typecheck clean. Evidence: tests/evidence/w4/W4B1-RED.txt + W4B1-GREEN.txt."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",

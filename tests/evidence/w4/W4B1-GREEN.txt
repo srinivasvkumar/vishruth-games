@@ -1,0 +1,65 @@
+================================================================================
+W4-B.1 — MenuScene keyboard navigation: Tab order + Enter/Space + Esc
+GREEN PHASE (spec passes after product fix)
+================================================================================
+Card:        t_e95e3455
+Date:        2026-09-24 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c580ee1 (main) + W4-B.1 diff (uncommitted)
+Spec:        tests/unit/menu-scene-keyboard.test.ts (17 tests)
+Run:         ./node_modules/.bin/vitest run tests/unit/menu-scene-keyboard.test.ts
+             --config config/vite.config.ts
+             (Node v22.22.2, vitest 1.6.1, happy-dom)
+Full log:    workspaces/t_e95e3455/green-vitest.log
+
+==================== RESULT SUMMARY ====================
+  17 passed (17 total)   — 1.10s
+
+Product fix applied to src/scenes/MenuScene.ts:
+  1. START button:   tabindex="1" + data-focus-outline + outline CSS
+  2. SETTINGS button: tabindex="2" + data-focus-outline + outline CSS
+  3. CLOSE button:   tabindex="4" + data-focus-outline + outline CSS
+  (HIGH SCORES panel: no tabindex — intentionally not a Tab stop)
+  (title h1, hint p: no tabindex — intentionally not focusable)
+
+Tab order (deterministic):
+  START (1) → SETTINGS (2) → [settings panel: volume → speed → difficulty
+  → controls (3)] → CLOSE (4)
+
+:focus style:
+  outline: 3px solid #00ff00; outline-offset: 2px;
+  on all three menu buttons (START, SETTINGS, CLOSE).
+
+Per-test results (all 17 PASS):
+  Tab order:
+    [PASS] START has explicit tabindex for deterministic Tab order
+    [PASS] SETTINGS has explicit tabindex for deterministic Tab order
+    [PASS] HIGH SCORES panel is not a Tab stop (skipped in Tab order)
+    [PASS] Tab order: START comes before SETTINGS in DOM
+    [PASS] Tab order: title and hint are not focusable (skipped)
+    [PASS] CLOSE button in settings panel has explicit tabindex
+  Enter/Space:
+    [PASS] Enter on START (panel closed) starts the game
+    [PASS] Space on START (panel closed) starts the game
+    [PASS] Enter/Space do NOT start the game when settings panel is open
+    [PASS] Enter/Space activate the focused settings control (not START)
+  Esc:
+    [PASS] Esc closes the settings panel
+    [PASS] Esc returns focus to the START button
+    [PASS] Esc on a closed panel is a no-op (no error, no state change)
+    [PASS] after Esc, Enter starts the game again (full cycle)
+  :focus style:
+    [PASS] START button has a visible :focus outline style
+    [PASS] SETTINGS button has a visible :focus outline style
+    [PASS] CLOSE button in settings panel has a visible :focus outline style
+
+REGRESSION CHECK:
+  menu-scene-full.test.ts   16/16 PASS
+  settings-panel.test.ts    14/14 PASS
+  menu-scene.test.ts         7/7 PASS
+  Total: 37/37 PASS (no regressions)
+
+LINT:    clean (eslint, 0 errors)
+TYPECHECK: clean (tsc --noEmit, 0 errors)
+
+================================================================================

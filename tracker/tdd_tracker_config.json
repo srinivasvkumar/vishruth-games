@@ -22,15 +22,15 @@
   },
   "current_status": {
 
-    "phase": "W4-A: In Progress",
+    "phase": "W4-B: In Progress",
     "day": 12,
-    "current_task": "W4-A.3 visual-regression refinement complete; W4-A.1/W4-A.2 pending",
-    "status": "W4-A-3-COMPLETE",
+    "current_task": "W4-B.1 keyboard nav complete; W4-A.1/W4-A.2 pending",
+    "status": "W4-B-1-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-24T20:00:00",
-    "last_updated": "2026-09-24T21:55:00",
-    "completion_date": "2026-09-24T21:55:00",
-    "completion_notes": "W4-A.3 complete: new spec tests/e2e/w4a-visual-regression.spec.ts (3 scenes x 2 browsers = 6 baselines). Two determinism levers: seeded Math.random (mulberry32 seed 0x9e3779b9) + pre-screenshot renderer.clear(). Stability verified (run 2 passes against run-1 baselines). Flake policy established: maxDiffPixels 3000 for S2 GameScene (SwiftShader non-determinism), 0 for S1/S3 DOM scenes. Evidence: w4a3-test-report.md + 6 mirror PNGs + findings.md."
+    "last_updated": "2026-09-24T22:55:00",
+    "completion_date": "2026-09-24T22:55:00",
+    "completion_notes": "W4-B.1 complete: WCAG AA keyboard nav for MenuScene. Explicit tabindex (START=1, SETTINGS=2, CLOSE=4; HIGH SCORES not a Tab stop; title/hint not focusable) + visible :focus outline (3px solid #00ff00, offset 2px) on all three menu buttons. Enter/Space activates focused button; Esc closes settings panel + returns focus to START. TDD RED: 6 failed / 11 passed. GREEN: 17/17. Regression: 37/37 menu-scene suites. Full suite: 683/683. Lint + typecheck clean. Evidence: W4B1-RED.txt + W4B1-GREEN.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

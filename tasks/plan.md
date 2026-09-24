@@ -566,3 +566,15 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Evidence: tests/evidence/w4/w4a3-test-report.md + 6 mirror PNGs +
     task-plan/w4a3-findings.md
 
+- [x] W4-B.1 — MenuScene keyboard navigation: Tab order + Enter/Space + Esc close + visible :focus style — game-dev — `t_e95e3455` — 2026-09-24
+  - Explicit tabindex: START=1, SETTINGS=2, CLOSE=4; HIGH SCORES not a Tab
+    stop; title/hint not focusable (div, no tabindex).
+  - Visible :focus style: outline 3px solid #00ff00, offset 2px on all 3
+    menu buttons (START, SETTINGS, CLOSE).
+  - Enter/Space activates focused button (native <button> behavior preserved).
+  - Esc closes settings panel + returns focus to START (existing behavior).
+  - TDD RED: 6 failed (no tabindex, no :focus style) / 11 passed (behavioral
+    already correct). GREEN: 17/17. Regression: 37/37 menu-scene suites.
+    Full suite: 683/683. Lint + typecheck clean.
+  - Evidence: tests/evidence/w4/W4B1-RED.txt + W4B1-GREEN.txt
+

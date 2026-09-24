@@ -1,0 +1,56 @@
+================================================================================
+W4-B.1 — MenuScene keyboard navigation: Tab order + Enter/Space + Esc
+RED PHASE (first run of the new spec against the product)
+================================================================================
+Card:        t_e95e3455
+Date:        2026-09-24 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c580ee1 (main)
+Spec:        tests/unit/menu-scene-keyboard.test.ts (17 tests)
+Run:         ./node_modules/.bin/vitest run tests/unit/menu-scene-keyboard.test.ts
+             --config config/vite.config.ts
+             (Node v22.22.2, vitest 1.6.1, happy-dom)
+Full log:    workspaces/t_e95e3455/red-vitest.log
+
+==================== RESULT SUMMARY ====================
+  6 failed | 11 passed (17 total)   — 1.31s
+
+RED PHASE (TDD discipline):
+  The spec was written FIRST against the intended behavior (explicit tabindex,
+  visible :focus style, Enter/Space activation, Esc close). On the first
+  execution against the product @ c580ee1, 6 tests failed as expected:
+
+  FAILED TESTS:
+  1. "START has explicit tabindex for deterministic Tab order"
+     → START must have an explicit tabindex attribute: expected null not to be null
+  2. "SETTINGS has explicit tabindex for deterministic Tab order"
+     → SETTINGS must have an explicit tabindex attribute: expected null not to be null
+  3. "CLOSE button in settings panel has explicit tabindex"
+     → CLOSE must have an explicit tabindex attribute: expected null not to be null
+  4. "START button has a visible :focus outline style"
+     → START button must have a visible :focus style: expected false to be true
+  5. "SETTINGS button has a visible :focus outline style"
+     → SETTINGS button must have a visible :focus style: expected false to be true
+  6. "CLOSE button in settings panel has a visible :focus outline style"
+     → CLOSE button must have a visible :focus style: expected false to be true
+
+  PASSED TESTS (11):
+  - "HIGH SCORES panel is not a Tab stop (skipped in Tab order)"
+  - "Tab order: START comes before SETTINGS in DOM"
+  - "Tab order: title and hint are not focusable (skipped)"
+  - "Enter on START (panel closed) starts the game"
+  - "Space on START (panel closed) starts the game"
+  - "Enter/Space do NOT start the game when settings panel is open"
+  - "Enter/Space activate the focused settings control (not START)"
+  - "Esc closes the settings panel"
+  - "Esc returns focus to the START button"
+  - "Esc on a closed panel is a no-op (no error, no state change)"
+  - "after Esc, Enter starts the game again (full cycle)"
+
+  Analysis: The product already implements Enter/Space activation and Esc close
+  correctly (11 behavioral tests pass). The 6 failures are for the two WCAG AA
+  requirements the product lacks:
+  (a) explicit tabindex attributes for deterministic Tab order
+  (b) visible :focus style on menu buttons
+
+================================================================================
