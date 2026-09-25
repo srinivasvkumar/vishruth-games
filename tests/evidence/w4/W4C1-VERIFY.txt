@@ -1,0 +1,72 @@
+================================================================================
+W4-C.1 — TESTING.md: test structure + coverage + patterns doc — VERIFY
+================================================================================
+Card:        t_37779e96
+Date:        2026-09-25 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Deliverable: TESTING.md (repo root) — 1 file, ~25 KB
+
+Content coverage (all six required sections present):
+  1. How to run tests — Vitest (test:run/test:watch/test:coverage/test:ui),
+     scoped runs, Playwright (full suite, --project, --project=chromium-boot,
+     single spec, -g by title, --ui, show-report), prerequisites (Node >= 20,
+     DISPLAY for headed WebGL), quality gates (pre-commit full-suite +
+     tracker-drift check, type-check, lint).
+  2. Test structure — full tests/ tree (38 unit files, 19 e2e specs,
+     setup/ mocks, baseline/, evidence/ d02|w2|w3|w4) + evidence-naming
+     conventions (W4Bx-RED/GREEN/VERIFY.txt, project-suffixed screenshots).
+  3. Coverage interpretation — v8 provider, reports to ./coverage (text/json/
+     html/lcov), column semantics, structural 0% rows (core/index.ts,
+     types/GameTypes.ts) explained, thresholds currently 0 with guidance.
+  4. Common patterns — TDD red/green/refactor/verify cycle with evidence
+     ritual; unit anatomy (score.test.ts: DI storage, pure fns, happy-dom,
+     aliases); e2e anatomy (w4a-full-loop-extended: window.game,
+     __debugPlayerPos, player:death/player:score CustomEvents, DOM ids,
+     console capture, fresh-page-per-scenario, in-test evidence); mock
+     strategies table (three/cannon global, audio per-spec, storage DI,
+     no-mock e2e); Playwright helper/tip list.
+  5. Troubleshooting — 12-row symptom/cause/fix table: Node 18 vs 20,
+     DISPLAY, WebGL-in-headless, tracker drift, full-suite pre-commit,
+     BROWSER smoke-swap, port 5173, stale dist, SwiftShader timing,
+     lint-staged legacy defect.
+  6. Examples — 4 worked examples (new unit test TDD cycle, new e2e scenario,
+     failing-run forensics, weekly evidence ritual).
+
+LIVE VERIFICATION (this run, 2026-09-25 ~13:31 AEST, Node 22.22.2):
+
+  Unit suite:
+    cmd: npx vitest run --config config/vite.config.ts
+    out: Test Files  38 passed (38)
+         Tests  756 passed (756)
+         Duration 5.81s
+
+  Coverage:
+    cmd: npx vitest run --config config/vite.config.ts --coverage
+    out: All files  95.19 stmts / 90.76 branch / 95.2 funcs / 95.19 lines
+         (per-file table quoted in TESTING.md §3, incl. uncovered line
+          numbers for Game.ts, SceneManager.ts, GameScene.ts)
+
+  E2E sample (grounding the Playwright commands in §1/§6):
+    cmd: PATH="$HOME/.nvm/versions/node/v22.22.2/bin:$PATH" \
+         ./node_modules/.bin/playwright test \
+         --project=chromium-boot tests/e2e/w3b/w3b-cp1-start.spec.ts
+    out: Running 3 tests using 1 worker
+         3 passed (10.7s)   [chromium-boot, DISPLAY=:1, headed]
+
+  Docs cross-checked against source:
+    - package.json scripts (test:run/test:coverage/test:e2e/...)
+    - config/vite.config.ts test block (happy-dom, include tests/**/*.test.ts,
+      setupFiles mock-three/mock-cannon, mockReset, coverage v8, thresholds 0)
+    - playwright.config.ts (testDir BROWSER-swap, 3 projects, headed +
+      WebGL args, webServer 5173/public/index.html, workers:1, retries:0)
+    - .husky/pre-commit (full-suite gate + 4-tracker drift check)
+    - tests/ tree (38 *.test.ts unit, 19 *.spec.ts e2e, setup/, baseline/,
+      evidence/d02|w2|w3|w4)
+    - tests/evidence/w4/W4B5-VERIFY.txt (stale-dist + headless-WebGL2 notes)
+
+RULES COMPLIANCE:
+  - No --no-verify used anywhere.
+  - No subtask/kiban child created (orchestrator-level decomposition only).
+  - 1 file written: TESTING.md (new, repo root).
+
+================================================================================
