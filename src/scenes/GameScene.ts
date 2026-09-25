@@ -3,8 +3,7 @@ import { Scene } from './Scene';
 import { Logger } from '@/utils/Logger';
 import { GameConstants, GameEvents } from '@/utils/Constants';
 import { Player } from '@/entities/Player';
-import { Obstacle } from '@/entities/Obstacle';
-import type { ObstacleType } from '@/entities/Obstacle';
+import { Obstacle, type ObstacleType } from '@/entities/Obstacle';
 import type { Game } from '@/core/Game';
 import { ScoreManager } from '@/systems/Score';
 import { SettingsManager, type Difficulty } from '@/systems/Settings';
@@ -56,7 +55,33 @@ export class GameScene extends Scene {
   private difficulty: Difficulty = 'normal';
   private spawnRateMultiplier = 1.0;
   private obstacleSpeedMultiplier = 1.0;
-  
+  /**
+   * W4-B.11: object pool for obstacles. `spawnObstacle()` pulls from here
+   * before allocating a new Obstacle; `reapObstacles()` pushes off-screen /
+   * deactivated obstacles back here instead of dropping them. The pool keeps
+   * the live obstacle count bounded and reuses the shared geometry/material
+   * caches across re-spawns — no per-spawn GPU allocation.
+   */
+  private readonly obstaclePool: Obstacle[] = [];
+  /** W4-B.11: reap threshold — obstacles past this z are off-screen behind
+   * the camera and are recycled into the pool instead of living forever. */
+  private static readonly REAP_Z = -250;
+  /**
+   * W4-B.10: true while the run is paused because the tab lost focus
+   * (window blur). Set true by the blur handler (which calls
+   * `game.pause()`), cleared by the focus handler (which calls
+   * `game.resume()`). Guard so focus only resumes a blur-induced pause and
+   * blur only pauses a running game.
+   */
+  private isPaused = false;
+  /**
+   * W4-B.10: the "PAUSED" overlay element. A transient gameplay-state
+   * overlay (NOT a HUD div — D2 HUD-ownership applies to score/health/level),
+   * so GameScene owns it directly. Created in setupEventListeners() and
+   * removed in onCleanup(). Hidden by default; shown on blur, hidden on focus.
+   */
+  private pausedOverlayEl: HTMLDivElement | null = null;
+
   constructor(game: Game) {
     super(game);
     this.scoreManager = new ScoreManager();
@@ -100,7 +125,12 @@ export class GameScene extends Scene {
     
     // Setup event listeners
     this.setupEventListeners();
-    
+
+    // W4-B.9: window resize handler — keep the active camera's aspect ratio
+    // and the shared WebGL viewport in sync with the viewport so a resize
+    // during gameplay does not leave the 3D view stretched or letterboxed.
+    window.addEventListener('resize', this.handleResize);
+
     Logger.info('Game scene loaded');
   }
   
@@ -168,6 +198,11 @@ export class GameScene extends Scene {
       this.gameOver();
       return;
     }
+    
+    // W4-B.11: reap off-screen obstacles into the pool. Runs at the start of
+    // every frame so the spawn timer below always sees a warm pool. Also
+    // bounds the live obstacle array under sustained spawning (500+).
+    this.reapOffscreenObstacles();
     
     // Update player
     // W3-C.3b: read the live key state BY REFERENCE via getKeys() (zero
@@ -238,6 +273,15 @@ export class GameScene extends Scene {
     // the game scene so they are not visible on the game-over / menu scenes
     // (W3A.6 S3: "Game HUD must be hidden in the game-over scene").
     this.game.getUISystem().hideHud();
+
+    // W4-B.10: if the run was blur-paused, hide the "PAUSED" overlay and
+    // clear the flag so it does not bleed through to the next scene. The
+    // game FSM stays in whatever state the loop is in — we only hide the
+    // transient overlay and drop the scene-local flag.
+    if (this.isPaused) {
+      this.isPaused = false;
+      this.hidePausedOverlay();
+    }
     Logger.debug('Game scene exited');
   }
   
@@ -245,22 +289,77 @@ export class GameScene extends Scene {
    * Clean up game scene
    */
   protected onCleanup(): void {
-    this.obstacles.forEach(obstacle => {
-      this.scene.remove(obstacle.getMesh());
-    });
+    // W4-B.11: dispose all obstacles (live + pooled) instead of just
+    // removing their meshes. dispose() detaches the mesh, resets state, and
+    // drops the instance from the tracking array. Shared GPU resources are
+    // retained (module-level caches).
+    this.disposeAllObstacles();
     
     if (this.player) {
       this.scene.remove(this.player.getMesh());
     }
     
-    this.obstacles = [];
     this.player = null;
-    
+
+    // W4-B.9: detach the window resize listener so leaving the game scene
+    // does not leak a handler that would keep mutating a dead camera.
+    window.removeEventListener('resize', this.handleResize);
+
+    // W4-B.10: detach the window blur/focus listeners and remove the
+    // "PAUSED" overlay so a cleaned-up scene leaves no dangling listeners or
+    // DOM nodes. The isPaused flag is reset (idempotent, re-enter safe).
+    window.removeEventListener('blur', this.handleBlur);
+    window.removeEventListener('focus', this.handleFocus);
+    if (this.pausedOverlayEl) {
+      this.pausedOverlayEl.remove();
+      this.pausedOverlayEl = null;
+    }
+    this.isPaused = false;
+
     // W3A.2: HUD is owned by UISystem (D2). The HUD divs are removed by
     // Game.cleanup() calling uiSystem.cleanup(). GameScene does not
     // remove them directly.
     Logger.debug('Game scene cleaned up');
   }
+
+  /**
+   * W4-B.9: window resize handler.
+   *
+   * When the browser window is resized during active gameplay this must:
+   *   1. Update the active camera's aspect ratio to the new viewport
+   *      (window.innerWidth / window.innerHeight) and call
+   *      updateProjectionMatrix() so the perspective projection rebuilds.
+   *      Without this the 3D view is stretched / letterboxed.
+   *   2. Resize the shared WebGL renderer to the #game-container so the
+   *      canvas fills the screen (mobile rotation included).
+   *
+   * The HUD is owned by UISystem (D2) and uses fixed-px corner offsets,
+   * which are resolution-independent by construction — no re-layout needed
+   * here. This handler owns only the 3D viewport (camera + renderer).
+   *
+   * Guarded against a missing container / zero-size so a resize fired
+   * before layout (or on a hidden tab) cannot produce a NaN aspect.
+   */
+  private handleResize = (): void => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    if (!width || !height) return;
+
+    // 1. Update the active camera's aspect ratio + projection.
+    const camera = this.camera as THREE.PerspectiveCamera;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    // 2. Resize the shared WebGL viewport to the game container.
+    const container = document.getElementById('game-container');
+    if (container) {
+      this.game.getRenderer().resizeToContainer(container);
+    } else {
+      // Fallback (e.g. unit tests / embedded setups without #game-container):
+      // resize the renderer directly to the viewport dimensions.
+      this.game.getRenderer().resize(width, height);
+    }
+  };
   
   /**
    * Setup game scene
@@ -300,6 +399,69 @@ export class GameScene extends Scene {
   }
   
   /**
+   * W4-B.11: reap off-screen obstacles into the pool.
+   *
+   * Scans `this.obstacles`; for each one past `REAP_Z` behind the player,
+   * dispose() the instance (releases the mesh from the scene graph, resets
+   * per-instance state — shared geometry/material are retained), push it to
+   * `this.obstaclePool`, and remove it from the tracking array.
+   *
+   * In-place filter (single pass, no intermediate array):
+   *   - i advances to the next non-reaped index,
+   *   - the write index (j) only advances when we keep an obstacle.
+   *
+   * Bounded at REAP_Z because:
+   *   1. it keeps the live obstacle array from growing unboundedly under
+   *      sustained spawning (the low-memory failure mode W4-B.11 targets),
+   *   2. it keeps the pool warm so the next spawnObstacle() pulls a pooled
+   *      instance instead of `new Obstacle(...)`.
+   */
+  private reapOffscreenObstacles(): void {
+    if (this.obstacles.length === 0) return;
+    const REAP_Z = GameScene.REAP_Z;
+    let j = 0;
+    for (let i = 0; i < this.obstacles.length; i++) {
+      const o = this.obstacles[i];
+      if (o.getMesh().position.z > REAP_Z) {
+        // Still on-screen — keep it.
+        if (j !== i) {
+          this.obstacles[j] = o;
+        }
+        j++;
+      } else {
+        // Off-screen — reap.
+        this.scene.remove(o.getMesh());
+        o.dispose();
+        this.obstaclePool.push(o);
+      }
+    }
+    this.obstacles.length = j;
+  }
+  
+  /**
+   * W4-B.11: dispose all live obstacles at scene teardown.
+   *
+   * Called from onExit(). Disposes each obstacle's instance-owned resources
+   * and clears the tracking array. The pool's reaped instances are dropped
+   * too — they have already had their mesh detached by dispose().
+   *
+   * Shared geometry/material caches are NOT disposed here: they are
+   * module-level and survive across scene transitions (the next game scene
+   * will reuse them). Disposing them at scene exit would force the next
+   * scene to re-allocate, defeating the purpose of the cache.
+   */
+  private disposeAllObstacles(): void {
+    for (const o of this.obstacles) {
+      this.scene.remove(o.getMesh());
+      o.dispose();
+    }
+    this.obstacles.length = 0;
+    // Drop pooled instances — they have already been disposed, so just
+    // clear the array. No double-dispose.
+    this.obstaclePool.length = 0;
+  }
+  
+  /**
    * Spawn initial obstacles
    */
   private spawnObstacles(count: number): void {
@@ -311,7 +473,7 @@ export class GameScene extends Scene {
         -10 - i * 10
       );
       
-      const obstacle = new Obstacle(position, type);
+      const obstacle = this.allocateObstacle(position, type);
       this.scene.add(obstacle.getMesh());
       this.obstacles.push(obstacle);
     }
@@ -328,11 +490,33 @@ export class GameScene extends Scene {
       -30
     );
     
-    const obstacle = new Obstacle(position, type);
+    const obstacle = this.allocateObstacle(position, type);
     this.scene.add(obstacle.getMesh());
     this.obstacles.push(obstacle);
     
     Logger.debug('Obstacle spawned', { type, position });
+  }
+  
+  /**
+   * W4-B.11: pull an obstacle from the pool or allocate a fresh one.
+   *
+   * Pool-first: when a reaped obstacle is available, `reset()` repositions
+   * it, re-types it, and re-activates it instead of constructing a new
+   * Obstacle. The re-typed obstacle swaps in the shared material for the new
+   * type and the shared geometry for its size — no GPU allocation on the hot
+   * spawn path.
+   *
+   * Fall back to `new Obstacle(position, type)` only when the pool is empty
+   * (cold start or a burst of simultaneous spawns larger than the pool).
+   */
+  private allocateObstacle(position: THREE.Vector3, type: ObstacleType): Obstacle {
+    const pooled = this.obstaclePool.pop();
+    if (pooled) {
+      // The caller re-adds the mesh to the scene graph.
+      pooled.reset(position, type);
+      return pooled;
+    }
+    return new Obstacle(position, type);
   }
   
   /**
@@ -396,6 +580,11 @@ export class GameScene extends Scene {
   
   /**
    * Setup event listeners
+   *
+   * W4-B.10: window blur/focus are added here so the tab-switching edge case
+   * is handled: blur pauses the run + shows the "PAUSED" overlay, focus
+   * resumes it + hides the overlay. The overlay is created lazily (idempotent
+   * — reuses #game-paused-overlay if a prior instance left it in the DOM).
    */
   private setupEventListeners(): void {
     window.addEventListener(GameEvents.PLAYER_SCORE, (e: Event) => {
@@ -408,6 +597,97 @@ export class GameScene extends Scene {
     window.addEventListener(GameEvents.PLAYER_DEATH, () => {
       this.gameOver();
     });
+
+    // W4-B.10: tab blur/focus -> pause/resume the game loop.
+    this.createPausedOverlay();
+    window.addEventListener('blur', this.handleBlur);
+    window.addEventListener('focus', this.handleFocus);
+  }
+
+  /**
+   * W4-B.10: window blur handler — the user switched away from the tab.
+   *
+   * Only acts while the game is actually playing (`game.isGameRunning()`):
+   * pausing from menu / game-over is a no-op the FSM would block anyway, and
+   * the `isPaused` guard makes repeated blurs idempotent (no double-pause).
+   * Calls `game.pause()` (FSM: playing -> paused; the rAF loop halts) and
+   * shows the "PAUSED" overlay.
+   */
+  private handleBlur = (): void => {
+    if (this.isPaused) return;
+    if (!this.game.isGameRunning()) return;
+    this.isPaused = true;
+    this.game.pause();
+    this.showPausedOverlay();
+    Logger.debug('GameScene: window blur -> paused');
+  };
+
+  /**
+   * W4-B.10: window focus handler — the user returned to the tab.
+   *
+   * Only resumes a blur-induced pause (`isPaused` true): focus in any other
+   * state is a no-op (avoids resuming a game the user paused manually or a
+   * game that is not in the paused FSM state). Calls `game.resume()`
+   * (FSM: paused -> playing; the rAF loop restarts) and hides the overlay.
+   */
+  private handleFocus = (): void => {
+    if (!this.isPaused) return;
+    this.isPaused = false;
+    this.game.resume();
+    this.hidePausedOverlay();
+    Logger.debug('GameScene: window focus -> resumed');
+  };
+
+  /**
+   * W4-B.10: create the "PAUSED" overlay div (idempotent). A fixed,
+   * full-viewport, centered overlay with the text "PAUSED", hidden by default
+   * (display:none) so it never bleeds through before the first blur.
+   */
+  private createPausedOverlay(): void {
+    const existing = document.getElementById('game-paused-overlay') as
+      HTMLDivElement | null;
+    if (existing) {
+      this.pausedOverlayEl = existing;
+      return;
+    }
+    const el = document.createElement('div');
+    el.id = 'game-paused-overlay';
+    el.textContent = 'PAUSED';
+    el.style.cssText = [
+      'position: fixed',
+      'top: 0',
+      'left: 0',
+      'width: 100vw',
+      'height: 100vh',
+      'display: none',
+      'align-items: center',
+      'justify-content: center',
+      'text-align: center',
+      'font-family: monospace',
+      'font-size: 48px',
+      'font-weight: bold',
+      'color: white',
+      'text-shadow: 2px 2px 4px black',
+      'background: rgba(0, 0, 0, 0.55)',
+      'z-index: 200',
+      'pointer-events: none'
+    ].join('; ');
+    document.body.appendChild(el);
+    this.pausedOverlayEl = el;
+  }
+
+  /** W4-B.10: show the "PAUSED" overlay (no-op if cleaned up / absent). */
+  private showPausedOverlay(): void {
+    if (this.pausedOverlayEl) {
+      this.pausedOverlayEl.style.display = 'flex';
+    }
+  }
+
+  /** W4-B.10: hide the "PAUSED" overlay (no-op if cleaned up / absent). */
+  private hidePausedOverlay(): void {
+    if (this.pausedOverlayEl) {
+      this.pausedOverlayEl.style.display = 'none';
+    }
   }
   
   /**

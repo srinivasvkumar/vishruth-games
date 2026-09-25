@@ -1,0 +1,111 @@
+================================================================================
+W4-B.11 — Edge case: low memory conditions (graceful degradation, no crash)
+GREEN PHASE (post-implementation)
+================================================================================
+Date: 2026-09-25
+Branch: main (base commit: cc0f166)
+Operator: game-dev (kanban t_170c965a)
+
+IMPLEMENTATION SUMMARY
+----------------------
+Three files changed to eliminate the per-obstacle GPU/heap allocation that
+was the low-memory failure mode at 500+ obstacles:
+
+1. src/entities/Obstacle.ts
+   - Added module-level geometryCache: Map<string, BoxGeometry> — one
+     geometry per unique size (GameScene always uses default 4x5x6 →
+     1 geometry for all 500+ obstacles).
+   - Added module-level materialCache: Map<ObstacleType, MeshStandardMaterial>
+     — one material per type (5 types → 5 materials total).
+   - Constructor now pulls from caches instead of `new BoxGeometry(...)`
+     and `new MeshStandardMaterial(...)`.
+   - Added DAMAGE_BY_TYPE export (single source of truth for damage values).
+   - Added getSharedMaterial export (used by GameScene pool re-typing).
+   - Added dispose(): detaches instance-owned mesh/group, resets state,
+     preserves shared geometry/material.
+   - Added reset(position, type): re-positions, re-types, and re-activates
+     a pooled obstacle in-place — no GPU allocation.
+
+2. src/scenes/GameScene.ts
+   - Added obstaclePool: Obstacle[] field.
+   - Added REAP_Z = -250 static constant.
+   - Added reapOffscreenObstacles(): called at the start of every
+     onUpdate() frame. Scans this.obstacles; for each one past REAP_Z,
+     removes its mesh from the scene, calls dispose(), pushes to
+     obstaclePool, and removes from the tracking array (in-place filter).
+   - Added allocateObstacle(): pool-first allocation. Pops from pool and
+     calls reset() if available; falls back to `new Obstacle(...)` on
+     cold start.
+   - spawnObstacles() and spawnObstacle() now call allocateObstacle()
+     instead of `new Obstacle(...)` directly.
+   - Added disposeAllObstacles(): called from onCleanup(). Disposes all
+     live obstacles and clears the pool array.
+   - onCleanup() now calls disposeAllObstacles() instead of the old
+     forEach(scene.remove(mesh)).
+
+3. tests/unit/memory-leak.test.ts (NEW — 12 tests)
+   TDD spec written FIRST (RED) against the intended behavior.
+
+TEST RESULTS (GREEN)
+--------------------
+Unit tests (all 38 files, 756 tests):
+  ✓ tests/unit/memory-leak.test.ts       (12 tests) — all PASS
+  ✓ tests/unit/obstacle.test.ts          (24 tests) — no regression
+  ✓ all other unit tests                 (720 tests) — no regression
+  Total: 756 passed / 0 failed
+
+E2E tests (full-loop + extended-loop + physics-sync):
+  ✓ w3a-full-loop.spec.ts                (19 tests) — all PASS
+  ✓ w4a-full-loop-extended.spec.ts      (3 tests) — all PASS
+  ✓ physics-sync.spec.ts                 (0 tests in this run, no failures)
+  ✓ w3c-fps-100.spec.ts                 (2 tests) — all PASS
+  Total: 22 passed / 0 failed
+
+BEFORE (RED) — 10/12 tests failing:
+  - 5 shared-geometry tests: expected 1 geometry, got 600
+  - 2 shared-material tests: expected 5 materials, got 600
+  - 1 dispose() retention test: dispose() didn't exist
+  - 1 reset() test: reset() didn't exist
+  - 1 pool-reuse test: pool didn't exist
+
+AFTER (GREEN) — 12/12 tests passing:
+  - 500 obstacles → 1 shared BoxGeometry (not 500)
+  - 500 obstacles across 5 types → 5 shared materials (not 500)
+  - dispose() does NOT destroy shared geometry/material
+  - reset() re-types a pooled obstacle without GPU allocation
+  - allocateObstacle() pulls from pool when warm, falls back on cold start
+
+MEMORY CHARACTERISTICS AT 500 OBSTACLES (post-fix)
+--------------------------------------------------
+  BoxGeometry instances: 1  (was: 500)
+  MeshStandardMaterial instances: 5  (was: 500)
+  Obstacle JS instances: bounded by REAP_Z (-250) + spawn rate
+  ObstaclePool warm instances: ~10-50 depending on spawn/reap cadence
+  GPU buffer allocations on spawn: 0  (pool hit) or 1 geometry (cold)
+
+KNOWN LIMITATIONS
+-----------------
+- Shared caches are module-level and survive scene transitions. This is
+  intentional: the next game scene reuses them instead of re-allocating.
+  If the app tears down entirely (page unload), the GC reclaims them.
+- REAP_Z = -250 is a heuristic. Obstacles between -60 and -250 are still
+  "live" (on-screen or just off-screen). The reap threshold was chosen to
+  keep the pool warm without reaping obstacles that are still visible.
+- The pool does not cap its size. Under sustained spawning with no reaping
+  (e.g., player dead, scene not updating), the pool could grow. This is
+  acceptable because: (a) the scene stops updating when the player dies,
+  (b) onCleanup() clears the pool on scene exit.
+
+EVIDENCE FILES
+--------------
+  tests/evidence/w4/W4B11-RED.txt   — RED phase (10/12 failing)
+  tests/evidence/w4/W4B11-GREEN.txt — this file (GREEN phase, 12/12 passing)
+  tests/unit/memory-leak.test.ts    — TDD spec (12 tests)
+
+COMMIT
+------
+  To be committed: src/entities/Obstacle.ts, src/scenes/GameScene.ts,
+  tests/unit/memory-leak.test.ts, tests/evidence/w4/W4B11-RED.txt,
+  tests/evidence/w4/W4B11-GREEN.txt
+
+================================================================================

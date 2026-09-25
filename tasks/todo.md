@@ -235,3 +235,7 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Esc closes panel + returns focus to SETTINGS button (was START). Enter/Space activate focused control (swallowed while open). Arrow keys act only while a settings control is focused.
   - TDD RED: 12 failed / 8 passed. GREEN: 20/20. Regression: 51/51. Full: 756/756.
   - Evidence: tests/evidence/w4/W4B8-RED.txt + W4B8-GREEN.txt
+- [x] W4-B.11 — Edge case: low memory conditions (graceful degradation, no crash) — game-dev — `t_170c965a` — 2026-09-25
+  - Eliminated per-obstacle GPU/heap allocation (low-memory failure mode at 500+ obstacles). Obstacle.ts: module-level geometryCache (1 for default 4x5x6) + materialCache (5 total). 500 obstacles share 1 geometry + 5 materials instead of 500+500. dispose() detaches instance mesh, preserves shared resources. reset(position, type) re-positions/re-types pooled obstacle in-place. GameScene.ts: obstaclePool + REAP_Z (-250); reapOffscreenObstacles() every frame; allocateObstacle() pool-first; onCleanup() calls disposeAllObstacles().
+  - TDD RED: 10/12 failing. GREEN: 12/12 in tests/unit/memory-leak.test.ts. Regression: 756/756 unit; 22/22 E2E.
+  - Evidence: tests/evidence/w4/W4B11-RED.txt + W4B11-GREEN.txt

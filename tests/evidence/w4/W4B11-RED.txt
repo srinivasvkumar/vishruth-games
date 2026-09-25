@@ -1,0 +1,77 @@
+================================================================================
+W4-B.11 — Edge case: low memory conditions (graceful degradation, no crash)
+RED PHASE (first run of the new spec against the product)
+================================================================================
+Card:        t_170c965a
+Date:        2026-09-25 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      cc0f166 (main)
+Spec:        tests/unit/memory-leak.test.ts (12 tests)
+Run:         ./node_modules/.bin/vitest run tests/unit/memory-leak.test.ts
+             --config config/vite.config.ts
+             (Node v22.22.2, vitest 1.6.1, happy-dom, real 'three' package)
+Full log:    workspace /tmp/w4b11-red-full.log (copied to t_170c965a workspace)
+
+==================== RESULT SUMMARY ====================
+  10 failed | 2 passed (12 total)   — 87ms
+
+RED PHASE (TDD discipline):
+  The spec was written FIRST against the intended behavior (shared geometry
+  cache, shared material per type, dispose() that frees only instance-owned
+  resources, pool-ready re-spawn, no-crash at 500+ simultaneous obstacles).
+  On the first run, 10 of 12 tests fail because the current Obstacle:
+    - allocates a fresh BoxGeometry per instance (500 distinct observed,
+      not 1) — every obstacle owns a 4x5x6 BoxGeometry,
+    - allocates a fresh MeshStandardMaterial per instance (500 distinct
+      observed, not 5) — only 5 distinct colors exist across types,
+    - has no dispose() method at all (4 tests fail with
+      "<x>.dispose is not a function"),
+    - offers no way to release GPU/heap resources on deactivate.
+  The 2 passing tests are the pure "no crash" behaviors that the current
+  code already satisfies at the JS level (600 simultaneous update() calls,
+  and the deactivate-all loop itself runs without throwing) — they pass
+  because update()/deactivate() never allocate per-frame; the LEAK is in
+  construction, which the failing 10 tests pin down.
+
+Per-test results:
+  Shared geometry (default size 4x5x6):
+    [FAIL] should use a SINGLE shared BoxGeometry for 500 default-size obstacles
+      -> expected 500 to be 1  (500 distinct BoxGeometry instances observed)
+    [FAIL] should keep the shared default geometry at 4x5x6 (identity check)
+      -> expected BoxGeometry{…} to be BoxGeometry{…}  (different instances)
+    [FAIL] should cache distinct non-default sizes per unique size
+      -> expected BoxGeometry{…} to be BoxGeometry{…}  (no size-keyed cache)
+  Shared material (per type):
+    [FAIL] should use a SINGLE shared MeshStandardMaterial per type (5 total)
+      -> expected 500 to be 5  (500 distinct MeshStandardMaterial instances)
+    [FAIL] should give obstacles of the same type the identical material instance
+      -> expected MeshStandardMaterial{…} to be MeshStandardMaterial{…}
+    [PASS] should give obstacles of different types distinct material instances
+      (trivially true: all 500 materials are distinct — passes for the wrong
+      reason until GREEN, still a valid invariant after)
+  dispose() — frees instance-owned resources only:
+    [FAIL] should exist as a method
+      -> expected 'undefined' to be 'function'
+    [FAIL] should NOT destroy shared geometry or material when disposed
+      -> a.dispose is not a function
+  No memory leak after 100 spawn/despawn cycles:
+    [FAIL] should keep distinct live geometries + materials constant
+      -> obstacle.dispose is not a function
+    [FAIL] should allow re-spawn to reuse shared resources after disposal
+      -> first.dispose is not a function
+  No crash at 500+ simultaneous obstacles:
+    [PASS] should update 600 simultaneous obstacles for 10 frames without throwing
+    [FAIL] should spawn + deactivate 500 breakable obstacles without unbounded
+            distinct resources
+      -> expected 500 to be 1  (distinct-geometry leak on the collision path)
+
+Root cause (from findings.md):
+  1. Obstacle constructor: new BoxGeometry(size) + new MeshStandardMaterial({…})
+     per instance; no caching.
+  2. No dispose() / recycle path; deactivate() only hides the mesh.
+  3. GameScene.obstacles is append-only (no off-screen reaping, no removal of
+     deactivated obstacles) → unbounded growth per run; resetRunState()/
+     onCleanup() remove meshes from the scene graph but never dispose
+     geometry/material → GPU buffers leak across restarts.
+
+================================================================================

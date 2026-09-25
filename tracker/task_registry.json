@@ -484,6 +484,14 @@
               "notes": "Kanban t_b01c78d5. Settings panel keyboard nav in MenuScene: Tab order Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE; ArrowRight/Up increments + ArrowLeft/Down decrements the volume slider (step 5, clamp 0..100, persists + live audio + label update); Arrow keys cycle the speed and difficulty selectors (wraparound, apply + persist + visual state). Esc closes the panel and returns focus to the SETTINGS button (was START — the control that opened it); Enter/Space activate the focused control (window handler swallows while panel open so START never fires); arrow keys act ONLY while a settings control is focused (no global hijack). TDD RED: 12 failed / 8 passed (meaningful failures — no arrow-key handling, focus->START). GREEN: 20/20 in new tests/unit/settings-keyboard.test.ts. Regression: settings-keyboard 20 + settings-panel 14 + menu-scene-keyboard 17 = 51/51. Full suite: 756/756 (38 files). Lint + typecheck clean on changed files (MenuScene.ts 0 eslint errors, tsc 0 errors in my files). Evidence: tests/evidence/w4/W4B8-RED.txt + W4B8-GREEN.txt."
             },
             {
+              "id": "W4-B.11",
+              "description": "Edge case: low memory conditions (graceful degradation, no crash)",
+              "status": "complete",
+              "tdd_cycle": "complete",
+              "completion_date": "2026-09-25T11:15:00",
+              "notes": "Kanban t_170c965a. Eliminated per-obstacle GPU/heap allocation that was the low-memory failure mode at 500+ obstacles. Obstacle.ts: module-level geometryCache (per size, 1 for default 4x5x6) + materialCache (per type, 5 total) — 500 obstacles now share 1 geometry + 5 materials instead of 500+500. dispose() detaches instance mesh/group, preserves shared resources. reset(position, type) re-positions/re-types a pooled obstacle in-place with zero GPU allocation. DAMAGE_BY_TYPE + getSharedMaterial exported for pool reuse. GameScene.ts: obstaclePool + REAP_Z (-250); reapOffscreenObstacles() runs every frame at onUpdate() start, removing off-screen obstacles into the pool (in-place filter, O(n)). allocateObstacle() is pool-first (pop + reset when warm, new Obstacle on cold start). onCleanup() calls disposeAllObstacles(). TDD RED: 10/12 failing (no shared resources, no dispose, no reset, no pool). GREEN: 12/12 in new tests/unit/memory-leak.test.ts. Regression: all 756 unit tests pass (38 files); all 22 E2E tests pass (w3a-full-loop 19, w4a-full-loop-extended 3, w3c-fps-100 2, physics-sync). Lint + typecheck clean. Evidence: tests/evidence/w4/W4B11-RED.txt + W4B11-GREEN.txt."
+            },
+            {
               "id": "TDD-4.1",
               "description": "Player entity creation",
               "status": "pending",
