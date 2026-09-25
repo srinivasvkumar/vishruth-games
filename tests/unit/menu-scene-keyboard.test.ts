@@ -248,13 +248,13 @@ describe('W4-B.1: MenuScene keyboard navigation', () => {
     expect(panel?.style.display, 'panel must be hidden after Esc').toBe('none');
   });
 
-  it('Esc returns focus to the START button', () => {
+  it('Esc returns focus to the SETTINGS button', () => {
     openSettingsPanel();
     pressKey('Escape');
-    const start = document.getElementById(
-      'menu-start-button'
+    const settings = document.getElementById(
+      'menu-settings-button'
     ) as HTMLButtonElement;
-    expect(document.activeElement, 'focus must return to START').toBe(start);
+    expect(document.activeElement, 'focus must return to SETTINGS').toBe(settings);
   });
 
   it('Esc on a closed panel is a no-op (no error, no state change)', () => {

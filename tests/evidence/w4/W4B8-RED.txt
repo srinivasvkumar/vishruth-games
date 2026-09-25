@@ -1,0 +1,45 @@
+W4-B.8 RED — settings-keyboard.test.ts (pre-implementation)
+Task: t_b01c78d5 — Settings panel keyboard navigation: Tab order + Arrow keys + Esc
+Date: 2026-09-25 (UTC)
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts tests/unit/settings-keyboard.test.ts
+
+Environment: vitest 1.6.1, happy-dom.
+Confirmed via probe (scratch/probe-happydom.cjs): happy-dom does NOT auto-adjust
+range input values on arrow keys; element.focus() works reliably; window-level
+keydown listeners receive bubbled KeyboardEvents.
+
+RESULT: Test Files 1 failed (1) | Tests 12 failed | 8 passed (20)
+
+=== PASSED (8) — behavior already correct / structural ===
+ - Tab order inside the panel: Volume -> Speed -> Difficulty -> Controls -> CLOSE
+ - opening the panel focuses the volume slider (first control)
+ - the Controls section is a read-only focus stop (tabindex, not a button)
+ - Esc closes the settings panel
+ - Enter/Space do NOT fire the START transition while the panel is open
+ - clicking the focused speed button selects that speed (native activation)
+ - arrow keys do nothing when no settings control is focused (no global hijack)
+   [passes trivially pre-impl because arrows are not handled at all]
+ - (1 further structural pass counted in the 8)
+
+=== FAILED (12) — gaps to close in GREEN ===
+ 1. ArrowRight increases the volume slider value (step +1) and persists it
+ 2. ArrowLeft decreases the volume slider value (step -1) and persists it
+ 3. ArrowUp / ArrowDown also adjust the volume slider
+ 4. adjusting volume with arrows updates the AudioSystem master volume
+ 5. adjusting volume with arrows updates the volume label
+ 6. ArrowRight cycles to the next speed option and selects it
+ 7. ArrowLeft cycles to the previous speed option and selects it
+ 8. speed cycling wraps around at both ends
+ 9. ArrowRight cycles to the next difficulty option and selects it
+10. difficulty cycling wraps around at both ends
+11. Esc returns focus to the SETTINGS button
+12. after Esc, focus is on SETTINGS and the panel is closed (full cycle)
+
+Reason for each failure:
+ - Volume arrow tests (1-5): no arrow-key handler on the volume slider; happy-dom
+   does not natively adjust range values on arrow keys, so value/persist/audio/
+   label all stay unchanged.
+ - Speed/difficulty cycling (6-10): no arrow-key cycling implemented; focus never
+   moves and selection never changes/wraps.
+ - Esc focus tests (11-12): closeSettingsPanel() focuses the START button, but the
+   task requires returning focus to the SETTINGS button.

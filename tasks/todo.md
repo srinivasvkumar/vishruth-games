@@ -229,3 +229,9 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Settings: volume slider ("Volume"), speed buttons ("Set speed to Xx"), difficulty buttons ("Set difficulty to X"), CLOSE ("Close settings")
   - TDD RED: 9 failed. GREEN: 9/9. Regression: 45/45 scene suites. Full: 692/692.
   - Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt
+- [x] W4-B.8 — Settings panel keyboard navigation: Tab order + Arrow-key adjustment + Esc-to-close — game-dev — `t_b01c78d5` — 2026-09-25
+  - Tab order: Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE
+  - Arrow keys adjust volume slider (step 5, clamp 0..100, persist + live audio + label) and cycle speed/difficulty selectors (wraparound, apply + persist + visual)
+  - Esc closes panel + returns focus to SETTINGS button (was START). Enter/Space activate focused control (swallowed while open). Arrow keys act only while a settings control is focused.
+  - TDD RED: 12 failed / 8 passed. GREEN: 20/20. Regression: 51/51. Full: 756/756.
+  - Evidence: tests/evidence/w4/W4B8-RED.txt + W4B8-GREEN.txt

@@ -279,15 +279,15 @@ describe('W3-C.4: Settings UI', () => {
     expect(game.getSpeedMultiplier()).toBe(1);
   });
 
-  it('Esc closes the settings panel and returns focus to the START button', () => {
+  it('Esc closes the settings panel and returns focus to the SETTINGS button', () => {
     openSettingsPanel();
     pressKey('Escape');
     const panel = document.getElementById('settings-panel');
     expect(panel?.style.display, 'panel must be hidden after Esc').toBe('none');
-    const start = document.getElementById(
-      'menu-start-button'
+    const settings = document.getElementById(
+      'menu-settings-button'
     ) as HTMLButtonElement;
-    expect(document.activeElement, 'focus must return to START').toBe(start);
+    expect(document.activeElement, 'focus must return to SETTINGS').toBe(settings);
   });
 
   it('Tab order inside the panel is Volume -> Speed -> Difficulty -> Controls -> CLOSE', () => {

@@ -24,13 +24,13 @@
 
     "phase": "W4-B: In Progress",
     "day": 12,
-    "current_task": "W4-B.3 ARIA labels complete; W4-B.2 pending",
-    "status": "W4-B-3-COMPLETE",
+    "current_task": "W4-B.8 settings-panel keyboard nav complete; W4-B.2 pending",
+    "status": "W4-B-8-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-24T20:00:00",
-    "last_updated": "2026-09-24T23:35:00",
-    "completion_date": "2026-09-24T23:35:00",
-    "completion_notes": "W4-B.3 complete: ARIA labels for all buttons across MenuScene, GameOverScene, Settings panel. MenuScene: START (\"Start game\"), SETTINGS (\"Open settings\"), HIGH SCORES panel (\"View high scores\", role=region). GameOverScene: RESTART (\"Restart game\"), final score (\"Final score\"). Settings: volume slider (\"Volume\"), speed buttons (\"Set speed to Xx\"), difficulty buttons (\"Set difficulty to X\"), CLOSE (\"Close settings\"). TDD RED: 9 failed. GREEN: 9/9. Regression: 45/45 scene suites. Full suite: 692/692. Lint + typecheck clean. Evidence: W4B3-RED.txt + W4B3-GREEN.txt."
+    "last_updated": "2026-09-25T01:00:00",
+    "completion_date": "2026-09-25T01:00:00",
+    "completion_notes": "W4-B.8 complete: Settings panel keyboard navigation in MenuScene. Tab order Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE; ArrowRight/Up + ArrowLeft/Down adjust volume slider (step 5, clamp 0..100, persist + live audio + label); Arrow keys cycle speed/difficulty selectors (wraparound, apply + persist + visual). Esc closes panel + returns focus to SETTINGS button (was START). Enter/Space activate focused control (window handler swallows while open). Arrow keys act only while a settings control is focused (no global hijack). TDD RED: 12 failed / 8 passed. GREEN: 20/20 in new tests/unit/settings-keyboard.test.ts. Regression: 51/51 (settings-keyboard+settings-panel+menu-scene-keyboard). Full suite: 756/756. Lint + typecheck clean on changed files. Evidence: tests/evidence/w4/W4B8-RED.txt + W4B8-GREEN.txt."
   },
   "w2_e1b_completion": {
     "date": "2026-09-13T23:30:00",

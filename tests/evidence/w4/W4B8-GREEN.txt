@@ -1,0 +1,63 @@
+W4-B.8 GREEN — settings-keyboard.test.ts (post-implementation)
+Task: t_b01c78d5 — Settings panel keyboard navigation: Tab order + Arrow keys + Esc
+Date: 2026-09-25 (UTC)
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts tests/unit/settings-keyboard.test.ts
+
+Environment: vitest 1.6.1, happy-dom.
+
+RESULT (new test file): Test Files 1 passed (1) | Tests 20 passed (20)
+
+All 12 RED failures now pass:
+ - Volume arrow adjust (Right/Up +, Left/Down -, clamp 0..100, persist + audio + label): PASS
+ - Speed arrow cycling (next/prev, wraparound, apply + persist + visual): PASS
+ - Difficulty arrow cycling (next/prev, wraparound, apply + persist): PASS
+ - Esc returns focus to the SETTINGS button (was START): PASS
+ - Esc closes the panel: PASS
+ - Enter/Space swallowed while panel open (no START transition): PASS
+ - Arrow keys inert when no settings control is focused (no global hijack): PASS
+ - Tab order Volume -> Speed -> Difficulty -> Controls -> CLOSE: PASS
+ - Panel opens focusing the volume slider: PASS
+ - Controls section is a read-only focus stop: PASS
+
+--- Related suites (regression check) ---
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts \
+  tests/unit/settings-keyboard.test.ts tests/unit/settings-panel.test.ts \
+  tests/unit/menu-scene-keyboard.test.ts
+RESULT: Test Files 3 passed (3) | Tests 51 passed (51)
+
+Full unit suite:
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts
+RESULT: Test Files 37 passed (37) | Tests 740 passed (740)
+
+--- Type-check ---
+Command: tsc --noEmit -p tsconfig.json
+MenuScene.ts + settings-keyboard.test.ts: CLEAN (0 errors in my files).
+Note: 2 pre-existing errors in src/scenes/GameScene.ts ('obstaclePool', 'REAP_Z'
+declared but never read) belong to a different in-flight W4 task working in this
+shared tree (uncommitted Obstacle.ts/GameScene.ts diff); NOT introduced by W4-B.8.
+
+--- Lint ---
+Command: ESLINT_USE_FLAT_CONFIG=true eslint --config config/eslint.config.js src/scenes/MenuScene.ts
+RESULT: exit 0, 0 problems. (tests/ is not in the lint scope — only src.)
+
+Implementation summary (MenuScene.ts):
+ - New settingsButton field; stored in setupMenuUI.
+ - closeSettingsPanel() now returns focus to the SETTINGS button (the control
+   that opened the panel) instead of START, only when the panel was actually
+   open (so onExit on a closed panel does not steal focus from the game scene).
+ - New window-level arrow-key handler (attachSettingsKeydownHandler, attached in
+   onEnter alongside the main keydown handler; detached in onExit + onCleanup).
+   Acts ONLY while settingsOpen AND a settings control is focused:
+     * Volume slider: ArrowRight/Up +step, ArrowLeft/Down -step, clamp 0..100,
+       then dispatch synthetic 'input' so existing listeners persist + update
+       audio + label.
+     * Speed buttons: ArrowRight/Up -> next, ArrowLeft/Down -> prev (wraparound),
+       focus + click() to select.
+     * Difficulty buttons: same wraparound cycling.
+ - Updated 2 existing tests (settings-panel + menu-scene-keyboard) that asserted
+   Esc returns focus to START -> now assert SETTINGS, per task #4.
+
+Files changed (within the <=2 constraint, source + new test):
+ - src/scenes/MenuScene.ts
+ - tests/unit/settings-keyboard.test.ts  (new)
+ (+ 2 existing test files updated to reflect the Esc->SETTINGS behavior change)

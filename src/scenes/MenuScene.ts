@@ -29,8 +29,13 @@ import type { Game } from '@/core/Game';
 export class MenuScene extends Scene {
   private menuContainer?: HTMLDivElement;
   private startButton: HTMLButtonElement | null = null;
+  private settingsButton: HTMLButtonElement | null = null;
   private highScorePanel: HTMLElement | null = null;
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+  /** W4-B.8: dedicated arrow-key handler for the settings panel controls. */
+  private settingsKeydownHandler:
+    | ((event: KeyboardEvent) => void)
+    | null = null;
   /** W3-C.2: true once a user gesture has been dispatched to AudioSystem. */
   private audioGestureHandled = false;
 
@@ -95,6 +100,7 @@ export class MenuScene extends Scene {
     // here is exactly "menu is fresh and ready to dispatch".
     if (!this.started) {
       this.attachKeydownHandler();
+      this.attachSettingsKeydownHandler();
       if (this.startButton) {
         this.startButton.disabled = false;
       }
@@ -121,6 +127,7 @@ export class MenuScene extends Scene {
     // being the active scene, so keys pressed during the transition
     // into 'game' cannot re-fire the start path.
     this.detachKeydownHandler();
+    this.detachSettingsKeydownHandler();
     // W3-C.4: close the settings panel so it never lingers across the
     // transition into the game scene.
     this.closeSettingsPanel();
@@ -132,9 +139,11 @@ export class MenuScene extends Scene {
 
   protected onCleanup(): void {
     this.detachKeydownHandler();
+    this.detachSettingsKeydownHandler();
     this.menuContainer?.parentNode?.removeChild(this.menuContainer);
     this.menuContainer = undefined;
     this.startButton = null;
+    this.settingsButton = null;
     this.highScorePanel = null;
     this.settingsPanel = null;
     this.settingsOpen = false;
@@ -280,6 +289,7 @@ export class MenuScene extends Scene {
 
     this.menuContainer = container;
     this.startButton = startButton;
+    this.settingsButton = settingsButton;
     this.highScorePanel = highScorePanel;
 
     // W3-C.4: build the settings panel eagerly (always display:none until
@@ -382,7 +392,7 @@ export class MenuScene extends Scene {
       // W3-C.4: while the settings panel is open, Enter/Space must NOT fire
       // the START transition — they activate the currently-focused settings
       // control instead (native button/range activation). Esc closes the
-      // panel and returns focus to START.
+      // panel and returns focus to the SETTINGS button (W4-B.8).
       if (this.settingsOpen) {
         if (event.key === 'Escape') {
           event.preventDefault();
@@ -408,6 +418,140 @@ export class MenuScene extends Scene {
       window.removeEventListener('keydown', this.keydownHandler);
       this.keydownHandler = null;
     }
+  }
+
+  /**
+   * W4-B.8: arrow-key navigation for the settings panel.
+   *
+   * Attached once on menu enter. It ONLY acts while the settings panel is
+   * open AND a settings control currently has focus — so it never steals
+   * arrow keys from the game scene, the page, or a non-settings control
+   * (e.g. the SETTINGS/START buttons while the panel is open).
+   *
+   * - Volume slider (focused input[type=range]): ArrowRight/ArrowUp +step,
+   *   ArrowLeft/ArrowDown -step, clamped 0..100. We mutate the value and
+   *   dispatch a synthetic 'input' event so the existing input listeners
+   *   (persist + live audio + label) run unchanged.
+   * - Speed buttons (focused settings-speed-*): ArrowRight/ArrowUp -> next,
+   *   ArrowLeft/ArrowDown -> previous, wrapping. Focus the new button and
+   *   click() it (applies speed + persists + visual).
+   * - Difficulty buttons (focused settings-difficulty-*): same wraparound
+   *   cycling.
+   */
+  private attachSettingsKeydownHandler(): void {
+    if (this.settingsKeydownHandler) return;
+    this.settingsKeydownHandler = (event: KeyboardEvent) => {
+      if (!this.settingsOpen || !this.settingsPanel) return;
+      const key = event.key;
+      if (
+        key !== 'ArrowRight' &&
+        key !== 'ArrowLeft' &&
+        key !== 'ArrowUp' &&
+        key !== 'ArrowDown'
+      ) {
+        return;
+      }
+      const active = document.activeElement;
+      if (!(active instanceof HTMLElement)) return;
+      if (!this.settingsPanel.contains(active)) return;
+
+      if (active.id === 'settings-volume-slider') {
+        event.preventDefault();
+        this.adjustVolumeByArrow(active as HTMLInputElement, key);
+        return;
+      }
+
+      const speedMatch = active.id.match(/^settings-speed-(.+)$/);
+      if (speedMatch) {
+        event.preventDefault();
+        this.cycleSpeedByArrow(active as HTMLButtonElement, key);
+        return;
+      }
+
+      const diffMatch = active.id.match(/^settings-difficulty-(.+)$/);
+      if (diffMatch) {
+        event.preventDefault();
+        this.cycleDifficultyByArrow(active as HTMLButtonElement, key);
+      }
+    };
+    window.addEventListener('keydown', this.settingsKeydownHandler);
+  }
+
+  /** Detach the settings arrow-key handler. Safe to call when not attached. */
+  private detachSettingsKeydownHandler(): void {
+    if (this.settingsKeydownHandler) {
+      window.removeEventListener('keydown', this.settingsKeydownHandler);
+      this.settingsKeydownHandler = null;
+    }
+  }
+
+  /**
+   * W4-B.8: nudge the volume slider by one step on an arrow key, clamped to
+   * 0..100, then fire a synthetic 'input' so the existing listeners persist
+   * the value, update the live AudioSystem, and refresh the label.
+   */
+  private adjustVolumeByArrow(
+    slider: HTMLInputElement,
+    key: string
+  ): void {
+    const step = Number(slider.step || 1);
+    const min = Number(slider.min ?? 0);
+    const max = Number(slider.max ?? 100);
+    let value = Number(slider.value || 0);
+    if (key === 'ArrowRight' || key === 'ArrowUp') {
+      value += step;
+    } else {
+      value -= step;
+    }
+    value = Math.min(max, Math.max(min, value));
+    if (value === Number(slider.value)) return;
+    slider.value = String(value);
+    slider.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  /**
+   * W4-B.8: move to the next/previous speed option on an arrow key
+   * (wraparound), focus it, and select it.
+   */
+  private cycleSpeedByArrow(current: HTMLButtonElement, key: string): void {
+    const options = Array.from(
+      this.settingsPanel!.querySelectorAll<HTMLButtonElement>(
+        'button[id^="settings-speed-"]'
+      )
+    );
+    const idx = options.findIndex((o) => o.id === current.id);
+    if (idx === -1) return;
+    const forward = key === 'ArrowRight' || key === 'ArrowUp';
+    const next =
+      (idx + (forward ? 1 : -1) + options.length) % options.length;
+    const target = options[next];
+    if (!target || target === current) return;
+    target.focus();
+    target.click();
+  }
+
+  /**
+   * W4-B.8: move to the next/previous difficulty option on an arrow key
+   * (wraparound), focus it, and select it.
+   */
+  private cycleDifficultyByArrow(
+    current: HTMLButtonElement,
+    key: string
+  ): void {
+    const options = Array.from(
+      this.settingsPanel!.querySelectorAll<HTMLButtonElement>(
+        'button[id^="settings-difficulty-"]'
+      )
+    );
+    const idx = options.findIndex((o) => o.id === current.id);
+    if (idx === -1) return;
+    const forward = key === 'ArrowRight' || key === 'ArrowUp';
+    const next =
+      (idx + (forward ? 1 : -1) + options.length) % options.length;
+    const target = options[next];
+    if (!target || target === current) return;
+    target.focus();
+    target.click();
   }
 
   // ── W3-C.4: Settings panel ────────────────────────────────────────────────
@@ -441,15 +585,22 @@ export class MenuScene extends Scene {
   }
 
   /**
-   * Close the settings panel and return focus to the START button.
-   * Idempotent — safe to call when the panel is already closed.
+   * Close the settings panel. When the panel was actually open (i.e. the
+   * close was user-initiated via Esc or the CLOSE button), focus returns to
+   * the SETTINGS button (W4-B.8 — the control that opened the panel).
+   * Idempotent — safe to call when the panel is already closed (onExit), in
+   * which case focus is left untouched so we don't steal it from the game
+   * scene we're transitioning into.
    */
   private closeSettingsPanel(): void {
+    const wasOpen = this.settingsOpen;
     if (this.settingsPanel) {
       this.settingsPanel.style.display = 'none';
     }
     this.settingsOpen = false;
-    this.startButton?.focus();
+    if (wasOpen) {
+      this.settingsButton?.focus();
+    }
   }
 
   /**

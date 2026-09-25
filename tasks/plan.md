@@ -588,3 +588,18 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
     Regression: 45/45 scene suites. Full suite: 692/692. Lint + typecheck clean.
   - Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt
 
+- [x] W4-B.8 — Settings panel keyboard navigation: Tab order + Arrow-key adjustment + Esc-to-close — game-dev — `t_b01c78d5` — 2026-09-25
+  - Tab order: Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE.
+  - ArrowRight/Up + ArrowLeft/Down adjust the volume slider (step 5, clamp
+    0..100, persists + live audio update + label). Arrow keys cycle the speed
+    and difficulty selectors (wraparound, apply + persist + visual state).
+  - Esc closes the panel and returns focus to the SETTINGS button (was START —
+    the control that opened it). Enter/Space activate the focused control
+    (window handler swallows while panel open so START never fires). Arrow keys
+    act ONLY while a settings control is focused (no global hijack).
+  - TDD RED: 12 failed / 8 passed (no arrow-key handling, focus->START).
+    GREEN: 20/20 in new tests/unit/settings-keyboard.test.ts.
+    Regression: 51/51 (settings-keyboard+settings-panel+menu-scene-keyboard).
+    Full suite: 756/756. Lint + typecheck clean on changed files.
+  - Evidence: tests/evidence/w4/W4B8-RED.txt + W4B8-GREEN.txt
+
