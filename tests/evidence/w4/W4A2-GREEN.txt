@@ -1,0 +1,82 @@
+================================================================================
+W4-A.2 — E2E full-loop extended: settings + high-scores + 2nd run cycle
+GREEN PHASE (clean full pass, both browsers)
+================================================================================
+Card:        t_fd1738cd
+Date:        2026-09-24 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c8bcead (main)
+Spec:        tests/e2e/w4a-full-loop-extended.spec.ts (3 scenarios, unchanged
+             between RED and GREEN phases)
+Node:        v22.22.2; Playwright 1.62.0; webServer auto-launched (port 5173)
+
+--------------------------------------------------------------------------------
+LEG 1 — Chrome
+Browser:     real headed Chromium via X11 DISPLAY=:1
+Project:     chromium-boot (Desktop Chrome, --enable-unsafe-webgl
+             --use-gl=angle --use-angle=swiftshader, headless:false)
+Run:         ./node_modules/.bin/playwright test --project=chromium-boot
+             tests/e2e/w4a-full-loop-extended.spec.ts
+Full log:    workspaces/t_fd1738cd/green-chrome.log
+Result:      3 passed, 0 failed   — 15.8s, workers=1, retries=0
+
+  [PASS] S1 boot -> settings volume=50 -> close -> start ->
+             AudioSystem master gain is 0.5                              (4.3s)
+             evidence: stored={"volume":50,"speed":1,"difficulty":"normal"}
+                       label=50 masterGain=0.5
+  [PASS] S2 play a run -> die -> high score saved to LocalStorage +
+             displayed in the menu                                      (4.4s)
+             evidence: storedHigh=500 goHigh=500 menuHigh=500
+  [PASS] S3 2nd run cycle — menu -> start -> play -> die -> game-over ->
+             restart -> menu -> 2nd start -> 2nd play                    (5.5s)
+             evidence: run2 hud={"score":"SCORE: 0","health":"HEALTH: 100",
+                       "level":"LEVEL: 1"} liveScore=100 state=playing
+
+--------------------------------------------------------------------------------
+LEG 2 — Firefox
+Browser:     real headed Firefox via X11 DISPLAY=:1 (GPU WebGL, no extra args)
+Project:     firefox (Desktop Firefox, headless:false)
+Run:         ./node_modules/.bin/playwright test --project=firefox
+             tests/e2e/w4a-full-loop-extended.spec.ts
+             (NOTE: the BROWSER env var must NOT be set when running this
+              spec — the Playwright config uses it to swap testDir to
+              ./tests/e2e/smoke, which hides tests/e2e/*. Browser
+              disambiguation comes from testInfo.project.name in the
+              screenshot filenames.)
+Full log:    workspaces/t_fd1738cd/green-firefox.log
+Result:      3 passed, 0 failed   — 19.1s, workers=1, retries=0
+
+  [PASS] S1 boot -> settings volume=50 -> close -> start ->
+             AudioSystem master gain is 0.5                              (5.4s)
+             evidence: stored={"volume":50,"speed":1,"difficulty":"normal"}
+                       label=50 masterGain=0.5
+  [PASS] S2 play a run -> die -> high score saved to LocalStorage +
+             displayed in the menu                                      (4.8s)
+             evidence: storedHigh=500 goHigh=500 menuHigh=500
+  [PASS] S3 2nd run cycle — menu -> start -> play -> die -> game-over ->
+             restart -> menu -> 2nd start -> 2nd play                    (5.8s)
+             evidence: run2 hud={"score":"SCORE: 0","health":"HEALTH: 100",
+                       "level":"LEVEL: 1"} liveScore=100 state=playing
+
+--------------------------------------------------------------------------------
+COMBINED: 6 passed, 0 failed across both legs (3 scenarios x 2 browsers)
+
+Verification notes:
+  - tsc --noEmit -p tsconfig.json: clean (spec typechecks under strict mode).
+  - Screenshot cross-check (vision analysis of the GREEN-phase captures):
+      * w4a2-s2-highscore-firefox.png — menu visible, HIGH SCORE panel
+        displays 500.
+      * w4a2-s3-second-run-chromium-boot.png — run-2 HUD reads
+        SCORE: 100 / LEVEL: 1 / HEALTH: 100 with the live 3D scene
+        (sky, ground, obstacle meshes) behind it.
+
+Defects found: NONE. All three extended behaviors (settings->live audio
+gain, high-score persistence + display, full 2nd run cycle incl. the
+BUG-W2-1a start-button re-arm guard) are implemented correctly on
+c8bcead in both real browsers.
+
+Evidence screenshots (tests/evidence/w4/):
+  w4a2-s1-settings-{chromium-boot,firefox}.png
+  w4a2-s2-highscore-{chromium-boot,firefox}.png
+  w4a2-s3-second-run-{chromium-boot,firefox}.png
+================================================================================

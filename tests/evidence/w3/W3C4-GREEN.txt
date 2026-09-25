@@ -1,5 +1,5 @@
 W3-C.4 — Settings panel (e2e, real Chromium + localStorage)
-timestamp: 2026-09-23T06:33:53.039Z
+timestamp: 2026-09-24T11:46:39.036Z
 url: http://localhost:5173/public/index.html
 browser: real Chromium (Playwright chromium-boot project, headed)
 

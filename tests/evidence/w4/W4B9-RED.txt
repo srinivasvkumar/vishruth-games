@@ -1,0 +1,32 @@
+W4-B.9 RED EVIDENCE (2026-09-25, task t_6be4f9e2)
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts tests/unit/resize-handling.test.ts
+
+Summary: 3 RED tests fail (game has no resize handler yet), 4 baseline tests pass.
+This is the RED state required by TDD before the GameScene.handleResize() implementation.
+
+Failed tests (RED — assert behavior the code does NOT yet support):
+  1. "resize triggers a camera aspect update to the new viewport ratio"
+     AssertionError: expected 1.3333333333333333 to be close to 0.6666666666666666
+     — camera.aspect is frozen at the construction-time window.innerWidth/innerHeight.
+       A resize to 800x1200 does NOT update it to 0.667.
+  2. "resize calls updateProjectionMatrix on the camera"
+     AssertionError: expected 0 to be greater than 0
+     — no window resize handler exists on GameScene, so updateProjectionMatrix()
+       is never invoked after aspect would change.
+  3. "resize delegates renderer sizing to the shared renderer wrapper"
+     AssertionError: expected "spy" to be called at least once
+     — game.getRenderer().resizeToContainer() is never called by GameScene on
+       window resize. (index.ts has its own listener, but it is NOT reachable
+       from the GameScene unit-test mock, and it does not touch camera.aspect.)
+
+Passing baseline tests (already hold, must stay GREEN):
+  4. "resize during gameplay does not throw (game must not crash)" — passes trivially
+     because nothing is wired up yet; must keep passing after the handler is added.
+  5. "HUD elements remain positioned and visible after resize" — passes because
+     UISystem's fixed-px corner offsets are resolution-independent; must keep passing.
+  6. "the game loop (update) still works after a resize" — passes; must keep passing.
+  7. "cleanup removes the resize listener (no leak, no double-resize)" — passes
+     because no listener exists yet; must keep passing after cleanup() removes it.
+
+Test Files  1 failed (1)
+     Tests  3 failed | 4 passed (7)

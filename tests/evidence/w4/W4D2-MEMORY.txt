@@ -1,0 +1,98 @@
+# W4-D.2 — 5-minute memory leak test
+# Verdict: FAIL
+# Run: 2026-09-25T06:35:30.006Z · project=chromium-boot · repo @ HEAD
+# Method: headed Chrome (chromium-boot, SwiftShader WebGL), 300 s continuous gameplay
+#   window, heap sampled every 10 s (performance.memory), in-page watch-dog kept the
+#   run alive; keyboard input cycled WASD+arrows every 15 s; score events
+#   every 30 s. Gate: envelope growth (start->end, GC dips excluded) <= 10 %.
+
+## Heap samples (in-window, every 10 s)
+t(s)  heapUsedMB  heapTotalMB  obstacles  pool  sceneChildren  domNodes  frames  playing
+    0        9.54         11.35          3     0               8       130       0  true
+   10        9.54         11.35         10     0              15       130     600  true
+   20        9.54         11.35         16     0              21       130    1200  true
+   30        9.54         11.35         23     0              28       130    1800  true
+   40        9.54         11.35         29     0              34       130    2400  true
+   50        9.54         11.35         36     0              41       130    3000  true
+   60        9.54         11.35         43     0              48       130    3600  true
+   70        9.54         11.35         49     0              54       130    4201  true
+   80        9.54         11.35         56     0              61       130    4800  true
+   90        9.54         11.35         62     0              67       130    5401  true
+  100        9.54         11.35         69     0              74       130    6001  true
+  110        9.54         11.35         76     0              81       130    6601  true
+  120        9.54         11.35         82     0              87       130    7201  true
+  130        9.54         11.35         89     0              94       130    7801  true
+  140        9.54         11.35         95     0             100       130    8401  true
+  150        9.54         11.35        102     0             107       130    9001  true
+  160        9.54         11.35        109     0             114       130    9601  true
+  170        9.54         11.35        115     0             120       130   10201  true
+  180        9.54         11.35        122     0             127       130   10801  true
+  190        9.54         11.35        128     0             133       130   11401  true
+  200        9.54         11.35        135     0             140       130   12001  true
+  210        9.54         11.35        142     0             147       130   12601  true
+  220        9.54         11.35        148     0             153       130   13201  true
+  230        9.54         11.35        155     0             160       130   13801  true
+  240        9.54         11.35        161     0             166       130   14401  true
+  250        9.54         11.35        168     0             173       130   15001  true
+  260        9.54         11.35        175     0             180       130   15601  true
+  270        9.54         11.35        181     0             186       130   16201  true
+  280        9.54         11.35        188     0             193       130   16801  true
+  290        9.54         11.35        195     0             200       130   17401  true
+  300        9.54         11.35        201     0             206       130   18001  true
+
+## Checkpoints (screenshot + console at each minute)
+T0MIN: heap=9.54MB total=11.35MB obs=3 pool=0 scene=8 dom=130 playing=true shot=(pre-run, at start)
+T0MIN: heap=9.54MB total=11.35MB obs=10 pool=0 scene=15 dom=130 playing=true shot=w4d2-mem-t0min.png
+T1MIN: heap=9.54MB total=11.35MB obs=23 pool=0 scene=28 dom=130 playing=true shot=w4d2-mem-t1min.png
+T2MIN: heap=9.54MB total=11.35MB obs=62 pool=0 scene=67 dom=130 playing=true shot=w4d2-mem-t2min.png
+T3MIN: heap=9.54MB total=11.35MB obs=102 pool=0 scene=107 dom=130 playing=true shot=w4d2-mem-t3min.png
+T4MIN: heap=9.54MB total=11.35MB obs=142 pool=0 scene=147 dom=130 playing=true shot=w4d2-mem-t4min.png
+T5MIN: heap=9.54MB total=11.35MB obs=181 pool=0 scene=186 dom=130 playing=true shot=w4d2-mem-t5min.png
+
+## Analysis
+Monotone envelope (GC dips excluded): start=9.54MB end=9.54MB growth=0.00% (gate: <= 10%)
+Step deltas (envelope):
+  t=0s->10s: +0.00MB
+  t=10s->20s: +0.00MB
+  t=20s->30s: +0.00MB
+  t=30s->40s: +0.00MB
+  t=40s->50s: +0.00MB
+  t=50s->60s: +0.00MB
+  t=60s->70s: +0.00MB
+  t=70s->80s: +0.00MB
+  t=80s->90s: +0.00MB
+  t=90s->100s: +0.00MB
+  t=100s->110s: +0.00MB
+  t=110s->120s: +0.00MB
+  t=120s->130s: +0.00MB
+  t=130s->140s: +0.00MB
+  t=140s->150s: +0.00MB
+  t=150s->160s: +0.00MB
+  t=160s->170s: +0.00MB
+  t=170s->180s: +0.00MB
+  t=180s->190s: +0.00MB
+  t=190s->200s: +0.00MB
+  t=200s->210s: +0.00MB
+  t=210s->220s: +0.00MB
+  t=220s->230s: +0.00MB
+  t=230s->240s: +0.00MB
+  t=240s->250s: +0.00MB
+  t=250s->260s: +0.00MB
+  t=260s->270s: +0.00MB
+  t=270s->280s: +0.00MB
+  t=280s->290s: +0.00MB
+  t=290s->300s: +0.00MB
+Live obstacle array: max=201 over window (bounded <= 60: NO)
+Fatal console errors in full run: 0
+
+## Transition phase (after 5 min, secondary — not gating)
+game-over heap=9.54MB; menu-after-run1=9.54MB; run2-end(30s)=9.54MB; menu-after-run2=9.54MB
+
+## VERDICT: FAIL
+  heap growth 0.00% <= 10% gate over 300 s continuous gameplay.
+  obstacle array UNBOUNDED (max 201) — reap/pool not bounding the live array.
+  no fatal console errors across the full run.
+
+## Screenshots
+  w4d2-mem-t0min.png .. w4d2-mem-t5min.png (per-minute checkpoints)
+  w4d2-mem-gameover.png, w4d2-mem-run2.png, w4d2-mem-menu2.png (transition phase)

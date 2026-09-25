@@ -1,0 +1,192 @@
+================================================================================
+W4-D.1 — FULL REGRESSION RUN — 2026-09-25 13:45 AEST
+Task: t_50346590 (kanban board cluster-rush)
+Repo: /home/srinivasvkumar/vishruth/games/clusterrush @ 5953dac (W4-B.5: screen-reader announcements)
+Environment: Node v22.22.2, vitest 1.6.1, @playwright/test 1.62.0, headed browsers on DISPLAY=:1
+Commands: npx vitest run | npx vitest run --coverage | npx tsc --noEmit -p tsconfig.json
+          | ESLINT_USE_FLAT_CONFIG=true eslint --config config/eslint.config.js src config scripts
+          | npx playwright test --reporter=list
+================================================================================
+
+## 1. UNIT TESTS (npx vitest run) — PASS
+
+ Test Files  38 passed (38)
+      Tests  756 passed (756)
+   Start at  13:30:30
+   Duration  3.56s
+
+No failures. No unit test regressions.
+
+## 2. COVERAGE (npx vitest run --coverage, v8 provider, include: src/**/*.ts)
+
+All files  | % Stmts | % Branch | % Funcs | % Lines
+All files  |   95.19 |    90.73 |   95.19 |   95.19
+
+Threshold check (task gate: coverage >= 90%):
+  lines     95.19 >= 90  -> PASS
+  branches  90.73 >= 90  -> PASS (margin 0.73 — thin)
+  funcs     95.19 >= 90  -> PASS
+  stmts     95.19 >= 90  -> PASS
+Note: thresholds in config/vite.config.ts are all set to 0 (no enforced minimum);
+the 90% gate above is the task-level requirement.
+Lowest per-file: src/types/GameTypes.ts — type-only module, 0% (types erase at
+runtime; not executable by unit tests by design).
+
+## 3. TYPE CHECK (npx tsc --noEmit -p tsconfig.json) — PASS
+
+exit code 0, no output.
+
+## 4. LINT (npm run lint) — FAIL (3 errors, 7 warnings)
+
+/home/srinivasvkumar/vishruth/games/clusterrush/src/scenes/GameScene.ts
+  172:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  176:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  179:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/srinivasvkumar/vishruth/games/clusterrush/src/utils/Logger.ts
+  27:7  warning  Unexpected console statement  no-console
+  36:7  warning  Unexpected console statement  no-console
+  63:7  warning  Unexpected console statement  no-console
+  65:7  warning  Unexpected console statement  no-console
+  77:9  warning  Unexpected console statement  no-console
+  79:9  warning  Unexpected console statement  no-console
+  89:7  warning  Unexpected console statement  no-console
+
+exit code: 1
+
+DIAGNOSIS (lint):
+- The 3 errors are the W3-B.0 debug accessors: (window as any).__debugPlayerPos /
+  __setPlayerHealth / __debugScore at GameScene.ts:172-181, committed in 6771762
+  (2026-09-21, W3-B.0). The @typescript-eslint/no-explicit-any=error rule was
+  enabled in 79b7b3f (2026-09-20, 'fix(infra): eslint flat-config'). These lines
+  have sat on main ~5 days without a full lint gate being run.
+- Pre-existing, NOT introduced by the W4-B commits (W4-B.1..W4-B.11 touched
+  MenuScene.ts / GameOverScene.ts / Accessibility.ts / UI.ts only — verified via
+  git diff c580ee1..HEAD --stat on those paths).
+- The 7 no-console warnings are Logger.ts's intentional console.* delegation
+  (rule is configured at 'warn' severity — non-blocking).
+- Suggested fix class (NOT applied — scope): type the debug accessors via a
+  declared Window interface augmentation instead of `as any`.
+
+## 5. E2E (npx playwright test — full suite, headed) — FAIL (18 failed / 96 passed / 3 skipped, 10.6m)
+
+Projects: chromium-boot (SwiftShader WebGL), firefox (GPU), w3b (Chrome, tests/e2e/w3b).
+
+### 5a. The 18 failures (by spec x browser):
+
+ 1. [chromium-boot] audio.spec.ts W2-C.2: AudioSystem available, pause/resume
+ 2. [chromium-boot] settings-panel.spec.ts W3-C.4 step 4: focus after Escape
+ 3. [chromium-boot] smoke.spec.ts S5: game-over then restart clean state
+ 4. [chromium-boot] w3b-cp3-score.spec.ts S2: #game-score after setScore(999)
+ 5. [chromium-boot] w3b-visual-baseline.spec.ts S1: MenuScene baseline maxDiffPixels:0
+ 6. [chromium-boot] w3b-visual-baseline.spec.ts S2: GameScene baseline (stable-shot timeout)
+ 7. [chromium-boot] w4a-visual-regression.spec.ts S1: MenuScene baseline maxDiffPixels:0
+ 8. [chromium-boot] w4a-visual-regression.spec.ts S2: GameScene baseline maxDiffPixels:0
+ 9. [firefox] audio.spec.ts W2-C.2
+10. [firefox] settings-panel.spec.ts W3-C.4 step 4
+11. [firefox] smoke.spec.ts S5
+12. [firefox] w3b-cp3-score.spec.ts S2
+13. [firefox] w3b-visual-baseline.spec.ts S1
+14. [firefox] w3b-visual-baseline.spec.ts S2
+15. [firefox] w4a-visual-regression.spec.ts S1
+16. [firefox] w4a-visual-regression.spec.ts S2
+17. [w3b] w3b-visual-baseline.spec.ts S1
+18. [w3b] w3b-visual-baseline.spec.ts S2
+
+Skipped (3, by-design): CP3 S3 collection-cycle flake (random spawn; documented)
++ 2 other documented skips in the w3b specs.
+
+### 5b. Root-cause classification (6 defect classes):
+
+D1. audio.spec.ts W2-C.2 (chromium-boot + firefox):
+    "AudioSystem.isAvailable() must be true in real Chrome — Received: false"
+    (spec line 129). PRE-EXISTING: in the W4-A.3 full-suite run (2026-09-24,
+    @c580ee1, 104 passed/12 failed) this spec was among the 12. Audio
+    availability in the headed test environment.
+
+D2. settings-panel.spec.ts W3-C.4 step 4 (chromium-boot + firefox):
+    "focus must return to START after Escape — Expected: menu-start-button,
+    Received: menu-settings-button" (spec line 145). NEW since the W4-A.3
+    checkpoint (this spec passed there). Suspected interaction with W4-B.8
+    settings-panel keyboard nav (a720a10, 2026-09-25): on Escape the panel
+    closes but focus lands on the settings button rather than returning to
+    START. Needs W4-B.8 owner confirmation.
+
+D3. smoke.spec.ts W2-E.1a S5 (chromium-boot + firefox):
+    "Game-over overlay must be visible after player:death — Received: false"
+    (spec line 334). PRE-EXISTING: among the W4-A.3 full-suite 12 failures.
+    Timing-sensitive death -> GameOverScene transition assertion in an
+    old-era smoke spec.
+
+D4. w3b-cp3-score.spec.ts S2 (chromium-boot + firefox legs):
+    "#game-score must read SCORE: 999 after setScore(999) (got SCORE: 0)"
+    (spec line 256). PRE-EXISTING deterministic CP3 S2 failure, root-caused in
+    W4-A.1 (t_ca6a8ada): spec/contract mismatch. NOTE: the SAME spec PASSED on
+    the w3b project in this run (#109) — the failure is project-context
+    dependent (chromium-boot/firefox legs run the w3b specs from the root
+    e2e dir with different page setup).
+
+D5. w3b-visual-baseline.spec.ts S1+S2 (chromium-boot + firefox + w3b = 6 fails):
+    maxDiffPixels:0 toHaveScreenshot against baselines captured 2026-09-22
+    (post a47d623). Menu legs: 3050-3051 px diff (~0.01 ratio), CONSTANT
+    across all 3 legs => deterministic baseline shift, not random flake.
+    GameScene legs: "Failed to take two consecutive stable screenshots"
+    (53 -> 9826 px variance between stability probes) => SwiftShader
+    non-determinism, the documented flake class per W4-A.3 flake policy
+    (w4a3-findings: 54-58% PNG byte variance on frozen GameScene).
+
+D6. w4a-visual-regression.spec.ts S1+S2 (chromium-boot + firefox = 4 fails):
+    same class as D5 but against the NEWER W4-A.3 baselines (captured
+    2026-09-24 21:40 @ c580ee1). Menu: 3050 px diff on chromium, 3051 px on
+    firefox — constant, deterministic. Five commits landed between baseline
+    capture and this run: d12c618 (W4-B.1 menu keyboard nav), cc0f166
+    (W4-B.3 ARIA labels), a720a10 (W4-B.8 settings keyboard nav), 11fccab
+    (W4-B.11), 5953dac (W4-B.5 announcements). MenuScene.ts gained +182 lines
+    in that window (focus styles, ARIA, announcer markup) => the committed
+    W4-A.3 menu baselines are STALE against current main. GameScene S2:
+    6806 px diff vs the maxDiffPixels:3000 allowance => also beyond the
+    calibrated tolerance (SwiftShader + W4-B.11 renderer changes).
+    W4-A.3 S3 (GameOverScene) PASSED on all 3 legs — the stable-DOM leg
+    still holds where the DOM did not change pixel-wise.
+
+### 5c. Delta vs W4-A.3 full-suite run (2026-09-24 @ c580ee1: 104 passed / 12 failed / 3 skipped)
+
+The 12 then: D1 (2), D3 (2), D4 (2), D5 (6).
+This run adds: D2 (2, NEW — settings Esc focus, suspected W4-B.8 interaction)
+and D6 (4, NEW — stale W4-A.3 baselines after W4-B menu/ARIA/announcement work).
+All 12 prior failures persist. Net: 2 of 6 defect classes are NEW since the
+W4-A.3 checkpoint; none is a product crash (boot, movement, score, restart,
+audio-in-firefox, FPS and latency all green).
+
+### 5d. Passing highlights (evidence the game itself is healthy)
+
+- Boot smoke (real WebGL context) PASS both browsers
+- W2-E.1a S1-S4 (boot/WASD/jump/score) PASS both browsers
+- W3-A full loop S1-S6 PASS both browsers
+- W3-B CP1-CP4 critical paths PASS on w3b project
+- W4-A.2 extended full-loop (settings persistence, high score, 2nd run) PASS both browsers
+- W3-C.1a FPS @ 120 obstacles: 60.0 mean FPS both browsers (D4 gate PASS)
+- W3-C.3a input latency < 16 ms (1 frame @ 60fps target met)
+- W3-C.2 firefox: 0 AudioContext "prevented" warnings across full gesture loop
+- w3b GameOverScene visual baseline still pixel-stable
+
+## 6. VERDICT
+
+FAIL — "verify all pass" is not met:
+  1. Playwright E2E: 18 failed / 96 passed / 3 skipped.
+  2. Lint: 3 errors (pre-existing GameScene.ts `as any` debug accessors).
+  3. Unit: 756/756 PASS.  4. tsc: PASS.  5. Coverage: 95.19% lines >= 90 PASS.
+
+Release blockers:
+  BLOCKER-1 (NEW): D2 — settings panel Escape focus return (chromium-boot +
+    firefox). Suspected W4-B.8 regression. Needs product-side fix + re-verify.
+  BLOCKER-2 (NEW): D6/D5 — stale visual baselines. W4-A.3 and W3-B.6-v2
+    Menu/GameScene baselines predate the W4-B menu DOM changes; re-capture
+    required (W4-A.3 S3 GameOverScene still stable).
+  PRE-EXISTING (documented, not new): D1 (audio availability in test env),
+    D3 (W2 smoke S5 game-over timing), D4 (CP3 S2 setScore contract mismatch,
+    project-context dependent), lint errors (GameScene.ts:172-179 `as any`).
+
+Per task rules, no fixes applied. Recommend orchestrator route: D2 to the
+W4-B.8 owner; D5/D6 baseline re-capture as a follow-up card; D1/D3/D4 + lint
+as pre-existing tech-debt items.

@@ -1,0 +1,85 @@
+================================================================================
+W4-A.1 — E2E smoke re-verify: 4 critical paths (Firefox leg)
+================================================================================
+Card:        t_ca6a8ada
+Date:        2026-09-24 (Australia/Sydney)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c8bcead (main, W3-C complete: 665/665 tests, tsc clean)
+Browser:     Firefox (real headed Firefox via X11 DISPLAY=:1), Playwright 1.62.0
+Project:     firefox (Desktop Firefox, headless:false, no extra args —
+             Firefox WebGL1/2 works out of the box with GPU/ANGLE on this box)
+Specs:       tests/e2e/w3b/w3b-cp{1,2,3,4}-*.spec.ts  (4 CPs, 14 tests)
+Run:         ./node_modules/.bin/playwright test --project=firefox
+             tests/e2e/w3b/w3b-cp1-start.spec.ts tests/e2e/w3b/w3b-cp2-movement.spec.ts
+             tests/e2e/w3b/w3b-cp3-score.spec.ts tests/e2e/w3b/w3b-cp4-restart.spec.ts
+             (Node v22.22.2; webServer auto-launched via Playwright config, port 5173)
+Full log:    workspaces/t_ca6a8ada/firefox-run.log
+
+==================== RESULT SUMMARY ====================
+  13 passed, 0 failed, 1 skipped (by design)   — 1.0m, workers=1, retries=0
+
+Per-CP / per-scenario:
+  CP1 start:
+    [PASS] S1 boot completes — WebGL live, menu visible, START enabled        (4.2s)
+    [PASS] S2 START via Enter enters GameScene — HUD up, menu down,
+             player + obstacles in scene graph                                (3.9s)
+    [PASS] S3 START via click enters GameScene — HUD up, menu down,
+             player present                                                  (3.8s)
+  CP2 movement:
+    [PASS] S1 boot -> menu -> START (Enter) -> GameScene with readable player (3.8s)
+    [PASS] S2 WASD drives the player — position-delta threshold on each axis  (6.7s)
+    [PASS] S3 moving into an obstacle damages the player — health decreases   (4.2s)
+    [PASS] S4 capture evidence screenshot + assert 0 fatal console errors     (4.4s)
+  CP3 score:
+    [PASS] S1 HUD displays live #game-score — valid number, in sync w/ state  (3.6s)
+    [PASS] S2 #game-score DOM updates when UISystem.setScore is driven
+             with a known value                                              (3.8s)  <-- SEE CAVEAT BELOW
+    [SKIP] S3 full collection-cycle — ram a breakable obstacle -> +100
+             (test.fixme — flaky by design: random 5-way spawn pick;
+              W3-C deterministic-spawn follow-up. Does NOT gate W4.)
+    [PASS] S4 dispatching PLAYER_SCORE(100) scores +100 in state and HUD     (4.4s)
+  CP4 restart:
+    [PASS] S1 __setPlayerHealth(0) -> GameOverScene active (final + high
+             score displayed)                                                (6.1s)
+    [PASS] S2 RESTART -> MenuScene active, #menu-start-button re-armed
+             (W3-A.7 guard)                                                  (4.4s)
+    [PASS] S3 2nd run after RESTART -> GameScene active again (fresh run,
+             HUD up, screenshot)                                             (5.0s)
+
+==================== CAVEAT — CP3 S2 PASSED ON A RACE, NOT ON CORRECTNESS ====================
+CP3 S2 is the SAME test that FAILED in the Chrome leg (W4A1-CHROME.txt).
+It passed here, but diagnosis (in-page rAF probes after this run) shows the
+pass is timing luck, not a Firefox-specific behavior:
+
+  - GameScene.onUpdate (src/scenes/GameScene.ts:225-230) pushes
+    setScore(scoreManager.getScore()) every frame; the driven value is
+    clobbered ~1 frame later in BOTH browsers.
+  - Firefox rAF cadence on this box: avg 7.05 ms vs Chromium/SwiftShader
+    16.87 ms, so the spec's read frequently lands in the ~7ms window before
+    the next push.
+  - Replayed the exact spec pattern 5 times on fresh Firefox runs:
+        run1: read42=SCORE: 42  read999=SCORE: 999
+        run2: read42=SCORE: 0   read999=SCORE: 999
+        run3: read42=SCORE: 42  read999=SCORE: 999
+        run4: read42=SCORE: 0   read999=SCORE: 999
+        run5: read42=SCORE: 0   read999=SCORE: 0
+    => 3/5 runs read SCORE: 0 — the test is FLAKY on Firefox as well.
+  - In-page rAF poll after drive(999): all 40 frames read "SCORE: 0"
+    (the revert happens; the spec just sometimes reads fast enough).
+
+Net: the Firefox leg is GREEN for W4 gate #1 as executed, but CP3 S2's
+evidence is weak in BOTH browsers. The score pipeline itself is verified
+sound by CP3 S1 + S4 (green in both browsers): PLAYER_SCORE(100) event ->
++100 in state -> HUD DOM reflects the increment on the next frame.
+
+==================== ENVIRONMENT NOTES ====================
+- Headed Firefox on X11 :1, GPU WebGL (no SwiftShader flags; Firefox uses
+  ANGLE/GPU natively).
+- 0 fatal console errors across all 13 passing CP tests (same
+  filterFatalErrors posture as CP1/CP2: AudioContext autoplay warnings and
+  manifest-404 are by-design non-fatal).
+- Screenshot evidence (tests/evidence/w3/): w3b-cp1-start.png,
+  w3b-cp2-movement.png, w3b-cp3-score.png (S2's own screenshot line WAS
+  reached this time, since the assertion passed), w3b-cp4-restart.png.
+- Full stdout: workspaces/t_ca6a8ada/firefox-run.log
+================================================================================

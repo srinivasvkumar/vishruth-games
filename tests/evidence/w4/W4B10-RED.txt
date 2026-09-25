@@ -1,0 +1,54 @@
+================================================================================
+W4-B.10 — Edge case: tab blur/focus (pause on blur, resume on focus)
+RED PHASE (first run of the new spec against the product)
+================================================================================
+Card:        t_3ea43ca0
+Date:        2026-09-25 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      cc0f166 (main)
+Spec:        tests/unit/blur-focus.test.ts (9 tests)
+Run:         ./node_modules/.bin/vitest run tests/unit/blur-focus.test.ts
+             --config config/vite.config.ts
+             (Node v18.19.1, vitest 1.6.1, happy-dom)
+Full log:    workspaces/t_3ea43ca0/red-vitest.log
+
+==================== RESULT SUMMARY ====================
+  7 failed | 2 passed (9 total)   — 980ms
+
+RED PHASE (TDD discipline):
+  The spec was written FIRST against the intended behavior (window blur ->
+  pause + show PAUSED overlay; window focus -> resume + hide overlay). On the
+  first execution against the product @ cc0f166, 7 tests failed as expected:
+
+  FAILED TESTS (7):
+  1. "blur: pauses the game when it is running"
+     → game.pause() must be called on window blur: expected "spy" to be called
+       1 times, but got 0 times
+  2. "focus: resumes the game after a blur"
+     → game.resume() must be called on window focus: expected "spy" to be
+       called 1 times, but got 0 times
+  3. "blur: shows the #game-paused-overlay with the text 'PAUSED'"
+     → overlay must exist in the DOM: expected null not to be null
+  4. "focus: hides the #game-paused-overlay"
+     → overlay missing (created by the RED state): Cannot read properties of
+       null (reading 'style')
+  5. "overlay: is present in the DOM after load, hidden by default"
+     → overlay must exist after load(): expected null not to be null
+  6. "blur x2: is idempotent — does not double-pause"
+     → first blur must call pause(): expected "spy" to be called 1 times, but
+       got 0 times
+  7. "onCleanup: removes the #game-paused-overlay from the DOM"
+     → overlay must exist before cleanup(): expected null not to be null
+
+  PASSED TESTS (2) — behavioral guards that are trivially satisfied by the
+  un-patched product (no-op assertions):
+  - "blur: does NOT pause when the game is not running (isGameRunning guard)"
+  - "focus: does NOT resume when the game was not paused (no-op)"
+
+  Analysis: The product @ cc0f166 has no window blur/focus wiring in GameScene
+  and no #game-paused-overlay. GameScene must add:
+  (a) window 'blur'  -> game.pause()   + show #game-paused-overlay ("PAUSED")
+  (b) window 'focus' -> game.resume()  + hide #game-paused-overlay
+  (c) the overlay div created on load, hidden by default, removed on cleanup
+  (d) an isGameRunning() guard so blur only acts while playing
+================================================================================

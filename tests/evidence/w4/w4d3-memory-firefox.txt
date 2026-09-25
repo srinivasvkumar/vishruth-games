@@ -1,0 +1,37 @@
+W4-D.3 — 5-minute memory leak test
+timestamp: 2026-09-25T04:14:37.630Z
+browser: firefox (real headed, WebGL live)
+url: http://localhost:5173/public/index.html
+phases: 5x play→die→restart cycles (~12000 ms each) + 240000 ms steady-state play
+sample interval: 15000 ms; samples captured: 17
+metric: obstacleCount (proxy — performance.memory unavailable in this browser)
+perf.memory available: false
+
+sample series (t_ms, obstacles,groups,bodies,dom):
+  t=    6  obst=   3  groups=   4  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=15029  obst=  13  groups=  14  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=30044  obst=  23  groups=  24  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=45068  obst=  33  groups=  34  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=60089  obst=  43  groups=  44  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=75101  obst=  53  groups=  54  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=90123  obst=  62  groups=  63  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=105136  obst=  72  groups=  73  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=120156  obst=  82  groups=  83  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=135177  obst=  92  groups=  93  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=150203  obst= 102  groups= 103  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=165220  obst= 112  groups= 113  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=180243  obst= 122  groups= 123  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=195261  obst= 132  groups= 133  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=210269  obst= 142  groups= 143  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=225287  obst= 152  groups= 153  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+  t=240019  obst= 162  groups= 163  bodies=0  dom=  139  heap=unavail  state=playing  running=true
+
+first sample: 3
+last sample:  162
+mean (all samples): 82.35
+least-squares slope: 12.04% of mean per 15000 ms sample-interval (threshold 3%)
+growth (first→last): 5300.0%
+verdict: GROWING/LEAKING
+heap/object counts climb past the stability band across the window → investigate (see suspect list below)
+
+Suspects if GROWING: (a) Obstacle entity meshes not disposed on death, (b) AudioContext nodes not closed on restart, (c) scene-graph children accumulating across loadScene, (d) rAF listeners re-registered per restart.

@@ -15,8 +15,6 @@
 [log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Loading scene: BootScene 
 [log] [INFO] Game started successfully 
-[warning] [JavaScript Warning: "An AudioContext was prevented from starting automatically. It must be created or resumed after a user gesture on the page." {file: "http://localhost:5173/src/systems/Audio.ts" line: 62}]
-[warning] [JavaScript Warning: "An AudioContext was prevented from starting automatically. It must be created or resumed after a user gesture on the page." {file: "http://localhost:5173/src/systems/Audio.ts" line: 77}]
 [log] [INFO] Scene loaded: BootScene 
 [log] [INFO] Entered scene: BootScene 
 [log] [INFO] Scene loaded successfully JSHandle@object

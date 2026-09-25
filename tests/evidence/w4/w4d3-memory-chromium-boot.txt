@@ -1,0 +1,37 @@
+W4-D.3 — 5-minute memory leak test
+timestamp: 2026-09-25T04:02:32.016Z
+browser: chromium-boot (real headed, WebGL live)
+url: http://localhost:5173/public/index.html
+phases: 5x play→die→restart cycles (~12000 ms each) + 240000 ms steady-state play
+sample interval: 15000 ms; samples captured: 17
+metric: usedJSHeapSize
+perf.memory available: true
+
+sample series (t_ms, usedHeapKB):
+  t=    8  heapKB=    9766  obst=3  groups=4  dom=139  state=playing  running=true
+  t=15030  heapKB=    9766  obst=13  groups=14  dom=139  state=playing  running=true
+  t=30049  heapKB=    9766  obst=23  groups=24  dom=139  state=playing  running=true
+  t=45069  heapKB=    9766  obst=33  groups=34  dom=139  state=playing  running=true
+  t=60082  heapKB=    9766  obst=42  groups=43  dom=139  state=playing  running=true
+  t=75102  heapKB=    9766  obst=52  groups=53  dom=139  state=playing  running=true
+  t=90126  heapKB=    9766  obst=62  groups=63  dom=139  state=playing  running=true
+  t=105144  heapKB=    9766  obst=72  groups=73  dom=139  state=playing  running=true
+  t=120162  heapKB=    9766  obst=82  groups=83  dom=139  state=playing  running=true
+  t=135184  heapKB=    9766  obst=92  groups=93  dom=139  state=playing  running=true
+  t=150206  heapKB=    9766  obst=102  groups=103  dom=139  state=playing  running=true
+  t=165216  heapKB=    9766  obst=112  groups=113  dom=139  state=playing  running=true
+  t=180240  heapKB=    9766  obst=122  groups=123  dom=139  state=playing  running=true
+  t=195248  heapKB=    9766  obst=132  groups=133  dom=139  state=playing  running=true
+  t=210267  heapKB=    9766  obst=142  groups=143  dom=139  state=playing  running=true
+  t=225273  heapKB=    9766  obst=152  groups=153  dom=139  state=playing  running=true
+  t=240022  heapKB=    9766  obst=161  groups=162  dom=139  state=playing  running=true
+
+first sample: 9765.625
+last sample:  9765.625
+mean (all samples): 9765.63
+least-squares slope: 0.00% of mean per 15000 ms sample-interval (threshold 3%)
+growth (first→last): 0.0%
+verdict: STABLE
+heap/object counts do not grow without bound across 5 restart cycles + 4 min play → no leak detected
+
+Suspects if GROWING: (a) Obstacle entity meshes not disposed on death, (b) AudioContext nodes not closed on restart, (c) scene-graph children accumulating across loadScene, (d) rAF listeners re-registered per restart.

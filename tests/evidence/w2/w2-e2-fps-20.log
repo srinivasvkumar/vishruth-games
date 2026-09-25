@@ -1,16 +1,16 @@
 W2-E.2 — FPS baseline @ 20 obstacles (D4 gate)
-timestamp: 2026-09-22T03:58:29.028Z
+timestamp: 2026-09-25T03:41:32.305Z
 browser: real Chrome (Playwright chromium-boot project, headed)
 url: http://localhost:5173/public/index.html
 obstacles: 20 (static groups w/ BoxGeometry+MeshStandardMaterial in the live scene + static mass=0 box bodies in the live cannon-es world)
 warmup: 3000 ms; sample window: 10000 ms; method: requestAnimationFrame tick counting in-page
 
-frames sampled: 601
+frames sampled: 600
 mean FPS:      60.0
-median FPS:    60.0
-min FPS (worst single frame): 56.9
+median FPS:    60.5
+min FPS (worst single frame): 57.3
 p95 frame time: 17.3 ms
-sample duration: 10017 ms
+sample duration: 10001 ms
 
 D4 GATE (>=30 FPS): PASS
 

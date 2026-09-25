@@ -1,0 +1,76 @@
+W4-C.2 GREEN EVIDENCE
+======================
+Date: 2026-09-25
+Task: t_8b4d5990 — Critical-path coverage (Gate #5)
+Project: clusterrush
+Command: ./node_modules/.bin/vitest run --config config/vite.config.ts --coverage
+
+Results:
+  Test Files: 40 passed (40)
+  Tests: 789 passed (789)
+  Duration: 8.28s
+
+New test files added:
+  tests/unit/coverage-critical-paths.test.ts
+    - Game loop start/stop + scene switch (5 tests)
+  tests/unit/coverage-critical-paths-scene-input.test.ts
+    - SceneManager transitions (10 tests)
+    - GameStateMachine death/restart (5 tests)
+    - InputSystem critical path (13 tests)
+
+Coverage after W4-C.2 tests:
+  Game.ts:         98.14% stmts  (was 97.83%, +0.31%)
+  SceneManager.ts: 99.49% stmts  (was 86.36%, +13.13%)
+  State.ts:        100%     stmts  (was 98.24%, +1.76%)
+  Input.ts:        100%     stmts  (was 95.71%, +4.29%)
+  Score.ts:        100%     stmts  (unchanged)
+
+Overall coverage: 95.82% (was 95.19%, +0.63%)
+
+Critical-path coverage assessment:
+  Game loop:        98.14% (remaining: boot-asset-fetch line 81, pause-block
+                      warn lines 168-170, stop-blocked-warn lines 311-312 —
+                      these are log/warn-only branches, not functional paths)
+  Scene transitions: 99.49% (remaining: getSceneName empty-string return line
+                      168 — unreachable in practice since every registered
+                      scene has a name)
+  State machine:     100%
+  Input:             100% stmts (line 66 is a branch, not a statement —
+                      gamepad polling when navigator.getGamepads is undefined)
+  Scoring:           100%
+
+Full coverage table:
+All files          |   95.82 |    91.71 |    96.1 |   95.82 |
+ src               |   97.75 |      100 |     100 |   97.75 |
+  index.ts         |   97.75 |      100 |     100 |   97.75 | 92-95
+ src/core          |   98.68 |    96.77 |   96.87 |   98.68 |
+  Game.ts          |   98.14 |    95.55 |      96 |   98.14 | 81,168-170,311-312
+  GameLoop.ts      |     100 |      100 |     100 |     100 |
+  Renderer.ts      |     100 |      100 |     100 |     100 |
+  SceneManager.ts  |   99.49 |    97.22 |     100 |   99.49 | 168
+  State.ts         |     100 |      100 |     100 |     100 |
+  index.ts         |       0 |        0 |       0 |       0 | 1-4
+ src/entities      |   95.06 |    95.45 |   96.55 |   95.06 |
+  Obstacle.ts      |   91.91 |    95.83 |   92.85 |   91.91 | 190-191,212-228
+  Player.ts        |   98.57 |    95.23 |     100 |   98.57 | 132-134
+ src/scenes        |   97.32 |     84.5 |   95.45 |   97.32 |
+  BootScene.ts     |   91.12 |    89.47 |      80 |   91.12 | 84,103-105,125-126,135-137,140-141,205-212
+  GameOverScene.ts |   97.72 |    87.87 |   94.73 |   97.72 | 94-95,285-291
+  GameScene.ts     |   96.17 |    80.76 |   97.14 |   96.17 | 198-200,220,282-284,358-361,428-429,432-436,515-518,570-572,720-723,754-755
+  MenuScene.ts     |   99.32 |    81.41 |     100 |   99.32 | 566-568,858,867-868
+  Scene.ts         |     100 |      100 |     100 |     100 |
+ src/systems       |   98.11 |    94.33 |   96.26 |   98.11 |
+  Accessibility.ts |   95.93 |    89.74 |    87.5 |   95.93 | 146-148,179-180,190-192
+  Audio.ts         |   97.38 |    91.04 |     100 |   97.38 | 226-227,255-256,281-283,294-295,394-395
+  BodySync.ts      |     100 |     87.5 |     100 |     100 | 48
+  Input.ts         |     100 |    97.87 |     100 |     100 | 66
+  Physics.ts       |     100 |      100 |     100 |     100 |
+  Score.ts         |     100 |      100 |     100 |     100 |
+  Settings.ts      |   94.04 |    88.88 |   86.66 |   94.04 | 62-63,85-86,128-129,138-139,146-147
+  UI.ts            |   99.07 |      100 |   93.33 |   99.07 | 187-188
+ src/types         |       0 |        0 |       0 |       0 |
+  GameTypes.ts     |       0 |        0 |       0 |       0 | 1-118
+ src/utils         |    99.5 |    98.27 |     100 |    99.5 |
+  AssetLoader.ts   |     100 |      100 |     100 |     100 |
+  Constants.ts     |     100 |      100 |     100 |     100 |
+  Logger.ts        |   97.82 |    94.44 |     100 |   97.82 | 27-28

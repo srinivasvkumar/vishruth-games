@@ -1,0 +1,97 @@
+================================================================================
+W4-B.10 — Edge case: tab blur/focus (pause on blur, resume on focus)
+GREEN PHASE
+================================================================================
+
+Date:            2026-09-25 (AEST)
+Worker:          game-dev (t_3ea43ca0)
+Spec:            tests/unit/blur-focus.test.ts
+Implementation:  src/scenes/GameScene.ts (blur/focus listeners + PAUSED overlay)
+Test runner:     vitest (jsdom env) — config/vite.config.ts
+
+--------------------------------------------------------------------------------
+TEST RUN (vitest, full spec)
+--------------------------------------------------------------------------------
+$ ./node_modules/.bin/vitest run tests/unit/blur-focus.test.ts --config config/vite.config.ts
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ✓ tests/unit/blur-focus.test.ts  (9 tests) 27ms
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  10:09:03
+   Duration  982ms (transform 189ms, setup 34ms, collect 187ms, tests 27ms, environment 166ms, prepare 130ms)
+
+All 9 assertions pass:
+  1. blur: calls game.pause()
+  2. blur: does NOT call game.resume()
+  3. blur: shows #game-paused-overlay with text "PAUSED"
+  4. blur: overlay is visible (display:flex, centered)
+  5. focus: calls game.resume()
+  6. focus: does NOT call game.pause()
+  7. focus: hides the overlay (display:none)
+  8. blur then focus: idempotent — second blur/focus does not double-toggle
+  9. pause/resume are no-ops when already in that state (FSM guard)
+
+--------------------------------------------------------------------------------
+REGRESSION (neighbouring GameScene / Scene suites)
+--------------------------------------------------------------------------------
+$ ./node_modules/.bin/vitest run tests/unit/game-scene-ui.test.ts tests/unit/game-loop.test.ts tests/unit/game.test.ts --config config/vite.config.ts
+  ✓ game-scene-ui.test.ts  ✓ game-loop.test.ts  ✓ game.test.ts
+  (blur-focus.test.ts re-run in the same batch: 9/9 pass)
+
+NOTE on pre-existing failures in sibling work (NOT caused by W4-B.10):
+  - scene-manager.test.ts (6 failures): `getAccessibilitySystem()` — sibling
+    W4-B.5 has UNCOMMITTED edits to src/core/SceneManager.ts + src/core/Game.ts
+    that add this getter; not yet committed, so the test can't see it.
+  - scenes.test.ts (1 failure): `MenuScene.detachSettingsKeydownHandler` —
+    sibling W4-B.8 has UNCOMMITTED edits to src/scenes/MenuScene.ts.
+  Both are in files W4-B.10 does not touch; confirmed via `git diff --stat`.
+
+--------------------------------------------------------------------------------
+TYPE-CHECK
+--------------------------------------------------------------------------------
+$ ./node_modules/.bin/tsc --noEmit -p tsconfig.json
+  1 error, all in src/scenes/MenuScene.ts:160 (sibling W4-B.8 in-flight work).
+  GameScene.ts + blur-focus.test.ts: 0 type errors.
+
+--------------------------------------------------------------------------------
+LINT
+--------------------------------------------------------------------------------
+$ ./node_modules/.bin/eslint --config config/eslint.config.js src/scenes/GameScene.ts
+  3 pre-existing @typescript-eslint/no-explicit-any errors on lines 162/166/169
+  (the W3-B.0 `__debugPlayerPos/__setPlayerHealth/__debugScore` accessors —
+   present in the original file, NOT introduced by W4-B.10).
+  0 errors in code added by W4-B.10.
+
+  tests/unit/blur-focus.test.ts: project `npm run lint` scopes to
+  `src config scripts` only — tests are outside lint scope (same as all
+  existing test files, which produce the identical tsconfig parse error).
+
+--------------------------------------------------------------------------------
+IN-BROWSER VERIFY (Playwright / Chromium, Node 22)
+--------------------------------------------------------------------------------
+$ /home/srinivasvkumar/.nvm/versions/node/v22.22.2/bin/node _w4b10_verify.tmp.mjs
+
+Drives a real headless Chromium against the live dev server
+(http://localhost:5173/index.html), clicks #menu-start-button to start a run,
+then dispatches window blur/focus and reads the Game FSM + overlay:
+
+  VERIFY-OK  : precondition: game running, FSM=playing
+  VERIFY-OK  : blur: #game-paused-overlay exists in DOM
+  VERIFY-OK  : blur: overlay text is "PAUSED" (got PAUSED)
+  VERIFY-OK  : blur: overlay visible (display=flex)
+  VERIFY-OK  : blur: Game FSM state='paused' (got paused)
+  VERIFY-OK  : focus: overlay hidden (display=none)
+  VERIFY-OK  : focus: Game FSM state='playing' (got playing)
+  VERIFY-OK  : no unexpected console/page errors (got 0)
+
+ALL VERIFY CHECKS PASSED
+
+End-to-end: blur -> FSM 'paused' + visible "PAUSED" overlay;
+           focus -> FSM 'playing' + overlay hidden. No console errors.
+
+================================================================================
+RESULT: GREEN. Feature implemented and verified.
+================================================================================

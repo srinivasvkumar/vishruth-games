@@ -4,173 +4,172 @@
 [log] [INFO] Initializing Cluster Rush... 
 [log] [INFO] SceneManager initialized 
 [log] [INFO] Input system initialized 
-[log] [INFO] Physics system initialized {gravity: 9.81, worldScale: 1, fixedTimeStep: 0.016666666666666666, maxSubSteps: 3}
+[log] [INFO] Physics system initialized JSHandle@object
 [log] [INFO] BodySync initialized 
-[log] [INFO] Game initialized {config: Object}
+[log] [INFO] Game initialized JSHandle@object
 [log] [INFO] Boot scene created 
 [log] [INFO] Menu scene created 
 [log] [INFO] Game scene created 
 [log] [INFO] Game over scene created 
 [log] [INFO] Starting game 
-[log] [INFO] Loading scene {name: boot}
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Loading scene: BootScene 
-[warning] The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
 [log] [INFO] Game started successfully 
 [log] [INFO] Scene loaded: BootScene 
 [log] [INFO] Entered scene: BootScene 
-[log] [INFO] Scene loaded successfully {name: boot}
+[log] [INFO] Scene loaded successfully JSHandle@object
 [log] [INFO] Exited scene: BootScene 
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Loading scene: MenuScene 
 [log] [INFO] Scene loaded: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
 [log] [INFO] Menu: starting game 
-[log] [INFO] Loading scene {name: game}
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
 [log] [INFO] Loading scene: GameScene 
 [log] [INFO] Loading game scene assets... 
-[log] [INFO] Player created at _Vector3
+[log] [INFO] Player created at JSHandle@object
 [log] [INFO] Game scene loaded 
 [log] [INFO] Scene loaded: GameScene 
-[log] [INFO] Player created at _Vector3
+[log] [INFO] Player created at JSHandle@object
 [log] [INFO] Entered scene: GameScene 
-[log] [INFO] Scene loaded successfully {name: game}
-[log] [INFO] Game over — transitioning to gameover scene {score: 30, highScore: 30, level: 1}
-[log] [INFO] Loading scene {name: gameover}
+[log] [INFO] Scene loaded successfully JSHandle@object
+[log] [INFO] Game over — transitioning to gameover scene JSHandle@object
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: GameScene 
 [log] [INFO] Loading scene: GameOverScene 
 [log] [INFO] Scene loaded: GameOverScene 
 [log] [INFO] Entered scene: GameOverScene 
-[log] [INFO] Scene loaded successfully {name: gameover}
+[log] [INFO] Scene loaded successfully JSHandle@object
 [log] [INFO] Game over: restarting to menu 
-[log] [INFO] Loading scene {name: menu}
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: GameOverScene 
 [log] [INFO] Entered scene: MenuScene 
-[log] [INFO] Scene loaded successfully {name: menu}
+[log] [INFO] Scene loaded successfully JSHandle@object
 [log] [INFO] Menu: starting game 
-[log] [INFO] Loading scene {name: game}
+[log] [INFO] Loading scene JSHandle@object
 [log] [INFO] Exited scene: MenuScene 
-[log] [INFO] Player created at _Vector3
+[log] [INFO] Player created at JSHandle@object
 [log] [INFO] Entered scene: GameScene 
-[log] [INFO] Scene loaded successfully {name: game}
+[log] [INFO] Scene loaded successfully JSHandle@object

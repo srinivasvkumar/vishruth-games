@@ -1,0 +1,133 @@
+================================================================================
+W4-A.1 — E2E smoke re-verify: 4 critical paths (Chrome leg)
+================================================================================
+Card:        t_ca6a8ada
+Date:        2026-09-24 (Australia/Sydney)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c8bcead (main, W3-C complete: 665/665 tests, tsc clean)
+Browser:     Chromium (real headed Chrome via X11 DISPLAY=:1), Playwright 1.62.0
+Project:     chromium-boot (Desktop Chrome, --enable-unsafe-webgl --use-gl=angle
+             --use-angle=swiftshader, headless:false)
+Specs:       tests/e2e/w3b/w3b-cp{1,2,3,4}-*.spec.ts  (4 CPs, 14 tests)
+Run:         ./node_modules/.bin/playwright test --project=chromium-boot
+             tests/e2e/w3b/w3b-cp1-start.spec.ts tests/e2e/w3b/w3b-cp2-movement.spec.ts
+             tests/e2e/w3b/w3b-cp3-score.spec.ts tests/e2e/w3b/w3b-cp4-restart.spec.ts
+             (Node v22.22.2; webServer auto-launched via Playwright config, port 5173)
+Full log:    workspaces/t_ca6a8ada/chrome-run.log
+
+==================== RESULT SUMMARY ====================
+  12 passed, 1 failed, 1 skipped (by design)   — 53.5s, workers=1, retries=0
+
+Per-CP / per-scenario:
+  CP1 start:
+    [PASS] S1 boot completes — WebGL live, menu visible, START enabled        (3.1s)
+    [PASS] S2 START via Enter enters GameScene — HUD up, menu down,
+             player + obstacles in scene graph                                (3.6s)
+    [PASS] S3 START via click enters GameScene — HUD up, menu down,
+             player present                                                  (3.2s)
+  CP2 movement:
+    [PASS] S1 boot -> menu -> START (Enter) -> GameScene with readable player (3.2s)
+    [PASS] S2 WASD drives the player — position-delta threshold on each axis  (6.0s)
+    [PASS] S3 moving into an obstacle damages the player — health decreases   (3.7s)
+    [PASS] S4 capture evidence screenshot + assert 0 fatal console errors     (3.9s)
+  CP3 score:
+    [PASS] S1 HUD displays live #game-score — valid number, in sync w/ state  (3.2s)
+    [FAIL] S2 #game-score DOM updates when UISystem.setScore is driven
+             with a known value                                              (3.2s)
+    [SKIP] S3 full collection-cycle — ram a breakable obstacle -> +100
+             (test.fixme — flaky by design: random 5-way spawn pick;
+              W3-C deterministic-spawn follow-up. Does NOT gate W4.)
+    [PASS] S4 dispatching PLAYER_SCORE(100) scores +100 in state and HUD     (3.3s)
+  CP4 restart:
+    [PASS] S1 __setPlayerHealth(0) -> GameOverScene active (final + high
+             score displayed)                                                (5.5s)
+    [PASS] S2 RESTART -> MenuScene active, #menu-start-button re-armed
+             (W3-A.7 guard)                                                  (3.8s)
+    [PASS] S3 2nd run after RESTART -> GameScene active again (fresh run,
+             HUD up, screenshot)                                             (4.5s)
+
+==================== FAILURE DETAIL (CP3 S2) ====================
+Test:   W3-B.4 CP3 S2: #game-score DOM updates when UISystem.setScore is
+        driven with a known value
+Spec:   tests/e2e/w3b/w3b-cp3-score.spec.ts:227
+Error:  #game-score must read "SCORE: 999" after setScore(999) (got "SCORE: 0")
+        Expected: "SCORE: 999"
+        Received: "SCORE: 0"
+        (first drive setScore(42) PASSed — HUD read "SCORE: 42"; the second
+         drive setScore(999) did NOT stick.)
+Repro:  deterministic on Chromium — re-ran the CP3 spec in isolation a 2nd
+        time; identical failure (12.8s, same assertion at spec line 256).
+Artifact: tests/evidence/w3/playwright-artifacts/w3b-w3b-cp3-score-W7-B-4-C-
+          345df-s-driven-with-a-known-value-chromium-boot/
+            - test-failed-1.png (HUD shows "SCORE: 0" at failure)
+            - error-context.md  (page snapshot: SCORE: 0 / HEALTH: 100 / LEVEL: 1)
+
+==================== ROOT CAUSE (diagnosis only — no fix applied) ====================
+The spec drives window.game.getUISystem().setScore(n) and asserts the DOM
+holds the driven value on the next read. But GameScene.onUpdate()
+(src/scenes/GameScene.ts:225-230) pushes setScore(scoreManager.getScore())
+UNCONDITIONALLY every frame:
+
+    if (this.player) {
+      const state = this.player.getState();
+      this.game.getUISystem().setScore(this.scoreManager.getScore());
+      ...
+    }
+
+In a fresh run the true score is 0, so every rAF tick overwrites the driven
+value with "SCORE: 0". Whether the spec's read lands before or after the
+next frame tick is a pure race:
+  - Chromium (SwiftShader): measured avg frame interval 16.87 ms -> the
+    rAF push almost always lands before the spec's ~50-250ms read
+    round-trip -> DETERMINISTIC failure.
+  - Firefox (GPU): measured avg frame interval 7.05 ms -> the race is
+    narrower and the spec's read frequently lands in the gap right after
+    the drive -> PASSES most of the time.
+
+Probe evidence (identical drives, 50ms polling):
+  Chrome: drive(42) -> 42 | 0 | 0 | 0 | 0 ...   (revert on frame 2)
+  Chrome: drive(999) -> 999 | 0 | 0 | 0 | 0 ...  (revert on frame 2)
+  Firefox in-page rAF poll after drive(999): 0 x40 frames (revert observed)
+  Firefox spec-pattern replay (5 fresh runs): read42=42/0/42/0/0
+                                              read999=999/999/999/999/0
+  => Firefox is FLAKY on the same spec too (3/5 runs read SCORE: 0);
+     the official W4-A.1 Firefox run happened to pass all reads.
+
+This is a spec/production-contract mismatch, NOT a product rendering bug:
+  - The real score pipeline (state -> event -> ScoreManager -> HUD push)
+    works: CP3 S1 and S4 are green (PLAYER_SCORE(100) -> +100 in state AND
+    HUD reflected next frame).
+  - The driven setScore() is correctly applied to the DOM — it is just
+    overwritten by the legitimate per-frame state->HUD sync ~1 frame later.
+  - CP3 S2 was green in W3-B.7-v2 (evidence W3B7V2-CHROME.txt) — the
+    per-frame push in GameScene.onUpdate (lines 223-230, "W3A.2: HUD is
+    owned by UISystem") has been in place since W3A; the spec passed
+    before at the mercy of frame-timing. The two W3-C commits touching
+    GameScene.ts (3c758fc perf(input), fd69fa8 settings UI) do not add the
+    push; the pre-existing push + slower SwiftShader frame cadence on this
+    box is what made the race deterministic.
+
+Classification: MAJOR (spec defect — W4 gate #1 evidence is contaminated:
+CP3 "DOM updates when setScore is driven" cannot be trusted in either
+browser until the spec is fixed). Product score functionality itself is
+healthy per S1/S4. No product code change required by this test alone.
+
+Suggested fix directions (for orchestrator/game-dev, NOT applied here):
+  a) Spec-side: assert the DOM read inside the same evaluate() call that
+     drives setScore (same JS task, no frame tick in between), OR drive
+     the value through the real state path (dispatch PLAYER_SCORE) — as S4
+     already does deterministically.
+  b) Product-side: make the per-frame push diff-aware (only touch the DOM
+     when the value changed) so external drives are not clobbered mid-frame;
+     this also removes a per-frame textContent write (minor perf win).
+
+==================== ENVIRONMENT NOTES ====================
+- Headed Chrome on X11 :1, SwiftShader WebGL (config flags).
+- Console: 0 fatal errors on all 12 passing CP tests. The only console
+  error observed in the failing test was a by-design 404 (manifest fetch),
+  which filterFatalErrors() excludes per CP1/CP2 posture.
+- Screenshot evidence for the passing CPs: tests/evidence/w3/w3b-cp1-start.png,
+  w3b-cp2-movement.png, w3b-cp3-score.png (from S1/S4 passes — S2's own
+  screenshot line was never reached), w3b-cp4-restart.png.
+- Full stdout: workspaces/t_ca6a8ada/chrome-run.log
+================================================================================

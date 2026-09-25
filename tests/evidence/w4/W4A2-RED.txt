@@ -1,0 +1,68 @@
+================================================================================
+W4-A.2 — E2E full-loop extended: settings + high-scores + 2nd run cycle
+RED PHASE (first run of the new spec against the product)
+================================================================================
+Card:        t_fd1738cd
+Date:        2026-09-24 (Australia/Sydney, AEST)
+Repo:        /home/srinivasvkumar/vishruth/games/clusterrush
+Commit:      c8bcead (main)
+Browser:     Chromium — real headed Chrome via X11 DISPLAY=:1, Playwright 1.62.0
+Project:     chromium-boot (Desktop Chrome, --enable-unsafe-webgl
+             --use-gl=angle --use-angle=swiftshader, headless:false)
+Spec:        tests/e2e/w4a-full-loop-extended.spec.ts (3 scenarios)
+Run:         ./node_modules/.bin/playwright test --project=chromium-boot
+             tests/e2e/w4a-full-loop-extended.spec.ts
+             (Node v22.22.2; webServer auto-launched via Playwright config,
+              port 5173)
+Full log:    workspaces/t_fd1738cd/red-chrome.log
+
+==================== RESULT SUMMARY ====================
+  3 passed, 0 failed   — 17.2s, workers=1, retries=0
+
+RED PHASE NOTE (TDD discipline):
+  The spec was written FIRST against the intended behavior (settings volume
+  -> live AudioSystem gain; high-score persistence + menu display; full 2nd
+  run cycle). On the first execution against the product @ c8bcead the
+  spec went GREEN immediately — the product already implements all three
+  extended behaviors correctly, so no product defect was found and no
+  RED->GREEN product fix cycle was needed. This file is the captured
+  first-run evidence; the GREEN phase re-ran the unchanged spec on both
+  browsers and reproduced the result (see W4A2-GREEN.txt).
+
+Per-scenario (chromium-boot):
+  S1 settings-volume:
+    [PASS] boot -> menu; SETTINGS click opens #settings-panel             (4.7s)
+           volume slider fill('50') + input event ->
+             localStorage['cluster-rush-settings'] =
+               {"volume":50,"speed":1,"difficulty":"normal"}
+             #settings-volume-label = "50"
+           CLOSE click hides the panel; Enter starts the game;
+           live AudioSystem masterGain.gain.value === 0.5  (50/100)
+           0 fatal console errors
+  S2 high-scores:
+    [PASS] cleared 'cluster-rush-high-score'; Enter -> game;
+           dispatch 'player:score' {points:500} (product's own event,
+           GameScene.ts:401 listener -> scoreManager.addScore)
+           HUD SCORE >= 500; dispatch 'player:death' -> GameOver
+           localStorage['cluster-rush-high-score'] === '500'
+           #gameover-high-score === '500'
+           RESTART -> menu; #menu-high-score-value === '500'
+           0 fatal console errors                                          (4.5s)
+  S3 2nd-run-cycle:
+    [PASS] one page, no reload:
+           run 1: Enter -> HUD (SCORE: 0, LEVEL: 1), player pos finite;
+                  'player:score' 80 -> 'player:death' -> gameover visible
+           RESTART -> menu visible, gameover hidden,
+                  #menu-start-button ENABLED (BUG-W2-1a re-arm)
+           run 2: #menu-start-button CLICK (mouse path) ->
+                  HUD (SCORE: 0, LEVEL: 1, HEALTH: 100), player pos finite
+                  'player:score' 100 -> HUD SCORE >= 100 (loop live)
+                  window.game.getGameState() === 'playing'
+           0 fatal console errors across the entire cycle                 (5.4s)
+
+Evidence screenshots (tests/evidence/w4/):
+  w4a2-s1-settings-chromium-boot.png  (mid run-1 after S1, gain verified)
+  w4a2-s2-highscore-chromium-boot.png (menu showing HIGH SCORE 500)
+  w4a2-s3-second-run-chromium-boot.png (run-2 live: SCORE 100 / LEVEL 1 /
+                                        HEALTH 100 + 3D scene)
+================================================================================

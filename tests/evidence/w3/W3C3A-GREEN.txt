@@ -1,5 +1,5 @@
 W3-C.3a — Input latency: key press -> visual response (target < 16 ms = 1 frame @ 60 fps)
-timestamp: 2026-09-23T05:28:08.381Z
+timestamp: 2026-09-25T04:07:57.593Z
 browser: real Chrome (Playwright chromium-boot project, headed, SwiftShader GL)
 url: http://localhost:5173/public/index.html
 
@@ -16,45 +16,49 @@ Method:
   - EPS rationale: at 60 fps one physics step moves z by 5.0/60 = 0.0833 units;
     EPS=0.02 is well under one frame of travel, so the sampler catches the FIRST frame moved.
 
-W-key sanity pre-check: |dz| over a 250 ms hold = 1.250 units (must be > 0.05)
+W-key sanity pre-check: |dz| over a 250 ms hold = 1.253 units (must be > 0.05)
 
 trials: 20; moved: 20/20
-average latency: 11.57 ms
-min:             0.90 ms
-max:             16.80 ms
-median:          14.50 ms
-p95:             16.80 ms
+average latency: 9.15 ms
+min:             1.00 ms
+max:             15.00 ms
+median:          10.00 ms
+p95:             15.00 ms
 
 per-trial:
-  #1  moved=true  dz=-0.0835  keydown=3497.00ms  firstMove=3504.50ms  latency=7.5 ms
-  #2  moved=true  dz=-0.0830  keydown=3840.70ms  firstMove=3854.70ms  latency=14.0 ms
-  #3  moved=true  dz=-0.0835  keydown=4197.10ms  firstMove=4205.20ms  latency=8.1 ms
-  #4  moved=true  dz=-0.0830  keydown=4538.30ms  firstMove=4554.30ms  latency=16.0 ms
-  #5  moved=true  dz=-0.0835  keydown=4886.80ms  firstMove=4887.90ms  latency=1.1 ms
-  #6  moved=true  dz=-0.0835  keydown=5221.30ms  firstMove=5237.40ms  latency=16.1 ms
-  #7  moved=true  dz=-0.0835  keydown=5573.70ms  firstMove=5587.90ms  latency=14.2 ms
-  #8  moved=true  dz=-0.0835  keydown=5922.90ms  firstMove=5937.40ms  latency=14.5 ms
-  #9  moved=true  dz=-0.0835  keydown=6269.90ms  firstMove=6270.80ms  latency=0.9 ms
-  #10  moved=true  dz=-0.0835  keydown=6606.40ms  firstMove=6621.30ms  latency=14.9 ms
-  #11  moved=true  dz=-0.0835  keydown=6957.60ms  firstMove=6970.90ms  latency=13.3 ms
-  #12  moved=true  dz=-0.0835  keydown=7307.40ms  firstMove=7321.10ms  latency=13.7 ms
-  #13  moved=true  dz=-0.0830  keydown=7653.10ms  firstMove=7654.50ms  latency=1.4 ms
-  #14  moved=true  dz=-0.0840  keydown=7985.70ms  firstMove=7987.40ms  latency=1.7 ms
-  #15  moved=true  dz=-0.0835  keydown=8322.50ms  firstMove=8337.70ms  latency=15.2 ms
-  #16  moved=true  dz=-0.0835  keydown=8672.60ms  firstMove=8687.80ms  latency=15.2 ms
-  #17  moved=true  dz=-0.0830  keydown=9022.20ms  firstMove=9038.00ms  latency=15.8 ms
-  #18  moved=true  dz=-0.0835  keydown=9372.80ms  firstMove=9387.50ms  latency=14.7 ms
-  #19  moved=true  dz=-0.0835  keydown=9721.20ms  firstMove=9738.00ms  latency=16.8 ms
-  #20  moved=true  dz=-0.0830  keydown=10071.10ms  firstMove=10087.40ms  latency=16.3 ms
+  #1  moved=true  dz=-0.0861  keydown=4016.00ms  firstMove=4017.00ms  latency=1.0 ms
+  #2  moved=true  dz=-0.0806  keydown=4374.00ms  firstMove=4383.00ms  latency=9.0 ms
+  #3  moved=true  dz=-0.0852  keydown=4733.00ms  firstMove=4735.00ms  latency=2.0 ms
+  #4  moved=true  dz=-0.0855  keydown=5085.00ms  firstMove=5100.00ms  latency=15.0 ms
+  #5  moved=true  dz=-0.0813  keydown=5454.00ms  firstMove=5467.00ms  latency=13.0 ms
+  #6  moved=true  dz=-0.0804  keydown=5819.00ms  firstMove=5833.00ms  latency=14.0 ms
+  #7  moved=true  dz=-0.0804  keydown=6184.00ms  firstMove=6198.00ms  latency=14.0 ms
+  #8  moved=true  dz=-0.0855  keydown=6540.00ms  firstMove=6550.00ms  latency=10.0 ms
+  #9  moved=true  dz=-0.0856  keydown=6892.00ms  firstMove=6900.00ms  latency=8.0 ms
+  #10  moved=true  dz=-0.0819  keydown=7240.00ms  firstMove=7250.00ms  latency=10.0 ms
+  #11  moved=true  dz=-0.0857  keydown=7591.00ms  firstMove=7601.00ms  latency=10.0 ms
+  #12  moved=true  dz=-0.0818  keydown=7941.00ms  firstMove=7950.00ms  latency=9.0 ms
+  #13  moved=true  dz=-0.0855  keydown=8289.00ms  firstMove=8300.00ms  latency=11.0 ms
+  #14  moved=true  dz=-0.0804  keydown=8642.00ms  firstMove=8650.00ms  latency=8.0 ms
+  #15  moved=true  dz=-0.0824  keydown=8989.00ms  firstMove=9001.00ms  latency=12.0 ms
+  #16  moved=true  dz=-0.0862  keydown=9342.00ms  firstMove=9351.00ms  latency=9.0 ms
+  #17  moved=true  dz=-0.0854  keydown=9695.00ms  firstMove=9700.00ms  latency=5.0 ms
+  #18  moved=true  dz=-0.0863  keydown=10052.00ms  firstMove=10066.00ms  latency=14.0 ms
+  #19  moved=true  dz=-0.0854  keydown=10413.00ms  firstMove=10417.00ms  latency=4.0 ms
+  #20  moved=true  dz=-0.0807  keydown=10761.00ms  firstMove=10766.00ms  latency=5.0 ms
 
-secondary (scene transition): FSM transition not observed within timeout (best-effort; not a gate)
+secondary (scene transition): scene-transition measurement errored (best-effort; not a gate): TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+Call log:
+[2m  - waiting for locator('#game-score') to be visible[22m
+[2m    24 × locator resolved to hidden <div id="game-score">SCORE: 0</div>[22m
+
 
 console errors (fatal would invalidate the reading): none
 
-TARGET (<16 ms at both avg AND p95): NOT MET
-  avg 11.6 ms <= 16
-  p95 16.8 ms > 16
-W3-C.3b (optimization): REQUIRED (input latency exceeds 16 ms — gap 16.8 ms p95 / 11.6 ms avg vs 16 ms target; top suspect documented below)
+TARGET (<16 ms at both avg AND p95): MET
+  avg 9.2 ms <= 16
+  p95 15.0 ms <= 16
+W3-C.3b (optimization): NOT REQUIRED (input latency <= 16 ms at p95 AND avg)
 
 Interpretation:
   - The measured span = CDP->DOM keydown delivery + the fixed-step physics update that

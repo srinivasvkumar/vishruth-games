@@ -1,0 +1,29 @@
+W4-C.2 RED EVIDENCE
+====================
+Date: 2026-09-25
+Task: t_8b4d5990 — Critical-path coverage (Gate #5)
+Project: clusterrush
+Command: ./node_modules/.bin/vitest run --config config/vite.config.ts --coverage
+
+Baseline (before W4-C.2 tests):
+  Test Files: 38 passed
+  Tests: 756 passed
+  Overall coverage: 95.19%
+
+Critical-path files at baseline:
+  Game.ts:         97.83% stmts  (uncovered: 81, 125, 168-170, 311-312)
+  SceneManager.ts: 86.36% stmts  (uncovered: 37-39, 51-54, 92-101, 107-111, 165-169)
+  State.ts:        98.24% stmts  (uncovered: 73-74)
+  Input.ts:        95.71% stmts  (uncovered: 34, 42, 55-56, 124-125, 131-133)
+  Score.ts:        100%          (already covered)
+
+Gap analysis:
+  - SceneManager: 86.36% → needed tests for unregister-current, load-queue,
+    fallback-to-previous, FIFO drain, getSceneName resolution
+  - Game: 97.83% → needed tests for boot-fail catch, empty-registry start,
+    pause-from-menu block, stop-from-gameOver warn
+  - State: 98.24% → needed test for unknown-initial-state throw
+  - Input: 95.71% → needed tests for uppercase keydown/keyup, mouseup release,
+    getKeys live map, isKeyJustPressed
+
+These lines existed and were correct but were never exercised by tests.

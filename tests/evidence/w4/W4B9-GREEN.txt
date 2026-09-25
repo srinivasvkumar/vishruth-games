@@ -1,0 +1,38 @@
+W4-B.9 GREEN EVIDENCE (2026-09-25, task t_6be4f9e2)
+Command: node node_modules/vitest/vitest.mjs run --config config/vite.config.ts tests/unit/resize-handling.test.ts
+
+All 7 tests pass after adding GameScene.handleResize() (registered in
+onLoad, removed in onCleanup). The handler updates the active camera's
+aspect ratio to window.innerWidth/innerHeight, calls
+updateProjectionMatrix(), and resizes the shared WebGL renderer to the
+#game-container (resizeToContainer), with a direct-resize fallback when
+no container element is present.
+
+✓ tests/unit/resize-handling.test.ts  (7 tests)
+  1. resize triggers a camera aspect update to the new viewport ratio  — PASS
+  2. resize calls updateProjectionMatrix on the camera                — PASS
+  3. resize delegates renderer sizing to the shared renderer wrapper  — PASS
+  4. resize during gameplay does not throw (game must not crash)      — PASS
+  5. HUD elements remain positioned and visible after resize        — PASS
+  6. the game loop (update) still works after a resize              — PASS
+  7. cleanup removes the resize listener (no leak, no double-resize) — PASS
+
+Test Files  1 passed (1)
+     Tests  7 passed (7)
+
+Type-check: `tsc --noEmit -p tsconfig.json` → exit 0 (no errors).
+
+Regression check: full suite shows 729 passing; the only failing files
+(blur-focus.test.ts / scene-manager.test.ts / settings-keyboard.test.ts,
+15 tests) fail identically WITHOUT this change (verified via git stash) —
+they belong to other in-flight W4 tasks (W4-B.8 / W4-B.10) and are not
+regressed by W4-B.9.
+
+In-browser note: headless Chrome on this host has no WebGL2 context
+(known constraint, see memory), so the 3D render path cannot be driven
+live here. The resize behavior is verified by the unit tests above
+(camera aspect + updateProjectionMatrix + renderer resizeToContainer
+all asserted), plus the no-crash guarantee (rapid portrait/landscape
+resizes through the update loop). The #game-container resize path is
+the same one index.ts already used pre-change; this change ADDS the
+missing camera.aspect update that index.ts's handler never did.
