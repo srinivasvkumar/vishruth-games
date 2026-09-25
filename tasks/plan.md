@@ -33,15 +33,15 @@
 33|  signal (orchestrator unblocks R).
 34|
 35|## Task list
-36|- [ ] R: T0.2.2a RED gate closure — verify committed RED evidence, lift PAUSE (game-tester) — parent: none
-37|- [ ] G1: Align game.test.ts + minimal Audio/UI stubs (make src/core/Game loadable) (game-dev) — parent R
-38|- [ ] G2: Align obstacle + physics-system tests (mock-cannon/mock-three divergence) (game-dev) — parent G1
-39|- [ ] G3: Align retroactive-core.test.ts (46 cross-cutting tests) (game-dev) — parent G2
-40|- [ ] G4: Align scene-manager + game-loop tests (game-dev) — parent G3
-41|- [ ] G5: Align constants + player tests (game-dev) — parent G4
-42|- [ ] G6: New retroactive tests for coverage gaps (AssetLoader, scenes, index) (game-dev) — parent G5
-43|- [ ] GV: T0.2.2b GREEN + final D0.2 verification (game-tester) — parent G6
-44|- [ ] QG: D0.2 quality gate + sign-off (reviewer) — parent GV
+36|- [x] R: T0.2.2a RED gate closure — verify committed RED evidence, lift PAUSE (game-tester) — parent: none
+37|- [x] G1: Align game.test.ts + minimal Audio/UI stubs (make src/core/Game loadable) (game-dev) — parent R
+38|- [x] G2: Align obstacle + physics-system tests (mock-cannon/mock-three divergence) (game-dev) — parent G1
+39|- [x] G3: Align retroactive-core.test.ts (46 cross-cutting tests) (game-dev) — parent G2
+40|- [x] G4: Align scene-manager + game-loop tests (game-dev) — parent G3
+41|- [x] G5: Align constants + player tests (game-dev) — parent G4
+42|- [x] G6: New retroactive tests for coverage gaps (AssetLoader, scenes, index) (game-dev) — parent G5
+43|- [x] GV: T0.2.2b GREEN + final D0.2 verification (game-tester) — parent G6
+44|- [x] QG: D0.2 quality gate + sign-off (reviewer) — parent GV
 45|
 46|## Checkpoints
 47|- After R: RED gate closed (GATE DECISION appended), PAUSE lifted, tracker 0.2.2 = red_verified / ACTIVE.
@@ -135,7 +135,7 @@
 135|  - Evidence: tests/evidence/w2/W2-E3-verify-probe.txt, w2-e3-localstorage.txt, w2-e3-shield.txt; sign-off doc: w2-signoff.md
 136|
 137|## BUG-W2-1: MenuScene start path (post-W2, 2026-09-16)
-138|- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator
+138|- [x] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator (both subtasks done)
 139|- [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard, listener cleanup in onExit/onCleanup — game-dev — `t_4298322b` — 2026-09-16
 140|  - RED: 6/7 menu-scene tests failed pre-change (no button, no key wiring, no guard)
 141|  - GREEN: 7/7 in tests/unit/menu-scene.test.ts; full suite 557/557; tsc clean; eslint 0 errors (7 pre-existing Logger.ts warnings)
@@ -304,15 +304,15 @@ one deterministic serial lane. No monoliths. Created 2026-09-11 by orchestrator 
   signal (orchestrator unblocks R).
 
 ## Task list
-- [ ] R: T0.2.2a RED gate closure — verify committed RED evidence, lift PAUSE (game-tester) — parent: none
-- [ ] G1: Align game.test.ts + minimal Audio/UI stubs (make src/core/Game loadable) (game-dev) — parent R
-- [ ] G2: Align obstacle + physics-system tests (mock-cannon/mock-three divergence) (game-dev) — parent G1
-- [ ] G3: Align retroactive-core.test.ts (46 cross-cutting tests) (game-dev) — parent G2
-- [ ] G4: Align scene-manager + game-loop tests (game-dev) — parent G3
-- [ ] G5: Align constants + player tests (game-dev) — parent G4
-- [ ] G6: New retroactive tests for coverage gaps (AssetLoader, scenes, index) (game-dev) — parent G5
-- [ ] GV: T0.2.2b GREEN + final D0.2 verification (game-tester) — parent G6
-- [ ] QG: D0.2 quality gate + sign-off (reviewer) — parent GV
+- [x] R: T0.2.2a RED gate closure — verify committed RED evidence, lift PAUSE (game-tester) — parent: none
+- [x] G1: Align game.test.ts + minimal Audio/UI stubs (make src/core/Game loadable) (game-dev) — parent R
+- [x] G2: Align obstacle + physics-system tests (mock-cannon/mock-three divergence) (game-dev) — parent G1
+- [x] G3: Align retroactive-core.test.ts (46 cross-cutting tests) (game-dev) — parent G2
+- [x] G4: Align scene-manager + game-loop tests (game-dev) — parent G3
+- [x] G5: Align constants + player tests (game-dev) — parent G4
+- [x] G6: New retroactive tests for coverage gaps (AssetLoader, scenes, index) (game-dev) — parent G5
+- [x] GV: T0.2.2b GREEN + final D0.2 verification (game-tester) — parent G6
+- [x] QG: D0.2 quality gate + sign-off (reviewer) — parent GV
 
 ## Checkpoints
 - After R: RED gate closed (GATE DECISION appended), PAUSE lifted, tracker 0.2.2 = red_verified / ACTIVE.
@@ -406,7 +406,7 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
   - Evidence: tests/evidence/w2/W2-E3-verify-probe.txt, w2-e3-localstorage.txt, w2-e3-shield.txt; sign-off doc: w2-signoff.md
 
 ## BUG-W2-1: MenuScene start path (post-W2, 2026-09-16)
-- [ ] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator
+- [x] BUG-W2-1 — MenuScene start path — DECOMPOSED + 1a COMPLETE + 1a VERIFIED IN REAL BROWSER @ 6f85f55 — orchestrator (both subtasks done)
 - [x] BUG-W2-1a — MenuScene player start path: Enter/Space keydown + START button click -> switchScene('game'), double-start guard, listener cleanup in onExit/onCleanup — game-dev — `t_4298322b` — 2026-09-16
   - RED: 6/7 menu-scene tests failed pre-change (no button, no key wiring, no guard)
   - GREEN: 7/7 in tests/unit/menu-scene.test.ts; full suite 557/557; tsc clean; eslint 0 errors (7 pre-existing Logger.ts warnings)
