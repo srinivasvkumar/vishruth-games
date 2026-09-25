@@ -1,0 +1,42 @@
+=== W4-B.5 In-Browser Verification — 2026-09-25 ~11:05 AEST ===
+
+Environment:
+  - Vite dev server (npm run dev, port 4174) — dist build was stale (committed
+    index.html still points at /src/index.ts, which is a dev-only path; the
+    preview build ships an untransformed script tag). The dev server serves
+    the live source, so all W4-B.5 code is present.
+  - Headless Chromium via Browser Use CLI (WebGL2 context unavailable in this
+    host's headless Chrome — known env limitation — but the announcer is a
+    DOM element, not canvas, so it is fully observable regardless).
+
+Observed transitions (live #sr-announcer textContent, read after each step):
+
+  1. Page load (boot scene active)
+       announcer: ""                (boot scene: no announcement by design)
+  2. Boot -> Menu (auto-transition ~1.5s after load)
+       announcer: "Menu"            <- announceSceneTransition('menu') fired
+  3. Menu -> Game (clicked #menu-start-button)
+       announcer: "Game started"    <- announceSceneTransition('game') fired
+  4. Game -> GameOver (window.__setPlayerHealth(0) — W4-B.11 debug hook,
+       deterministic death per GameScene.onUpdate health<=0 check)
+       announcer: "Game over, final score: 0"
+       <- Two announcements fired here:
+          a) announceSceneTransition('gameover', {score: 0, highScore: 0})
+             wrote "Game over, final score: 0"
+          b) GameOverScene.onEnter() called announce() with the same string
+             (authoritative final-score overwrite — covers direct entry)
+       The two are idempotent (identical text, double-set re-announce is a
+       no-op for screen readers since the text is unchanged).
+  5. GameOver -> Menu (clicked RESTART button)
+       announcer: "Menu"            <- announceSceneTransition('menu') fired
+
+ARIA attributes verified on #sr-announcer:
+  - aria-live="assertive"
+  - role="status"
+  - style: position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+           overflow:hidden; clip:rect(0px,0px,0px,0px); white-space:nowrap;
+           border:0px;
+  (visually hidden, SR-accessible — standard SR-only pattern)
+
+Conclusion: All four required scene-transition announcements fire correctly
+in the live browser. The implementation is verified end-to-end.

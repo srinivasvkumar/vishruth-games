@@ -24,12 +24,12 @@
 
     "phase": "W4-B: In Progress",
     "day": 12,
-    "current_task": "W4-B.11 low-memory graceful degradation complete; W4-B.2 pending",
-    "status": "W4-B-11-COMPLETE",
+    "current_task": "W4-B.5 screen-reader announcements complete; W4-B.2 pending",
+    "status": "W4-B-5-COMPLETE",
     "tdd_cycle": "complete",
     "start_date": "2026-09-24T20:00:00",
-    "last_updated": "2026-09-25T11:15:00",
-    "completion_date": "2026-09-25T11:15:00",
+    "last_updated": "2026-09-25T11:30:00",
+    "completion_date": "2026-09-25T11:30:00",
     "completion_notes": "W4-B.11 complete: low-memory graceful degradation (graceful degradation, no crash) at 500+ obstacles. Eliminated per-obstacle GPU/heap allocation. Obstacle.ts: module-level geometryCache (1 for default 4x5x6) + materialCache (5 total) — 500 obstacles share 1 geometry + 5 materials instead of 500+500. dispose() detaches instance mesh, preserves shared resources. reset(position, type) re-positions/re-types pooled obstacle in-place with zero GPU allocation. DAMAGE_BY_TYPE + getSharedMaterial exported. GameScene.ts: obstaclePool + REAP_Z (-250); reapOffscreenObstacles() every frame at onUpdate() start (in-place filter, O(n)); allocateObstacle() pool-first (pop+reset when warm, new Obstacle on cold start); spawnObstacles/spawnObstacle call allocateObstacle(); onCleanup() calls disposeAllObstacles(). TDD RED: 10/12 failing (no shared resources, no dispose, no reset, no pool). GREEN: 12/12 in new tests/unit/memory-leak.test.ts. Regression: 756/756 unit (38 files); 22/22 E2E (w3a-full-loop 19, w4a-full-loop-extended 3, w3c-fps-100 2, physics-sync). Lint + typecheck clean. Evidence: tests/evidence/w4/W4B11-RED.txt + W4B11-GREEN.txt."
   },
   "w2_e1b_completion": {

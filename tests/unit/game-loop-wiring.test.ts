@@ -26,6 +26,7 @@ import { GameScene } from '@/scenes/GameScene';
 import { GameOverScene } from '@/scenes/GameOverScene';
 import { GameEvents } from '@/utils/Constants';
 import { HIGH_SCORE_KEY } from '@/systems/Score';
+import { AccessibilitySystem } from '@/systems/Accessibility';
 import { UISystem } from '@/systems/UI';
 import type { UIConfig } from '@/types/GameTypes';
 import type { Game } from '@/core/Game';
@@ -69,6 +70,9 @@ function createMockGame() {
     showFPS: false,
     showDebug: false,
   } as UIConfig);
+  // W4-B.5: GameOverScene.onEnter announces via the game's
+  // AccessibilitySystem — real instance (same convention as uiSystem).
+  const accessibilitySystem = new AccessibilitySystem();
   // W2-A.2: scenes now share Game's renderer (Scene.ts constructor calls
   // game.getRenderer().getRenderer()). Provide a mock with the same shape.
   const mockRendererInner = {
@@ -93,6 +97,7 @@ function createMockGame() {
     pause: () => {},
     stop: () => {},
     getUISystem: () => uiSystem,
+    getAccessibilitySystem: () => accessibilitySystem,
     getInputSystem: () => ({
       getInputState: () => ({ keys: {} as Record<string, boolean> }),
     }),

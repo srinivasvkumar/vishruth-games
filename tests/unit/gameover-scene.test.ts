@@ -26,6 +26,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { GameOverScene } from "@/scenes/GameOverScene";
 import { HIGH_SCORE_KEY } from "@/systems/Score";
+import { AccessibilitySystem } from "@/systems/Accessibility";
 import { Logger } from "@/utils/Logger";
 import { GameEvents } from "@/utils/Constants";
 
@@ -54,6 +55,10 @@ vi.mock("@/utils/Logger", () => ({
 
 // --- Helpers ------------------------------------------------------------------
 function createMockGame() {
+  // W4-B.5: scenes now announce scene transitions via the game's
+  // AccessibilitySystem — provide a real instance (same convention as
+  // the UISystem mock in game-loop-wiring.test.ts).
+  const accessibilitySystem = new AccessibilitySystem();
   // W2-A.2: scenes now share Game's renderer (Scene.ts constructor calls
   // game.getRenderer().getRenderer()). Provide a mock with the same shape.
   const mockRendererInner = {
@@ -73,6 +78,7 @@ function createMockGame() {
     isGameRunning: () => false,
     pause: vi.fn(),
     stop: vi.fn(),
+    getAccessibilitySystem: () => accessibilitySystem,
   };
 }
 

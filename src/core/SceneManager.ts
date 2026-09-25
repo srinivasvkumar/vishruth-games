@@ -12,8 +12,10 @@ export class SceneManager {
   private previousScene: Scene | null = null;
   private sceneQueue: string[] = [];
   private isLoading = false;
+  private game: Game;
   
-  constructor(_game: Game) {
+  constructor(game: Game) {
+    this.game = game;
     Logger.info('SceneManager initialized');
   }
   
@@ -75,7 +77,12 @@ export class SceneManager {
       
       // Enter new scene
       scene.enter();
-      
+
+      // W4-B.5: announce the transition to screen readers via the
+      // visually-hidden aria-live region. This is the single choke point
+      // every scene switch goes through (Game.switchScene delegates here).
+      this.game.getAccessibilitySystem().announceSceneTransition(name, data);
+
       // Emit scene loaded event
       this.emit(GameEvents.LEVEL_START, { name, data });
       

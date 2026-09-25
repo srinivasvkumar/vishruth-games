@@ -30,8 +30,11 @@ describe('SceneManager Class - Retroactive Tests', () => {
   let mockGame: any;
 
   beforeEach(() => {
+    // W4-B.5: loadScene() announces the transition via the game's
+    // AccessibilitySystem — the minimal mock exposes a spy in its place.
     mockGame = {
-      emit: vi.fn()
+      emit: vi.fn(),
+      getAccessibilitySystem: () => ({ announceSceneTransition: vi.fn() }),
     };
     sceneManager = new SceneManager(mockGame);
   });

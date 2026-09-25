@@ -229,6 +229,12 @@ blocked (needs_input); nothing runs until the user's resume signal (orchestrator
   - Settings: volume slider ("Volume"), speed buttons ("Set speed to Xx"), difficulty buttons ("Set difficulty to X"), CLOSE ("Close settings")
   - TDD RED: 9 failed. GREEN: 9/9. Regression: 45/45 scene suites. Full: 692/692.
   - Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt
+- [x] W4-B.5 — Screen-reader announcements for scene transitions (aria-live region) — game-dev — `t_87e672ec` — 2026-09-25
+  - Visually-hidden aria-live='assertive' region (#sr-announcer) owned by AccessibilitySystem
+  - Announcements: boot -> (none), menu -> 'Menu', game -> 'Game started', gameover -> 'Game over, final score: X', unknown -> 'Scene: <name>'
+  - SceneManager.loadScene() announces on every transition; GameOverScene.onEnter() overwrites with authoritative final score
+  - TDD RED: 16 failed. GREEN: 16/16. Full: 756/756. In-browser verified: all 4 transitions observed in live Chromium.
+  - Evidence: tests/evidence/w4/W4B5-RED.txt + W4B5-GREEN.txt + W4B5-VERIFY.txt
 - [x] W4-B.8 — Settings panel keyboard navigation: Tab order + Arrow-key adjustment + Esc-to-close — game-dev — `t_b01c78d5` — 2026-09-25
   - Tab order: Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE
   - Arrow keys adjust volume slider (step 5, clamp 0..100, persist + live audio + label) and cycle speed/difficulty selectors (wraparound, apply + persist + visual)

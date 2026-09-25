@@ -588,6 +588,19 @@ in the same commit as its evidence. W1-D's late scope addendum was superseded by
     Regression: 45/45 scene suites. Full suite: 692/692. Lint + typecheck clean.
   - Evidence: tests/evidence/w4/W4B3-RED.txt + W4B3-GREEN.txt
 
+- [x] W4-B.5 — Screen-reader announcements for scene transitions (aria-live region) — game-dev — `t_87e672ec` — 2026-09-25
+  - Visually-hidden aria-live='assertive' region (#sr-announcer) owned by
+    AccessibilitySystem. SceneManager.loadScene() announces every transition;
+    GameOverScene.onEnter() overwrites with the authoritative final-score string.
+  - Announcements: boot -> (none), menu -> 'Menu', game -> 'Game started',
+    gameover -> 'Game over, final score: X', unknown -> 'Scene: <name>'.
+  - TDD RED: 16 failed. GREEN: 16/16 in tests/unit/scene-announcements.test.ts.
+    Mock updates: scene-manager.test.ts (spy), gameover-scene.test.ts +
+    game-loop-wiring.test.ts (real instance). Full suite: 756/756.
+    Type-check clean. Lint: zero new issues. In-browser verified: all 4
+    transitions observed firing in live Chromium.
+  - Evidence: tests/evidence/w4/W4B5-RED.txt + W4B5-GREEN.txt + W4B5-VERIFY.txt
+
 - [x] W4-B.8 — Settings panel keyboard navigation: Tab order + Arrow-key adjustment + Esc-to-close — game-dev — `t_b01c78d5` — 2026-09-25
   - Tab order: Volume -> Speed -> Difficulty -> Controls(read-only) -> CLOSE.
   - ArrowRight/Up + ArrowLeft/Down adjust the volume slider (step 5, clamp

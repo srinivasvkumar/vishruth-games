@@ -5,6 +5,7 @@ import { InputSystem } from '@/systems/Input';
 import { PhysicsSystem } from '@/systems/Physics';
 import { AudioSystem } from '@/systems/Audio';
 import { UISystem } from '@/systems/UI';
+import { AccessibilitySystem } from '@/systems/Accessibility';
 import { BodySync } from '@/systems/BodySync';
 import { Renderer } from '@/core/Renderer';
 import { AssetLoader } from '@/utils/AssetLoader';
@@ -38,6 +39,7 @@ export class Game {
   private physicsSystem: PhysicsSystem;
   private audioSystem: AudioSystem;
   private uiSystem: UISystem;
+  private accessibilitySystem: AccessibilitySystem;
   private physicsSync: BodySync;
   private renderer: Renderer;
   private fsm: GameStateMachine;
@@ -60,6 +62,10 @@ export class Game {
     this.physicsSync = new BodySync(this.physicsSystem);
     this.audioSystem = new AudioSystem(config.audio);
     this.uiSystem = new UISystem(config.ui);
+    // W4-B.5: screen-reader announcements for scene transitions — a
+    // visually-hidden aria-live region the SceneManager updates on every
+    // scene change. Owned here alongside the other systems.
+    this.accessibilitySystem = new AccessibilitySystem();
 
     // W2-A.2: shared renderer — one WebGL context for the whole game,
     // owned by Game and passed to the SceneManager, instead of each
@@ -273,6 +279,7 @@ export class Game {
     this.physicsSync.cleanup();
     this.audioSystem.cleanup();
     this.uiSystem.cleanup();
+    this.accessibilitySystem.cleanup();
     this.renderer.dispose();
     Logger.info('Game resources cleaned up');
   }
@@ -292,6 +299,8 @@ export class Game {
   getPhysicsSync(): BodySync { return this.physicsSync; }
   getAudioSystem(): AudioSystem { return this.audioSystem; }
   getUISystem(): UISystem { return this.uiSystem; }
+  /** W4-B.5: the screen-reader announcement system (scene transitions). */
+  getAccessibilitySystem(): AccessibilitySystem { return this.accessibilitySystem; }
   getRenderer(): Renderer { return this.renderer; }
   isGameRunning(): boolean { return this.fsm.getState() === 'playing'; }
 

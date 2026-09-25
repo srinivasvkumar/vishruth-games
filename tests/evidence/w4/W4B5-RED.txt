@@ -1,0 +1,31 @@
+W4-B.5 — RED phase (tests before implementation)
+timestamp: 2026-09-25T09:49:37+10:00
+command: npx vitest run --config config/vite.config.ts tests/unit/scene-announcements.test.ts
+expectation: FAIL — src/systems/Accessibility.ts does not exist yet
+
+
+ RUN  v1.6.1 /home/srinivasvkumar/vishruth/games/clusterrush
+
+ ❯ tests/unit/scene-announcements.test.ts  (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/scene-announcements.test.ts [ tests/unit/scene-announcements.test.ts ]
+Error: Failed to resolve import "@/systems/Accessibility" from "tests/unit/scene-announcements.test.ts". Does the file exist?
+ ❯ TransformPluginContext._formatError node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
+ ❯ async file:/home/srinivasvkumar/vishruth/games/clusterrush/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
+ ❯ PluginContainer.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  09:49:38
+   Duration  781ms (transform 95ms, setup 37ms, collect 0ms, tests 0ms, environment 167ms, prepare 343ms)
+
+
+exit_code: 1

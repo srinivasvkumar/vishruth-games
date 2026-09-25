@@ -71,6 +71,14 @@ export class GameOverScene extends Scene {
     }
     // Refresh the high score on every entry so the current record is shown.
     this.updateHighScoreDisplay();
+    // W4-B.5: screen-reader announcement with the scene's authoritative
+    // final score (the value actually displayed). Overwrites the
+    // SceneManager's data-payload announcement, so the SR always hears
+    // the score the user sees — including on direct entry where no
+    // transition data payload was passed.
+    this.game
+      .getAccessibilitySystem()
+      .announce(`Game over, final score: ${this.finalScore}`);
     // Wire the restart path. If a previous transition rejected,
     // restarted is false again — re-arm.
     if (!this.restarted) {

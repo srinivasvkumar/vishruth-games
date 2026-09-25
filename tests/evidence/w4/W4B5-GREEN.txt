@@ -1,0 +1,40 @@
+=== W4-B.5 GREEN (post regression fix) — 2026-09-25 ~10:51 AEST ===
+
+### Targeted suites
+$ npx vitest run --config config/vite.config.ts tests/unit/scene-announcements.test.ts tests/unit/scene-manager.test.ts tests/unit/gameover-scene.test.ts tests/unit/game-loop-wiring.test.ts
+ ✓ tests/unit/gameover-scene.test.ts  (21 tests) 59ms
+ ✓ tests/unit/game-loop-wiring.test.ts  (11 tests) 77ms
+
+ Test Files  4 passed (4)
+      Tests  68 passed (68)
+   Start at  10:26:21
+   Duration  1.22s (transform 574ms, setup 249ms, collect 729ms, tests 188ms, environment 657ms, prepare 456ms)
+
+
+
+### Full suite
+$ npm run test:run
+ Test Files  38 passed (38)
+      Tests  756 passed (756)
+   Start at  10:51:20
+   Duration  4.72s (transform 3.19s, setup 2.10s, collect 8.59s, tests 6.77s, environment 23.26s, prepare 9.81s)
+
+
+### Type-check
+$ npm run type-check
+> cluster-rush@0.1.0 type-check
+> tsc --noEmit -p tsconfig.json
+
+rc=0
+
+### Lint (npm run lint)
+  63:7  warning  Unexpected console statement  no-console
+  65:7  warning  Unexpected console statement  no-console
+  77:9  warning  Unexpected console statement  no-console
+  79:9  warning  Unexpected console statement  no-console
+  89:7  warning  Unexpected console statement  no-console
+
+✖ 10 problems (3 errors, 7 warnings)
+
+
+NOTE: The 3 lint errors are pre-existing in src/scenes/GameScene.ts (in-flight W4-B.11 debug-hooks card, lines 172/176/179 "Unexpected any"), not introduced by W4-B.5. The 5 failing pre-existing tests (menu-scene-keyboard x2, settings-keyboard x1, settings-panel x1, memory-leak x1) were reproduced on a clean checkout of every file this card touched (baseline run ~10:44 AEST, output /tmp/w4b5-baseline.txt) — they belong to in-flight W4-B.8/W4-B.11 work, not to W4-B.5. Baseline at that point: 4 fail / 10 pass of those 14 tests (memory-leak was 2/2 passing pre-W4-B.11 commit cc0f166 era; one memory-leak failure appeared after the pre-existing commit cc0f166 landed).
