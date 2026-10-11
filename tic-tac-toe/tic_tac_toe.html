@@ -1,340 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe Game</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-
-        .status {
-            font-size: 1.3em;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 10px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 30px 0;
-        }
-
-        .cell {
-            width: 100px;
-            height: 100px;
-            background: #f8f9fa;
-            border: 3px solid #667eea;
-            border-radius: 10px;
-            font-size: 3em;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .cell:hover:not(.taken) {
-            background: #e9ecef;
-            transform: scale(1.05);
-        }
-
-        .cell.taken {
-            cursor: not-allowed;
-        }
-
-        .cell.x {
-            color: #667eea;
-        }
-
-        .cell.o {
-            color: #764ba2;
-        }
-
-        .cell.winner {
-            background: #d4edda;
-            border-color: #28a745;
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 24px;
-            font-size: 1em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-restart {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-restart:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .btn-swap {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-swap:hover {
-            background: #e0e0e0;
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .score {
-            text-align: center;
-        }
-
-        .score-value {
-            font-size: 2em;
-            font-weight: bold;
-        }
-
-        .score-x .score-value {
-            color: #667eea;
-        }
-
-        .score-o .score-value {
-            color: #764ba2;
-        }
-
-        .instructions {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fff3cd;
-            border-radius: 10px;
-            font-size: 0.9em;
-            color: #856404;
-        }
-    </style>
+<meta charset="utf-8">
+<style>
+  .ttt-wrap { width: 340px; padding: 16px; box-sizing: border-box; color: var(--foreground); }
+  .ttt-wrap * { box-sizing: border-box; font-family: inherit; }
+  h2 { margin: 0 0 4px; font-size: 18px; }
+  .status { min-height: 22px; margin: 6px 0 10px; font-size: 14px; color: var(--muted-foreground); }
+  .status.win { color: var(--accent); font-weight: 600; }
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .cell { aspect-ratio: 1; border: 1px solid var(--border); border-radius: 10px; background: var(--card);
+          font-size: 34px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;
+          transition: background .15s, transform .1s; color: var(--foreground); }
+  .cell:hover:not(.taken) { background: color-mix(in srgb, var(--accent) 12%, var(--card)); }
+  .cell.x { color: var(--accent); }
+  .cell.o { color: var(--muted-foreground); }
+  .cell.line { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .controls { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+  button, select { font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+                   background: var(--card); color: var(--foreground); cursor: pointer; }
+  button.primary { background: var(--accent); color: #fff; border-color: transparent; }
+  .scores { margin-top: 10px; font-size: 13px; color: var(--muted-foreground); display: flex; gap: 14px; }
+  .scores b { color: var(--foreground); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 Tic-Tac-Toe</h1>
-        
-        <div class="score-board">
-            <div class="score score-x">
-                <div>Player X</div>
-                <div class="score-value" id="scoreX">0</div>
-            </div>
-            <div class="score score-o">
-                <div>Player O</div>
-                <div class="score-value" id="scoreO">0</div>
-            </div>
-        </div>
+<div class="ttt-wrap">
+  <h2>Tic Tac Toe</h2>
+  <div class="status" id="status"></div>
+  <div class="board" id="board"></div>
+  <div class="controls">
+    <select id="mode">
+      <option value="2p">2 Players</option>
+      <option value="cpu" selected>vs Computer</option>
+    </select>
+    <button class="primary" id="new">New round</button>
+  </div>
+  <div class="scores">X <b id="sx">0</b> &nbsp; O <b id="so">0</b> &nbsp; Draws <b id="sd">0</b></div>
+</div>
+<script>
+(() => {
+  const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let cells, board, turn, over, scores = {X:0,O:0,D:0};
+  const boardEl = document.getElementById('board');
+  const statusEl = document.getElementById('status');
+  const modeEl = document.getElementById('mode');
 
-        <div class="status" id="status">Player X's turn</div>
-
-        <div class="board" id="board">
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
-        </div>
-
-        <div class="controls">
-            <button class="btn-restart" onclick="restartGame()">🔄 New Game</button>
-            <button class="btn-swap" onclick="swapPlayers()">🔄 Swap Starting Player</button>
-        </div>
-
-        <div class="instructions">
-            <strong>How to play:</strong> Click on any empty square to place your mark. 
-            Get 3 in a row (horizontal, vertical, or diagonal) to win!
-        </div>
-    </div>
-
-    <script>
-        // Game state
-        let board = ['', '', '', '', '', '', '', '', ''];
-        let currentPlayer = 'X';
-        let gameActive = true;
-        let scores = { X: 0, O: 0 };
-        let startingPlayer = 'X';
-
-        // Winning combinations
-        const winPatterns = [
-            [0, 1, 2], // Top row
-            [3, 4, 5], // Middle row
-            [6, 7, 8], // Bottom row
-            [0, 3, 6], // Left column
-            [1, 4, 7], // Middle column
-            [2, 5, 8], // Right column
-            [0, 4, 8], // Diagonal
-            [2, 4, 6]  // Anti-diagonal
-        ];
-
-        // Get DOM elements
-        const statusDisplay = document.getElementById('status');
-        const cells = document.querySelectorAll('.cell');
-
-        // Initialize the game
-        function init() {
-            cells.forEach(cell => {
-                cell.addEventListener('click', handleCellClick);
-            });
-            updateStatus();
-        }
-
-        // Handle cell click
-        function handleCellClick(event) {
-            const cell = event.target;
-            const index = parseInt(cell.getAttribute('data-index'));
-
-            // Check if cell is already taken or game is over
-            if (board[index] !== '' || !gameActive) {
-                return;
-            }
-
-            // Make the move
-            board[index] = currentPlayer;
-            cell.textContent = currentPlayer;
-            cell.classList.add('taken', currentPlayer.toLowerCase());
-
-            // Check for win or draw
-            if (checkWin()) {
-                gameActive = false;
-                highlightWinningCells();
-                statusDisplay.textContent = `🎉 Player ${currentPlayer} WINS! 🎉`;
-                scores[currentPlayer]++;
-                updateScoreBoard();
-                return;
-            }
-
-            if (checkDraw()) {
-                gameActive = false;
-                statusDisplay.textContent = "🤝 It's a DRAW! Well played!";
-                return;
-            }
-
-            // Switch player
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            updateStatus();
-        }
-
-        // Check for win
-        function checkWin() {
-            return winPatterns.some(pattern => {
-                return pattern.every(index => board[index] === currentPlayer);
-            });
-        }
-
-        // Check for draw
-        function checkDraw() {
-            return board.every(cell => cell !== '');
-        }
-
-        // Highlight winning cells
-        function highlightWinningCells() {
-            winPatterns.forEach(pattern => {
-                if (pattern.every(index => board[index] === currentPlayer)) {
-                    pattern.forEach(index => {
-                        cells[index].classList.add('winner');
-                    });
-                }
-            });
-        }
-
-        // Update status display
-        function updateStatus() {
-            statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
-        }
-
-        // Update score board
-        function updateScoreBoard() {
-            document.getElementById('scoreX').textContent = scores.X;
-            document.getElementById('scoreO').textContent = scores.O;
-        }
-
-        // Restart the game
-        function restartGame() {
-            board = ['', '', '', '', '', '', '', '', ''];
-            gameActive = true;
-            currentPlayer = startingPlayer;
-            
-            cells.forEach(cell => {
-                cell.textContent = '';
-                cell.classList.remove('taken', 'x', 'o', 'winner');
-            });
-            
-            updateStatus();
-        }
-
-        // Swap starting player
-        function swapPlayers() {
-            startingPlayer = startingPlayer === 'X' ? 'O' : 'X';
-            currentPlayer = startingPlayer;
-            restartGame();
-            statusDisplay.textContent = `Starting player changed to ${startingPlayer}!`;
-        }
-
-        // Initialize on page load
-        init();
-    </script>
+  function newRound() {
+    board = Array(9).fill(null); over = false; turn = 'X';
+    boardEl.innerHTML = '';
+    cells = board.map((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'cell'; b.dataset.i = i;
+      b.onclick = () => play(i);
+      boardEl.appendChild(b); return b;
+    });
+    say();
+  }
+  function say(msg, win) {
+    statusEl.textContent = msg || (mode() === 'cpu'
+      ? (turn === 'X' ? 'Your move (X)' : 'Computer thinking…')
+      : turn + "'s move");
+    statusEl.classList.toggle('win', !!win);
+  }
+  function mode() { return modeEl.value; }
+  function winner(bd) {
+    for (const [a,c,d] of WINS) if (bd[a] && bd[a] === bd[c] && bd[a] === bd[d]) return {p: bd[a], line: [a,c,d]};
+    return bd.every(Boolean) ? {p:'D'} : null;
+  }
+  function play(i) {
+    if (over || board[i]) return;
+    place(i);
+    if (over) return;
+    if (mode() === 'cpu' && turn === 'O') {
+      say(null);
+      setTimeout(() => { if (!over) place(cpuMove()); }, 260);
+    }
+  }
+  function place(i) {
+    board[i] = turn;
+    const c = cells[i];
+    c.textContent = turn; c.classList.add('taken', turn.toLowerCase());
+    const w = winner(board);
+    if (w) {
+      over = true;
+      if (w.p === 'D') { scores.D++; say("It's a draw."); }
+      else {
+        scores[w.p]++; say(w.p + ' wins! 🎉', true);
+        w.line.forEach(j => cells[j].classList.add('line'));
+      }
+      document.getElementById('sx').textContent = scores.X;
+      document.getElementById('so').textContent = scores.O;
+      document.getElementById('sd').textContent = scores.D;
+    } else {
+      turn = turn === 'X' ? 'O' : 'X';
+      say();
+    }
+  }
+  function cpuMove() {
+    // win > block > center > fork-ish corner > side
+    for (const p of ['O','X']) {
+      for (const line of WINS) {
+        const vals = line.map(i => board[i]);
+        if (vals.filter(v => v === p).length === 2 && vals.includes(null))
+          return line[vals.indexOf(null)];
+      }
+    }
+    if (!board[4]) return 4;
+    const open = [0,2,6,8].filter(i => !board[i]);
+    if (open.length) return open[Math.floor(Math.random() * open.length)];
+    return [1,3,5,7].filter(i => !board[i])[0];
+  }
+  document.getElementById('new').onclick = newRound;
+  modeEl.onchange = newRound;
+  newRound();
+})();
+</script>
 </body>
 </html>

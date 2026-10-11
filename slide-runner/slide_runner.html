@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html,body { margin:0; padding:0; background:transparent; }
+  .rg-wrap { width: 100%; max-width: 720px; margin: 0 auto; color: var(--foreground); font-family: inherit; }
+  .rg-head { display:flex; justify-content:space-between; align-items:center; padding: 8px 4px; }
+  .rg-head h2 { margin:0; font-size:18px; }
+  .rg-hud { font-size:13px; color: var(--muted-foreground); }
+  .rg-hud b { color: var(--foreground); }
+  #cv { display:block; width:100%; aspect-ratio: 16/7; border-radius:12px;
+        border:1px solid var(--border); background:#0b1020; cursor:pointer; }
+  .rg-help { font-size:12px; color:var(--muted-foreground); padding:6px 4px; text-align:center; }
+  kbd { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:11px; }
+</style>
+</head>
+<body>
+<div class="rg-wrap">
+  <div class="rg-head">
+    <h2>Slide Runner</h2>
+    <div class="rg-hud">Score <b id="score">0</b> &nbsp; Best <b id="best">0</b> &nbsp; <span id="lives">❤❤❤</span></div>
+  </div>
+  <canvas id="cv"></canvas>
+  <div class="rg-help"><kbd>Space</kbd>/<kbd>&uarr;</kbd> jump (0.5s cooldown — land ON blue blocks) &nbsp;•&nbsp; <kbd>D</kbd> in mid-air = twirl glide (longer from higher up) &nbsp;•&nbsp; hold <kbd>&darr;</kbd> slide under barriers</div>
+</div>
+<script>
+(() => {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const BASE_W = 720, BASE_H = 315;
+  let W = BASE_W, H = BASE_H, dpr = 1;
+
+  function resize() {
+    const r = cv.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    W = Math.max(360, Math.round(r.width));
+    H = Math.round(W * BASE_H / BASE_W);
+    cv.width = W * dpr; cv.height = H * dpr;
+  }
+  new ResizeObserver(resize).observe(cv);
+  resize();
+
+  const S = () => W / BASE_W;
+  const GROUND = 0.80, RUNNER_X = 0.14;
+  const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.5;
+
+  let state, score, best = +(localStorage.getItem('rg-best') || 0), speed, dist;
+  let obstacles, coins, particles, clouds, slideHeld, tGlobal, shake, nextObs;
+  let flags, lives, cpDist, nextCp, bonus, invuln, dyingT, cpFlash;
+  const CP_EVERY = 1200, MAX_LIVES = 3;             // world px between checkpoints
+  document.getElementById('best').textContent = best;
+
+  function updateLives() {
+    document.getElementById('lives').textContent =
+      '♥'.repeat(Math.max(0, lives)) + '♡'.repeat(Math.max(0, MAX_LIVES - lives));
+  }
+
+  // py = height of feet above base ground (up = positive), vy up = positive
+  const player = {py: 0, vy: 0, grounded: true, cool: 0, sliding: false,
+                  twirlT: 0, spun: 0, canTwirl: false, legT: 0};
+  player.px = () => W * RUNNER_X;
+  player.h  = () => (player.sliding ? 22 : 44) * S();
+
+  function reset() {
+    state = 'ready'; score = 0; speed = 330; dist = 0;
+    obstacles = []; coins = []; particles = []; flags = [];
+    clouds = Array.from({length: 5}, () => ({x: Math.random(), y: 0.08+Math.random()*0.25, s: 0.3+Math.random()*0.5, v: 12+Math.random()*14}));
+    Object.assign(player, {py: 0, vy: 0, grounded: true, cool: 0, sliding: false, twirlT: 0, spun: 0, canTwirl: false});
+    slideHeld = false; shake = 0; nextObs = 1.2;
+    lives = MAX_LIVES; cpDist = 0; nextCp = CP_EVERY; bonus = 0; invuln = 0; dyingT = 0; cpFlash = 0;
+    updateLives();
+  }
+
+  function start() { if (state === 'over') reset(); state = 'running'; }
+
+  function jump() {
+    if (state !== 'running') { start(); return; }
+    if (player.grounded && player.cool <= 0) {           // 1s cooldown — no spamming
+      player.vy = JUMP_V * S(); player.grounded = false;
+      player.cool = JUMP_CD; player.canTwirl = true;
+      puff(8, '#9fb6ff');
+    }
+  }
+  function twirl() {
+    if (state !== 'running' || player.grounded || !player.canTwirl) return;
+    // glide: base 0.5s, up to +0.6s extra the higher you launch from
+    player.twirlT = 0.5 + Math.min(1, player.py / (160 * S())) * 0.6;
+    player.canTwirl = false;
+    if (player.vy < 60 * S()) player.vy = (60 + Math.random()*40) * S();
+    burst(player.px(), H*GROUND - player.py - 20*S(), '#a5f3d0', 8);
+  }
+
+  function spawn() {
+    const s = S();
+    const r = Math.random();
+    if (r < 0.38) {                                   // platform block — land ON it
+      obstacles.push({kind:'block', x: W + 40*s, w: 70*s, h: (26 + Math.random()*24)*s});
+    } else if (r < 0.58) {                            // spikes — jump + twirl across
+      obstacles.push({kind:'spike', x: W + 40*s, w: 26*s, h: 42*s});
+      if (Math.random() < 0.5) obstacles.push({kind:'spike', x: W + 40*s + 34*s, w: 26*s, h: 42*s});
+    } else if (r < 0.78) {                            // overhead bar — slide
+      obstacles.push({kind:'bar', x: W + 40*s, w: 60*s, h: 20*s, gap: 34*s});
+    } else {                                          // tall block — jump, maybe twirl to clear
+      obstacles.push({kind:'block', x: W + 40*s, w: 60*s, h: 52*s});
+    }
+    if (Math.random() < 0.5) coins.push({x: W + 90*s, y: H*GROUND - (100 + Math.random()*50)*s, r: 7*s, t: 0});
+    nextObs = (240*s + Math.random()*190*s) / (speed*s);
+  }
+
+  function puff(n, col) {
+    const s = S();
+    for (let i=0;i<n;i++) particles.push({
+      x: player.px() + (Math.random()-0.5)*12*s, y: H*GROUND - player.py - 4*s,
+      vx: -(40+Math.random()*80)*s, vy: -(Math.random()*60)*s, life: 0.4+Math.random()*0.3, col});
+  }
+  function burst(x, y, col, n) {
+    const s = S();
+    for (let i=0;i<n;i++) particles.push({x, y, vx:(Math.random()-0.5)*380*s, vy:(Math.random()-0.5)*320*s, life:0.5+Math.random()*0.4, col});
+  }
+
+  function pb() {   // player box (screen coords)
+    const s = S(), g = H * GROUND, h = player.h();
+    return {x: player.px() - (player.sliding? 20:13)*s, y: g - player.py - h,
+            w: (player.sliding? 40:26)*s, h};
+  }
+  function ob(o) {
+    const s = S(), g = H * GROUND;
+    if (o.kind === 'bar') return {x:o.x, y: g - o.gap - o.h, w:o.w, h:o.h};
+    return {x:o.x, y: g - o.h, w:o.w, h:o.h};
+  }
+  const ov = (a,b) => a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+
+  // ---- loop ----
+  let last = performance.now();
+  function frame(now) {
+    let dt = Math.min((now - last)/1000, 0.033); last = now;
+    tGlobal = (tGlobal||0) + dt;
+    const s = S(), g = H * GROUND;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    if (state === 'running' || state === 'respawn') {
+      if (dyingT > 0) {                              // frozen death pause
+        dyingT -= dt;
+        invuln = Math.max(0, invuln - dt);
+        cpFlash = Math.max(0, cpFlash - dt*1.5);
+        if (dyingT <= 0) respawn();
+      } else {
+      speed += 6*dt; dist += speed*dt;
+      score = Math.floor(dist/10);
+      document.getElementById('score').textContent = score;
+
+      player.cool = Math.max(0, player.cool - dt);
+      player.sliding = slideHeld && player.grounded;
+
+      let gv = GRAV * s;
+      if (player.twirlT > 0) {                       // twirl glide: near-zero gravity
+        player.twirlT -= dt;
+        player.spun += dt * 18;
+        gv *= 0.10;
+        if (player.vy < 30*s) player.vy = 30*s;
+      }
+      if (slideHeld && !player.grounded) gv *= 1.8;  // fast-fall
+      player.vy -= gv * dt;
+      player.py += player.vy * dt;
+
+      nextObs -= dt;
+      if (nextObs <= 0) spawn();
+      const vx = speed * s;
+      // checkpoint flags every CP_EVERY world px
+      if (dist >= nextCp) { flags.push({x: W + 30*s, taken: false}); nextCp += CP_EVERY; }
+      obstacles.forEach(o => o.x -= vx*dt);
+      flags.forEach(f => f.x -= vx*dt);
+      coins.forEach(c => { c.x -= vx*dt; c.t += dt; });
+      obstacles = obstacles.filter(o => o.x + o.w > -50);
+      flags = flags.filter(f => f.x > -50);
+      coins = coins.filter(c => c.x > -50 && !c.got);
+      clouds.forEach(c => { c.x -= c.v*dt/W; if (c.x < -0.2) c.x = 1.2; });
+      invuln = Math.max(0, invuln - dt);
+      cpFlash = Math.max(0, cpFlash - dt*1.5);
+
+      if (player.py <= 0 && player.vy <= 0) {        // ground
+        if (-player.vy > 240*s) puff(4,'#8899bb');
+        player.py = 0; player.vy = 0; player.grounded = true; player.canTwirl = false; player.twirlT = 0;
+      } else if (player.py > 0.5) player.grounded = false;
+
+      // block tops are landable; sides/spikes/bars kill
+      let standing = false;
+      for (const o of obstacles) {
+        const b = ob(o);
+        if (o.kind === 'block') {
+          const horiz = player.px()+10*s > b.x && player.px()-10*s < b.x + b.w;
+          const feet = g - player.py;
+          if (horiz && player.vy <= 0 && feet >= b.y - 10*s && feet <= b.y + 14*s) {
+            player.py = g - b.y; player.vy = 0; player.grounded = true;
+            player.canTwirl = false; player.twirlT = 0; standing = true;
+            continue;
+          }
+          if (!standing && horiz && feet > b.y && ov(pb(), b)) { die(); break; }
+        } else if (ov(pb(), b)) { die(); break; }
+      }
+      for (const c of coins) {
+        if (ov(pb(), {x:c.x-c.r, y:c.y-c.r*1.6, w:c.r*2, h:c.r*3.2})) { c.got = true; score += 25; burst(c.x, c.y, '#ffd75e', 10); }
+      }
+      // checkpoint flags: touch = save + bonus
+      for (const f of flags) {
+        if (!f.taken && Math.abs(f.x - player.px()) < 22*s) {
+          f.taken = true; cpDist = dist; bonus += 50; score += 50; cpFlash = 1;
+          burst(f.x, H*GROUND - 40*s, '#ffd75e', 14);
+        }
+      }
+      player.legT += dt * speed/18;
+      }
+    } else if (state === 'ready') {
+      clouds.forEach(c => { c.x -= c.v*dt/W; if (c.x < -0.2) c.x = 1.2; });
+    }
+
+    particles.forEach(p => { p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 500*dt; });
+    particles = particles.filter(p => p.life > 0);
+    shake = Math.max(0, shake - dt*30);
+
+    if (shake) ctx.translate((Math.random()-0.5)*shake, (Math.random()-0.5)*shake);
+    draw(g, s);
+    requestAnimationFrame(frame);
+  }
+
+  function die() {
+    if (state === 'over' || dyingT > 0 || invuln > 0) return;
+    lives--; updateLives();
+    const b = pb(); burst(b.x + b.w/2, b.y + b.h/2, '#ff6b6b', 24);
+    shake = 10;
+    if (lives > 0) {
+      dyingT = 0.7; state = 'respawn';
+    } else {
+      state = 'over';
+      if (score > best) { best = score; localStorage.setItem('rg-best', best); document.getElementById('best').textContent = best; }
+    }
+  }
+  function respawn() {
+    state = 'running';
+    const s = S();
+    // roll the world back to the last checkpoint
+    const back = (dist - cpDist) * s;
+    obstacles.forEach(o => o.x += back);
+    coins.forEach(c => c.x += back);
+    flags.forEach(f => f.x += back);
+    obstacles = obstacles.filter(o => o.x > W * 0.35);   // clear what's on top of the player
+    dist = cpDist; nextCp = cpDist + CP_EVERY;
+    nextObs = 0.9;
+    player.py = 0; player.vy = 0; player.grounded = true;
+    player.twirlT = 0; player.canTwirl = false; player.cool = 0;
+    invuln = 1.5;                                        // grace period
+  }
+
+  // ---- render ----
+  function draw(g, s) {
+    const grd = ctx.createLinearGradient(0,0,0,H);
+    grd.addColorStop(0,'#0b1020'); grd.addColorStop(1,'#1a2244');
+    ctx.fillStyle = grd; ctx.fillRect(-30,-30,W+60,H+60);
+
+    ctx.fillStyle = 'rgba(150,170,220,0.12)';
+    clouds.forEach(c => { ctx.beginPath(); ctx.ellipse(c.x*W, c.y*H, 40*c.s*s, 12*c.s*s, 0, 0, 7); ctx.fill(); });
+
+    ctx.fillStyle = '#232c52'; ctx.fillRect(0, g, W, H-g);
+    ctx.strokeStyle = '#3d4a80'; ctx.lineWidth = 2*s;
+    ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(W, g); ctx.stroke();
+    ctx.strokeStyle = 'rgba(120,140,200,0.25)';
+    const off = (dist*s) % 46*s;
+    for (let x = -off; x < W; x += 46*s) { ctx.beginPath(); ctx.moveTo(x, g+10*s); ctx.lineTo(x+18*s, g+10*s); ctx.stroke(); }
+
+    coins.forEach(c => {
+      const sq = Math.abs(Math.cos(c.t*4));
+      ctx.fillStyle = '#ffd75e';
+      ctx.beginPath(); ctx.ellipse(c.x, c.y, c.r*(0.4+0.6*sq), c.r, 0, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#b8892a'; ctx.lineWidth = 1.5*s; ctx.stroke();
+    });
+
+    obstacles.forEach(o => {
+      const b = ob(o);
+      if (o.kind === 'block') {
+        ctx.fillStyle = '#5b6ee8'; roundRect(b.x, b.y, b.w, b.h, 4*s); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(b.x+2*s, b.y, b.w-4*s, 3*s);   // bright top = landable
+      } else if (o.kind === 'spike') {
+        ctx.fillStyle = '#e85b9e';
+        ctx.beginPath(); ctx.moveTo(b.x, g); ctx.lineTo(b.x+b.w/2, g-b.h); ctx.lineTo(b.x+b.w, g); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.beginPath(); ctx.moveTo(b.x+b.w*0.35, g); ctx.lineTo(b.x+b.w/2, g-b.h); ctx.lineTo(b.x+b.w*0.5, g); ctx.closePath(); ctx.fill();
+      } else {
+        ctx.fillStyle = '#e8a15b'; roundRect(b.x, b.y, b.w, b.h, 4*s); ctx.fill();
+        ctx.fillRect(b.x+b.w-4*s, b.y, 4*s, g-b.y);
+        ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(b.x+2*s, b.y+b.h-4*s, b.w-8*s, 2*s);
+      }
+    });
+
+    // checkpoint flags
+    flags.forEach(f => {
+      ctx.strokeStyle = f.taken ? 'rgba(120,140,180,0.5)' : '#ffd75e'; ctx.lineWidth = 3*s;
+      ctx.beginPath(); ctx.moveTo(f.x, g); ctx.lineTo(f.x, g - 46*s); ctx.stroke();
+      ctx.fillStyle = f.taken ? 'rgba(120,140,180,0.5)' : (cpFlash > 0 && !f.taken ? '#fff3b0' : '#ffd75e');
+      ctx.beginPath(); ctx.moveTo(f.x, g - 46*s); ctx.lineTo(f.x + 18*s, g - 40*s); ctx.lineTo(f.x, g - 34*s); ctx.closePath(); ctx.fill();
+    });
+
+    if (state !== 'over' && state !== 'respawn') drawRunner(g, s);
+
+    particles.forEach(p => {
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life*2.2));
+      ctx.fillStyle = p.col; ctx.fillRect(p.x, p.y, 3*s, 3*s);
+    });
+    ctx.globalAlpha = 1;
+
+    // jump cooldown ring above head
+    if (state === 'running' && player.cool > 0) {
+      const frac = player.cool / JUMP_CD;
+      ctx.strokeStyle = 'rgba(124,240,200,0.55)'; ctx.lineWidth = 3*s;
+      ctx.beginPath();
+      ctx.arc(player.px(), g - player.py - player.h() - 14*s, 8*s, -Math.PI/2, -Math.PI/2 + (1-frac)*Math.PI*2);
+      ctx.stroke();
+    }
+
+    ctx.textAlign = 'center';
+    if (state === 'respawn') {
+      ctx.fillStyle = 'rgba(8,10,24,0.45)'; ctx.fillRect(-30,-30,W+60,H+60);
+      ctx.fillStyle = '#ffd75e'; ctx.font = `700 ${24*s}px system-ui`;
+      ctx.fillText(`💔 -1 life  •  ${lives} left`, W/2, H*0.45);
+      ctx.fillStyle = '#cdd6f4'; ctx.font = `500 ${14*s}px system-ui`;
+      ctx.fillText('Respawning at checkpoint…', W/2, H*0.6);
+    } else if (state === 'ready') {
+      ctx.fillStyle = '#cdd6f4'; ctx.font = `600 ${22*s}px system-ui`;
+      ctx.fillText('Click or press Space to run', W/2, H*0.42);
+    } else if (state === 'over') {
+      ctx.fillStyle = 'rgba(8,10,24,0.55)'; ctx.fillRect(-30,-30,W+60,H+60);
+      ctx.fillStyle = '#ff8b8b'; ctx.font = `700 ${26*s}px system-ui`;
+      ctx.fillText('CRASH!', W/2, H*0.36);
+      ctx.fillStyle = '#cdd6f4'; ctx.font = `500 ${15*s}px system-ui`;
+      ctx.fillText(`Score ${score}  •  Best ${best}`, W/2, H*0.5);
+      ctx.fillText('Space / click to retry', W/2, H*0.64);
+    }
+  }
+
+  function drawRunner(g, s) {
+    const h = player.h();
+    const x = player.px(), y = g - player.py - h;
+    ctx.save();
+    if (invuln > 0) ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(tGlobal*12));   // grace flicker
+    if (player.twirlT > 0) {                          // spinning mid-air
+      ctx.translate(x, y + h/2); ctx.rotate(Math.sin(player.spun)*1.4); ctx.translate(-x, -(y + h/2));
+      ctx.strokeStyle = 'rgba(165,243,208,0.5)'; ctx.lineWidth = 2*s;
+      ctx.beginPath(); ctx.arc(x, y + h/2, 26*s, tGlobal*10, tGlobal*10 + 2.2); ctx.stroke();
+    }
+    if (player.sliding) {
+      ctx.fillStyle = '#7cf0c8'; roundRect(x - 20*s, y, 40*s, h, 8*s); ctx.fill();
+      ctx.fillStyle = '#0b1020'; ctx.fillRect(x + 6*s, y + 8*s, 5*s, 5*s);
+    } else {
+      ctx.fillStyle = '#7cf0c8'; roundRect(x - 13*s, y, 26*s, h - 10*s, 6*s); ctx.fill();
+      const swing = player.grounded ? Math.sin(player.legT) * 7*s : 4*s;
+      ctx.strokeStyle = '#7cf0c8'; ctx.lineWidth = 5*s; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x - 4*s, y + h - 10*s); ctx.lineTo(x - 4*s + swing, y + h + (player.grounded ? 9*s : 6*s));
+      ctx.moveTo(x + 4*s, y + h - 10*s); ctx.lineTo(x + 4*s - swing, y + h + (player.grounded ? 9*s : 6*s));
+      ctx.stroke();
+      ctx.fillStyle = '#0b1020'; ctx.fillRect(x + 3*s, y + 6*s, 5*s, 5*s);
+      ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 4*s;
+      ctx.beginPath(); ctx.moveTo(x - 12*s, y + 12*s);
+      ctx.quadraticCurveTo(x - 22*s, y + 10*s + Math.sin(tGlobal*9)*3*s, x - 30*s, y + 14*s + Math.sin(tGlobal*7)*4*s);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function roundRect(x,y,w,h,r) {
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+
+  // ---- input ----
+  addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') { if (!e.repeat) jump(); e.preventDefault(); }
+    if (e.code === 'KeyD') { if (!e.repeat) twirl(); e.preventDefault(); }
+    if (e.code === 'ArrowDown') { slideHeld = true; e.preventDefault(); }
+  });
+  addEventListener('keyup', e => { if (e.code === 'ArrowDown') slideHeld = false; });
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); jump(); });
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
