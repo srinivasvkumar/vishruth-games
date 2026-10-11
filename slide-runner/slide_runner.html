@@ -44,10 +44,11 @@
   const S = () => W / BASE_W;
   const GROUND = 0.80, RUNNER_X = 0.14;
   const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.5;
+  const BASE_SPEED = 300, MAX_SPEED = 460, RAMP = 40;   // px/s; +40 per 1000 world px
 
   let state, score, best = +(localStorage.getItem('rg-best') || 0), speed, dist;
   let obstacles, coins, particles, clouds, slideHeld, tGlobal, shake, nextObs;
-  let flags, lives, cpDist, nextCp, bonus, invuln, dyingT, cpFlash;
+  let flags, lives, cpDist, cpSpeed, nextCp, bonus, invuln, dyingT, cpFlash;
   const CP_EVERY = 1200, MAX_LIVES = 3;             // world px between checkpoints
   document.getElementById('best').textContent = best;
 
@@ -63,12 +64,12 @@
   player.h  = () => (player.sliding ? 22 : 44) * S();
 
   function reset() {
-    state = 'ready'; score = 0; speed = 330; dist = 0;
+    state = 'ready'; score = 0; speed = BASE_SPEED; dist = 0;
     obstacles = []; coins = []; particles = []; flags = [];
     clouds = Array.from({length: 5}, () => ({x: Math.random(), y: 0.08+Math.random()*0.25, s: 0.3+Math.random()*0.5, v: 12+Math.random()*14}));
     Object.assign(player, {py: 0, vy: 0, grounded: true, cool: 0, sliding: false, twirlT: 0, spun: 0, canTwirl: false});
     slideHeld = false; shake = 0; nextObs = 1.2;
-    lives = MAX_LIVES; cpDist = 0; nextCp = CP_EVERY; bonus = 0; invuln = 0; dyingT = 0; cpFlash = 0;
+    lives = MAX_LIVES; cpDist = 0; cpSpeed = BASE_SPEED; nextCp = CP_EVERY; bonus = 0; invuln = 0; dyingT = 0; cpFlash = 0;
     updateLives();
   }
 
@@ -93,19 +94,22 @@
 
   function spawn() {
     const s = S();
+    // never spawn cramped against an existing obstacle: keep >= 200*s px clearance
+    const rightmost = obstacles.reduce((m, o) => Math.max(m, o.x + o.w), 0);
+    const x = Math.max(W + 40*s, rightmost + 200*s);
     const r = Math.random();
     if (r < 0.38) {                                   // platform block — land ON it
-      obstacles.push({kind:'block', x: W + 40*s, w: 70*s, h: (26 + Math.random()*24)*s});
+      obstacles.push({kind:'block', x, w: 70*s, h: (26 + Math.random()*24)*s});
     } else if (r < 0.58) {                            // spikes — jump + twirl across
-      obstacles.push({kind:'spike', x: W + 40*s, w: 26*s, h: 42*s});
-      if (Math.random() < 0.5) obstacles.push({kind:'spike', x: W + 40*s + 34*s, w: 26*s, h: 42*s});
+      obstacles.push({kind:'spike', x, w: 26*s, h: 42*s});
+      if (Math.random() < 0.5) obstacles.push({kind:'spike', x: x + 34*s, w: 26*s, h: 42*s});
     } else if (r < 0.78) {                            // overhead bar — slide
-      obstacles.push({kind:'bar', x: W + 40*s, w: 60*s, h: 20*s, gap: 34*s});
+      obstacles.push({kind:'bar', x, w: 60*s, h: 20*s, gap: 34*s});
     } else {                                          // tall block — jump, maybe twirl to clear
-      obstacles.push({kind:'block', x: W + 40*s, w: 60*s, h: 52*s});
+      obstacles.push({kind:'block', x, w: 60*s, h: 52*s});
     }
-    if (Math.random() < 0.5) coins.push({x: W + 90*s, y: H*GROUND - (100 + Math.random()*50)*s, r: 7*s, t: 0});
-    nextObs = (240*s + Math.random()*190*s) / (speed*s);
+    if (Math.random() < 0.5) coins.push({x: x + 50*s, y: H*GROUND - (100 + Math.random()*50)*s, r: 7*s, t: 0});
+    nextObs = (260*s + Math.random()*200*s) / (speed*s);
   }
 
   function puff(n, col) {
@@ -146,7 +150,8 @@
         cpFlash = Math.max(0, cpFlash - dt*1.5);
         if (dyingT <= 0) respawn();
       } else {
-      speed += 6*dt; dist += speed*dt;
+      speed = Math.min(MAX_SPEED, BASE_SPEED + (dist/1000) * RAMP);   // speed keyed to distance
+      dist += speed*dt;
       score = Math.floor(dist/10);
       document.getElementById('score').textContent = score;
 
@@ -205,7 +210,7 @@
       // checkpoint flags: touch = save + bonus
       for (const f of flags) {
         if (!f.taken && Math.abs(f.x - player.px()) < 22*s) {
-          f.taken = true; cpDist = dist; bonus += 50; score += 50; cpFlash = 1;
+          f.taken = true; cpDist = dist; cpSpeed = speed; bonus += 50; score += 50; cpFlash = 1;
           burst(f.x, H*GROUND - 40*s, '#ffd75e', 14);
         }
       }
@@ -245,8 +250,12 @@
     coins.forEach(c => c.x += back);
     flags.forEach(f => f.x += back);
     obstacles = obstacles.filter(o => o.x > W * 0.35);   // clear what's on top of the player
-    dist = cpDist; nextCp = cpDist + CP_EVERY;
-    nextObs = 0.9;
+    coins = coins.filter(c => c.x > W * 0.35 && !c.got);
+    // de-cramp: enforce spacing among surviving obstacles
+    let lastX = W * 0.35;
+    obstacles.sort((a,b) => a.x - b.x).forEach(o => { if (o.x < lastX + 200*s) o.x = lastX + 200*s; lastX = o.x + o.w; });
+    dist = cpDist; speed = cpSpeed; nextCp = cpDist + CP_EVERY;   // roll speed back with the world
+    nextObs = 1.4;
     player.py = 0; player.vy = 0; player.grounded = true;
     player.twirlT = 0; player.canTwirl = false; player.cool = 0;
     invuln = 1.5;                                        // grace period
@@ -382,6 +391,7 @@
   cv.addEventListener('pointerdown', e => { e.preventDefault(); jump(); });
 
   reset();
+  window.__dbg = () => ({state, lives, dist, speed, cpDist, cpSpeed, obs: obstacles.map(o=>({k:o.kind,x:Math.round(o.x),w:Math.round(o.w)}))});
   requestAnimationFrame(frame);
 })();
 </script>
