@@ -368,8 +368,11 @@ export class MenuScene extends Scene {
       this.startButton.disabled = true;
     }
     Logger.info('Menu: starting game');
-    this.game
-      .switchScene('game')
+    // W5 FIX: go through the FSM (menu -> playing) via beginRun so game
+    // state and the scene graph stay in sync. Falls back to switchScene for
+    // the lightweight Game mocks in the unit tests.
+    const game = this.game as typeof this.game & { beginRun?: () => Promise<void> };
+    (game.beginRun ? game.beginRun() : this.game.switchScene('game'))
       .catch((error) => {
         Logger.error('Failed to start game from menu', { error });
         // Re-arm the start path — the menu is still the active scene

@@ -38,6 +38,10 @@ export class GameScene extends Scene {
   private level = 1;
   private isGameOver = false;
   private obstacleSpawnTimer = 0;
+  /** W5 FIX: total world distance scrolled this run (drives level curve). */
+  private scrollDistance = 0;
+  /** W5 FIX: fractional score carry so per-frame fractions aren't floored away. */
+  private scoreCarry = 0;
   private scoreManager: ScoreManager;
   /**
    * W3-C.3b: pre-allocated camera-follow target. onUpdate() used to build a
@@ -66,6 +70,16 @@ export class GameScene extends Scene {
   /** W4-B.11: reap threshold — obstacles past this z are off-screen behind
    * the camera and are recycled into the pool instead of living forever. */
   private static readonly REAP_Z = -250;
+  /** W5 FIX: obstacles that scroll past the camera by this much are recycled. */
+  private static readonly PASS_Z = 20;
+  /** W5 FIX: post-hit invincibility window (ms). */
+  private static readonly IFRAMES_MS = 1000;
+  // -Infinity so the FIRST hit always lands even under fake timers
+  // (performance.now() === 0 would otherwise read as 'just hit').
+  private lastHitTimeMs = -Infinity;
+  /** W5 FIX: world scroll speed toward the camera (units/s) — the missing
+   * endless-runner motion. Scaled by difficulty multiplier + level. */
+  private static readonly SCROLL_BASE = 16;
   /**
    * W4-B.10: true while the run is paused because the tab lost focus
    * (window blur). Set true by the blur handler (which calls
@@ -98,8 +112,8 @@ export class GameScene extends Scene {
       0.1,
       1000
     );
-    camera.position.set(0, 5, 15);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 8, 14);
+    camera.lookAt(0, 2, -10);
     return camera;
   }
   
@@ -187,6 +201,13 @@ export class GameScene extends Scene {
    * Update game scene
    */
   protected onUpdate(deltaTime: number): void {
+    if (!this.isActive) return;
+    // W5 FIX: while paused (FSM 'paused'), freeze the simulation; the frame
+    // pump still renders the last world state. Escape/Space keydown handler
+    // (attached in onEnter) resumes the run. Guarded for lightweight Game
+    // mocks in tests that omit getGameState.
+    const state = typeof this.game.getGameState === 'function' ? this.game.getGameState() : 'playing';
+    if (state === 'paused') return;
     if (this.isGameOver || !this.player?.isPlayerAlive()) return;
     
     // W3-B.0: Deterministic death check. If __setPlayerHealth(0) was called,
@@ -237,8 +258,33 @@ export class GameScene extends Scene {
     // Update obstacles
     // W3-C.4: scale per-frame obstacle movement by the difficulty's
     // obstacleSpeedMultiplier (hard moves faster, easy slower).
+    // W5 FIX: THE ENDLESS-RUNNER MOTION — every obstacle travels toward the
+    // camera at SCROLL_BASE * multiplier * level. Previously obstacles only
+    // sine-wiggled in place and the world was frozen.
+    const scrollSpeed =
+      GameScene.SCROLL_BASE * this.obstacleSpeedMultiplier * (1 + (this.level - 1) * 0.15);
     for (const obstacle of this.obstacles) {
+      obstacle.getMesh().position.z += scrollSpeed * deltaTime;
       obstacle.update(deltaTime * this.obstacleSpeedMultiplier);
+    }
+
+    // W5 FIX: survival score from distance scrolled (SCORE_MULTIPLIER per
+    // unit, matching the Score constant's intent). Drives the level-up clock
+    // implicitly via score thresholds handled by ScoreManager multiplier.
+    this.scrollDistance += scrollSpeed * deltaTime;
+    this.scoreCarry += scrollSpeed * deltaTime; // 1 point per unit travelled
+    if (this.scoreCarry >= 1) {
+      const points = Math.floor(this.scoreCarry);
+      this.scoreCarry -= points;
+      this.scoreManager.addScore(points);
+    }
+    const targetLevel = Math.min(
+      GameConstants.MAX_LEVEL,
+      1 + Math.floor(this.scrollDistance / 400)
+    );
+    if (targetLevel > this.level) {
+      this.level = targetLevel;
+      window.dispatchEvent(new CustomEvent(GameEvents.LEVEL_START, { detail: { name: `level-${targetLevel}` } }));
     }
     
     // Spawn new obstacles
@@ -283,6 +329,9 @@ export class GameScene extends Scene {
       this.hidePausedOverlay();
     }
     Logger.debug('Game scene exited');
+
+    // W5 FIX: detach the ESC/R keydown handler with the scene.
+    window.removeEventListener('keydown', this.handleGameKeydown);
   }
   
   /**
@@ -366,18 +415,38 @@ export class GameScene extends Scene {
    */
   private setupScene(): void {
     // Add ground
-    const groundGeometry = new THREE.PlaneGeometry(100, 100);
+    // W5 FIX: the old 100x100 plane centered at origin put its far edge at
+    // z=-50 — a hard horizon line mid-screen with obstacles floating in
+    // sky-colored void beyond it. Now a long track slab + fog matched to the
+    // sky dissolves the edge.
+    const groundGeometry = new THREE.PlaneGeometry(60, 700);
     const groundMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0x333333,
+      color: 0x3a3a45,
       metalness: 0.1,
-      roughness: 0.8
+      roughness: 0.9
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
+    ground.position.set(0, 0, -300);
+    ground.receiveShadow = true;
     this.scene.add(ground);
-    
+
+    // W5 FIX: lane markings so the three-lane track reads visually.
+    for (const x of [-2.5, 2.5]) {
+      const line = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.25, 700),
+        new THREE.MeshBasicMaterial({ color: 0xf7d154 })
+      );
+      line.rotation.x = -Math.PI / 2;
+      line.position.set(x, 0.02, -300);
+      this.scene.add(line);
+    }
+
     // Add sky
     this.scene.background = new THREE.Color(0x87CEEB);
+    // W5 FIX: fog hides the far ground edge and makes obstacles emerge from
+    // the distance instead of popping.
+    this.scene.fog = new THREE.Fog(0x87CEEB, 60, 140);
   }
   
   /**
@@ -391,6 +460,13 @@ export class GameScene extends Scene {
     // Directional light
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(10, 20, 10);
+    // W5 FIX: shadows — the flat, unlit look made the scene read as
+    // placeholder geometry.
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.set(1024, 1024);
+    const sc = directionalLight.shadow.camera;
+    sc.left = -30; sc.right = 30; sc.top = 30; sc.bottom = -30;
+    sc.near = 1; sc.far = 100;
     this.scene.add(directionalLight);
     
     // Hemisphere light
@@ -422,17 +498,19 @@ export class GameScene extends Scene {
     let j = 0;
     for (let i = 0; i < this.obstacles.length; i++) {
       const o = this.obstacles[i];
-      if (o.getMesh().position.z > REAP_Z) {
-        // Still on-screen — keep it.
+      const z = o.getMesh().position.z;
+      // W5 FIX: with the world scrolling toward the camera, an obstacle
+      // leaves play when it passes behind the camera (z > PASS_Z). The old
+      // REAP_Z (far) bound is kept for obstacles spawned beyond it.
+      if (z > GameScene.PASS_Z || z <= REAP_Z) {
+        this.scene.remove(o.getMesh());
+        o.dispose();
+        this.obstaclePool.push(o);
+      } else {
         if (j !== i) {
           this.obstacles[j] = o;
         }
         j++;
-      } else {
-        // Off-screen — reap.
-        this.scene.remove(o.getMesh());
-        o.dispose();
-        this.obstaclePool.push(o);
       }
     }
     this.obstacles.length = j;
@@ -461,16 +539,24 @@ export class GameScene extends Scene {
     this.obstaclePool.length = 0;
   }
   
+  /** W5 FIX: three-lane track (endless-runner convention). Lane centers: */
+  private static readonly LANES = [-5, 0, 5];
+  /** W5 FIX: obstacles enter from the fog line, not the spawn point. */
+  private static readonly SPAWN_Z = -90;
+
   /**
    * Spawn initial obstacles
    */
   private spawnObstacles(count: number): void {
     for (let i = 0; i < count; i++) {
       const type = this.getRandomObstacleType();
+      const lane = GameScene.LANES[Math.floor(Math.random() * GameScene.LANES.length)];
+      // W5 FIX: spread down the track in lane centers (was random x in
+      // [-10,10] with no lane structure, parked at the old z=-10..-30 line).
       const position = new THREE.Vector3(
-        (Math.random() - 0.5) * 20,
+        lane,
         0.5,
-        -10 - i * 10
+        -40 - i * 15
       );
       
       const obstacle = this.allocateObstacle(position, type);
@@ -484,10 +570,13 @@ export class GameScene extends Scene {
    */
   private spawnObstacle(): void {
     const type = this.getRandomObstacleType();
+    const lane = GameScene.LANES[Math.floor(Math.random() * GameScene.LANES.length)];
+    // W5 FIX: spawn at the fog line so obstacles emerge in the distance and
+    // scroll toward the player (the endless-runner motion axis).
     const position = new THREE.Vector3(
-      (Math.random() - 0.5) * 20,
+      lane,
       0.5,
-      -30
+      GameScene.SPAWN_Z
     );
     
     const obstacle = this.allocateObstacle(position, type);
@@ -536,19 +625,30 @@ export class GameScene extends Scene {
     if (!this.player) return;
     
     const playerPosition = this.player.getPosition();
-    const playerRadius = 3.5;
+    // W5 FIX: AABB collision instead of 3D sphere distance. The old
+    // radius sum (3.5 + 3.0 = 6.5) exceeded the 5-unit lane spacing, so
+    // every obstacle in a neighbouring lane also counted as a hit, and a
+    // 3D distance test can never let a jump clear anything. Box overlap
+    // with a vertical test makes jumping actually meaningful. Hitboxes are
+    // slightly shrunk vs the visual boxes (standard runner forgiveness):
+    // jump apex is pos.y≈5.1 (JUMP_FORCE 10, GRAVITY 9.81), so the player
+    // bottom must clear the obstacle top at 1.75 — reachable mid-jump.
+    const P = { hx: 2, hz: 4, hy: 2.5 };
+    const O = { hx: 2, hz: 2, hy: 1.25 };
     
     for (const obstacle of this.obstacles) {
       if (!obstacle.isObstacleActive()) continue;
       
       const obstaclePosition = obstacle.getMesh().position;
-      const obstacleRadius = 3.0;
-      
-      const distance = playerPosition.distanceTo(obstaclePosition);
-      
-      if (distance < playerRadius + obstacleRadius) {
-        this.handleCollision(obstacle);
-      }
+
+      const dx = Math.abs(playerPosition.x - obstaclePosition.x);
+      const dz = Math.abs(playerPosition.z - obstaclePosition.z);
+      if (dx >= P.hx + O.hx || dz >= P.hz + O.hz) continue;
+
+      const dy = Math.abs(playerPosition.y - (obstaclePosition.y + 0.5));
+      if (dy >= P.hy + O.hy) continue;
+
+      this.handleCollision(obstacle);
     }
   }
   
@@ -557,6 +657,14 @@ export class GameScene extends Scene {
    */
   private handleCollision(obstacle: Obstacle): void {
     if (!this.player) return;
+
+    // W5 FIX: invincibility frames. Now that obstacles scroll THROUGH the
+    // player's space (instead of sitting parked 30 units away), a hit would
+    // otherwise re-trigger every frame for ~0.8s and kill instantly. One hit
+    // per IFrames window; the obstacle then passes or is jumped.
+    const now = performance.now();
+    if (now - this.lastHitTimeMs < GameScene.IFRAMES_MS) return;
+    this.lastHitTimeMs = now;
 
     this.player.damage(obstacle.getDamage());
 
@@ -602,7 +710,32 @@ export class GameScene extends Scene {
     this.createPausedOverlay();
     window.addEventListener('blur', this.handleBlur);
     window.addEventListener('focus', this.handleFocus);
+
+    // W5 FIX: implement the ESC pause / R restart controls that
+    // public/index.html advertises but no code ever handled.
+    window.addEventListener('keydown', this.handleGameKeydown);
   }
+
+  /**
+   * W5 FIX: ESC toggles pause/resume (playing <-> paused FSM states);
+   * R abandons the run and returns to the menu.
+   */
+  private handleGameKeydown = (event: KeyboardEvent): void => {
+    const key = event.key === ' ' ? 'space' : event.key.toLowerCase();
+    if (key === 'escape') {
+      const state = this.game.getGameState();
+      if (state === 'playing') {
+        this.game.pause();
+        this.showPausedOverlay();
+      } else if (state === 'paused') {
+        this.game.resume();
+        this.hidePausedOverlay();
+        this.isPaused = false;
+      }
+    } else if (key === 'r' && !this.isGameOver) {
+      this.game.returnToMenu();
+    }
+  };
 
   /**
    * W4-B.10: window blur handler — the user switched away from the tab.
@@ -703,6 +836,13 @@ export class GameScene extends Scene {
   private gameOver(): void {
     this.isGameOver = true;
     
+    // W5 FIX: put the FSM in 'gameOver' so the run lifecycle and the scene
+    // graph agree (previously this path never touched the FSM and
+    // 'gameOver'/'restart' states were dead in the live app). Guarded for
+    // lightweight Game mocks in tests.
+    const gameCtl = this.game as typeof this.game & { gameOver?: () => unknown };
+    if (typeof gameCtl.gameOver === 'function') gameCtl.gameOver();
+
     // Persist high score before transitioning.
     this.scoreManager.saveHighScore();
     const score = this.scoreManager.getScore();
@@ -780,6 +920,8 @@ export class GameScene extends Scene {
     this.isGameOver = false;
     this.level = 1;
     this.obstacleSpawnTimer = 0;
+    this.scrollDistance = 0;
+    this.scoreCarry = 0;
     
     // Fresh score manager (reads high score from localStorage).
     this.scoreManager = new ScoreManager();

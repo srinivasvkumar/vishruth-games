@@ -281,7 +281,10 @@ export class GameOverScene extends Scene {
       this.restartButton.disabled = true;
     }
     Logger.info("Game over: restarting to menu");
-    this.game.switchScene("menu").catch((error) => {
+    // W5 FIX: walk the FSM (gameOver -> restart -> menu) via returnToMenu.
+    // Falls back to switchScene for the lightweight Game mocks in tests.
+    const game = this.game as typeof this.game & { returnToMenu?: () => Promise<void> };
+    (game.returnToMenu ? game.returnToMenu() : this.game.switchScene("menu")).catch((error) => {
       Logger.error("Failed to restart from game over", { error });
       // Re-arm the restart path.
       this.restarted = false;

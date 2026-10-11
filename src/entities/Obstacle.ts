@@ -63,7 +63,9 @@ function colorForType(type: ObstacleType): number {
   const colors: Record<ObstacleType, number> = {
     'block': 0xff0000,
     'spike': 0x990000,
-    'moving': 0x00ff00,
+    // W5 FIX: was 0x00ff00 — identical to the player; amber now reads
+    // clearly against the green player cube.
+    'moving': 0xffaa00,
     'rotating': 0x0000ff,
     'breakable': 0x888888
   };
@@ -117,6 +119,7 @@ export class Obstacle {
     const material = getSharedMaterial(type);
     
     const obstacleMesh = new Mesh(geometry, material);
+    (obstacleMesh as { castShadow?: boolean }).castShadow = true;
     this.mesh.add(obstacleMesh);
     
     // Set movement/rotation based on type

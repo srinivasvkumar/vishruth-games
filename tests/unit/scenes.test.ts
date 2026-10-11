@@ -384,7 +384,10 @@ describe('BootScene', () => {
     expect(boot.isSceneActive()).toBe(false);
     expect(game.switchScene).toHaveBeenCalledTimes(1);
     expect(game.switchScene).toHaveBeenCalledWith('menu');
-    expect((boot as any).loadingText.style.display).toBe('none'); // onExit hid the UI
+    // W5: onExit now REMOVES the loading UI from the DOM (hiding left the
+    // green-bordered container floating over later scenes).
+    expect((boot as any).progressContainer.isConnected).toBe(false);
+    expect((boot as any).loadingText.isConnected).toBe(false);
   });
 
   it('onCleanup() safely removes progressBar and loadingText from the DOM (no-op if already removed)', async () => {
@@ -398,12 +401,11 @@ describe('BootScene', () => {
     // setupLoadingUI() appends the bar INSIDE the container:
     expect((boot as any).progressBar.parentNode).toBe(container);
 
-    // onCleanup() has guard checks (src/scenes/BootScene.ts:107-112):
-    //   if (this.progressBar && this.progressBar.parentNode) { ... }
-    // so it succeeds (no throw), removes progressBar from the container
-    // and loadingText from body, but the container div itself stays.
+    // W5: onCleanup() removes BOTH the bar and the container it lived in
+    // (the old behavior left the green-bordered container div floating over
+    // every later scene). Body ends up with zero loading nodes.
     boot.cleanup();
-    expect(document.body.children.length).toBe(1);
+    expect(document.body.children.length).toBe(0);
     expect(boot.isSceneLoaded()).toBe(false);
   });
 });
@@ -449,8 +451,8 @@ describe('GameScene', () => {
     }
     const camera = gs.getCamera() as THREE.PerspectiveCamera;
     expect(camera.position.x).toBe(0);
-    expect(camera.position.y).toBe(5);
-    expect(camera.position.z).toBe(15);
+    expect(camera.position.y).toBe(8); // W5: raised for runner view
+    expect(camera.position.z).toBe(14);
     expect(gs.isSceneLoaded()).toBe(false);
     expect(Logger.info).toHaveBeenCalledWith('Game scene created');
   });
@@ -458,7 +460,7 @@ describe('GameScene', () => {
   it('load() builds the scene: ground, player, 3 obstacles, 3 lights, and the sky color', async () => {
     const gs = await loadedScene();
     expect(gs.isSceneLoaded()).toBe(true);
-    expect(gs.getScene().children).toHaveLength(8); // ground + player + 3 obstacles + 3 lights
+    expect(gs.getScene().children).toHaveLength(10); // ground + 2 lane lines + player + 3 obstacles + 3 lights
     const ground = gs.getScene().children[0];
     expect(ground.isMesh).toBe(true);
     expect(ground.rotation.x).toBeCloseTo(-Math.PI / 2);
@@ -559,7 +561,7 @@ describe('GameScene', () => {
   it('cleanup() removes the entities from the scene; HUD divs are owned by UISystem', async () => {
     const gs = await loadedScene();
     gs.cleanup();
-    expect(gs.getScene().children).toHaveLength(4); // ground + 3 lights remain
+    expect(gs.getScene().children).toHaveLength(6); // ground + 2 lane lines + 3 lights remain
     expect(findGroups(gs.getScene())).toHaveLength(0);
     // W3A.2: HUD divs are owned by UISystem (D2). gs.cleanup() no longer
     // removes them — that's Game.cleanup()'s job (it calls

@@ -56,6 +56,11 @@ async function importIndex(): Promise<{ mod: Record<string, unknown>; Logger: an
       start(): void {
         mockGame.starts.push(this);
       }
+      // W5: index.ts bootstraps via boot() (frame pump without forcing the
+      // FSM to 'playing'); the mock routes it through start().
+      boot(): void {
+        this.start();
+      }
       pause(): void {}
       stop(): void {}
       isGameRunning(): boolean {

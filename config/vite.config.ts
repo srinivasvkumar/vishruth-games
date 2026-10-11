@@ -86,6 +86,6 @@ export default defineConfig({
 
     // Mock three.js and cannon-es for unit tests
     mockReset: true,
-    setupFiles: ['tests/setup/mock-three.ts', 'tests/setup/mock-cannon.ts']
+    setupFiles: ['tests/setup/localstorage-polyfill.ts', 'tests/setup/mock-three.ts', 'tests/setup/mock-cannon.ts']
   }
 })

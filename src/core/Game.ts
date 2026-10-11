@@ -44,6 +44,8 @@ export class Game {
   private renderer: Renderer;
   private fsm: GameStateMachine;
   private lastTimestamp = 0;
+  /** W5 FIX: frame-pump lifecycle flag, decoupled from the run FSM. */
+  private running = false;
   /**
    * W3-C.4: game-speed multiplier applied to the frame delta time in the
    * game loop (settings: 0.5x / 1x / 1.5x / 2x). 1.0 = normal speed.
@@ -91,7 +93,41 @@ export class Game {
   
   /**
    * Start the game loop
+   *
+   * W5 FIX: two lifecycle paths.
+   *   - boot(): spin the frame pump WITHOUT touching the FSM. index.ts uses
+   *     this at page load, so the app boots in 'menu' and the FSM stays in
+     * sync with the visible scene. The loop is gated on this.running (not
+   * FSM state) so menu/gameover scenes animate and render.
+   *   - start(): legacy run-start contract (menu -> playing); retained for
+   *     the W2 lifecycle tests. beginRun() is what the menu START uses.
    */
+  boot(): void {
+    if (this.running) {
+      Logger.debug('Game boot ignored: frame pump already running');
+      return;
+    }
+    Logger.info('Booting game (frame pump, FSM stays in menu)');
+    this.lastTimestamp = performance.now();
+    this.running = true;
+    this.gameLoop(this.lastTimestamp);
+
+    // AssetLoader hook + first-scene boot (same wiring as start()).
+    const BOOT_ASSET_MANIFEST = '/assets/manifest/boot.json';
+    void AssetLoader.load(BOOT_ASSET_MANIFEST, 'json').catch((error: unknown) => {
+      Logger.error('Boot asset manifest load failed', { BOOT_ASSET_MANIFEST, error });
+    });
+    const bootSceneName = this.sceneManager.getAllScenes().size > 0
+      ? this.sceneManager.getAllScenes().keys().next().value
+      : null;
+    if (bootSceneName) {
+      void this.sceneManager.loadScene(bootSceneName).catch((error: unknown) => {
+        Logger.error('Boot scene load failed', { bootSceneName, error });
+      });
+    }
+    this.audioSystem.bindToGameEvents();
+  }
+
   start(): void {
     if (!this.fsm.transition('playing')) {
       Logger.warn('Game start blocked: not in a startable state', {
@@ -99,9 +135,6 @@ export class Game {
       });
       return;
     }
-    
-    Logger.info('Starting game');
-    this.lastTimestamp = performance.now();
 
     // W2-A.2 (DECISION D1): wire the AssetLoader.load() hook into the boot
     // path. The minimal hook loads the boot scene's essential-asset manifest
@@ -143,9 +176,63 @@ export class Game {
     // skip the init()+startMusic() here. Music will start on the
     // GAME_START event (bound via bindToGameEvents above).
 
+    this.running = true;
     this.gameLoop(this.lastTimestamp);
     
     this.emit('game:start');
+  }
+
+  /**
+   * W5 FIX: begin a run from the menu — the ONLY legal menu -> playing
+   * transition. MenuScene.startGame() calls this instead of switchScene
+   * directly, so the FSM and the scene agree on which state the game is in.
+   */
+  beginRun(): Promise<void> {
+    if (!this.fsm.transition('playing')) {
+      Logger.warn('beginRun blocked: not in a startable state', {
+        state: this.fsm.getState(),
+      });
+      return Promise.reject(new Error(`beginRun blocked from state ${this.fsm.getState()}`));
+    }
+    this.lastTimestamp = performance.now();
+    if (!this.running) {
+      this.running = true;
+      this.gameLoop(this.lastTimestamp);
+    }
+    this.emit('game:start');
+    return this.switchScene('game').catch((error: unknown) => {
+      // Roll the FSM back so the menu can retry the transition cleanly.
+      if (this.fsm.getState() === 'playing') this.fsm.transition('paused');
+      if (this.fsm.getState() === 'paused') this.fsm.transition('menu');
+      throw error;
+    });
+  }
+
+  /**
+   * W5 FIX: abandon the current run and return to the menu. Walks the FSM
+   * (playing/paused/gameOver -> ... -> menu) and switches scenes; safe to
+   * call from any state.
+   */
+  returnToMenu(): Promise<void> {
+    const s = this.fsm.getState();
+    if (s === 'playing') this.fsm.transition('paused');
+    if (this.fsm.getState() === 'gameOver') this.fsm.transition('restart');
+    if (this.fsm.getState() === 'paused' || this.fsm.getState() === 'restart') {
+      this.fsm.transition('menu');
+    }
+    this.hidePausedOverlayIfAny();
+    if (!this.running) {
+      this.running = true;
+      this.lastTimestamp = performance.now();
+      this.gameLoop(this.lastTimestamp);
+    }
+    return this.switchScene('menu');
+  }
+
+  /** W5 FIX: remove any lingering PAUSED overlay when leaving a run. */
+  private hidePausedOverlayIfAny(): void {
+    const el = document.getElementById('game-paused-overlay');
+    if (el) el.style.display = 'none';
   }
   
   /**
@@ -156,6 +243,7 @@ export class Game {
       Logger.warn('Game pause blocked: not playing', { state: this.fsm.getState() });
       return;
     }
+    this.running = false; // pump halts at the next frame gate
     this.emit('game:pause');
     Logger.info('Game paused');
   }
@@ -169,6 +257,7 @@ export class Game {
       return;
     }
     this.lastTimestamp = performance.now();
+    this.running = true;
     this.gameLoop(this.lastTimestamp);
     this.emit('game:resume');
     Logger.info('Game resumed');
@@ -180,11 +269,16 @@ export class Game {
    * paused -> menu transition is valid.
    */
   stop(): void {
+    this.running = false;
     this.cleanup();
 
     // From playing, we must go through paused to reach menu.
     if (this.fsm.getState() === 'playing') {
       this.fsm.transition('paused');
+    }
+    // From gameOver, restart must pass through before menu is reachable.
+    if (this.fsm.getState() === 'gameOver') {
+      this.fsm.transition('restart');
     }
 
     if (!this.fsm.transition('menu')) {
@@ -240,7 +334,7 @@ export class Game {
    * Main game loop
    */
   private gameLoop(timestamp: number): void {
-    if (this.fsm.getState() !== 'playing') return;
+    if (!this.running) return;
     
     const deltaTime = (timestamp - this.lastTimestamp) / 1000;
     this.lastTimestamp = timestamp;

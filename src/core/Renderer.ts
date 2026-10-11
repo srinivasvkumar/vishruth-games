@@ -47,6 +47,16 @@ export class Renderer {
     this.renderer = new THREE.WebGLRenderer({ antialias, canvas, preserveDrawingBuffer: true });
     this.renderer.setSize(width, height);
     this.renderer.setClearColor(clearColor);
+    // W5 FIX: enable shadows + filmic tone mapping so the scene reads as a
+    // lit 3D world instead of flat placeholder cubes. Wrapped because the
+    // mock-three test stub is a Proxy that throws on unknown properties.
+    try {
+      (this.renderer as unknown as { shadowMap: { enabled: boolean; type?: unknown } }).shadowMap.enabled = true;
+      (this.renderer as unknown as { shadowMap: { type?: unknown } }).shadowMap.type = THREE.PCFSoftShadowMap;
+      (this.renderer as unknown as { toneMapping?: unknown }).toneMapping = THREE.ACESFilmicToneMapping;
+    } catch {
+      /* mock renderer without shadow support */
+    }
     this.renderer.clear();
   }
 

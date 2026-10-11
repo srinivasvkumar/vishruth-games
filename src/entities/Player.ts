@@ -28,10 +28,14 @@ export class Player {
     this.mesh.position.copy(position);
     
     // Main body (truck-sized: ~4 units wide, ~7 tall, ~8 long)
+    // W5 FIX: emissive identity + shadow so the player is unmistakable
+    // against the (recolored) obstacles.
     const geometry = new BoxGeometry(4, 7, 8);
-    const material = new MeshStandardMaterial({ color: 0x00ff00 });
+    const material = new MeshStandardMaterial({ color: 0x00ff00, emissive: 0x005511, roughness: 0.4 });
     const body = new Mesh(geometry, material);
     body.position.y = 0; // group origin at truck center
+    (body as { castShadow?: boolean }).castShadow = true;
+    this.mesh.name = 'player';
     this.mesh.add(body);
     
     Logger.info('Player created at', position);

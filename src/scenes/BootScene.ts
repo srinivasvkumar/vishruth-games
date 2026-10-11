@@ -12,6 +12,11 @@ export class BootScene extends Scene {
   private loadingText!: HTMLDivElement;
   private totalAssets = 0;
   private loadedAssets = 0;
+  /** One-shot guard: the boot->menu advance must fire exactly once.
+   * Without it the empty-asset condition stayed true every frame and
+   * enqueued ~60 duplicate menu loads (W5 diagnosis). */
+  private advancedToMenu = false;
+  private progressContainer: HTMLElement | null = null;
   
   constructor(game: Game) {
     super(game);
@@ -76,11 +81,15 @@ export class BootScene extends Scene {
       }
     }
     
-    // Auto-transition when loaded
-    if (this.loadedAssets >= this.totalAssets && this.isActive) {
+    // Auto-transition when loaded — ONE SHOT only. The loaded>=total guard
+    // is trivially true for the empty manifest, so without the flag this
+    // fired every frame and flooded the SceneManager queue.
+    if (!this.advancedToMenu && this.loadedAssets >= this.totalAssets && this.isActive) {
+      this.advancedToMenu = true;
       setTimeout(() => {
-        this.exit();
+        this.exit(); // idempotent; SceneManager guards on isActive too
         this.game.switchScene('menu').catch((error) => {
+          this.advancedToMenu = false; // allow retry if the switch failed
           Logger.error('Failed to switch to menu scene', { error });
         });
       }, 500);
@@ -91,11 +100,10 @@ export class BootScene extends Scene {
    * Exit boot scene
    */
   protected onExit(): void {
-    // Hide loading UI
-    if (this.progressBar && this.loadingText) {
-      this.progressBar.style.display = 'none';
-      this.loadingText.style.display = 'none';
-    }
+    // Remove the loading UI entirely — hiding only the inner bar left the
+    // green-bordered container floating over every later scene (W5).
+    this.progressContainer?.remove();
+    this.loadingText?.remove();
 
     // Clear the static #loading-message from index.html
     const loadingMsg = document.getElementById('loading-message');
@@ -111,8 +119,10 @@ export class BootScene extends Scene {
    * Clean up boot scene
    */
   protected onCleanup(): void {
+    this.progressContainer?.remove();
     this.progressBar?.parentNode?.removeChild(this.progressBar);
     this.loadingText?.parentNode?.removeChild(this.loadingText);
+    this.advancedToMenu = false;
     
     Logger.debug('Boot scene cleaned up');
   }
@@ -147,6 +157,7 @@ export class BootScene extends Scene {
   private setupLoadingUI(): void {
     // Create progress bar container
     const progressContainer = document.createElement('div');
+    this.progressContainer = progressContainer;
     progressContainer.style.cssText = `
       position: fixed;
       top: 50%;

@@ -12,6 +12,8 @@ export class SceneManager {
   private previousScene: Scene | null = null;
   private sceneQueue: string[] = [];
   private isLoading = false;
+  /** Scene name of the in-flight or queued transition (dedupe guard). */
+  private pendingSceneName: string | null = null;
   private game: Game;
   
   constructor(game: Game) {
@@ -47,15 +49,30 @@ export class SceneManager {
    * Load and switch to a scene
    */
   async loadScene(name: string, data?: Record<string, unknown>): Promise<void> {
+    // Dedupe guard: a request for the scene we're already in (or already
+    // loading) is a no-op. BootScene's auto-advance and retry paths used to
+    // enqueue dozens of duplicate loads per second, ping-ponging enter/exit
+    // and flickering the menu (W5 diagnosis).
+    if (this.currentScene && this.getSceneName(this.currentScene) === name) {
+      Logger.debug('loadScene skipped: already current scene', { name });
+      return;
+    }
+    if (this.pendingSceneName === name) {
+      Logger.debug('loadScene skipped: already queued/loading', { name });
+      return;
+    }
     if (this.isLoading) {
       Logger.warn('Already loading a scene, queuing request', { name });
       this.sceneQueue.push(name);
+      this.pendingSceneName = name;
       return;
     }
+    this.pendingSceneName = name;
     
     const scene = this.scenes.get(name);
     if (!scene) {
       Logger.error('Scene not found', { name });
+      this.pendingSceneName = null;
       throw new Error(`Scene "${name}" not found`);
     }
     
@@ -101,6 +118,7 @@ export class SceneManager {
       
     } finally {
       this.isLoading = false;
+      this.pendingSceneName = null;
       
       // Process queued scenes
       if (this.sceneQueue.length > 0) {

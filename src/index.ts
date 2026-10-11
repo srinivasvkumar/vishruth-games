@@ -68,7 +68,10 @@ function initGame(): void {
     sm.registerScene('gameover', new GameOverScene(game));
     
     // Start the game
-    game.start();
+    // W5 FIX: boot() spins the frame pump without forcing the FSM to
+    // 'playing' at page load (the old start() did, decoupling state from
+    // the visible menu scene).
+    game.boot();
     
     Logger.info('Game started successfully');
     
