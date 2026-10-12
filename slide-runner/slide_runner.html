@@ -43,7 +43,7 @@
 
   const S = () => W / BASE_W;
   const GROUND = 0.80, RUNNER_X = 0.14;
-  const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.35;   // apex ~0.30s < CD: air-jumps catch you already falling, chaining is a real skill
+  const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.40;   // apex ~0.30s < CD: chain = timing skill, sloppy rhythm sinks fast
   const BASE_SPEED = 300, MAX_SPEED = 460, RAMP = 40;   // px/s; +40 per 1000 world px
 
   let state, score, best = +(localStorage.getItem('rg-best') || 0), speed, dist;
