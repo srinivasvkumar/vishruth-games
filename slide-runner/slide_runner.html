@@ -22,7 +22,7 @@
     <div class="rg-hud">Score <b id="score">0</b> &nbsp; Best <b id="best">0</b> &nbsp; <span id="lives">❤❤❤</span></div>
   </div>
   <canvas id="cv"></canvas>
-  <div class="rg-help"><kbd>Space</kbd>/<kbd>&uarr;</kbd> jump — land ON blue blocks; re-jump at the apex (0.3s rhythm) to stay airborne as long as your timing holds &nbsp;•&nbsp; <kbd>D</kbd> in mid-air = short twirl glide (re-press near its end to extend) &nbsp;•&nbsp; hold <kbd>&darr;</kbd> slide under barriers</div>
+  <div class="rg-help"><kbd>Space</kbd>/<kbd>&uarr;</kbd> jump — land ON blue blocks; re-jump at the apex (~0.3–0.4s rhythm) to chain height &nbsp;•&nbsp; <kbd>D</kbd> in mid-air = short twirl glide (re-press near its end to extend) &nbsp;•&nbsp; hold <kbd>&darr;</kbd> slide under barriers</div>
 </div>
 <script>
 (() => {
@@ -43,8 +43,8 @@
 
   const S = () => W / BASE_W;
   const GROUND = 0.80, RUNNER_X = 0.14;
-  const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.40;   // apex ~0.30s < CD: chain = timing skill, sloppy rhythm sinks fast
-  const BASE_SPEED = 300, MAX_SPEED = 460, RAMP = 40;   // px/s; +40 per 1000 world px
+  const GRAV = 2100, JUMP_V = 620, JUMP_CD = 0.40;   // apex ~0.30s < CD: chaining is a timing skill
+  const BASE_SPEED = 340, MAX_SPEED = 460, RAMP = 40;   // px/s; 2j+twirl+2j (~2.1s air) spans one screen at start speed
 
   let state, score, best = +(localStorage.getItem('rg-best') || 0), speed, dist;
   let obstacles, coins, particles, clouds, slideHeld, tGlobal, shake, nextObs;
